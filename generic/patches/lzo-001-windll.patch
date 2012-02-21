@@ -1,0 +1,24 @@
+#diff -urNp lzo-2.05/Makefile.am lzo-2.05.1//Makefile.am
+#--- lzo-2.05/Makefile.am	2011-04-23 13:55:35.000000000 +0300
+#+++ lzo-2.05.1//Makefile.am	2012-02-20 23:00:32.491222622 +0200
+#@@ -121,7 +121,7 @@ EXTRA_DIST += lzotest/asm.h lzotest/db.h
+# 
+# lib_LTLIBRARIES += src/liblzo2.la
+# 
+#-src_liblzo2_la_LDFLAGS = -version-info 2:0:0 $(AM_LDFLAGS)
+#+src_liblzo2_la_LDFLAGS = -version-info 2:0:0 -no-undefined $(AM_LDFLAGS)
+# 
+# src_liblzo2_la_SOURCES = \
+#     src/lzo1.c src/lzo1_99.c src/lzo1a.c src/lzo1a_99.c src/lzo1b_1.c \
+diff -urNp lzo-2.05/Makefile.in lzo-2.05.1//Makefile.in
+--- lzo-2.05/Makefile.in	2011-04-23 13:55:35.000000000 +0300
++++ lzo-2.05.1//Makefile.in	2012-02-20 23:00:58.573265422 +0200
+@@ -407,7 +407,7 @@ minilzo_testmini_CPPFLAGS = -DMINILZO_HA
+ 	-I$(top_srcdir)/include/lzo $(AM_CPPFLAGS)
+ minilzo_testmini_LDADD = 
+ lzotest_lzotest_SOURCES = lzotest/lzotest.c
+-src_liblzo2_la_LDFLAGS = -version-info 2:0:0 $(AM_LDFLAGS)
++src_liblzo2_la_LDFLAGS = -version-info 2:0:0 -no-undefined $(AM_LDFLAGS)
+ src_liblzo2_la_SOURCES = \
+     src/lzo1.c src/lzo1_99.c src/lzo1a.c src/lzo1a_99.c src/lzo1b_1.c \
+     src/lzo1b_2.c src/lzo1b_3.c src/lzo1b_4.c src/lzo1b_5.c src/lzo1b_6.c \

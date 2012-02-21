@@ -1,0 +1,74 @@
+OpenVPN Project Cross Compile Build
+
+About
+
+	This environment provides an easy way to build
+	OpenVPN Project components using a cross compiler.
+
+Versions
+
+	The tarballs are taken from "SOURCEROOT" directory, the
+	version is not forced. If tarball is missing it is
+	downloaded from its site using a specific version.
+
+Cross compile
+
+	$ CHOST=i686-pc-mingw32 CBUILD=i686-pc-linux-gnu ./build
+	
+	Notes:
+		Ubuntu 8.10
+			CHOST=i586-mingw32msvc
+	
+		cygwin
+			Packages:
+				diffutils
+				m4
+				mingw64-i686-binutils
+				mingw64-i686-gcc-core
+				mingw64-i686-headers
+				mingw64-i686-pthreads
+				mingw64-i686-runtime
+				mingw64-x86_64-binutils
+				mingw64-x86_64-gcc-core
+				mingw64-x86_64-headers
+				mingw64-x86_64-pthreads
+				mingw64-x86_64-runtime
+				patch
+				patchutils
+				perl
+				unzip
+				wget
+
+			$ IMAGEROOT=`pwd`/image-win32 \
+				CHOST=i686-w64-mingw32 \
+				CBUILD=i686-pc-cygwin \
+				./build
+			$ IMAGEROOT=`pwd`/image-win64 \
+				CHOST=x86_64-w64-mingw32 \
+				CBUILD=i686-pc-cygwin \
+				./build
+Environment
+
+	WGET
+		wget to use, default wget.
+	WGET_OPTS
+		options for wget, default empty.
+
+	MAKEOPTS
+		options for make, default "-j2".
+	CHOST
+		host to build to, default empty (native).
+	CTARGET
+		target to build to, default CHOST.
+	CBUILD
+		target of local host, default CHOST.
+
+	IMAGEROOT
+		output goes here, default "image".
+	BUILDROOT
+		build goes here, default "tmp".
+
+	OPENSSL_VERSION
+	PKCS11_HELPER_VERSION
+	LZO_VERSION
+	OPENVPN_VERSION

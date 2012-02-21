@@ -1,0 +1,470 @@
+#!/bin/sh
+# OpenVPN Project Cross Compile Build
+# Copyright (C) 2008-2012 Alon Bar-Lev <alon.barlev@gmail.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+
+#
+# Cross compile for Windows under Linux:
+# IMAGEROOT=`pwd`/image-win32 CHOST=i686-w64-mingw32 CBUILD=x86_64-pc-linux-gnu ./build
+# IMAGEROOT=`pwd`/image-win64 CHOST=x86_64-w64-mingw32 CBUILD=x86_64-pc-linux-gnu ./build
+# Cross compile for Windows under cygwin:
+# IMAGEROOT=`pwd`/image-win32 CHOST=i686-w64-mingw32 CBUILD=i686-pc-cygwin ./build
+# IMAGEROOT=`pwd`/image-win64 CHOST=x86_64-w64-mingw32 CBUILD=i686-pc-cygwin ./build
+# Cross compile for uClibc:
+# CHOST=i586-pc-linux-uclibc CBUILD=i686-pc-linux-gnu ./build
+#
+
+die() {
+	local m="$1"
+
+	echo "FATAL: ${m}" >&2
+	exit 1
+}
+
+get_full_path() {
+	local d="$1"
+	( cd "${d}" 2> /dev/null && pwd )
+}
+
+empty_ifelse() {
+	local v="$1"
+	local t="$2"
+	local f="$3"
+
+	[ -z "${v}" ] && echo "$2" || echo "$3"
+}
+
+fixup_la() {
+	local f
+
+	echo "Fixup libtool files"
+	find "${IMAGEROOT}" -name '*.la' | while read f; do
+		local top="$(dirname "$(dirname "$(echo "${f}")")" | sed 's#//#/#g')"
+		sed 's#//#'"${top}"'/#g' "${f}" > "${f}.tmp"
+		mv "${f}.tmp" "${f}"
+	done
+}
+
+restore_la() {
+	local f
+
+	echo "Restore libtool files"
+	find "${IMAGEROOT}" -name '*.la' | while read f; do
+		local x="$(echo "${IMAGEROOT}" | sed 's#/$##')"
+		sed 's#'"${x}"'/[^/]*/lib#//lib#g' "${f}" > "${f}.tmp"
+		mv "${f}.tmp" "${f}"
+	done
+}
+
+geturl() {
+	if [ -n "${WGET_MODE}" ]; then
+		"${WGET}" ${WGET_OPTS} --directory-prefix="${SOURCESROOT}" "${url}"
+	else
+		(
+			cd "${SOURCESROOT}" && \
+				"${CURL}" ${CURL_OPTS} "${url}"
+		)
+	fi
+}
+
+download1() {
+	local url="$1"
+	local prefix="$(basename "${url}" | sed 's/-[0-9].*//g')"
+
+	if ! [ -n "$(ls "${SOURCESROOT}/${prefix}-"[0-9]* 2> /dev/null)" ]; then
+		geturl ${url} || die "Cannot download ${url}"
+	fi
+}
+
+download() {
+	for url in \
+		${LZO_URL} \
+		${OPENSSL_URL} \
+		${PKCS11_HELPER_URL} \
+		${TAP_WINDOWS_URL} \
+		${OPENVPN_URL} \
+		${OPENVPN_GUI_URL};
+		do
+		download1 "${url}"
+	done
+
+	if [ "$(ls "${SOURCESROOT}" | wc -l | sed 's/[ \t]//g')" != 6 ]; then
+		die "sources is unclean."
+	fi
+}
+
+create_layout() {
+	[ -e "${IMAGEROOT}" ] && rm -fr "${IMAGEROOT}"
+	[ -e "${BUILDROOT}" ] && rm -fr "${BUILDROOT}"
+
+	if ! [ -e "${SOURCESROOT}" ]; then
+		mkdir -p "${SOURCESROOT}" || die "Cannot create '${SOURCESROOT}'"
+	fi
+	mkdir -p "${IMAGEROOT}" || die "Cannot create '${IMAGEROOT}'"
+	mkdir -p "${BUILDROOT}" || die "Cannot create '${BUILDROOT}'"
+
+	BUILDROOT="$(get_full_path "${BUILDROOT}")"
+	SOURCESROOT="$(get_full_path "${SOURCESROOT}")"
+	IMAGEROOT="$(get_full_path "${IMAGEROOT}")"
+}
+
+extract() {
+	local f
+
+	for f in "${SOURCESROOT}"/*; do
+		local extract=""
+		echo "Extract '$f'"
+		case "${f}" in
+			*.gz)
+				extract="gunzip -c"
+			;;
+			*.bz2)
+				extract="bunzip2 -c"
+			;;
+			*.lzma)
+				extract="unlzma"
+			;;
+			*.zip)
+				extract="unzip"
+			;;
+			*)
+				extract="cat"
+			;;
+		esac
+		if [ "${extract}" = "unzip" ]; then
+			(cd "${BUILDROOT}" && unzip "${f}") || die "Extract '${f}'"
+		else
+			${extract} < "${f}" | ( cd "${BUILDROOT}" && tar -xf - ) || die "Extract '${f}'"
+		fi
+	done
+
+	for f in "${PATCHDIR}"/*.patch "${PATCHDIR}"/*.sh; do
+		product="$(echo "${f}" | sed -e 's#.*/##g' -e 's/-[0-9].*//g')"
+		if [ -d "${BUILDROOT}/${product}"* ]; then
+			if echo "${f}" | grep '.patch$' > /dev/null; then
+				echo "Patch: '$f'"
+				patch -d "${BUILDROOT}/${product}"* -p1 < "${f}" || die "Patch '${f}'"
+			else
+				echo "Running: '$f'"
+				$( cd "${BUILDROOT}/${product}"*; "${f}" ) || die "Patch '${f}'"
+			fi
+		fi
+	done
+}
+
+build_dep() {
+	echo "Build openssl"
+	cd "${BUILDROOT}/openssl"* || die "cd openssl"
+
+	./Configure --prefix="/${TARGET_ROOT}" --cross-compile-prefix=${CHOST:+${CHOST}-} \
+		$(empty_ifelse "${DO_STATIC}" shared no-dso) \
+		$(CHOST="${VIRTUAL_CHOST}" "${SCRIPTROOT}/gentoo.config-0.9.8") \
+		${CFLAGS} ${LDFLAGS} \
+		no-multilib \
+		no-capieng \
+		--openssldir=/etc/ssl \
+		--libdir=/lib \
+		${EXTRA_OPENSSL_CONFIG} \
+		|| die "Configure openssl"
+	[ -n "${BUILD_FOR_WINDOWS}" ] && perl util/mkdef.pl crypto ssl NT update
+	[ -z "${OPENSSL_SKIP_DEPEND}" ] && ${MAKE} depend
+	${MAKE} install INSTALL_PREFIX="${OPENVPN_ROOT}" INSTALLTOP="/" MANDIR="/tmp" \
+		|| die "make openssl"
+	rm -fr "${OPENVPN_ROOT}/tmp"
+
+	fixup_la
+
+	echo "Build lzo"
+	cd "${BUILDROOT}/lzo"* || die "cd lzo"
+	./configure ${CONFIGOPTS} ${EXTRA_LZO_CONFIG} \
+		$(empty_ifelse "${DO_STATIC}" --enable-shared --disable-shared) \
+		|| die "Configure lzo"
+	${MAKE} ${MAKEOPTS} ${MAKE_AUTOCONF_INSTALL_TARGET} DESTDIR="${OPENVPN_ROOT}" || die "make lzo"
+
+	fixup_la
+
+	if [ -z "${DO_STATIC}" ]; then
+		echo "Build pkcs11-helper"
+		cd "${BUILDROOT}/pkcs11-helper"* || die "cd pkcs11-helper"
+		./configure ${CONFIGOPTS} ${EXTRA_PKCS11_HELPER_CONFIG} \
+			--disable-crypto-engine-gnutls \
+			--disable-crypto-engine-nss \
+			OPENSSL_CFLAGS="${OPENSSL_CRYPTO_CFLAGS}" \
+			OPENSSL_LIBS="${OPENSSL_CRYPTO_LIBS}" \
+			|| die "Configure pkcs11-helper"
+		${MAKE} ${MAKEOPTS} ${MAKE_AUTOCONF_INSTALL_TARGET} DESTDIR="${OPENVPN_ROOT}" || die "make pkcs11-helper"
+	fi
+
+	echo "tap-windows"
+	cp "${BUILDROOT}"/tap-windows-*/include/* "${OPENVPN_ROOT}/include" || die "tap-windows copy"
+
+	fixup_la
+
+	cd "${SCRIPTROOT}"
+	restore_la
+}
+
+build_openvpn() {
+
+	fixup_la
+
+	echo "Build openvpn"
+	cd "${BUILDROOT}/openvpn-${OPENVPN_VERSION}" || die "cd openvpn"
+	./configure ${CONFIGOPTS} ${EXTRA_OPENVPN_CONFIG} \
+		$(empty_ifelse "${DO_STATIC}" --enable-pkcs11 --disable-plugins) \
+		--enable-lzo \
+		|| die "Configure openvpn"
+	${MAKE} ${MAKEOPTS} ${MAKE_AUTOCONF_INSTALL_TARGET} DESTDIR="${OPENVPN_ROOT}" || die "make openvpn"
+
+	fixup_la
+
+	cd "${SCRIPTROOT}"
+	restore_la
+}
+
+build_openvpn_gui() {
+
+	fixup_la
+
+	echo "Build openvpn-gui"
+	cd "${BUILDROOT}/openvpn-gui"* || die "cd openvpn gui"
+	./configure ${CONFIGOPTS} ${EXTRA_OPENVPN_GUI_CONFIG} \
+		|| die "Configure openvpn-gui"
+	${MAKE} ${MAKEOPTS} ${MAKE_AUTOCONF_INSTALL_TARGET} DESTDIR="${OPENVPN_ROOT}" || die "make openvpn-gui"
+
+	fixup_la
+
+	cd "${SCRIPTROOT}"
+	restore_la
+}
+
+copy_docs() {
+	echo "Copying documents"
+	mkdir -p "${OPENVPN_ROOT}/share/doc/package"
+	cp "${SCRIPTROOT}/README" "${SCRIPTROOT}/COPYING"* "${OPENVPN_ROOT}/share/doc/package" || die "package docs"
+}
+
+copy_sources() {
+	echo "Copying sources"
+	mkdir -p "${IMAGEROOT}/src/patches"
+	cp "${SOURCESROOT}"/* "${IMAGEROOT}/src" || die "sources"
+	if [ "$(cd "${PATCHDIR}" && echo *)" != "*" ]; then
+		cp "${PATCHDIR}"/* "${IMAGEROOT}/src/patches" || die "patches"
+	fi
+}
+
+clean_empty_dirs() {
+	echo "Cleaning empty directories"
+	find "${IMAGEROOT}" -type d | sort -r | xargs rmdir 2> /dev/null
+}
+
+pack() {
+	echo "Packing images"
+	local X="${CHOST:-$(gcc -dumpmachine)}"
+	(cd "${IMAGEROOT}" && find src ) | bzip2 > "${IMAGEROOT}/openvpn-${X}-${BUILD_VERSION}-srclist.bz2" || die "srclist"
+	tar -cjf "${IMAGEROOT}/openvpn-${X}-${BUILD_VERSION}-src.tar.bz2" -C "${IMAGEROOT}" src || die "src"
+	tar -cjf "${IMAGEROOT}/openvpn-${X}-${BUILD_VERSION}-bin.tar.bz2" -C "${OPENVPN_ROOT}" . || die "openvpn"
+}
+
+aix_common() {
+	export CC=cc
+	export PATH="/usr/vac/bin:$PATH"
+	VIRTUAL_CHOST="ppc-ibm-aix"
+}
+
+solaris_common() {
+	export CC=cc
+	export PATH="/usr/ccs/bin:/usr/sfw/bin:${PATH}"
+	for d in /opt/solarisstudio12.3/bin /opt/solstudio12.2/bin /opt/sunstudio12.1/bin /opt/SUNWspro/bin; do
+		[ -e "${d}" ] && export PATH="${d}:${PATH}"
+	done
+
+	case "$(uname -r)-$(uname -p)" in
+		5.8-*) VIRTUAL_CHOST="sparc-sun-solaris2.8";;
+		5.9-*) VIRTUAL_CHOST="sparc-sun-solaris2.9";;
+		5.10-i386) VIRTUAL_CHOST="i386-pc-solaris2.10";;
+		5.10-sparc) VIRTUAL_CHOST="sparc-sun-solaris2.10";;
+		*) die "Unknown machine";;
+	esac
+	OPENSSL_SKIP_DEPEND=1 # sun compiler
+}
+
+main() {
+	export CFLAGS="${TARGET_CFLAGS} ${EXTRA_TARGET_CFLAGS}"
+	export LDFLAGS="${TARGET_LDFLAGS} ${EXTRA_TARGET_LDFLAGS}"
+	download
+	create_layout
+	extract
+	build_dep
+	if [ -z "${DO_ONLY_DEPS}" ]; then
+		build_openvpn
+		[ -n "${BUILD_FOR_WINDOWS}" ] && build_openvpn_gui
+		copy_docs
+		copy_sources
+		clean_empty_dirs
+		pack
+	fi
+}
+
+SCRIPTROOT="$(get_full_path "$(dirname "$0")")"
+
+#CHOST
+VIRTUAL_CHOST="${CHOST}"
+#CTARGET
+TARGET_CFLAGS=""
+TARGET_LDFLAGS=""
+CBUILD="${CBUILD:-${CHOST}}"
+IMAGEROOT="${IMAGEROOT:-${SCRIPTROOT}/image}"
+BUILDROOT="${BUILDROOT:-${SCRIPTROOT}/tmp}"
+SOURCESROOT="${SOURCESROOT:-${SCRIPTROOT}/sources}"
+PATCHDIR="${SCRIPTROOT}/patches"
+
+. "${SCRIPTROOT}/build.vars" || die "Cannot source build.vars"
+
+echo "${CHOST:-$(gcc -dumpmachine)}" | grep mingw > /dev/null && BUILD_FOR_WINDOWS=1
+which "${WGET}" > /dev/null 2>&1 && WGET_MODE=1
+
+CONFIGOPTS=" \
+	--prefix=${TARGET_ROOT} \
+	--libdir=${TARGET_ROOT}/lib \
+	--host=${CHOST} \
+	--target=${CTARGET} \
+	--build=${CBUILD} \
+	--program-prefix='' \
+"
+
+OPENVPN_ROOT="${IMAGEROOT}/openvpn"
+
+if [ -z "${DO_NO_STRIP}" ]; then
+	MAKE_AUTOCONF_INSTALL_TARGET="install-strip"
+else
+	MAKE_AUTOCONF_INSTALL_TARGET="install"
+fi
+
+export OPENSSL_CRYPTO_CFLAGS="-I${OPENVPN_ROOT}/include"
+export OPENSSL_CRYPTO_LIBS="-L${OPENVPN_ROOT}/lib -lcrypto"
+export OPENSSL_SSL_CFLAGS="-I${OPENVPN_ROOT}/include"
+export OPENSSL_SSL_LIBS="-L${OPENVPN_ROOT}/lib -lssl"
+export LZO_CFLAGS="-I${OPENVPN_ROOT}/include"
+export LZO_LIBS="-L${OPENVPN_ROOT}/lib -llzo2"
+export PKCS11_HELPER_CFLAGS="-I${OPENVPN_ROOT}/include"
+export PKCS11_HELPER_LIBS="-L${OPENVPN_ROOT}/lib -lpkcs11-helper"
+export TAP_CFLAGS="-I${OPENVPN_ROOT}/include"
+
+if [ -n "${BUILD_FOR_WINDOWS}" ]; then
+	CONFIGOPTS=" \
+		${CONFIGOPTS} \
+		--sbindir=/bin \
+	"
+	export PKG_CONFIG="true"
+fi
+
+while [ -n "$1" ]; do
+	v="${1#*=}"
+	case "$1" in
+		--configuration=*)
+			case "${v}" in
+				aix-32)
+					aix_common
+					export TARGET_OBJECT_MODE=32
+					;;
+				aix-64)
+					aix_common
+					export TARGET_OBJECT_MODE=64
+					export OPENSSL_FORCE64BIT=1
+					;;
+				aix-32-gcc)
+					aix_common
+					export CC=gcc
+					export TARGET_OBJECT_MODE=32
+					;;
+				aix-64-gcc)
+					aix_common
+					export CC=gcc
+					TARGET_CFLAGS="-maix64"
+					TARGET_LDFLAGS="-maix64"
+					export TARGET_OBJECT_MODE=64
+					export OPENSSL_FORCE64BIT=1
+					;;
+				solaris-32)
+					solaris_common
+					;;
+				solaris-64)
+					solaris_common
+					if cc -flags 2>&1 | grep m64 > /dev/null; then
+						TARGET_CFLAGS="-m64"
+						TARGET_LDFLAGS="-m64"
+					else
+						TARGET_CFLAGS="-xtarget=ultra -xarch=v9"
+						TARGET_LDFLAGS="-xtarget=ultra -xarch=v9"
+					fi
+					export OPENSSL_FORCE64BIT=1
+					;;
+				linux-64-force31)
+					linux_common
+					TARGET_CFLAGS="-m31"
+					TARGET_LDFLAGS="-m31"
+					export OPENSSL_FORCE32BIT=1
+					EXTRA_OPENSSL_CONFIG="${EXTRA_OPENSSL_CONFIG} -m31"
+					;;
+				linux-64-force32)
+					linux_common
+					TARGET_CFLAGS="-m32"
+					TARGET_LDFLAGS="-m32"
+					export OPENSSL_FORCE32BIT=1
+					EXTRA_OPENSSL_CONFIG="${EXTRA_OPENSSL_CONFIG} -m32"
+					;;
+				linux-64-force64)
+					linux_common
+					TARGET_CFLAGS="-m64"
+					TARGET_LDFLAGS="-m64"
+					export OPENSSL_FORCE64BIT=1
+					EXTRA_OPENSSL_CONFIG="${EXTRA_OPENSSL_CONFIG} -m64"
+					;;
+				native)
+					;;
+				*)
+					die "Invalid configuration '${v}'"
+					;;
+			esac
+			;;
+		--help|*)
+			cat <<__EOF__
+Usage: $0
+	--configuration=
+		native
+		aix-32
+		aix-64
+		aix-32-gcc
+		aix-64-gcc
+		solaris-32
+		solaris-64
+		linux-32
+		linux-64
+		linux-64-force31
+		linux-64-force32
+		linux-64-force64
+__EOF__
+			exit 1
+			;;
+	esac
+	shift
+done
+
+main
+
+exit 0
+
