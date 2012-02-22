@@ -1,2 +1,7 @@
-tmp*
+*.tmp
 image*
+sources
+tools
+tmp
+*.exe
+*.gz
