@@ -1,0 +1,158 @@
+#!/bin/sh
+
+MAKENSIS="${MAKENSIS:-makensis}"
+OSSLSIGNCODE="${OSSLSIGNCODE:-osslsigncode}"
+ROOT="${ROOT:-tmp}"
+OPENVPN_ROOT="${ROOT}/openvpn"
+EASYRSA_ROOT="${ROOT}/easy-rsa"
+
+die() {
+	local m="$1"
+	echo "FATAL: ${m}" >&2
+	exit 1
+}
+
+codesign() {
+	local f="$1"
+	if [ -n "${DO_SIGN}" ]; then
+		echo "Signing '${f}'"
+		"${OSSLSIGNCODE}" \
+			-pkcs12 "${SIGN_PKCS12}" \
+			-pass "${SIGN_PKCS12_PASS}" \
+			-t "http://timestamp.verisign.com/scripts/timstamp.dll" \
+			-in "${f}" \
+			-out "${f}.tmp" \
+			|| die "Cannot sign '${f}'"
+		rm "${f}"
+		mv "${f}.tmp" "${f}" || die "Cannot move into '${f}'"
+	fi
+}
+
+layout() {
+	mkdir -p "${OUTPUT_DIR}"
+	rm -fr "${ROOT}"
+	mkdir "${ROOT}"
+	mkdir "${OPENVPN_ROOT}"
+	tar -C "${OPENVPN_ROOT}" -xf "${OPENVPN_TARBALL}" || die "extract openvpn"
+	if [ -n "${EASYRSA_TARBALL}" ]; then
+		tar -C "${ROOT}" -xf "${EASYRSA_TARBALL}" || die "extract easy rsa"
+		mv "${ROOT}"/easy-rsa-*/easy-rsa "${EASYRSA_ROOT}"
+	fi
+}
+
+text() {
+	find "${OPENVPN_ROOT}/share/doc"/*  -type f | xargs unix2dos || die "unix2dos"
+	if [ -d "${EASYRSA_ROOT}" ]; then
+		unix2dos "${EASYRSA_ROOT}/2.0"/*.cnf "${EASYRSA_ROOT}/Windows"/* || die "unix2dos"
+	fi
+}
+
+sign() {
+	find "${ROOT}" -name '*.dll' -or -name '*.exe' | while read f; do
+		codesign "${f}"
+	done || die "cannot sign"
+}
+
+main() {
+	layout
+
+	. "${OPENVPN_ROOT}/version.sh" || die "cannot find openvpn version.sh"
+	case "${OPENVPN_PACKAGE_HOST}" in
+		*-*-mingw*)
+			ARCH="${OPENVPN_PACKAGE_HOST%%-*}"
+			;;
+		*)
+			die "invalid openvpn tarball architecture '${OPENVPN_PACKAGE_HOST}'"
+			;;
+	esac
+
+	text
+	sign
+
+	cat \
+		"${OPENVPN_ROOT}/share/doc/openvpn/COPYING" \
+		"${OPENVPN_ROOT}/share/doc/openvpn/COPYRIGHT.GPL" \
+		> "${OPENVPN_ROOT}/share/doc/openvpn/license.txt" || die "license.txt"
+	
+	VERSION_STRING="${OPENVPN_PACKAGE_VERSION}-I${INSTALLER_VERSION}${INSTALLER_SUFFIX}"
+	OUTPUT="${OUTPUT_DIR}/openvpn-install-${VERSION_STRING}-${ARCH}.exe"
+
+	"${MAKENSIS}" \
+		-DPACKAGE_NAME="${OPENVPN_PACKAGE_NAME}" \
+		-DVERSION_STRING="${VERSION_STRING}" \
+		-DOPENVPN_ROOT="${OPENVPN_ROOT//\//\\}" \
+		-DTAP_WINDOWS_INSTALLER="${TAP_WINDOWS_INSTALLER//\//\\}" \
+		${TAP_WINDOWS_INSTALLER:+-DUSE_TAP_WINDOWS} \
+		-DEASYRSA_ROOT="${EASYRSA_ROOT//\//\\}" \
+		${EASYRSA_TARBALL:+-DUSE_EASYRSA} \
+		-DUSE_OPENVPN_GUI \
+		-DOUTPUT="${OUTPUT}" \
+		openvpn.nsi || die "makensis"
+
+	codesign "${OUTPUT}"
+}
+
+OUTPUT_DIR="."
+INSTALLER_VERSION="000"
+INSTALLER_SUFFIX=""
+
+while [ -n "$1" ]; do
+	v="${1#*=}"
+	case "$1" in
+		--installer-version=*)
+			INSTALLER_VERSION="${v}"
+			;;
+		--installer-suffix=*)
+			INSTALLER_SUFFIX="${v}"
+			;;
+		--openvpn-bin-tarball=*)
+			OPENVPN_TARBALL="${v}"
+			;;
+		--easy-rsa-tarball=*)
+			EASYRSA_TARBALL="${v}"
+			;;
+		--tap-windows=*)
+			TAP_WINDOWS_INSTALLER="${v}"
+			;;
+		--sign)
+			DO_SIGN=1
+			;;
+		--sign-pkcs12=*)
+			SIGN_PKCS12="${v}"
+			;;
+		--sign-pkcs12-pass=*)
+			SIGN_PKCS12_PASS="${v}"
+			;;
+		--output-dir=*)
+			OUTPUT_DIR="${v}"
+			;;
+		--help|*)
+			cat <<__EOF__
+Usage: $0
+	--installer-version=version     installer version
+	--installer-suffix=suffix	installer suffix
+	--openvpn-bin-tarball=tarball	openvpn binary tarball
+	--easy-rsa-tarball=tarball	easy-rsa source tarball
+	--tap-windows=installer         tap-windows installer
+	--sign				do sign
+	--sign-pkcs12=pkcs12-file	signing PKCS#12 file
+	--sign-pkcs12-pass=password	PKCS#12 file password
+	--output-dir=output		output directory
+	--help				this
+__EOF__
+			exit 1
+	esac
+	shift
+done
+
+[ -n "${OPENVPN_TARBALL}" ] || die "please specify openvpn binary tarball"
+[ -f "${OPENVPN_TARBALL}" ] || die "cannot find openvpn binary tarball '${OPENVPN_TARBALL}'"
+if [ -n "${EASYRSA_TARBALL}" ]; then
+	[ -f "${EASYRSA_TARBALL}" ] || die "cannot find easy-rsa tarball '${EASYRSA_TARBALL}'"
+fi
+if [ -n "${DO_SIGN}" ]; then
+	[ -n "${SIGN_PKCS12}" ] || die "please specify PKCS#12 file"
+	[ -f "${SIGN_PKCS12}" ] || die "cannot find PKCS#12 file '${SIGN_PKCS12}'"
+fi
+
+main

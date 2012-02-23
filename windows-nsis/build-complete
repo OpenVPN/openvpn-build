@@ -1,0 +1,88 @@
+#!/bin/sh
+
+die() {
+	local m="$1"
+	echo "FATAL: ${m} >&2"
+	exit 1
+}
+
+main() {
+	rm -fr "${TMPDIR}"
+
+	"${WGET}" ${WGET_OPTS} --directory-prefix=${TMPDIR} "${EASY_RSA_URL}" || die "get easy-rsa"
+	"${WGET}" ${WGET_OPTS} --directory-prefix=${TMPDIR} "${TAP_WINDOWS_URL}" || die "get tap-windows"
+
+	for arch in i686 x86_64; do
+		echo "BUILDING ${arch}"
+
+		IMAGEROOT="$(pwd)/${TMPDIR}/image-${arch}" \
+			BUILDROOT="${TMPDIR}/build-${arch}" \
+			CHOST=${arch}-w64-mingw32 \
+			../generic/build \
+			|| die "build ${arch}"
+
+		ROOT="${TMPDIR}/installer" \
+			./build \
+			--installer-version="${INSTALLER_VERSION}" \
+			--openvpn-bin-tarball=$(ls ${TMPDIR}/image-${arch}/openvpn-${arch}-*-bin.*) \
+			--easy-rsa-tarball=$(ls ${TMPDIR}/easy-rsa-*) \
+			--tap-windows=$(ls ${TMPDIR}/tap-windows-*) \
+			--output-dir="${OUTPUT_DIR}" \
+			${DO_SIGN:+--sign} \
+			--sign-pkcs12="${SIGN_PKCS12}" \
+			--sign-pkcs12-pass="${SIGN_PKCS12_PASS}" \
+			|| die "pack ${arch}"
+	done
+
+	echo
+	echo "NOTICE: OpenVPN Installers are at '${OUTPUT_DIR}'"
+	exit 0
+}
+
+cd "$(dirname "$0")"
+. ./build-complete.vars
+
+TMPDIR="${TMPDIR:-tmp}"
+OUTPUT_DIR="."
+INSTALLER_VERSION="000"
+INSTALLER_SUFFIX=""
+export CBUILD="${CBUILD:-$(gcc -dumpmachine)}"
+
+while [ -n "$1" ]; do
+	v="${1#*=}"
+	case "$1" in
+		--installer-version=*)
+			INSTALLER_VERSION="${v}"
+			;;
+		--installer-suffix=*)
+			INSTALLER_SUFFIX="${v}"
+			;;
+		--sign)
+			DO_SIGN=1
+			;;
+		--sign-pkcs12=*)
+			SIGN_PKCS12="${v}"
+			;;
+		--sign-pkcs12-pass=*)
+			SIGN_PKCS12_PASS="${v}"
+			;;
+		--output-dir=*)
+			OUTPUT_DIR="${v}"
+			;;
+		--help|*)
+			cat <<__EOF__
+Usage: $0
+	--installer-version=version     installer version
+	--installer-suffix=suffix	installer suffix
+	--sign				do sign
+	--sign-pkcs12=pkcs12-file	signing PKCS#12 file
+	--sign-pkcs12-pass=password	PKCS#12 file password
+	--output-dir=output		output directory
+	--help				this
+__EOF__
+			exit 1
+	esac
+	shift
+done
+
+main
