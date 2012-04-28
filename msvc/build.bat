@@ -27,7 +27,7 @@ rem
 
 setlocal ENABLEDELAYEDEXPANSION
 
-cd %0\..
+cd /d %0\..
 SET ROOT=%CD%
 
 call build-env.bat
