@@ -1,0 +1,90 @@
+#!/bin/sh
+
+die() {
+	local m="$1"
+	echo "FATAL: ${m} >&2"
+	exit 1
+}
+
+get_full_path() {
+	local d="$1"
+	( cd "${d}" 2> /dev/null && pwd )
+}
+
+GIT="${GIT:-git}"
+OPENVPN_BRANCH="${BRANCH:-master}"
+OPENVPN_URL="${OPENVPN_URL:-git://github.com/OpenVPN/openvpn.git}"
+
+SCRIPTROOT="$(get_full_path "$(dirname "$0")")"
+TMPDIR="${SCRIPTROOT}/tmp-$$"
+
+cleanup() {
+	rm -fr "${TMPDIR}"
+}
+
+trap cleanup 0
+
+main() {
+	rm -fr "${TMPDIR}"
+	mkdir "${TMPDIR}" || die "tmp.mkdir"
+	cd "${TMPDIR}"
+	git clone -q --depth 1 --branch "${OPENVPN_BRANCH}" "${OPENVPN_URL}" || die "openvpn.clone"
+	cd openvpn
+	autoreconf -ivf || die "autoreconf.openvpn"
+	./configure --disable-lzo || die "openvpn.configure"
+	make dist || die "openvpn.dist"
+	cd "${SCRIPTROOT}"
+	CONFIGURE_GIT_REVISION="`GIT_DIR="${TMPDIR}/openvpn/.git" ${GIT} rev-parse --symbolic-full-name HEAD`/`GIT_DIR="${TMPDIR}/openvpn/.git" ${GIT} rev-parse --short=16 HEAD`"
+
+	mkdir -p "${SCRIPTROOT}/sources"
+	rm -f "${SCRIPTROOT}/sources"/openvpn-[0-9]*
+	cp "${TMPDIR}"/openvpn/*.gz "${SCRIPTROOT}/sources"
+
+	SPECIAL_BUILD="$(date "+%Y%m%d") ${CONFIGURE_GIT_REVISION}"
+
+	"${SCRIPTROOT}/build-complete" \
+		--special-build="${SPECIAL_BUILD}" \
+		${DO_SIGN:+--sign} \
+		--sign-pkcs12="${SIGN_PKCS12}" \
+		--sign-pkcs12-pass="${SIGN_PKCS12_PASS}" \
+		--output-dir="${OUTPUT_DIR}" \
+		|| die "build-complete"
+	
+	exit 0
+}
+
+DO_SIGN=
+SIGN_PKCS12=
+SIGN_PKCS12_PASS=
+OUTPUT_DIR="."
+
+while [ -n "$1" ]; do
+	v="${1#*=}"
+	case "$1" in
+		--sign)
+			DO_SIGN=1
+			;;
+		--sign-pkcs12=*)
+			SIGN_PKCS12="${v}"
+			;;
+		--sign-pkcs12-pass=*)
+			SIGN_PKCS12_PASS="${v}"
+			;;
+		--output-dir=*)
+			OUTPUT_DIR="${v}"
+			;;
+		--help|*)
+			cat <<__EOF__
+Usage: $0
+	--sign				do sign
+	--sign-pkcs12=pkcs12-file	signing PKCS#12 file
+	--sign-pkcs12-pass=password	PKCS#12 file password
+	--output-dir=output		output directory
+	--help				this
+__EOF__
+			exit 1
+	esac
+	shift
+done
+
+main
