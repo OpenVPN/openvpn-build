@@ -16,6 +16,7 @@ main() {
 		echo "BUILDING ${arch}"
 
 		IMAGEROOT="$(pwd)/${TMPDIR}/image-${arch}" \
+			SOURCESROOT="$(pwd)/sources" \
 			BUILDROOT="${TMPDIR}/build-${arch}" \
 			CHOST=${arch}-w64-mingw32 \
 			../generic/build \
