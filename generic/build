@@ -226,6 +226,7 @@ build_openvpn() {
 	./configure ${CONFIGOPTS} ${EXTRA_OPENVPN_CONFIG} \
 		$(empty_ifelse "${DO_STATIC}" --enable-pkcs11 --disable-plugins) \
 		--enable-lzo \
+		--with-special-build="${SPECIAL_BUILD}" \
 		|| die "Configure openvpn"
 	${MAKE} ${MAKEOPTS} ${MAKE_AUTOCONF_INSTALL_TARGET} DESTDIR="${OPENVPN_ROOT}" || die "make openvpn"
 
@@ -440,6 +441,9 @@ while [ -n "$1" ]; do
 					die "Invalid configuration '${v}'"
 					;;
 			esac
+			;;
+		--special-build=*)
+			SPECIAL_BUILD="${v}"
 			;;
 		--help|*)
 			cat <<__EOF__
