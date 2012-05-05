@@ -23,6 +23,7 @@ SetCompressor lzma
 
 ;General
 
+Name "${PACKAGE_NAME} ${VERSION_STRING}"
 OutFile "${OUTPUT}"
 
 ShowInstDetails show
@@ -37,9 +38,7 @@ InstallDirRegKey HKCU "Software\${PACKAGE_NAME}" ""
 ;--------------------------------
 ;Modern UI Configuration
 
-Name "${PACKAGE_NAME} ${VERSION_STRING}"
-
-!define MUI_WELCOMEPAGE_TEXT "This wizard will guide you through the installation of ${PACKAGE_NAME}, an Open Source VPN package by James Yonan.\r\n\r\nNote that the Windows version of ${PACKAGE_NAME} will only run on Win 2000, XP, or higher.\r\n\r\n\r\n"
+!define MUI_WELCOMEPAGE_TEXT "This wizard will guide you through the installation of ${PACKAGE_NAME} ${SPECIAL_BUILD}, an Open Source VPN package by James Yonan.\r\n\r\nNote that the Windows version of ${PACKAGE_NAME} will only run on Win 2000, XP, or higher.\r\n\r\n\r\n"
 
 !define MUI_COMPONENTSPAGE_TEXT_TOP "Select the components to install/upgrade.  Stop any ${PACKAGE_NAME} processes or the ${PACKAGE_NAME} service if it is running.  All DLLs are installed locally."
 
@@ -391,7 +390,7 @@ Section -post
 	WriteUninstaller "$INSTDIR\Uninstall.exe"
 
 	; Show up in Add/Remove programs
-	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PACKAGE_NAME}" "DisplayName" "${PACKAGE_NAME} ${VERSION_STRING}"
+	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PACKAGE_NAME}" "DisplayName" "${PACKAGE_NAME} ${VERSION_STRING} ${SPECIAL_BUILD}"
 	WriteRegExpandStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PACKAGE_NAME}" "UninstallString" "$INSTDIR\Uninstall.exe"
 	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PACKAGE_NAME}" "DisplayIcon" "$INSTDIR\icon.ico"
 	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PACKAGE_NAME}" "DisplayVersion" "${VERSION_STRING}"

@@ -80,6 +80,7 @@ main() {
 	"${MAKENSIS}" \
 		-DPACKAGE_NAME="${OPENVPN_PACKAGE_NAME}" \
 		-DVERSION_STRING="${VERSION_STRING}" \
+		-DSPECIAL_BUILD="${SPECIAL_BUILD}" \
 		-DOPENVPN_ROOT="${OPENVPN_ROOT//\//\\}" \
 		-DTAP_WINDOWS_INSTALLER="${TAP_WINDOWS_INSTALLER//\//\\}" \
 		${TAP_WINDOWS_INSTALLER:+-DUSE_TAP_WINDOWS} \
@@ -94,7 +95,7 @@ main() {
 
 OUTPUT_DIR="."
 INSTALLER_VERSION="000"
-INSTALLER_SUFFIX=""
+SPECIAL_BUILD=""
 
 while [ -n "$1" ]; do
 	v="${1#*=}"
@@ -102,8 +103,8 @@ while [ -n "$1" ]; do
 		--installer-version=*)
 			INSTALLER_VERSION="${v}"
 			;;
-		--installer-suffix=*)
-			INSTALLER_SUFFIX="${v}"
+		--special-build=*)
+			SPECIAL_BUILD="${v}"
 			;;
 		--openvpn-bin-tarball=*)
 			OPENVPN_TARBALL="${v}"
@@ -130,7 +131,7 @@ while [ -n "$1" ]; do
 			cat <<__EOF__
 Usage: $0
 	--installer-version=version     installer version
-	--installer-suffix=suffix	installer suffix
+	--special-build=string	        special build string
 	--openvpn-bin-tarball=tarball	openvpn binary tarball
 	--easy-rsa-tarball=tarball	easy-rsa source tarball
 	--tap-windows=installer         tap-windows installer

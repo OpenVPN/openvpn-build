@@ -19,11 +19,13 @@ main() {
 			BUILDROOT="${TMPDIR}/build-${arch}" \
 			CHOST=${arch}-w64-mingw32 \
 			../generic/build \
-			|| die "build ${arch}"
+				--special-build="${SPECIAL_BUILD}" \
+				|| die "build ${arch}"
 
 		ROOT="${TMPDIR}/installer" \
 			./build \
 			--installer-version="${INSTALLER_VERSION}" \
+			--special-build="${SPECIAL_BUILD}" \
 			--openvpn-bin-tarball=$(ls ${TMPDIR}/image-${arch}/openvpn-${arch}-*-bin.*) \
 			--easy-rsa-tarball=$(ls ${TMPDIR}/easy-rsa-*) \
 			--tap-windows=$(ls ${TMPDIR}/tap-windows-*) \
@@ -44,7 +46,7 @@ cd "$(dirname "$0")"
 
 TMPDIR="${TMPDIR:-tmp}"
 OUTPUT_DIR="."
-INSTALLER_SUFFIX=""
+SPECIAL_BUILD=""
 export CBUILD="${CBUILD:-$(gcc -dumpmachine)}"
 
 while [ -n "$1" ]; do
@@ -53,8 +55,8 @@ while [ -n "$1" ]; do
 		--installer-version=*)
 			INSTALLER_VERSION="${v}"
 			;;
-		--installer-suffix=*)
-			INSTALLER_SUFFIX="${v}"
+		--special-build=*)
+			SPECIAL_BUILD="${v}"
 			;;
 		--sign)
 			DO_SIGN=1
@@ -72,7 +74,7 @@ while [ -n "$1" ]; do
 			cat <<__EOF__
 Usage: $0
 	--installer-version=version     installer version
-	--installer-suffix=suffix	installer suffix
+	--special-build=string	        special build string
 	--sign				do sign
 	--sign-pkcs12=pkcs12-file	signing PKCS#12 file
 	--sign-pkcs12-pass=password	PKCS#12 file password
