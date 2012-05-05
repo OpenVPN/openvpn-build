@@ -3,8 +3,8 @@
 if "%OPENSSL_VERSION%"=="" set OPENSSL_VERSION=1.0.0g
 if "%LZO_VERSION%"=="" set LZO_VERSION=2.06
 if "%PKCS11_VERSION%"=="" set PKCS11_VERSION=1.10
-if "%TAP_VERSION%"=="" set TAP_VERSION=9.9
-if "%OPENVPN_VERSION%"=="" set OPENVPN_VERSION=2.3_alpha1
+if "%TAP_VERSION%"=="" set TAP_VERSION=9.9.0_master
+if "%OPENVPN_VERSION%"=="" set OPENVPN_VERSION=2.3_master
 if "%OPENVPN_BRANCH%"=="" set OPENVPN_BRANCH=build
 if "%OPENVPN_SOURCE%"=="" set OPENVPN_SOURCE=tarball
 
