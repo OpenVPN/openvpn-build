@@ -44,7 +44,6 @@ cd "$(dirname "$0")"
 
 TMPDIR="${TMPDIR:-tmp}"
 OUTPUT_DIR="."
-INSTALLER_VERSION="000"
 INSTALLER_SUFFIX=""
 export CBUILD="${CBUILD:-$(gcc -dumpmachine)}"
 
