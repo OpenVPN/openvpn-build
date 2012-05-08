@@ -153,7 +153,7 @@ Function .onInit
 	!insertmacro IsAdmin
 
 	# Delete previous start menu
-	RMDir /r $SMPROGRAMS\${PACKAGE_NAME}
+	RMDir /r "$SMPROGRAMS\${PACKAGE_NAME}"
 FunctionEnd
 
 ;--------------------
@@ -340,7 +340,6 @@ SectionEnd
 Section "Add Shortcuts to Start Menu" SecAddShortcuts
 
 	SetOverwrite on
-	CreateDirectory "$SMPROGRAMS\${PACKAGE_NAME}"
 	CreateDirectory "$SMPROGRAMS\${PACKAGE_NAME}\Documentation"
 	WriteINIStr "$SMPROGRAMS\${PACKAGE_NAME}\Documentation\${PACKAGE_NAME} Windows Notes.url" "InternetShortcut" "URL" "http://openvpn.net/INSTALL-win32.html"
 	WriteINIStr "$SMPROGRAMS\${PACKAGE_NAME}\Documentation\${PACKAGE_NAME} Manual Page.url" "InternetShortcut" "URL" "http://openvpn.net/man.html"
@@ -449,8 +448,6 @@ Section "Uninstall"
 
 	${un.EnvVarUpdate} $R0 "PATH" "R" "HKLM" "$INSTDIR\bin"
 
-	RMDir /r $SMPROGRAMS\${PACKAGE_NAME}
-
 	!ifdef USE_OPENVPN_GUI
 		Delete "$INSTDIR\bin\openvpn-gui.exe"
 		Delete "$DESKTOP\${PACKAGE_NAME} GUI.lnk"
@@ -500,6 +497,7 @@ Section "Uninstall"
 	RMDir "$INSTDIR\sample-config"
 	RMDir /r "$INSTDIR\log"
 	RMDir "$INSTDIR"
+	RMDir /r "$SMPROGRAMS\${PACKAGE_NAME}"
 
 	!insertmacro DelRegKeyIfUnchanged HKCR ".${OPENVPN_CONFIG_EXT}" "${PACKAGE_NAME}File"
 	DeleteRegKey HKCR "${PACKAGE_NAME}File"
