@@ -12,8 +12,7 @@ SetCompressor lzma
 
 !include "MUI.nsh"
 
-!include "StrStr.nsi"
-!include "setpath.nsi"
+!include "EnvVarUpdate.nsh"
 
 ; Default service settings
 !define OPENVPN_CONFIG_EXT   "ovpn"
@@ -332,13 +331,8 @@ SectionEnd
 
 Section "Add ${PACKAGE_NAME} to PATH" SecAddPath
 
-	; remove previously set path (if any)
-	Push "$INSTDIR\bin"
-	Call RemoveFromPath
-
 	; append our bin directory to end of current user path
-	Push "$INSTDIR\bin"
-	Call AddToPath
+	${EnvVarUpdate} $R0 "PATH" "A" "HKLM" "$INSTDIR\bin"
 
 SectionEnd
 
@@ -451,8 +445,7 @@ Section "Uninstall"
 		${EndIf}
 	!endif
 
-	Push "$INSTDIR\bin"
-	Call un.RemoveFromPath
+	${un.EnvVarUpdate} $R0 "PATH" "R" "HKLM" "$INSTDIR\bin"
 
 	RMDir /r $SMPROGRAMS\${PACKAGE_NAME}
 
