@@ -32,7 +32,7 @@ ShowUninstDetails show
 InstallDir "$PROGRAMFILES\${PACKAGE_NAME}"
 
 ;Remember install folder
-InstallDirRegKey HKCU "Software\${PACKAGE_NAME}" ""
+InstallDirRegKey HKLM "SOFTWARE\${PACKAGE_NAME}" ""
 
 ;--------------------------------
 ;Modern UI Configuration
@@ -244,7 +244,7 @@ Section "TAP Virtual Ethernet Adapter" SecTAP
 
 	Delete "$TEMP\tap-windows.exe"
 
-	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PACKAGE_NAME}" "tap" "installed"
+	WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\${PACKAGE_NAME}" "tap" "installed"
 SectionEnd
 !endif
 
@@ -384,10 +384,10 @@ Section -post
 	WriteUninstaller "$INSTDIR\Uninstall.exe"
 
 	; Show up in Add/Remove programs
-	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PACKAGE_NAME}" "DisplayName" "${PACKAGE_NAME} ${VERSION_STRING} ${SPECIAL_BUILD}"
-	WriteRegExpandStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PACKAGE_NAME}" "UninstallString" "$INSTDIR\Uninstall.exe"
-	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PACKAGE_NAME}" "DisplayIcon" "$INSTDIR\icon.ico"
-	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PACKAGE_NAME}" "DisplayVersion" "${VERSION_STRING}"
+	WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\${PACKAGE_NAME}" "DisplayName" "${PACKAGE_NAME} ${VERSION_STRING} ${SPECIAL_BUILD}"
+	WriteRegExpandStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\${PACKAGE_NAME}" "UninstallString" "$INSTDIR\Uninstall.exe"
+	WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\${PACKAGE_NAME}" "DisplayIcon" "$INSTDIR\icon.ico"
+	WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\${PACKAGE_NAME}" "DisplayVersion" "${VERSION_STRING}"
 
 SectionEnd
 
@@ -435,9 +435,9 @@ Section "Uninstall"
 	Sleep 3000
 
 	!ifdef USE_TAP_WINDOWS
-		ReadRegStr $R0 HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PACKAGE_NAME}" "tap"
+		ReadRegStr $R0 HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\${PACKAGE_NAME}" "tap"
 		${If} $R0 == "installed"
-			ReadRegStr $R0 HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\TAP-Windows" "UninstallString"
+			ReadRegStr $R0 HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\TAP-Windows" "UninstallString"
 			${If} $R0 != ""
 				DetailPrint "TAP UNINSTALL"
 				nsExec::ExecToLog '"$R0" /S'
@@ -501,8 +501,7 @@ Section "Uninstall"
 
 	!insertmacro DelRegKeyIfUnchanged HKCR ".${OPENVPN_CONFIG_EXT}" "${PACKAGE_NAME}File"
 	DeleteRegKey HKCR "${PACKAGE_NAME}File"
-	DeleteRegKey HKLM SOFTWARE\${PACKAGE_NAME}
-	DeleteRegKey HKCU "Software\${PACKAGE_NAME}"
-	DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PACKAGE_NAME}"
+	DeleteRegKey HKLM "SOFTWARE\${PACKAGE_NAME}"
+	DeleteRegKey HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\${PACKAGE_NAME}"
 
 SectionEnd
