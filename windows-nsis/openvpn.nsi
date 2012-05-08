@@ -148,6 +148,7 @@ ReserveFile "install-whirl.bmp"
 
 Function .onInit
 	ClearErrors
+	SetShellVarContext all
 
 	!insertmacro IsAdmin
 
@@ -420,6 +421,7 @@ SectionEnd
 
 Function un.onInit
 	ClearErrors
+	SetShellVarContext all
 
 	!insertmacro IsAdmin
 FunctionEnd
