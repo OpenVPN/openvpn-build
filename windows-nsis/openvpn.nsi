@@ -150,6 +150,7 @@ Function .onInit
 	!insertmacro IsAdmin
 
 	${If} "${ARCH}" == "x86_64"
+		SetRegView 64
 		StrCpy $INSTDIR "$PROGRAMFILES64\${PACKAGE_NAME}"
 	${Else}
 		StrCpy $INSTDIR "$PROGRAMFILES\${PACKAGE_NAME}"
@@ -424,7 +425,9 @@ SectionEnd
 Function un.onInit
 	ClearErrors
 	SetShellVarContext all
-
+	${If} "${ARCH}" == "x86_64"
+		SetRegView 64
+	${EndIf}
 	!insertmacro IsAdmin
 FunctionEnd
 
