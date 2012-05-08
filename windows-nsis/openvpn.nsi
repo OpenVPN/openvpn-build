@@ -11,6 +11,8 @@
 SetCompressor lzma
 
 !include "MUI.nsh"
+!define MULTIUSER_EXECUTIONLEVEL Admin
+!include "MultiUser.nsh"
 
 !include "EnvVarUpdate.nsh"
 
@@ -126,28 +128,13 @@ ReserveFile "install-whirl.bmp"
 	Pop $R0
 !macroend
 
-!macro IsAdmin
-	# Verify that user has admin privs
-	UserInfo::GetName
-	${Unless} ${Errors}
-		Pop $R0
-		UserInfo::GetAccountType
-		Pop $R1
-		${If} $R1 != "Admin"
-			Messagebox MB_OK "Administrator privileges required to install ${PACKAGE_NAME} [$R0/$R1]"
-			Abort
-		${EndIF}
-	${EndUnless}
-!macroend
-
 ;--------------------------------
 ;Installer Sections
 
 Function .onInit
 	ClearErrors
+	!insertmacro MULTIUSER_INIT
 	SetShellVarContext all
-
-	!insertmacro IsAdmin
 
 	${If} "${ARCH}" == "x86_64"
 		SetRegView 64
@@ -424,11 +411,11 @@ SectionEnd
 
 Function un.onInit
 	ClearErrors
+	!insertmacro MULTIUSER_UNINIT
 	SetShellVarContext all
 	${If} "${ARCH}" == "x86_64"
 		SetRegView 64
 	${EndIf}
-	!insertmacro IsAdmin
 FunctionEnd
 
 Section "Uninstall"
