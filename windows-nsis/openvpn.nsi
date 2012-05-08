@@ -28,9 +28,6 @@ OutFile "${OUTPUT}"
 ShowInstDetails show
 ShowUninstDetails show
 
-;Folder selection page
-InstallDir "$PROGRAMFILES\${PACKAGE_NAME}"
-
 ;Remember install folder
 InstallDirRegKey HKLM "SOFTWARE\${PACKAGE_NAME}" ""
 
@@ -151,6 +148,12 @@ Function .onInit
 	SetShellVarContext all
 
 	!insertmacro IsAdmin
+
+	${If} "${ARCH}" == "x86_64"
+		StrCpy $INSTDIR "$PROGRAMFILES64\${PACKAGE_NAME}"
+	${Else}
+		StrCpy $INSTDIR "$PROGRAMFILES\${PACKAGE_NAME}"
+	${EndIf}
 
 	# Delete previous start menu
 	RMDir /r "$SMPROGRAMS\${PACKAGE_NAME}"
