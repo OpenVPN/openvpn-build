@@ -12,6 +12,11 @@ die() {
 	exit 1
 }
 
+dospath() {
+	local p="$1"
+	echo "$p" | sed 's/\//\\/g'
+}
+
 codesign() {
 	local f="$1"
 	if [ -n "${DO_SIGN}" ]; then
@@ -82,10 +87,10 @@ main() {
 		-DPACKAGE_NAME="${OPENVPN_PACKAGE_NAME}" \
 		-DVERSION_STRING="${VERSION_STRING}" \
 		-DSPECIAL_BUILD="${SPECIAL_BUILD}" \
-		-DOPENVPN_ROOT="${OPENVPN_ROOT//\//\\}" \
-		-DTAP_WINDOWS_INSTALLER="${TAP_WINDOWS_INSTALLER//\//\\}" \
+		-DOPENVPN_ROOT="$(dospath "${OPENVPN_ROOT}")" \
+		-DTAP_WINDOWS_INSTALLER="$(dospath "${TAP_WINDOWS_INSTALLER}")" \
 		${TAP_WINDOWS_INSTALLER:+-DUSE_TAP_WINDOWS} \
-		-DEASYRSA_ROOT="${EASYRSA_ROOT//\//\\}" \
+		-DEASYRSA_ROOT="$(dospath "${EASYRSA_ROOT}")" \
 		${EASYRSA_TARBALL:+-DUSE_EASYRSA} \
 		-DUSE_OPENVPN_GUI \
 		-DOUTPUT="${OUTPUT}" \
