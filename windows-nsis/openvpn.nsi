@@ -170,6 +170,7 @@ Section "${PACKAGE_NAME} User-Space Components" SecOpenVPNUserSpace
 
 	SetOutPath "$INSTDIR"
 	File "${OPENVPN_ROOT}\share\doc\openvpn\INSTALL-win32.txt"
+	File "${OPENVPN_ROOT}\share\doc\openvpn\openvpn.8.html"
 
 SectionEnd
 
@@ -335,11 +336,14 @@ Section "Add Shortcuts to Start Menu" SecAddShortcuts
 	SetOverwrite on
 	CreateDirectory "$SMPROGRAMS\${PACKAGE_NAME}\Documentation"
 	WriteINIStr "$SMPROGRAMS\${PACKAGE_NAME}\Documentation\${PACKAGE_NAME} Windows Notes.url" "InternetShortcut" "URL" "http://openvpn.net/INSTALL-win32.html"
-	WriteINIStr "$SMPROGRAMS\${PACKAGE_NAME}\Documentation\${PACKAGE_NAME} Manual Page.url" "InternetShortcut" "URL" "http://openvpn.net/man.html"
 	WriteINIStr "$SMPROGRAMS\${PACKAGE_NAME}\Documentation\${PACKAGE_NAME} HOWTO.url" "InternetShortcut" "URL" "http://openvpn.net/howto.html"
 	WriteINIStr "$SMPROGRAMS\${PACKAGE_NAME}\Documentation\${PACKAGE_NAME} Web Site.url" "InternetShortcut" "URL" "http://openvpn.net/"
-	CreateShortCut "$SMPROGRAMS\${PACKAGE_NAME}\Uninstall ${PACKAGE_NAME}.lnk" "$INSTDIR\Uninstall.exe"
 
+	${If} ${SectionIsSelected} ${SecOpenVPNUserSpace}
+		CreateShortCut "$SMPROGRAMS\${PACKAGE_NAME}\Documentation\${PACKAGE_NAME} Manual Page.lnk" "$INSTDIR\openvpn.8.html"
+	${EndIf}
+
+	CreateShortCut "$SMPROGRAMS\${PACKAGE_NAME}\Uninstall ${PACKAGE_NAME}.lnk" "$INSTDIR\Uninstall.exe"
 SectionEnd
 
 ;--------------------------------
@@ -459,6 +463,7 @@ Section "Uninstall"
 	Delete "$INSTDIR\bin\openssl.exe"
 
 	Delete "$INSTDIR\INSTALL-win32.txt"
+	Delete "$INSTDIR\openvpn.8.html"
 	Delete "$INSTDIR\icon.ico"
 	Delete "$INSTDIR\license.txt"
 	Delete "$INSTDIR\Uninstall.exe"
