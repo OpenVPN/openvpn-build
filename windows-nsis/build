@@ -100,7 +100,7 @@ main() {
 }
 
 OUTPUT_DIR="."
-INSTALLER_VERSION="000"
+INSTALLER_VERSION="000_snap"
 SPECIAL_BUILD=""
 
 while [ -n "$1" ]; do
