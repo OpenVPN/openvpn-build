@@ -312,31 +312,6 @@ Section /o "${PACKAGE_NAME} RSA Certificate Management Scripts" SecOpenVPNEasyRS
 SectionEnd
 !endif
 
-Section "OpenSSL DLLs" SecOpenSSLDLLs
-
-	SetOverwrite on
-	SetOutPath "$INSTDIR\bin"
-	File "${OPENVPN_ROOT}\bin\libeay32.dll"
-	File "${OPENVPN_ROOT}\bin\ssleay32.dll"
-
-SectionEnd
-
-Section "LZO DLLs" SecLZODLLs
-
-	SetOverwrite on
-	SetOutPath "$INSTDIR\bin"
-	File "${OPENVPN_ROOT}\bin\liblzo2-2.dll"
-
-SectionEnd
-
-Section "PKCS#11 DLLs" SecPKCS11DLLs
-
-	SetOverwrite on
-	SetOutPath "$INSTDIR\bin"
-	File "${OPENVPN_ROOT}\bin\libpkcs11-helper-1.dll"
-
-SectionEnd
-
 Section "Add ${PACKAGE_NAME} to PATH" SecAddPath
 
 	; append our bin directory to end of current user path
@@ -354,6 +329,35 @@ Section "Add Shortcuts to Start Menu" SecAddShortcuts
 
 	CreateShortCut "$SMPROGRAMS\${PACKAGE_NAME}\Uninstall ${PACKAGE_NAME}.lnk" "$INSTDIR\Uninstall.exe"
 SectionEnd
+
+SectionGroup "!Dependencies (Advanced)"
+
+	Section "OpenSSL DLLs" SecOpenSSLDLLs
+
+		SetOverwrite on
+		SetOutPath "$INSTDIR\bin"
+		File "${OPENVPN_ROOT}\bin\libeay32.dll"
+		File "${OPENVPN_ROOT}\bin\ssleay32.dll"
+
+	SectionEnd
+
+	Section "LZO DLLs" SecLZODLLs
+
+		SetOverwrite on
+		SetOutPath "$INSTDIR\bin"
+		File "${OPENVPN_ROOT}\bin\liblzo2-2.dll"
+
+	SectionEnd
+
+	Section "PKCS#11 DLLs" SecPKCS11DLLs
+
+		SetOverwrite on
+		SetOutPath "$INSTDIR\bin"
+		File "${OPENVPN_ROOT}\bin\libpkcs11-helper-1.dll"
+
+	SectionEnd
+
+SectionGroupEnd
 
 ;--------------------------------
 ;Dependencies
