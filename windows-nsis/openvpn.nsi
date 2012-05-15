@@ -161,6 +161,11 @@ Section -pre
 
 SectionEnd
 
+Section "-workaround" SecAddShortcutsWorkaround
+	; this section should be selected as SecAddShortcuts
+	; as we don't want to move SecAddShortcuts to top of selection
+SectionEnd
+
 Section "${PACKAGE_NAME} User-Space Components" SecOpenVPNUserSpace
 
 	SetOverwrite on
@@ -172,6 +177,10 @@ Section "${PACKAGE_NAME} User-Space Components" SecOpenVPNUserSpace
 	File "${OPENVPN_ROOT}\share\doc\openvpn\INSTALL-win32.txt"
 	File "${OPENVPN_ROOT}\share\doc\openvpn\openvpn.8.html"
 
+	${If} ${SectionIsSelected} ${SecAddShortcutsWorkaround}
+		CreateDirectory "$SMPROGRAMS\${PACKAGE_NAME}\Documentation"
+		CreateShortCut "$SMPROGRAMS\${PACKAGE_NAME}\Documentation\${PACKAGE_NAME} Manual Page.lnk" "$INSTDIR\openvpn.8.html"
+	${EndIf}
 SectionEnd
 
 Section "${PACKAGE_NAME} Service" SecService
@@ -202,6 +211,15 @@ Section "${PACKAGE_NAME} Service" SecService
 	FileWrite $R0 "sessions which are being run as a service.$\r$\n"
 	FileClose $R0
 
+	${If} ${SectionIsSelected} ${SecAddShortcutsWorkaround}
+		CreateDirectory "$SMPROGRAMS\${PACKAGE_NAME}\Utilities"
+		CreateShortCut "$SMPROGRAMS\${PACKAGE_NAME}\Utilities\Generate a static ${PACKAGE_NAME} key.lnk" "$INSTDIR\bin\openvpn.exe" '--pause-exit --verb 3 --genkey --secret "$INSTDIR\config\key.txt"' "$INSTDIR\icon.ico" 0
+		CreateDirectory "$SMPROGRAMS\${PACKAGE_NAME}\Shortcuts"
+		CreateShortCut "$SMPROGRAMS\${PACKAGE_NAME}\Shortcuts\${PACKAGE_NAME} Sample Configuration Files.lnk" "$INSTDIR\sample-config" ""
+		CreateShortCut "$SMPROGRAMS\${PACKAGE_NAME}\Shortcuts\${PACKAGE_NAME} log file directory.lnk" "$INSTDIR\log" ""
+		CreateShortCut "$SMPROGRAMS\${PACKAGE_NAME}\Shortcuts\${PACKAGE_NAME} configuration file directory.lnk" "$INSTDIR\config" ""
+	${EndIf}
+
 	; set registry parameters for openvpnserv	
 	!insertmacro WriteRegStringIfUndef HKLM "SOFTWARE\${PACKAGE_NAME}" "config_dir" "$INSTDIR\config" 
 	!insertmacro WriteRegStringIfUndef HKLM "SOFTWARE\${PACKAGE_NAME}" "config_ext"  "${OPENVPN_CONFIG_EXT}"
@@ -209,14 +227,6 @@ Section "${PACKAGE_NAME} Service" SecService
 	!insertmacro WriteRegStringIfUndef HKLM "SOFTWARE\${PACKAGE_NAME}" "log_dir"     "$INSTDIR\log"
 	!insertmacro WriteRegStringIfUndef HKLM "SOFTWARE\${PACKAGE_NAME}" "priority"    "NORMAL_PRIORITY_CLASS"
 	!insertmacro WriteRegStringIfUndef HKLM "SOFTWARE\${PACKAGE_NAME}" "log_append"  "0"
-
-	; shortcuts
-	CreateDirectory "$SMPROGRAMS\${PACKAGE_NAME}\Utilities"
-	CreateShortCut "$SMPROGRAMS\${PACKAGE_NAME}\Utilities\Generate a static ${PACKAGE_NAME} key.lnk" "$INSTDIR\bin\openvpn.exe" '--pause-exit --verb 3 --genkey --secret "$INSTDIR\config\key.txt"' "$INSTDIR\icon.ico" 0
-	CreateDirectory "$SMPROGRAMS\${PACKAGE_NAME}\Shortcuts"
-	CreateShortCut "$SMPROGRAMS\${PACKAGE_NAME}\Shortcuts\${PACKAGE_NAME} Sample Configuration Files.lnk" "$INSTDIR\sample-config" ""
-	CreateShortCut "$SMPROGRAMS\${PACKAGE_NAME}\Shortcuts\${PACKAGE_NAME} log file directory.lnk" "$INSTDIR\log" ""
-	CreateShortCut "$SMPROGRAMS\${PACKAGE_NAME}\Shortcuts\${PACKAGE_NAME} configuration file directory.lnk" "$INSTDIR\config" ""
 
 	; install openvpnserv as a service (to be started manually from service control manager)
 	DetailPrint "Service INSTALL"
@@ -251,8 +261,11 @@ Section "${PACKAGE_NAME} GUI" SecOpenVPNGUI
 
 	File "${OPENVPN_ROOT}\bin\openvpn-gui.exe"
 
-	CreateShortCut "$SMPROGRAMS\${PACKAGE_NAME}\${PACKAGE_NAME} GUI.lnk" "$INSTDIR\bin\openvpn-gui.exe" ""
-	CreateShortcut "$DESKTOP\${PACKAGE_NAME} GUI.lnk" "$INSTDIR\bin\openvpn-gui.exe"
+	${If} ${SectionIsSelected} ${SecAddShortcutsWorkaround}
+		CreateDirectory "$SMPROGRAMS\${PACKAGE_NAME}"
+		CreateShortCut "$SMPROGRAMS\${PACKAGE_NAME}\${PACKAGE_NAME} GUI.lnk" "$INSTDIR\bin\openvpn-gui.exe" ""
+		CreateShortcut "$DESKTOP\${PACKAGE_NAME} GUI.lnk" "$INSTDIR\bin\openvpn-gui.exe"
+	${EndIf}
 SectionEnd
 !endif
 
@@ -339,10 +352,6 @@ Section "Add Shortcuts to Start Menu" SecAddShortcuts
 	WriteINIStr "$SMPROGRAMS\${PACKAGE_NAME}\Documentation\${PACKAGE_NAME} HOWTO.url" "InternetShortcut" "URL" "http://openvpn.net/howto.html"
 	WriteINIStr "$SMPROGRAMS\${PACKAGE_NAME}\Documentation\${PACKAGE_NAME} Web Site.url" "InternetShortcut" "URL" "http://openvpn.net/"
 
-	${If} ${SectionIsSelected} ${SecOpenVPNUserSpace}
-		CreateShortCut "$SMPROGRAMS\${PACKAGE_NAME}\Documentation\${PACKAGE_NAME} Manual Page.lnk" "$INSTDIR\openvpn.8.html"
-	${EndIf}
-
 	CreateShortCut "$SMPROGRAMS\${PACKAGE_NAME}\Uninstall ${PACKAGE_NAME}.lnk" "$INSTDIR\Uninstall.exe"
 SectionEnd
 
@@ -358,6 +367,11 @@ Function .onSelChange
 		!insertmacro SelectSection ${SecOpenSSLUtilities}
 	${EndIf}
 !endif
+	${If} ${SectionIsSelected} ${SecAddShortcuts}
+		!insertmacro SelectSection ${SecAddShortcutsWorkaround}
+	${Else}
+		!insertmacro UnselectSection ${SecAddShortcutsWorkaround}
+	${EndIf}
 FunctionEnd
 
 ;--------------------
