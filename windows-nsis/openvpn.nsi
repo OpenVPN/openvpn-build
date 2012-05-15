@@ -164,9 +164,12 @@ SectionEnd
 Section "${PACKAGE_NAME} User-Space Components" SecOpenVPNUserSpace
 
 	SetOverwrite on
-	SetOutPath "$INSTDIR\bin"
 
+	SetOutPath "$INSTDIR\bin"
 	File "${OPENVPN_ROOT}\bin\openvpn.exe"
+
+	SetOutPath "$INSTDIR"
+	File "${OPENVPN_ROOT}\share\doc\openvpn\INSTALL-win32.txt"
 
 SectionEnd
 
@@ -247,7 +250,6 @@ Section "${PACKAGE_NAME} GUI" SecOpenVPNGUI
 
 	File "${OPENVPN_ROOT}\bin\openvpn-gui.exe"
 
-	CreateDirectory "$SMPROGRAMS\${PACKAGE_NAME}\Documentation"
 	CreateShortCut "$SMPROGRAMS\${PACKAGE_NAME}\${PACKAGE_NAME} GUI.lnk" "$INSTDIR\bin\openvpn-gui.exe" ""
 	CreateShortcut "$DESKTOP\${PACKAGE_NAME} GUI.lnk" "$INSTDIR\bin\openvpn-gui.exe"
 SectionEnd
@@ -360,16 +362,12 @@ FunctionEnd
 Section -post
 
 	SetOverwrite on
-
-	; Store README, license, icon
-	SetOverwrite on
-	SetOutPath $INSTDIR
+	SetOutPath "$INSTDIR"
 	File "icon.ico"
-	File "${OPENVPN_ROOT}\share\doc\openvpn\INSTALL-win32.txt"
 	File "${OPENVPN_ROOT}\share\doc\openvpn\license.txt"
 
 	; Store install folder in registry
-	WriteRegStr HKLM SOFTWARE\${PACKAGE_NAME} "" $INSTDIR
+	WriteRegStr HKLM "SOFTWARE\${PACKAGE_NAME}" "" "$INSTDIR"
 
 	; Create uninstaller
 	WriteUninstaller "$INSTDIR\Uninstall.exe"
