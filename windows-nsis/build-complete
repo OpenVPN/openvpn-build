@@ -34,6 +34,7 @@ main() {
 			${DO_SIGN:+--sign} \
 			--sign-pkcs12="${SIGN_PKCS12}" \
 			--sign-pkcs12-pass="${SIGN_PKCS12_PASS}" \
+			--sign-timestamp="${SIGN_TIMESTAMP_URL}" \
 			|| die "pack ${arch}"
 	done
 
@@ -68,6 +69,9 @@ while [ -n "$1" ]; do
 		--sign-pkcs12-pass=*)
 			SIGN_PKCS12_PASS="${v}"
 			;;
+		--sign-timestamp=*)
+			SIGN_TIMESTAMP_URL="${v}"
+			;;
 		--output-dir=*)
 			OUTPUT_DIR="${v}"
 			;;
@@ -79,6 +83,7 @@ Usage: $0
 	--sign				do sign
 	--sign-pkcs12=pkcs12-file	signing PKCS#12 file
 	--sign-pkcs12-pass=password	PKCS#12 file password
+	--sign-timestamp=url            URL to be used for timestamp
 	--output-dir=output		output directory
 	--help				this
 __EOF__
