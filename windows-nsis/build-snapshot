@@ -12,7 +12,7 @@ get_full_path() {
 }
 
 GIT="${GIT:-git}"
-OPENVPN_BRANCH="${BRANCH:-master}"
+OPENVPN_BRANCH="${OPENVPN_BRANCH:-master}"
 OPENVPN_URL="${OPENVPN_URL:-http://github.com/OpenVPN/openvpn.git}"
 
 SCRIPTROOT="$(get_full_path "$(dirname "$0")")"
