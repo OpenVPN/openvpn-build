@@ -13,8 +13,10 @@ SetCompressor lzma
 !include "MUI.nsh"
 !define MULTIUSER_EXECUTIONLEVEL Admin
 !include "MultiUser.nsh"
-
 !include "EnvVarUpdate.nsh"
+!include FileFunc.nsh
+!insertmacro GetParameters
+!insertmacro GetOptions
 
 ; Default service settings
 !define OPENVPN_CONFIG_EXT   "ovpn"
@@ -110,6 +112,19 @@ ReserveFile "install-whirl.bmp"
 ;--------------------------------
 ;Macros
 
+!macro SelectByParameter SECT PARAMETER DEFAULT
+	${GetOptions} $R0 "/${PARAMETER}=" $0
+	${If} ${DEFAULT} == 0
+		${If} $0 == 1
+			!insertmacro SelectSection ${SECT}
+		${EndIf}
+	${Else}
+		${If} $0 != 0
+			!insertmacro SelectSection ${SECT}
+		${EndIf}
+	${EndIf}
+!macroend
+
 !macro WriteRegStringIfUndef ROOT SUBKEY KEY VALUE
 	Push $R0
 	ReadRegStr $R0 "${ROOT}" "${SUBKEY}" "${KEY}"
@@ -128,25 +143,6 @@ ReserveFile "install-whirl.bmp"
 	Pop $R0
 !macroend
 
-;--------------------------------
-;Installer Sections
-
-Function .onInit
-	ClearErrors
-	!insertmacro MULTIUSER_INIT
-	SetShellVarContext all
-
-	${If} "${ARCH}" == "x86_64"
-		SetRegView 64
-		StrCpy $INSTDIR "$PROGRAMFILES64\${PACKAGE_NAME}"
-	${Else}
-		StrCpy $INSTDIR "$PROGRAMFILES\${PACKAGE_NAME}"
-	${EndIf}
-
-	# Delete previous start menu
-	RMDir /r "$SMPROGRAMS\${PACKAGE_NAME}"
-FunctionEnd
-
 ;--------------------
 ;Pre-install section
 
@@ -161,12 +157,12 @@ Section -pre
 
 SectionEnd
 
-Section "-workaround" SecAddShortcutsWorkaround
+Section /o "-workaround" SecAddShortcutsWorkaround
 	; this section should be selected as SecAddShortcuts
 	; as we don't want to move SecAddShortcuts to top of selection
 SectionEnd
 
-Section "${PACKAGE_NAME} User-Space Components" SecOpenVPNUserSpace
+Section /o "${PACKAGE_NAME} User-Space Components" SecOpenVPNUserSpace
 
 	SetOverwrite on
 
@@ -183,7 +179,7 @@ Section "${PACKAGE_NAME} User-Space Components" SecOpenVPNUserSpace
 	${EndIf}
 SectionEnd
 
-Section "${PACKAGE_NAME} Service" SecService
+Section /o "${PACKAGE_NAME} Service" SecService
 
 	SetOverwrite on
 
@@ -236,7 +232,7 @@ Section "${PACKAGE_NAME} Service" SecService
 SectionEnd
 
 !ifdef USE_TAP_WINDOWS
-Section "TAP Virtual Ethernet Adapter" SecTAP
+Section /o "TAP Virtual Ethernet Adapter" SecTAP
 
 	SetOverwrite on
 	SetOutPath "$TEMP"
@@ -254,7 +250,7 @@ SectionEnd
 !endif
 
 !ifdef USE_OPENVPN_GUI
-Section "${PACKAGE_NAME} GUI" SecOpenVPNGUI
+Section /o "${PACKAGE_NAME} GUI" SecOpenVPNGUI
 
 	SetOverwrite on
 	SetOutPath "$INSTDIR\bin"
@@ -269,7 +265,7 @@ Section "${PACKAGE_NAME} GUI" SecOpenVPNGUI
 SectionEnd
 !endif
 
-Section "${PACKAGE_NAME} File Associations" SecFileAssociation
+Section /o "${PACKAGE_NAME} File Associations" SecFileAssociation
 	WriteRegStr HKCR ".${OPENVPN_CONFIG_EXT}" "" "${PACKAGE_NAME}File"
 	WriteRegStr HKCR "${PACKAGE_NAME}File" "" "${PACKAGE_NAME} Config File"
 	WriteRegStr HKCR "${PACKAGE_NAME}File\shell" "" "open"
@@ -312,14 +308,14 @@ Section /o "${PACKAGE_NAME} RSA Certificate Management Scripts" SecOpenVPNEasyRS
 SectionEnd
 !endif
 
-Section "Add ${PACKAGE_NAME} to PATH" SecAddPath
+Section /o "Add ${PACKAGE_NAME} to PATH" SecAddPath
 
 	; append our bin directory to end of current user path
 	${EnvVarUpdate} $R0 "PATH" "A" "HKLM" "$INSTDIR\bin"
 
 SectionEnd
 
-Section "Add Shortcuts to Start Menu" SecAddShortcuts
+Section /o "Add Shortcuts to Start Menu" SecAddShortcuts
 
 	SetOverwrite on
 	CreateDirectory "$SMPROGRAMS\${PACKAGE_NAME}\Documentation"
@@ -332,7 +328,7 @@ SectionEnd
 
 SectionGroup "!Dependencies (Advanced)"
 
-	Section "OpenSSL DLLs" SecOpenSSLDLLs
+	Section /o "OpenSSL DLLs" SecOpenSSLDLLs
 
 		SetOverwrite on
 		SetOutPath "$INSTDIR\bin"
@@ -341,7 +337,7 @@ SectionGroup "!Dependencies (Advanced)"
 
 	SectionEnd
 
-	Section "LZO DLLs" SecLZODLLs
+	Section /o "LZO DLLs" SecLZODLLs
 
 		SetOverwrite on
 		SetOutPath "$INSTDIR\bin"
@@ -349,7 +345,7 @@ SectionGroup "!Dependencies (Advanced)"
 
 	SectionEnd
 
-	Section "PKCS#11 DLLs" SecPKCS11DLLs
+	Section /o "PKCS#11 DLLs" SecPKCS11DLLs
 
 		SetOverwrite on
 		SetOutPath "$INSTDIR\bin"
@@ -358,6 +354,47 @@ SectionGroup "!Dependencies (Advanced)"
 	SectionEnd
 
 SectionGroupEnd
+
+;--------------------------------
+;Installer Sections
+
+Function .onInit
+	${GetParameters} $R0
+	ClearErrors
+
+	!insertmacro SelectByParameter ${SecAddShortcutsWorkaround} SELECT_SHORTCUTS 1
+	!insertmacro SelectByParameter ${SecOpenVPNUserSpace} SELECT_OPENVPN 1
+	!insertmacro SelectByParameter ${SecService} SELECT_SERVICE 1
+!ifdef USE_TAP_WINDOWS
+	!insertmacro SelectByParameter ${SecTAP} SELECT_TAP 1
+!endif
+!ifdef USE_OPENVPN_GUI
+	!insertmacro SelectByParameter ${SecOpenVPNGUI} SELECT_OPENVPNGUI 1
+!endif
+	!insertmacro SelectByParameter ${SecFileAssociation} SELECT_ASSOCIATIONS 1
+	!insertmacro SelectByParameter ${SecOpenSSLUtilities} SELECT_OPENSSL_UTILITIES 0
+!ifdef USE_EASYRSA
+	!insertmacro SelectByParameter ${SecOpenVPNEasyRSA} SELECT_EASYRSA 0
+!endif
+	!insertmacro SelectByParameter ${SecAddPath} SELECT_PATH 1
+	!insertmacro SelectByParameter ${SecAddShortcuts} SELECT_SHORTCUTS 1
+	!insertmacro SelectByParameter ${SecOpenSSLDLLs} SELECT_OPENSSLDLLS 1
+	!insertmacro SelectByParameter ${SecLZODLLs} SELECT_LZODLLS 1
+	!insertmacro SelectByParameter ${SecPKCS11DLLs} SELECT_PKCS11DLLS 1
+
+	!insertmacro MULTIUSER_INIT
+	SetShellVarContext all
+
+	${If} "${ARCH}" == "x86_64"
+		SetRegView 64
+		StrCpy $INSTDIR "$PROGRAMFILES64\${PACKAGE_NAME}"
+	${Else}
+		StrCpy $INSTDIR "$PROGRAMFILES\${PACKAGE_NAME}"
+	${EndIf}
+
+	# Delete previous start menu
+	RMDir /r "$SMPROGRAMS\${PACKAGE_NAME}"
+FunctionEnd
 
 ;--------------------------------
 ;Dependencies
