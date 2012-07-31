@@ -240,7 +240,7 @@ Section /o "TAP Virtual Ethernet Adapter" SecTAP
 	File /oname=tap-windows.exe "${TAP_WINDOWS_INSTALLER}"
 
 	DetailPrint "TAP INSTALL (May need confirmation)"
-	nsExec::ExecToLog '"$TEMP\tap-windows.exe" /S'
+	nsExec::ExecToLog '"$TEMP\tap-windows.exe" /S /SELECT_UTILITIES=1'
 	Pop $R0 # return value/error/timeout
 
 	Delete "$TEMP\tap-windows.exe"
