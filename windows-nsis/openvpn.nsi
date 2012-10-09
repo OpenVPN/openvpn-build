@@ -310,7 +310,7 @@ SectionEnd
 
 Section /o "Add ${PACKAGE_NAME} to PATH" SecAddPath
 
-	; append our bin directory to end of current user path
+	; append our bin directory to end of local machine path
 	${EnvVarUpdate} $R0 "PATH" "A" "HKLM" "$INSTDIR\bin"
 
 SectionEnd
