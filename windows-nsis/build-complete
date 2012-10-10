@@ -75,6 +75,9 @@ while [ -n "$1" ]; do
 		--output-dir=*)
 			OUTPUT_DIR="${v}"
 			;;
+		--config-overlay=*)
+			CONFIG_OVERLAY="${v}"
+			;;
 		--help|*)
 			cat <<__EOF__
 Usage: $0
@@ -84,7 +87,8 @@ Usage: $0
 	--sign-pkcs12=pkcs12-file	signing PKCS#12 file
 	--sign-pkcs12-pass=password	PKCS#12 file password
 	--sign-timestamp=url            URL to be used for timestamp
-	--output-dir=output		output directory
+	--output-dir=output			output directory
+	--config-overlay=path		Path to directory structure to include in the config/ directory on installation
 	--help				this
 __EOF__
 			exit 1
