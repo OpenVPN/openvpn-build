@@ -195,6 +195,11 @@ Section /o "${PACKAGE_NAME} Service" SecService
 	FileWrite $R0 "When ${PACKAGE_NAME} is started as a service, a separate ${PACKAGE_NAME}$\r$\n"
 	FileWrite $R0 "process will be instantiated for each configuration file.$\r$\n"
 	FileClose $R0
+	
+	; Possibly include custom configuration files
+	!ifdef CONFIG_OVERLAY
+		File /r "${CONFIG_OVERLAY}\*.*"
+	!endif
 
 	SetOutPath "$INSTDIR\sample-config"
 	File "${OPENVPN_ROOT}\share\doc\openvpn\sample\sample.${OPENVPN_CONFIG_EXT}"
@@ -513,6 +518,10 @@ Section "Uninstall"
 
 	Delete "$INSTDIR\config\README.txt"
 	Delete "$INSTDIR\config\sample.${OPENVPN_CONFIG_EXT}.txt"
+	
+	!ifdef CONFIG_OVERLAY
+		RMDir /r "$INSTDIR\config"
+	!endif
 
 	Delete "$INSTDIR\log\README.txt"
 
