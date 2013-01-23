@@ -10,7 +10,7 @@ if "%OPENVPN_SOURCE%"=="" set OPENVPN_SOURCE=tarball
 
 set OPENSSL_URL=http://www.openssl.org/source/openssl-%OPENSSL_VERSION%.tar.gz
 set LZO_URL=http://www.oberhumer.com/opensource/lzo/download/lzo-%LZO_VERSION%.tar.gz
-set PKCS11_URL=https://github.com/downloads/alonbl/pkcs11-helper/pkcs11-helper-%PKCS11_VERSION%.tar.bz2
+set PKCS11_URL=http://downloads.sourceforge.net/project/opensc/pkcs11-helper/pkcs11-helper-%PKCS11_VERSION%.tar.bz2
 set TAP_URL=https://github.com/downloads/OpenVPN/tap-windows/tap-windows-%TAP_VERSION%.zip
 set OPENVPN_URL=https://github.com/downloads/OpenVPN/openvpn/openvpn-%OPENVPN_VERSION%.tar.gz
 set OPENVPN_GIT=https://github.com/OpenVPN/openvpn.git
