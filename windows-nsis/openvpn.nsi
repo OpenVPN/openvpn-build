@@ -10,11 +10,19 @@
 
 SetCompressor lzma
 
+; Modern user interface
 !include "MUI.nsh"
+
+; Install for all users. MultiUser.nsh also calls SetShellVarContext to point 
+; the installer to global directories (e.g. Start menu, desktop, etc.)
 !define MULTIUSER_EXECUTIONLEVEL Admin
 !include "MultiUser.nsh"
+
+; EnvVarUpdate.nsh is needed to update the PATH environment variable
 !include "EnvVarUpdate.nsh"
 !include FileFunc.nsh
+
+; Read the command-line parameters
 !insertmacro GetParameters
 !insertmacro GetOptions
 
@@ -26,7 +34,9 @@ SetCompressor lzma
 
 ;General
 
+; Package name as shown in the installer GUI
 Name "${PACKAGE_NAME} ${VERSION_STRING}"
+; Installer filename
 OutFile "${OUTPUT}"
 
 ShowInstDetails show
@@ -38,6 +48,7 @@ InstallDirRegKey HKLM "SOFTWARE\${PACKAGE_NAME}" ""
 ;--------------------------------
 ;Modern UI Configuration
 
+; Compile-time constants which we'll need during install
 !define MUI_WELCOMEPAGE_TEXT "This wizard will guide you through the installation of ${PACKAGE_NAME} ${SPECIAL_BUILD}, an Open Source VPN package by James Yonan.\r\n\r\nNote that the Windows version of ${PACKAGE_NAME} will only run on Windows XP, or higher.\r\n\r\n\r\n"
 
 !define MUI_COMPONENTSPAGE_TEXT_TOP "Select the components to install/upgrade.  Stop any ${PACKAGE_NAME} processes or the ${PACKAGE_NAME} service if it is running.  All DLLs are installed locally."
