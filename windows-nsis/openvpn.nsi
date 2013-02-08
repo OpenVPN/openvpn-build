@@ -20,7 +20,6 @@ SetCompressor lzma
 
 ; EnvVarUpdate.nsh is needed to update the PATH environment variable
 !include "EnvVarUpdate.nsh"
-!include FileFunc.nsh
 
 ; Read the command-line parameters
 !insertmacro GetParameters
