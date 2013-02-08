@@ -35,6 +35,13 @@ SetCompressor lzma
 
 ; Package name as shown in the installer GUI
 Name "${PACKAGE_NAME} ${VERSION_STRING}"
+
+; On 64-bit Windows the constant $PROGRAMFILES defaults to
+; C:\Program Files (x86) and on 32-bit Windows to C:\Program Files. However,
+; the .onInit function (see below) takes care of changing this for 64-bit 
+; Windows.
+InstallDir "$PROGRAMFILES\${PACKAGE_NAME}"
+
 ; Installer filename
 OutFile "${OUTPUT}"
 
@@ -395,11 +402,15 @@ Function .onInit
 	!insertmacro MULTIUSER_INIT
 	SetShellVarContext all
 
+	; Check if we're running on 64-bit Windows
 	${If} "${ARCH}" == "x86_64"
 		SetRegView 64
-		StrCpy $INSTDIR "$PROGRAMFILES64\${PACKAGE_NAME}"
-	${Else}
-		StrCpy $INSTDIR "$PROGRAMFILES\${PACKAGE_NAME}"
+
+		; Change the installation directory to C:\Program Files, but only if the
+		; user has not provided a custom install location.
+		${If} "$INSTDIR" == "$PROGRAMFILES\${PACKAGE_NAME}"
+			StrCpy $INSTDIR "$PROGRAMFILES64\${PACKAGE_NAME}"
+		${EndIf}
 	${EndIf}
 
 	# Delete previous start menu
