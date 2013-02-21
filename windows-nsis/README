@@ -1,0 +1,50 @@
+OpenVPN project cross-compile buildsystem
+Windows NSIS packaging wrapper
+
+About
+
+    This subdirectory contains scripts for building OpenVPN
+    and all it's dependencies and packaging the results into
+    Windows NSIS 32- and 64-bit installers. The scripts in
+    ../generic are used for building the components.
+
+    More thorough documentation is available in the OpenVPN
+    wiki:
+
+    <https://community.openvpn.net/openvpn>
+
+Usage
+
+    First you need to configure the build environment. You
+    can make persistent changes by editing two
+    configuration files:
+
+        ../generic/build.vars (build configuration)
+        build-complete.vars (packaging configuration)
+
+    You can also change the build configuration temporarily
+    using shell variables (see below).
+
+    To create an unsigned release build use
+
+        ./build-complete
+
+    Overriding build configuration using shell variables:
+
+        TAP_WINDOWS_INSTALLER_URL=http://domain.com/tap.exe\
+            ./build-complete
+
+    To create a signed snapshot from Git sources, use
+    "build-snapshot":
+
+        ./build-snapshot --sign
+            --sign-pkcs12=signingkey.p12\
+            --sign-pkcs12-pass=yourpassphrase\
+            --sign-timestamp="http://timestamp.domain.com"
+
+    To make a release build use "build-complete" instead:
+
+        ./build-complete --sign
+            --sign-pkcs12=signingkey.p12\
+            --sign-pkcs12-pass=yourpassphrase\
+            --sign-timestamp="http://timestamp.domain.com"

@@ -1,9 +1,14 @@
-OpenVPN Project Cross Compile Build
+OpenVPN project cross-compile buildsystem
 
 About
 
 	This environment provides an easy way to build
 	OpenVPN Project components using a cross compiler.
+
+    More thorough documentation is available in the OpenVPN
+    wiki:
+
+    <https://community.openvpn.net/openvpn>
 
 Versions
 

@@ -1,0 +1,21 @@
+OpenVPN project Microsoft Visual C buildsystem
+
+About
+
+    This subdirectory contains scripts for building OpenVPN
+    and all it's dependencies using Microsoft Visual C.
+
+    Note that this buildsystem is not actively maintained
+    anymore, and people are strongly encouraged to use the
+    cross-compile (mingw_w64) buildsystem instead. For
+    details look here:
+
+    ../generic/README
+    ../windows-nsis/README
+
+Usage
+
+    If you're sure you _need_ to build using MSVC, please
+    refer to instructions in the OpenVPN wiki:
+
+    <https://community.openvpn.net/openvpn>

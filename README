@@ -1,0 +1,30 @@
+OpenVPN project buildsystems
+
+About
+
+    These directories contain scripts to help build and
+    package OpenVPN and it's dependencies for various
+    hardware platforms and operating systems (e.g. Windows,
+    ARM). You do not need any of these scripts if you're
+    building a native version of OpenVPN on a UNIX-like
+    operatingsystem.
+
+    Thorough documentation is available in the OpenVPN wiki:
+
+    <https://community.openvpn.net/openvpn>
+
+Directories
+
+    The "generic" subdir contains scripts to cross-compile
+    OpenVPN using mingw_w64 (e.g. Linux -> Windows).
+
+    The "msvc" subdir is used to compile OpenVPN on Windows
+    for Windows using Microsoft Visual Studio tools. Please
+    note that the "msvc" buildsystem is not actively
+    maintained anymore.
+
+    The "windows-nsis" subdir contains scripts to
+    cross-compile and package OpenVPN for Windows.
+
+    Please refer to the README files in the subdirectories
+    for further information.
