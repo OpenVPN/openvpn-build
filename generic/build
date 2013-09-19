@@ -153,13 +153,14 @@ extract() {
 
 	for f in "${PATCHDIR}"/*.patch "${PATCHDIR}"/*.sh; do
 		product="$(echo "${f}" | sed -e 's#.*/##g' -e 's/-[0-9].*//g')"
-		if [ -d "${BUILDROOT}/${product}"* ]; then
+		dir="$(echo "${BUILDROOT}/${product}"-[0-9]*)"
+		if [ -d "${dir}" ]; then
 			if echo "${f}" | grep '.patch$' > /dev/null; then
 				echo "Patch: '$f'"
-				patch -d "${BUILDROOT}/${product}"* -p1 < "${f}" || die "Patch '${f}'"
+				patch -d "${dir}" -p1 < "${f}" || die "Patch '${f}'"
 			else
 				echo "Running: '$f'"
-				$( cd "${BUILDROOT}/${product}"*; "${f}" ) || die "Patch '${f}'"
+				$( cd "${dir}"; "${f}" ) || die "Patch '${f}'"
 			fi
 		fi
 	done
