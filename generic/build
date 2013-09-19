@@ -160,7 +160,7 @@ extract() {
 				patch -d "${dir}" -p1 < "${f}" || die "Patch '${f}'"
 			else
 				echo "Running: '$f'"
-				$( cd "${dir}"; "${f}" ) || die "Patch '${f}'"
+				( cd "${dir}"; "${f}" ) || die "Patch '${f}'"
 			fi
 		fi
 	done
