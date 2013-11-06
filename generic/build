@@ -224,7 +224,7 @@ build_openvpn() {
 
 	echo "Build openvpn"
 	cd "${BUILDROOT}/openvpn-${OPENVPN_VERSION}" || die "cd openvpn"
-	CFLAGS="-I../../../../openssl-1.0.1e/include" ./configure ${CONFIGOPTS} ${EXTRA_OPENVPN_CONFIG} \
+	CFLAGS="-I../../../../openssl-${OPENSSL_VERSION}/include" ./configure ${CONFIGOPTS} ${EXTRA_OPENVPN_CONFIG} \
 		$(empty_ifelse "${DO_STATIC}" --enable-pkcs11 --disable-plugins) \
 		--disable-plugin-auth-pam \
 		--enable-lzo \
