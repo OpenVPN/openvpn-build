@@ -115,6 +115,16 @@ create_layout() {
 	fi
 	mkdir -p "${IMAGEROOT}" || die "Cannot create '${IMAGEROOT}'"
 	mkdir -p "${BUILDROOT}" || die "Cannot create '${BUILDROOT}'"
+	mkdir -p "${OPENVPN_ROOT}" || die "Cannot create '${OPENVPN_ROOT}'"
+
+	# Depcache setup
+	[ -n "${USE_DEP_CACHE}" ] && [ -n "${SAVE_DEP_CACHE}" ] \
+		&& die "You cannot both use and save a depcache in the same run"
+	# define the depcache dir, using the supplied suffix when non-empty:
+	DEPCACHEDIR="${SCRIPTROOT}/depcache${DEPCACHE_SUFFIX:+-$DEPCACHE_SUFFIX}"
+	if [ -n "${SAVE_DEP_CACHE}" ]; then
+		mkdir -p "${DEPCACHEDIR}" || die "Cannot create '${DEPCACHEDIR}'"
+	fi
 
 	BUILDROOT="$(get_full_path "${BUILDROOT}")"
 	SOURCESROOT="$(get_full_path "${SOURCESROOT}")"
@@ -166,38 +176,82 @@ extract() {
 	done
 }
 
+# Takes a short product name (eg: 'openssl') and extracts the depcache.
+depcache_extract() {
+	local src="${DEPCACHEDIR}/${1}.tar.gz" 
+	[ -f "${src}" ] \
+		|| die "Depcache for '${1}' not found at: '${src}'"
+	tar -xzf "${src}" -C "${OPENVPN_ROOT}" \
+		|| die "Cannot extract depcache '${1}'"
+	[ -z "${2}" ] && echo "Using a depcache tarball for '${1}"
+}
+
+# Takes a short product name (eg: 'openssl') and creates a depcache tarball.
+depcache_save() {
+	local dst="${DEPCACHEDIR}/${1}.tar.gz"
+	(cd "${INSTALL_ROOT}" && tar -czf "${dst}" .) \
+		|| die "Cannot save depcache for '${1}' to: '${dst}'"
+	rm -fr "${INSTALL_ROOT}" \
+		|| die "Cleanup failed for: '${INSTALL_ROOT}'"
+	depcache_extract "${1}" noecho
+}
+
 build_dep() {
-	echo "Build openssl"
-	cd "${BUILDROOT}/openssl"* || die "cd openssl"
+	if [ -z "${SAVE_DEP_CACHE}" ]; then
+		INSTALL_ROOT="${OPENVPN_ROOT}"
+	else
+		INSTALL_ROOT="${BUILDROOT}/depcache-root"
+		mkdir -p "${INSTALL_ROOT}" \
+			|| die "Cannot create depcache install root at: ${INSTALL_ROOT}'"
+	fi
 
-	./Configure --prefix="/${TARGET_ROOT}" --cross-compile-prefix=${CHOST:+${CHOST}-} \
-		$(empty_ifelse "${DO_STATIC}" shared no-dso) \
-		$(CHOST="${VIRTUAL_CHOST}" "${SCRIPTROOT}/gentoo.config-0.9.8") \
-		${CFLAGS} ${LDFLAGS} \
-		no-multilib \
-		no-capieng \
-		--openssldir=/etc/ssl \
-		--libdir=/lib \
-		${EXTRA_OPENSSL_CONFIG} \
-		|| die "Configure openssl"
-	[ -n "${BUILD_FOR_WINDOWS}" ] && perl util/mkdef.pl crypto ssl NT update
-	[ -z "${OPENSSL_SKIP_DEPEND}" ] && ${MAKE} depend
-	${MAKE} install INSTALL_PREFIX="${OPENVPN_ROOT}" INSTALLTOP="/" MANDIR="/tmp" \
-		|| die "make openssl"
-	rm -fr "${OPENVPN_ROOT}/tmp"
+	if [ -n "${USE_DEP_CACHE}" ]; then
+		depcache_extract openssl
+	else
+		echo "Build openssl"
+		cd "${BUILDROOT}/openssl"* || die "cd openssl"
 
-	fixup_la
+		./Configure --prefix="/${TARGET_ROOT}" --cross-compile-prefix=${CHOST:+${CHOST}-} \
+			$(empty_ifelse "${DO_STATIC}" shared no-dso) \
+			$(CHOST="${VIRTUAL_CHOST}" "${SCRIPTROOT}/gentoo.config-0.9.8") \
+			${CFLAGS} ${LDFLAGS} \
+			no-multilib \
+			no-capieng \
+			--openssldir=/etc/ssl \
+			--libdir=/lib \
+			${EXTRA_OPENSSL_CONFIG} \
+			|| die "Configure openssl"
+		[ -n "${BUILD_FOR_WINDOWS}" ] && perl util/mkdef.pl crypto ssl NT update
+		[ -z "${OPENSSL_SKIP_DEPEND}" ] && ${MAKE} depend
+		${MAKE} install INSTALL_PREFIX="${INSTALL_ROOT}" INSTALLTOP="/" MANDIR="/tmp" \
+			|| die "make openssl"
+		rm -fr "${INSTALL_ROOT}/tmp"
+		fixup_la
 
-	echo "Build lzo"
-	cd "${BUILDROOT}/lzo"* || die "cd lzo"
-	./configure ${CONFIGOPTS} ${EXTRA_LZO_CONFIG} \
-		$(empty_ifelse "${DO_STATIC}" --enable-shared --disable-shared) \
-		|| die "Configure lzo"
-	${MAKE} ${MAKEOPTS} ${MAKE_AUTOCONF_INSTALL_TARGET} DESTDIR="${OPENVPN_ROOT}" || die "make lzo"
+		[ -n "${SAVE_DEP_CACHE}" ] && depcache_save openssl
+	fi
 
-	fixup_la
+
+	if [ -n "${USE_DEP_CACHE}" ]; then
+		depcache_extract lzo
+	else
+		echo "Build lzo"
+		cd "${BUILDROOT}/lzo"* || die "cd lzo"
+		./configure ${CONFIGOPTS} ${EXTRA_LZO_CONFIG} \
+			$(empty_ifelse "${DO_STATIC}" --enable-shared --disable-shared) \
+			|| die "Configure lzo"
+		${MAKE} ${MAKEOPTS} ${MAKE_AUTOCONF_INSTALL_TARGET} DESTDIR="${INSTALL_ROOT}" \
+			|| die "make lzo"
+
+		fixup_la
+
+		[ -n "${SAVE_DEP_CACHE}" ] && depcache_save lzo
+	fi
 
 	if [ -z "${DO_STATIC}" ]; then
+	  if [ -n "${USE_DEP_CACHE}" ]; then
+		depcache_extract pkcs11-helper
+	  else
 		echo "Build pkcs11-helper"
 		cd "${BUILDROOT}/pkcs11-helper"* || die "cd pkcs11-helper"
 		./configure ${CONFIGOPTS} ${EXTRA_PKCS11_HELPER_CONFIG} \
@@ -206,7 +260,11 @@ build_dep() {
 			OPENSSL_CFLAGS="${OPENSSL_CRYPTO_CFLAGS}" \
 			OPENSSL_LIBS="${OPENSSL_CRYPTO_LIBS}" \
 			|| die "Configure pkcs11-helper"
-		${MAKE} ${MAKEOPTS} ${MAKE_AUTOCONF_INSTALL_TARGET} DESTDIR="${OPENVPN_ROOT}" || die "make pkcs11-helper"
+		${MAKE} ${MAKEOPTS} ${MAKE_AUTOCONF_INSTALL_TARGET} DESTDIR="${INSTALL_ROOT}" \
+			|| die "make pkcs11-helper"
+
+		[ -n "${SAVE_DEP_CACHE}" ] && depcache_save pkcs11-helper
+	  fi
 	fi
 
 	echo "tap-windows"
@@ -446,6 +504,14 @@ while [ -n "$1" ]; do
 		--special-build=*)
 			SPECIAL_BUILD="${v}"
 			;;
+		--use-depcache=*)
+			DEPCACHE_SUFFIX="${v}"
+			USE_DEP_CACHE="defined"
+			;;
+		--save-depcache=*)
+			DEPCACHE_SUFFIX="${v}"
+			SAVE_DEP_CACHE="defined"
+			;;
 		--help|*)
 			cat <<__EOF__
 Usage: $0
@@ -462,6 +528,10 @@ Usage: $0
 		linux-64-force31
 		linux-64-force32
 		linux-64-force64
+
+	--use-depcache=SUFFIX
+	--save-depcache=SUFFIX
+		Use or save a depcache tarball dir with the named suffix.
 __EOF__
 			exit 1
 			;;

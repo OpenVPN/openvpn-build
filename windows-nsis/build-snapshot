@@ -45,6 +45,7 @@ main() {
 	"${SCRIPTROOT}/build-complete" \
 		--special-build="${SPECIAL_BUILD}" \
 		${DO_SIGN:+--sign} \
+		${DO_DEPCACHE:+--use-depcache} \
 		--sign-pkcs12="${SIGN_PKCS12}" \
 		--sign-pkcs12-pass="${SIGN_PKCS12_PASS}" \
 		--sign-timestamp="${SIGN_TIMESTAMP_URL}" \
@@ -55,6 +56,7 @@ main() {
 }
 
 DO_SIGN=
+DO_DEPCACHE=
 SIGN_PKCS12=
 SIGN_PKCS12_PASS=
 OUTPUT_DIR="."
@@ -77,6 +79,9 @@ while [ -n "$1" ]; do
 		--output-dir=*)
 			OUTPUT_DIR="${v}"
 			;;
+		--use-depcache)
+			DO_DEPCACHE=1
+			;;
 		--help|*)
 			cat <<__EOF__
 Usage: $0
@@ -85,6 +90,7 @@ Usage: $0
 	--sign-pkcs12-pass=password	PKCS#12 file password
 	--sign-timestamp=url            URL to be used for timestamp
 	--output-dir=output		output directory
+	--use-depcache			use an existing depcache
 	--help				this
 __EOF__
 			exit 1

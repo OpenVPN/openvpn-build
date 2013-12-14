@@ -77,3 +77,13 @@ Environment
 	PKCS11_HELPER_VERSION
 	LZO_VERSION
 	OPENVPN_VERSION
+
+	(depcache specific env-vars shown below.
+	 Note that CLI-options exist; see `./build --help` for details.)
+
+	USE_DEP_CACHE
+	SAVE_DEP_CACHE
+		define these to a nonzero string to enable (only 1 per run).
+	DEPCACHE_SUFFIX
+		an optional suffix to name the depcache. allows for multiple
+		independent depcache dirs to be used on different runs.

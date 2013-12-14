@@ -48,3 +48,28 @@ Usage
             --sign-pkcs12=signingkey.p12\
             --sign-pkcs12-pass=yourpassphrase\
             --sign-timestamp="http://timestamp.domain.com"
+
+Depcache feature
+
+    Much of the build time is spent building dependencies,
+    and a depcache feature can re-use deps once they're
+    initially built. This can dramatically cut down on the
+    time required to run builds when only OpenVPN-components
+    were changed.
+    
+    Note that using a depcache blindly unpacks whatever the
+    resulting build was, including that version and any
+    specific configure options.
+
+    To create the initial depcache, first run:
+
+        ./build-complete --build-depcache
+
+    which will create a Windows-specific depcache for both
+    32 & 64 bit builds. Once the depcache is created, future
+    builds can re-use them like this:
+
+        ./build-complete --use-depcache
+
+    These options take no values and the depcache dirs are
+    stored under the ../generic/ dir.

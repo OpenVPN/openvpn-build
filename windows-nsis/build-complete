@@ -21,7 +21,12 @@ main() {
 			CHOST=${arch}-w64-mingw32 \
 			../generic/build \
 				--special-build="${SPECIAL_BUILD}" \
+				${WIN_USE_DEPCACHE:+--use-depcache=win-$arch} \
+				${WIN_SAVE_DEPCACHE:+--save-depcache=win-$arch} \
 				|| die "build ${arch}"
+
+		# Loop here if building the depcache:
+		[ -n "${DO_ONLY_DEPS}" ] && continue
 
 		ROOT="${TMPDIR}/installer" \
 			./build \
@@ -39,7 +44,11 @@ main() {
 	done
 
 	echo
-	echo "NOTICE: OpenVPN Installers are at '${OUTPUT_DIR}'"
+	if [ -z "${DO_ONLY_DEPS}" ]; then
+		echo "NOTICE: OpenVPN Installers are at '${OUTPUT_DIR}'"
+	else
+		echo "NOTICE: depcache prepared for future use"
+	fi
 	exit 0
 }
 
@@ -75,6 +84,13 @@ while [ -n "$1" ]; do
 		--output-dir=*)
 			OUTPUT_DIR="${v}"
 			;;
+		--use-depcache)
+			WIN_USE_DEPCACHE=1
+			;;
+		--build-depcache)
+			WIN_SAVE_DEPCACHE=1
+			export DO_ONLY_DEPS=1
+			;;
 		--help|*)
 			cat <<__EOF__
 Usage: $0
@@ -85,6 +101,8 @@ Usage: $0
 	--sign-pkcs12-pass=password	PKCS#12 file password
 	--sign-timestamp=url            URL to be used for timestamp
 	--output-dir=output		output directory
+	--use-depcache			use a pre-existing depcache
+	--build-depcache		create depcache only (no program build)
 	--help				this
 __EOF__
 			exit 1
