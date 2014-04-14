@@ -317,6 +317,7 @@ Section /o "${PACKAGE_NAME} RSA Certificate Management Scripts" SecOpenVPNEasyRS
 	File "${EASYRSA_ROOT}\Windows\build-dh.bat"
 	File "${EASYRSA_ROOT}\Windows\build-key-server.bat"
 	File "${EASYRSA_ROOT}\Windows\build-key.bat"
+	File "${EASYRSA_ROOT}\Windows\build-key-pass.bat"
 	File "${EASYRSA_ROOT}\Windows\build-key-pkcs12.bat"
 	File "${EASYRSA_ROOT}\Windows\clean-all.bat"
 	File "${EASYRSA_ROOT}\Windows\index.txt.start"
