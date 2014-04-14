@@ -561,7 +561,6 @@ Section "Uninstall"
 		Delete "$INSTDIR\easy-rsa\build-key-pkcs12.bat"
 		Delete "$INSTDIR\easy-rsa\clean-all.bat"
 		Delete "$INSTDIR\easy-rsa\index.txt.start"
-		Delete "$INSTDIR\easy-rsa\revoke-key.bat"
 		Delete "$INSTDIR\easy-rsa\revoke-full.bat"
 		Delete "$INSTDIR\easy-rsa\serial.start"
 	!endif
