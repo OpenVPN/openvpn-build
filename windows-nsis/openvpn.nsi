@@ -24,12 +24,15 @@ SetCompressor lzma
 ; WinMessages.nsh is needed to send WM_CLOSE to the GUI if it is still running
 !include "WinMessages.nsh"
 
+; nsProcess.nsh to detect whether OpenVPN process is running ( http://nsis.sourceforge.net/NsProcess_plugin )
+!include "nsProcess.nsh"
+
 ; Read the command-line parameters
 !insertmacro GetParameters
 !insertmacro GetOptions
 
 ; Default service settings
-!define OPENVPN_CONFIG_EXT   "ovpn"
+!define OPENVPN_CONFIG_EXT "ovpn"
 
 ;--------------------------------
 ;Configuration
@@ -174,8 +177,7 @@ ReserveFile "install-whirl.bmp"
 ;Pre-install section
 
 Section -pre
-
-	Push $0
+	Push $0 ; for FindWindow
 	FindWindow $0 "OpenVPN-GUI"
 	StrCmp $0 0 guiNotRunning
 
@@ -199,8 +201,14 @@ Section -pre
 		StrCpy $strGuiKilled "1"
 
 	guiNotRunning:
-		; GUI not running/closed successfully, carry on with install/upgrade
-		Pop $0
+		; check for running openvpn.exe processes
+		${nsProcess::FindProcess} "openvpn.exe" $R0
+		${If} $R0 == 0
+			MessageBox MB_OK|MB_ICONEXCLAMATION "The installation cannot continue as OpenVPN is currently running. Please close all OpenVPN instances and re-run the installer."
+			Quit
+		${EndIf}
+
+		; openvpn.exe + GUI not running/closed successfully, carry on with install/upgrade
 	
 		; Delete previous start menu folder
 		RMDir /r "$SMPROGRAMS\${PACKAGE_NAME}"
@@ -211,6 +219,7 @@ Section -pre
 		Pop $R0 # return value/error/timeout
 
 		Sleep 3000
+	Pop $0 ; for FindWindow
 
 SectionEnd
 
@@ -235,6 +244,7 @@ Section /o "${PACKAGE_NAME} User-Space Components" SecOpenVPNUserSpace
 		CreateShortCut "$SMPROGRAMS\${PACKAGE_NAME}\Documentation\${PACKAGE_NAME} Manual Page.lnk" "$INSTDIR\doc\openvpn.8.html"
 		CreateShortCut "$SMPROGRAMS\${PACKAGE_NAME}\Documentation\${PACKAGE_NAME} Windows Notes.lnk" "$INSTDIR\doc\INSTALL-win32.txt"
 	${EndIf}
+
 SectionEnd
 
 Section /o "${PACKAGE_NAME} Service" SecService
@@ -645,3 +655,4 @@ Section "Uninstall"
 	DeleteRegKey HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\${PACKAGE_NAME}"
 
 SectionEnd
+
