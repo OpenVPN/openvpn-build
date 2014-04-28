@@ -27,6 +27,9 @@ SetCompressor lzma
 ; nsProcess.nsh to detect whether OpenVPN process is running ( http://nsis.sourceforge.net/NsProcess_plugin )
 !include "nsProcess.nsh"
 
+; x64.nsh for architecture detection
+!include "x64.nsh"
+
 ; Read the command-line parameters
 !insertmacro GetParameters
 !insertmacro GetOptions
@@ -455,8 +458,15 @@ Function .onInit
 	!insertmacro MULTIUSER_INIT
 	SetShellVarContext all
 
-	; Check if we're running on 64-bit Windows
+	; Check if the installer was built for x86_64
 	${If} "${ARCH}" == "x86_64"
+
+		${IfNot} ${RunningX64}
+			; User is running 64 bit installer on 32 bit OS
+			MessageBox MB_OK|MB_ICONEXCLAMATION "This installer is designed to run only on 64-bit systems."
+			Quit
+		${EndIf}
+	
 		SetRegView 64
 
 		; Change the installation directory to C:\Program Files, but only if the
