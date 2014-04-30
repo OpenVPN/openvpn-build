@@ -25,6 +25,7 @@ SetCompressor lzma
 !include "WinMessages.nsh"
 
 ; nsProcess.nsh to detect whether OpenVPN process is running ( http://nsis.sourceforge.net/NsProcess_plugin )
+!addplugindir .
 !include "nsProcess.nsh"
 
 ; x64.nsh for architecture detection
