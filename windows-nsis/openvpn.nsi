@@ -11,7 +11,7 @@
 SetCompressor lzma
 
 ; Modern user interface
-!include "MUI.nsh"
+!include "MUI2.nsh"
 
 ; Install for all users. MultiUser.nsh also calls SetShellVarContext to point 
 ; the installer to global directories (e.g. Start menu, desktop, etc.)
@@ -21,12 +21,22 @@ SetCompressor lzma
 ; EnvVarUpdate.nsh is needed to update the PATH environment variable
 !include "EnvVarUpdate.nsh"
 
+; WinMessages.nsh is needed to send WM_CLOSE to the GUI if it is still running
+!include "WinMessages.nsh"
+
+; nsProcess.nsh to detect whether OpenVPN process is running ( http://nsis.sourceforge.net/NsProcess_plugin )
+!addplugindir .
+!include "nsProcess.nsh"
+
+; x64.nsh for architecture detection
+!include "x64.nsh"
+
 ; Read the command-line parameters
 !insertmacro GetParameters
 !insertmacro GetOptions
 
 ; Default service settings
-!define OPENVPN_CONFIG_EXT   "ovpn"
+!define OPENVPN_CONFIG_EXT "ovpn"
 
 ;--------------------------------
 ;Configuration
@@ -55,12 +65,16 @@ InstallDirRegKey HKLM "SOFTWARE\${PACKAGE_NAME}" ""
 ;Modern UI Configuration
 
 ; Compile-time constants which we'll need during install
-!define MUI_WELCOMEPAGE_TEXT "This wizard will guide you through the installation of ${PACKAGE_NAME} ${SPECIAL_BUILD}, an Open Source VPN package by James Yonan.\r\n\r\nNote that the Windows version of ${PACKAGE_NAME} will only run on Windows XP, or higher.\r\n\r\n\r\n"
+!define MUI_WELCOMEPAGE_TEXT "This wizard will guide you through the installation of ${PACKAGE_NAME} ${SPECIAL_BUILD}, an Open Source VPN package by James Yonan.$\r$\n$\r$\nNote that the Windows version of ${PACKAGE_NAME} will only run on Windows XP, or higher.$\r$\n$\r$\n$\r$\n"
 
 !define MUI_COMPONENTSPAGE_TEXT_TOP "Select the components to install/upgrade.  Stop any ${PACKAGE_NAME} processes or the ${PACKAGE_NAME} service if it is running.  All DLLs are installed locally."
 
 !define MUI_COMPONENTSPAGE_SMALLDESC
 !define MUI_FINISHPAGE_SHOWREADME "$INSTDIR\doc\INSTALL-win32.txt"
+!define MUI_FINISHPAGE_RUN_TEXT "Start OpenVPN GUI"
+!define MUI_FINISHPAGE_RUN "$INSTDIR\bin\openvpn-gui.exe"
+!define MUI_FINISHPAGE_RUN_NOTCHECKED
+
 !define MUI_FINISHPAGE_NOAUTOCLOSE
 !define MUI_ABORTWARNING
 !define MUI_ICON "icon.ico"
@@ -74,11 +88,14 @@ InstallDirRegKey HKLM "SOFTWARE\${PACKAGE_NAME}" ""
 !insertmacro MUI_PAGE_COMPONENTS
 !insertmacro MUI_PAGE_DIRECTORY
 !insertmacro MUI_PAGE_INSTFILES
+!define MUI_PAGE_CUSTOMFUNCTION_SHOW StartGUI.show
 !insertmacro MUI_PAGE_FINISH
 
 !insertmacro MUI_UNPAGE_CONFIRM
-!insertmacro MUI_UNPAGE_INSTFILES  
+!insertmacro MUI_UNPAGE_INSTFILES
 !insertmacro MUI_UNPAGE_FINISH
+
+Var /Global strGuiKilled ; Track if GUI was killed so we can tick the checkbox to start it upon installer finish
 
 ;--------------------------------
 ;Languages
@@ -164,13 +181,49 @@ ReserveFile "install-whirl.bmp"
 ;Pre-install section
 
 Section -pre
+	Push $0 ; for FindWindow
+	FindWindow $0 "OpenVPN-GUI"
+	StrCmp $0 0 guiNotRunning
 
-	; Stop OpenVPN if currently running
-	DetailPrint "Previous Service REMOVE (if exists)"
-	nsExec::ExecToLog '"$INSTDIR\bin\openvpnserv.exe" -remove'
-	Pop $R0 # return value/error/timeout
+	MessageBox MB_YESNO|MB_ICONEXCLAMATION "To perform the specified operation, OpenVPN-GUI needs to be closed. Shall I close it?" /SD IDYES IDNO guiEndNo
+	DetailPrint "Closing OpenVPN-GUI..."
+	Goto guiEndYes
 
-	Sleep 3000
+	guiEndNo:
+		Quit
+
+	guiEndYes:
+		; user wants to close GUI as part of install/upgrade
+		FindWindow $0 "OpenVPN-GUI"
+		IntCmp $0 0 guiClosed
+		SendMessage $0 ${WM_CLOSE} 0 0
+		Sleep 100
+		Goto guiEndYes
+
+	guiClosed:
+		; Keep track that we closed the GUI so we can offer to auto (re)start it later
+		StrCpy $strGuiKilled "1"
+
+	guiNotRunning:
+		; check for running openvpn.exe processes
+		${nsProcess::FindProcess} "openvpn.exe" $R0
+		${If} $R0 == 0
+			MessageBox MB_OK|MB_ICONEXCLAMATION "The installation cannot continue as OpenVPN is currently running. Please close all OpenVPN instances and re-run the installer."
+			Quit
+		${EndIf}
+
+		; openvpn.exe + GUI not running/closed successfully, carry on with install/upgrade
+	
+		; Delete previous start menu folder
+		RMDir /r "$SMPROGRAMS\${PACKAGE_NAME}"
+
+		; Stop & Remove previous OpenVPN service
+		DetailPrint "Removing any previous OpenVPN service..."
+		nsExec::ExecToLog '"$INSTDIR\bin\openvpnserv.exe" -remove'
+		Pop $R0 # return value/error/timeout
+
+		Sleep 3000
+	Pop $0 ; for FindWindow
 
 SectionEnd
 
@@ -195,6 +248,7 @@ Section /o "${PACKAGE_NAME} User-Space Components" SecOpenVPNUserSpace
 		CreateShortCut "$SMPROGRAMS\${PACKAGE_NAME}\Documentation\${PACKAGE_NAME} Manual Page.lnk" "$INSTDIR\doc\openvpn.8.html"
 		CreateShortCut "$SMPROGRAMS\${PACKAGE_NAME}\Documentation\${PACKAGE_NAME} Windows Notes.lnk" "$INSTDIR\doc\INSTALL-win32.txt"
 	${EndIf}
+
 SectionEnd
 
 Section /o "${PACKAGE_NAME} Service" SecService
@@ -243,7 +297,7 @@ Section /o "${PACKAGE_NAME} Service" SecService
 	!insertmacro WriteRegStringIfUndef HKLM "SOFTWARE\${PACKAGE_NAME}" "log_append"  "0"
 
 	; install openvpnserv as a service (to be started manually from service control manager)
-	DetailPrint "Service INSTALL"
+	DetailPrint "Installing OpenVPN Service..."
 	nsExec::ExecToLog '"$INSTDIR\bin\openvpnserv.exe" -install'
 	Pop $R0 # return value/error/timeout
 
@@ -257,7 +311,7 @@ Section /o "TAP Virtual Ethernet Adapter" SecTAP
 
 	File /oname=tap-windows.exe "${TAP_WINDOWS_INSTALLER}"
 
-	DetailPrint "TAP INSTALL (May need confirmation)"
+	DetailPrint "Installing TAP (may need confirmation)..."
 	nsExec::ExecToLog '"$TEMP\tap-windows.exe" /S /SELECT_UTILITIES=1'
 	Pop $R0 # return value/error/timeout
 
@@ -405,8 +459,15 @@ Function .onInit
 	!insertmacro MULTIUSER_INIT
 	SetShellVarContext all
 
-	; Check if we're running on 64-bit Windows
+	; Check if the installer was built for x86_64
 	${If} "${ARCH}" == "x86_64"
+
+		${IfNot} ${RunningX64}
+			; User is running 64 bit installer on 32 bit OS
+			MessageBox MB_OK|MB_ICONEXCLAMATION "This installer is designed to run only on 64-bit systems."
+			Quit
+		${EndIf}
+	
 		SetRegView 64
 
 		; Change the installation directory to C:\Program Files, but only if the
@@ -416,8 +477,6 @@ Function .onInit
 		${EndIf}
 	${EndIf}
 
-	# Delete previous start menu
-	RMDir /r "$SMPROGRAMS\${PACKAGE_NAME}"
 FunctionEnd
 
 ;--------------------------------
@@ -436,6 +495,19 @@ Function .onSelChange
 		!insertmacro SelectSection ${SecAddShortcutsWorkaround}
 	${Else}
 		!insertmacro UnselectSection ${SecAddShortcutsWorkaround}
+	${EndIf}
+FunctionEnd
+
+Function StartGUI.show
+	; if the user chooses not to install the GUI, do not offer to start it
+	${IfNot} ${SectionIsSelected} ${SecOpenVPNGUI}
+		SendMessage $mui.FinishPage.Run ${BM_SETCHECK} ${BST_CHECKED} 0
+		ShowWindow $mui.FinishPage.Run 0
+	${EndIf}
+
+	; if we killed the GUI to do the install/upgrade, automatically tick the "Start OpenVPN GUI" option
+	${If} $strGuiKilled == "1"
+		SendMessage $mui.FinishPage.Run ${BM_SETCHECK} ${BST_CHECKED} 1
 	${EndIf}
 FunctionEnd
 
@@ -502,8 +574,20 @@ FunctionEnd
 
 Section "Uninstall"
 
+	; Stop OpenVPN-GUI if currently running
+	DetailPrint "Stopping OpenVPN-GUI..."
+	StopGUI:
+
+	FindWindow $0 "OpenVPN-GUI"
+	IntCmp $0 0 guiClosed
+	SendMessage $0 ${WM_CLOSE} 0 0
+	Sleep 100
+	Goto StopGUI
+
+	guiClosed:
+
 	; Stop OpenVPN if currently running
-	DetailPrint "Service REMOVE"
+	DetailPrint "Removing OpenVPN Service..."
 	nsExec::ExecToLog '"$INSTDIR\bin\openvpnserv.exe" -remove'
 	Pop $R0 # return value/error/timeout
 
@@ -514,7 +598,7 @@ Section "Uninstall"
 		${If} $R0 == "installed"
 			ReadRegStr $R0 HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\TAP-Windows" "UninstallString"
 			${If} $R0 != ""
-				DetailPrint "TAP UNINSTALL"
+				DetailPrint "Uninstalling TAP..."
 				nsExec::ExecToLog '"$R0" /S'
 				Pop $R0 # return value/error/timeout
 			${EndIf}
@@ -582,3 +666,4 @@ Section "Uninstall"
 	DeleteRegKey HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\${PACKAGE_NAME}"
 
 SectionEnd
+
