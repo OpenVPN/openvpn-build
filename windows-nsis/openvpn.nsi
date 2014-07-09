@@ -400,6 +400,23 @@ Section /o "Add Shortcuts to Start Menu" SecAddShortcuts
 	CreateShortCut "$SMPROGRAMS\${PACKAGE_NAME}\Uninstall ${PACKAGE_NAME}.lnk" "$INSTDIR\Uninstall.exe"
 SectionEnd
 
+Section /o "Use ProgramData folder to store configuration Files and logs (Vista or newer)" SecProgData
+	; More convenient for Microsoft windows Vista/7 and above compatibility
+	; SetShellVarContext must be set to 'all' to allow a proper configuration for all users of the PC.
+	; if set to 'current' the directories may not be readable/writable for all users.
+	; creating directories
+	CreateDirectory "$APPDATA\OpenVPN\config"
+	CreateDirectory "$APPDATA\OpenVPN\log"
+	; Add the keys for OpenVPN
+	WriteRegStr HKLM "SOFTWARE\${PACKAGE_NAME}" "config_dir" "$APPDATA\OpenVPN\config"
+	WriteRegStr HKLM "SOFTWARE\${PACKAGE_NAME}" "log_dir" "$APPDATA\OpenVPN\log"
+	; Add the keys for OpenVPN-GUI (only if GUI is selected)
+	${If} ${SectionIsSelected} ${SecOpenVPNGUI}
+		WriteRegStr HKLM "SOFTWARE\${PACKAGE_NAME}-GUI" "config_dir" "$APPDATA\OpenVPN\config"
+		WriteRegStr HKLM "SOFTWARE\${PACKAGE_NAME}-GUI" "log_dir" "$APPDATA\OpenVPN\log"
+	${EndIf}
+SectionEnd
+
 SectionGroup "!Dependencies (Advanced)"
 
 	Section /o "OpenSSL DLLs" SecOpenSSLDLLs
