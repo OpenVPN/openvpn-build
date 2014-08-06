@@ -67,8 +67,8 @@ Adding new sbuild schroots
 
 Before you can build anything you need to setup chroots using sbuild. First of 
 all, you will need a debootstrap script for the operating system you're creating 
-the chroot for. You easy check if your target platforms are already supported by 
-your operating system's debootstrap scripts:
+the chroot for. You can easyly check if your target platforms are already 
+supported by your operating system's debootstrap scripts:
 
     $ ls /usr/share/debootstrap/scripts
 
@@ -137,7 +137,7 @@ Next update the OpenVPN sources which sbuild uses:
     $ cd openvpn-<version>
     $ cp -a <sbuild_wrapper_dir>/packaging/openvpn-with-openssl-0.9.8/debian .
 
-Next edit the changelog file (openvpn-<version>/debian/changelog) and other 
+Next edit the changelog file (openvpn-\<version\>/debian/changelog) and other 
 package metadata to match this latest release. If you need to add patches, then 
 do so at this point. Finally you can generate the .dsc file:
 
@@ -151,12 +151,15 @@ Finally, update the PROGRAM_VERSION and PACKAGE_VERSION variables in
     $ cd <sbuild_wrapper_basedir>
     $ scripts/build-all.sh
 
+The .deb files can be found from the "output" directory. They are also packaged 
+into "output.tar.gz" file at <sbuild_wrapper_basedir>.
+
 Applying patches
 ================
 
 Patches are applied manually with quilt. First copy the patch in 
-openvpn-<version>/debian/patches. Then create or modify the series file 
-(openvpn-<version>/debian/patches/series) to include the new patch. Finally 
+openvpn-\<version\>/debian/patches. Then create or modify the series file 
+(openvpn-\<version\>/debian/patches/series) to include the new patch. Finally 
 apply the patch:
 
     $ cd openvpn-<version>
