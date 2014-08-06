@@ -1,0 +1,190 @@
+# translation of openvpn_2.0.7-1_nl.po to Debian l10n Dutch
+#
+# This file is distributed under the same license as the openvpn package.
+# Please see debian/copyright.
+#
+#    Translators, if you are not familiar with the PO format, gettext
+#    documentation is worth reading, especially sections dedicated to
+#    this format, e.g. by running:
+#         info -n '(gettext)PO Files'
+#         info -n '(gettext)Header Entry'
+#    Some information specific to po-debconf are available at
+#            /usr/share/doc/po-debconf/README-trans
+#         or http://www.debian.org/intl/l10n/po-debconf/README-trans#
+#    Developers do not need to manually edit POT or PO files.
+#
+# This is an unofficial translation
+# Kurt De Bree <kdebree(AT)telenet(DOT)be>, 2006.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: openvpn_2.0.7-1_nl\n"
+"Report-Msgid-Bugs-To: openvpn@packages.debian.org\n"
+"POT-Creation-Date: 2008-06-24 20:24+0200\n"
+"PO-Revision-Date: 2006-09-28 18:40+0200\n"
+"Last-Translator: Kurt De Bree <kdebree(AT)telenet(DOT)be>\n"
+"Language-Team: Debian l10n Dutch <debian-l10n-dutch@lists.debian.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: KBabel 1.11.1\n"
+
+#. Type: boolean
+#. Description
+#: ../templates:2001
+msgid "Create the TUN/TAP device?"
+msgstr ""
+
+#. Type: boolean
+#. Description
+#: ../templates:2001
+msgid ""
+"If you choose this option, the /dev/net/tun device needed by OpenVPN will be "
+"created."
+msgstr ""
+
+#. Type: boolean
+#. Description
+#: ../templates:2001
+msgid "You should not choose this option if you're using devfs."
+msgstr ""
+
+#. Type: note
+#. Description
+#: ../templates:3001
+msgid "Vulnerable random number generator"
+msgstr ""
+
+#. Type: note
+#. Description
+#: ../templates:3001
+msgid ""
+"A weakness has been discovered in the random number generator used by "
+"OpenSSL on Ubuntu and Debian systems.  As a result of this weakness, certain "
+"encryption keys are generated much more frequently than they should be, such "
+"that an attacker could guess the key through a brute-force attack given "
+"minimal knowledge of the system."
+msgstr ""
+
+#. Type: note
+#. Description
+#: ../templates:3001
+msgid ""
+"Any keys created on a vulnerable system may be affected by this problem. The "
+"'openssl-vulnkey' command may be used as a partial test for RSA keys with "
+"certain bit sizes, and the 'openvpn-vulnkey' for OpenVPN shared secret keys. "
+"Users are urged to verify their keys or simply regenerate any server or "
+"client certificates and keys in use on the system."
+msgstr ""
+
+#~ msgid "Would you like to start openvpn sooner?"
+#~ msgstr "Wenst u openvpn vroeger op te starten?"
+
+#~ msgid ""
+#~ "Previous versions of openvpn started at the same time as most of other "
+#~ "services. This means that most of these services couldn't use openvpn "
+#~ "since it may have been unavailable when they started. Newer versions of "
+#~ "the openvpn package will start earlier. (i.e. a S16openvpn link in rc"
+#~ "[235].d instead of a S20openvpn)"
+#~ msgstr ""
+#~ "Vorige versies van openvpn startten tegelijkertijd met het merendeel van "
+#~ "andere diensten. Dit betekent dat het merendeel van deze diensten openvpn "
+#~ "niet konden gebruiken omdat openvpn mogelijk onbeschikbaar was wanneer "
+#~ "zij opstartten. Nieuwere versies van het openvpn-pakket starten vroeger "
+#~ "op (d.i. een S16openvpn-koppeling in 'rc[235].d' i.p.v. een S20openvpn-"
+#~ "koppeling)."
+
+#~ msgid ""
+#~ "If you accept here, the package upgrade will make this change for you. If "
+#~ "you refuse, nothing will change, and openvpn will be working just like it "
+#~ "did before."
+#~ msgstr ""
+#~ "Indien u hier toestemt, wordt de wijziging door de pakketopwaardering "
+#~ "uitgevoerd. Bij weigering wordt niets gewijzigd en zal openvpn werken "
+#~ "zoals voordien."
+
+#, fuzzy
+#~| msgid ""
+#~| "Unless you do your upgrades locally, it is advised NOT to stop openvpn "
+#~| "before it gets upgraded. The installation process will restart it once "
+#~| "it's done."
+#~ msgid ""
+#~ "Unless upgrades are performed locally, you should choose to not stop "
+#~ "OpenVPN before it is upgraded. The installation process will restart it "
+#~ "once the upgrade is completed."
+#~ msgstr ""
+#~ "Tenzij u uw opwaarderingen lokaal uitvoert, is het NIET aangewezen om "
+#~ "openvpn uit te schakelen alvorens het is opgewaardeerd. Het "
+#~ "installatieproces zal het nadien herstarten."
+
+#, fuzzy
+#~| msgid "This option will take effect in your next upgrade."
+#~ msgid "This option will take effect for the next upgrade."
+#~ msgstr "Deze optie zal na de volgende opwaardering in werking treden."
+
+#~ msgid "Default port has changed"
+#~ msgstr "De standaardpoort is gewijzigd"
+
+#~ msgid ""
+#~ "OpenVPN's default port has changed from 5000 to 1194 (IANA assigned). If "
+#~ "you don't specify the port to be used on your VPNs, this upgrade may "
+#~ "break them."
+#~ msgstr ""
+#~ "De standaardpoort van openvpn is gewijzigd van 5000 naar 1194 (toegewezen "
+#~ "door IANA). Als u geen poort specificeert dat op uw VPN's moet worden "
+#~ "gebruikt, kan deze opwaardering hen breken."
+
+#~ msgid ""
+#~ "Use the option 'port 5000' if you want to keep the old port "
+#~ "configuration, or take a look at your firewall rules to allow the new "
+#~ "default port configuration to work."
+#~ msgstr ""
+#~ "Gebruik de optie 'poort 5000' als u de oude poortconfiguratie wenst te "
+#~ "behouden, of kijk naar uw firewallregels om de werking van de nieuwe "
+#~ "standaardpoortconfiguratie toe te staan."
+
+#~ msgid "Would you like to stop openvpn later?"
+#~ msgstr "Wilt u openvpn later stoppen?"
+
+#~ msgid ""
+#~ "Previous versions of openvpn stopped at the same time as most of other "
+#~ "services. This meant that some of services stopping later couldn't use  "
+#~ "openvpn since it may have been stopped before them. Newer versions of the "
+#~ "openvpn package will stop the service later. (i.e. a K80openvpn link in  "
+#~ "rc[06].d instead of a K20openvpn)"
+#~ msgstr ""
+#~ "Eerdere versies van openvpn stopten tegelijkertijd met het merendeel van "
+#~ "andere diensten. Dit betekent dat diensten die later stopten openvpn niet "
+#~ "konden gebruiken aangezien deze reeds voordien kon gestopt zijn. Nieuwere "
+#~ "versies van het openvpn-pakket stopt de dienst later. (d.i. een "
+#~ "K80openvpn-koppeling in 'rc[06].d' i.p.v. een K20openvpn-koppeling)."
+
+#~ msgid "Would you like a TUN/TAP device to be created?"
+#~ msgstr "Wilt u een TUN/TAP-apparaat aanmaken?"
+
+#~ msgid ""
+#~ "If you accept here, the package will make a special device called /dev/"
+#~ "net/tun for openvpn's use. If you refuse, the device won't be made now. "
+#~ "Read README.Debian for details on how to make it. If you are using devfs "
+#~ "refuse here."
+#~ msgstr ""
+#~ "Indien u hier toestemt, zal het pakket een speciaal apparaat (/dev/net/"
+#~ "tun), voor het gebruik van openvpn, aanmaken. Bij weigering zal het "
+#~ "apparaat niet nu aangemaakt worden. Meer informatie over de aanmaak vindt "
+#~ "u in README.Debian. Weiger hier indien u devfs gebruikt."
+
+#~ msgid "Would you like to stop openvpn before it gets upgraded?"
+#~ msgstr "Wilt u openvpn uitschakelen alvorens het opgewaardeerd wordt?"
+
+#~ msgid ""
+#~ "In some cases you may be upgrading openvpn in a remote server using a VPN "
+#~ "to do so. The upgrade process stops the running daemon before  installing "
+#~ "the new version, in that case you may lose your connection, the upgrade "
+#~ "may be interrupted, and you may not be able to reconnect to the remote "
+#~ "host."
+#~ msgstr ""
+#~ "De opwaardering van openvpn stopt de lopende achtergronddienst voor de "
+#~ "installatie van de nieuwe versie. Als u openvpn vanop afstand opwaardeert "
+#~ "via een vpn verbinding kunt u dus uw verbinding verliezen en zal de "
+#~ "opwaarding onderbroken worden, waardoor u waarschijnlijk de verbinding "
+#~ "met de server die probeert op te waarderen niet meer kunt herstellen."

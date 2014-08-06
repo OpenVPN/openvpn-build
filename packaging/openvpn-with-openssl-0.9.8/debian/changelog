@@ -1,0 +1,208 @@
+openvpn (2.3.4-debian0) stable; urgency=low
+
+  * Preparing for release v2.3.4 (ChangeLog, version.m4) (Gert Doering, 024454a)
+  * Make serial env exporting consistent amongst OpenSSL and PolarSSL builds. (Steffan Karger, 142d4dd)
+  * When tls-version-min is unspecified, revert to original versioning approach. (James Yonan, a291825)
+  * Conditionalize calls to print_default_gateway on !ENABLE_SMALL (Gert Doering, d08a6a9)
+  * Fix is_ipv6 in case of tap interface. (Dmitrij Tejblum, 7227af1)
+  * Fix build system to accept non-system crypto library locations for plugins. (Steffan Karger, c2faef0)
+  * More IPv6-related updates to the openvpn man page. (Gert Doering, 268e211)
+  * Fix OCSP_check.sh to also use decimal for stdout verification. (Steffan Karger, 78e1175)
+  * Change signedness of hash in x509_get_sha1_hash(), fixes compiler warning. (Steffan Karger, b36515a)
+  * Rewrite manpage section about --multihome (Gert Doering, d40de75)
+  * Repair --multihome on FreeBSD for IPv4 sockets. (Gert Doering, fc759c2)
+  * Fix man page and OSCP script: tls_serial_{n} is decimal (Arne Schwabe, d160a62)
+  * Minor t_client.sh cleanups (Gert Doering, 413f052)
+  * Use native strtoull() with MSVC 2013. (James Yonan, 040b306)
+  * Add SSL library version reporting. (Gert Doering, 25bc9f0)
+  * IPv6 address/route delete fix for Win8 (Gert Doering, 22e834b)
+  * Fix SOCKSv5 method selection (Yawning Angel, 34df13f)
+  * Fix typo in sample build script to use LDFLAGS (kangsterizer, e8d8e50)
+
+ -- Samuli Seppänen <samuli@openvpn.net>  Fri, 2 May 2014 08:00:00 +0000
+
+openvpn (2.3.3-debian0) stable; urgency=low
+ 
+  * Add openssl-specific common cipher list names to ssl.c. (Steffan Karger, a39ceeb)
+  * Workaround missing SSL_OP_NO_TICKET in earlier OpenSSL versions (Gert Doering, 2cf9d4e)
+  * Set SSL_OP_NO_TICKET flag in SSL context for OpenSSL builds, to disable TLS stateless session resumption. (James Yonan, 058e889)
+  * Introduce safety check for http proxy options (Arne Schwabe, 74d53c9)
+  * Fix "." in description of utun. (Thomas Veerman, 5a197f7)
+  * Replace copied structure elements with including <net/route.h> (Gert Doering, 15e0d0f)
+  * Rename 'struct route' to 'struct route_ipv4' (Gert Doering, 07b5c1d)
+  * Document issue with --chroot, /dev/urandom and PolarSSL. (Gert Doering, 2600680)
+  * Reduce IV_OPENVPN_GUI_VERSION= to IV_GUI_VER= (Gert Doering, c1b3568)
+  * Make code and documentation for --remote-random-hostname consistent. (Gert Doering, 945cfa5)
+  * Fix spurious ignoring of pushed config options (trac#349). (Jens Wagner, e93fb8c)
+  * If --tls-cipher is supplied, make --show-tls parse the list. (Steffan Karger, 5690c52)
+  * Update TLSv1 error messages to SSLv23 to reflect changes from commit 4b67f98 (Steffan Karger, dce118c)
+  * Also update TLSv1_method() calls in support code to SSLv23_method() calls. (Steffan Karger, 191af65)
+  * Use RSA_generate_key_ex() instead of deprecated, RSA_generate_key() (Steffan Karger, 8c5c587)
+  * Add warning for using connection block variables after connection blocks (Arne Schwabe, d931524)
+  * Fix file checks when --chroot is being used (David Sommerseth, c79fa3b)
+  * pkcs11: use generic evp key instead of rsa (Alon Bar-Lev, f8b590d)
+  * Support non-ASCII characters in Windows tmp path (Heiko Hund, 1146c72)
+  * Fix assertion when SIGUSR1 is received while getaddrinfo is successful (Arne Schwabe, 47a9636)
+  * t_client.sh: ignore fields from "ip -6 route show" output that distort results. (Gert Doering, 8a55310)
+  * Fix compile error in ssl_openssl introduced by polar external-management patch (Arne Schwabe, 816ccf2)
+  * external_pkcs1_sign: Support non-RSA_SIG_RAW hash_ids (Joachim Schipper, d81e29f)
+  * --management-external-key for PolarSSL (Joachim Schipper, 5269096)
+  * Refactor tls_ctx_use_external_private_key() (Joachim Schipper, a1e2e76)
+  * Remove duplicate cipher entries from TLS translation table. (Max Muster, d976909)
+  * Fix slow memory drain on each client renegotiation. (Gert Doering, ad49fb5)
+  * Fix IPv6 examples in t_client.rc-sample (Gert Doering, 3bdc5d7)
+  * Document authfile for socks server (Davide Brini, a478420)
+  * tls_ctx_load_ca: Improve certificate error messages (Klee Dienes, 2f3c65f)
+  * Add reporting of UI version to basic push-peer-info set. (Arne Schwabe, ca2c4a9)
+  * Require a 1.2.x PolarSSL version (Josh Cepek, 941118f)
+  * Require polarssl >= 1.2.10 for polarssl-builds, which fixes CVE-2013-5915. (Steffan Karger, 402ace5)
+  * Support non-ASCII TAP adapter names on Windows (Heiko Hund, 8f5a459)
+  * Fix configure interaction with static OpenSSL libraries (Peter Sagerson, 588c5fe)
+  * Correct error text when no Windows TAP device is present (Josh Cepek, 4276540)
+  * Always load intermediate certificates from a PKCS#12 file (Heikki Hannikainen, 09a002b)
+  * Add a note what setenv opt does for OpenVPN < 2.3.3 (Arne Schwabe, 5fbc2bf)
+  * Add support to ignore specific options. (Arne Schwabe, e56b52f)
+  * Added "setenv opt" directive prefix.  If present, and if the directive that follows is recognized, it will be processed as if the "setenv opt" prefix was absent.  If present and if the directive that follows is not recognized, the directive will be ignored rather than cause a fatal error. (James Yonan, b12b961)
+  * TLS version negotiation (James Yonan, 2f9ba52)
+  * autoconf: Fix typo (David Sommerseth, 030fcea)
+  * plugin: Extend the plug-in v3 API to identify the SSL implementation used (David Sommerseth, 570da54)
+  * Remove the --disable-eurephia configure option (David Sommerseth, 14566e4)
+  * man page: Update man page about the tls_digest_{n} environment variable (David Sommerseth, 8141daa)
+  * Add support of utun devices under Mac OS X (Arne Schwabe, bdfd4ee)
+  * Add support for client-cert-not-required for PolarSSL. (Tamas TEVESZ, fd20880)
+  * Do not pass struct tls_session* as void* in key_state_ssl_init(). (Steffan Karger, 1c84259)
+
+ -- Samuli Seppänen <samuli@openvpn.net>  Wed, 9 Apr 2014 06:00:00 +0000
+
+openvpn (2.3.2-debian0) stable; urgency=low
+ 
+  * Preparing for v2.3.2 (ChangeLog, version.m4) (Gert Doering, 5e03d9b)
+  * Move checking of script file access into set_user_script (Arne Schwabe, 05afd0b)
+  * Move settings of user script into set_user_script function (Arne Schwabe, 8df20e5)
+  * Provide more accurate warning message (Davide Brini, 5957218)
+  * Only print script warnings when a script is used. Remove stray mention of script-security system. (Arne Schwabe, 567bfc0)
+  * Fix problem with UDP tunneling due to mishandled pktinfo structures. (Gert Doering, 02d027f)
+  * Always push basic set of peer info values to server. (James Yonan, eed9b8e)
+  * make 'explicit-exit-notify' pullable again (Jan Just Keijser, 14dfec0)
+  * Fix Windows script execution when called from script hooks (Josh Cepek, 93ec740)
+  * Fix NULL-pointer crash in route_list_add_vpn_gateway(). (Gert Doering, 4203296)
+  * Fix segfault when enabling pf plug-ins (svimik, 9b9e33c)
+  * Fix proto tcp6 for server & non-P2MP modes (Josh Cepek, 4b22e86)
+  * Fixed usage of stale define USE_SSL to ENABLE_SSL (Steffan Karger, eb16a92)
+  * Fixed tls-cipher translation bug in openssl-build (Steffan Karger, 0710f92)
+
+ -- Samuli Seppänen <samuli@openvpn.net>  Mon, 3 Jun 2013 08:00:00 +0000
+
+openvpn (2.3.1-debian0) stable; urgency=low
+ 
+  * Preparing for v2.3.1 (ChangeLog, version.m4) (Gert Doering, 3fe52e7)
+  * Fix directly connected routes for "topology subnet" on Solaris. (Gert Doering, c9ec7f7)
+  * Add MIN() compatibility macro (Gert Doering, 445d3ef)
+  * Use constant time memcmp when comparing HMACs in openvpn_decrypt. (Steffan Karger, f375aa6)
+  * Fixed autoconf script to properly detect missing pkcs11 with polarssl. (Steffan Karger, b07223d)
+  * Switch to IANA names for TLS ciphers. (Steffan Karger, 030c7b0)
+  * Config compatibility patch. Added translate_cipher_name. (Steffan Karger, e659a8d)
+  * Improve verify_callback messages (Steffan Karger, b3ac0bc)
+  * Improve PolarSSL key_state_read_{cipher, plain}text messages (Steffan Karger, bf71c15)
+  * PolarSSL-1.2 support (Steffan Karger, c5857cd)
+  * (updated) [PATCH] Warn when using verb levels >=7 without debug (Josh Cepek, 152ca3e)
+  * Fix parameter listing in non-debug builds at verb 4 (Josh Cepek, c435864)
+  * Permit pool size of /64.../112 for ifconfig-ipv6-pool (Gert Doering, 0fb2391)
+  * Repair "tcp server queue overflow" brokenness, more <stdbool.h> fallout. (Gert Doering, 80b4b1e)
+  * Remove unused function no_tap_ifconfig (Arne Schwabe, a8cd06e)
+  * Move static prototype definition from header into c file (Arne Schwabe, 08c3b83)
+  * Remove unused function xor (Arne Schwabe, 589ef65)
+  * add new option for X.509 name verification (Heiko Hund, f6e1286)
+  * make --tls-remote compatible with pre 2.3 configs (Heiko Hund, 0f92b3b)
+  * reintroduce --no-name-remapping option (Heiko Hund, c86d09c)
+  * Fix corner case in NTLM authentication (trac #172) (Christian Niessner, 55058d4)
+  * fix build with automake 1.13(.1) (Christian Hesse, ffb9d7d)
+  * Ignore UTF-8 byte order mark (Heiko Hund, a8fe779)
+  * Cleaned up and updated INSTALL (Samuli Seppänen, 901f647)
+  * Updated README (Samuli Seppänen, cd088e4)
+  * Added cross-compilation information INSTALL-win32.txt (Samuli Seppänen, 10675f3)
+  * Removed ChangeLog.IPv6 (Samuli Seppänen, 5a1c16e)
+  * Enable TCP_NODELAY configuration on FreeBSD. (Matthias Andree, 0a70090)
+  * man page patch for missing options (Jan Just Keijser, 967c5d8)
+  * Remove dead code path and putenv functionality (Arne Schwabe, d84002f)
+  * Update README.IPv6 to match what is in 2.3.0 (Gert Doering, 5085ae1)
+  * close more file descriptors on exec (Heiko Hund, 46d533c)
+
+ -- Samuli Seppänen <samuli@openvpn.net>  Thu, 28 Mar 2013 12:00:00 +0000
+
+openvpn (2.3.0-debian0) stable; urgency=low
+ 
+  * Preparing for v2.3.0 (David Sommerseth, d690047)
+  * Fix client crash on double PUSH_REPLY. (Gert Doering, 2e3b853)
+  * Fix parameter type for IP_TOS setsockopt on non-Linux systems. (Gert Doering, a28048a)
+
+ -- Samuli Seppänen <samuli@openvpn.net>  Tue, 8 Jan 2013 08:00:00 +0000
+
+openvpn (2.3-rc2-debian0) stable; urgency=low
+ 
+  * Preparing for v2.3_rc2 (David Sommerseth, a2f40aa)
+  * Fix option inconsistency warnings about "proto" and "tun-ipv6" (Gert Doering, f214107)
+  * Implement --mssfix handling for IPv6 packets. (Gert Doering, 729c846)
+  * Fix the proto is used inconsistently warning (Arne Schwabe, 34bc52d)
+  * Remove dnsflags_to_socktype, it is not used anywhere (Arne Schwabe, e999822)
+  * Avoid recursion in virtual_output_callback_func() (David Sommerseth, 5541ea2)
+  * The get_default_gateway() function uses warn() instead of msg() (David Sommerseth, 28d9e57)
+  * Properly require --key even if defined(MANAGMENT_EXTERNAL_KEY) (Arne Schwabe, 9447858)
+  * Fix typo in ./configure message (Joachim Schipper, 9e6b857)
+  * doc/management-notes.txt: fix typo (Joachim Schipper, 376e143)
+  * Error message if max-routes used incorrectly (Arne Schwabe, cb8c4ef)
+  * Fix --show-pkcs11-ids (Bug #239) (Adriaan de Jong, fd02ae9)
+  * Fix double-free issue in pf_destroy_context() (David Sommerseth, 03dfcd9)
+
+ -- Samuli Seppänen <samuli@openvpn.net>  Tue, 18 Dec 2012 08:00:00 +0000
+
+openvpn (2.3-rc1-debian0) stable; urgency=low
+ 
+  * Preparing for v2.3_rc1 (David Sommerseth, 78a6afe)
+  * Remove the support for using system() when executing external programs or scripts (David Sommerseth, 3cb9f1a)
+  * Support UTF-8 --client-config-dir (Heiko Hund, d442b8d)
+  * Fix display of plugin hook types (Heiko Hund, 3b8d116)
+  * Options parsing demands unnecessary configuration if PKCS11 is used (Arne Schwabe, ad0cc02)
+  * Make git ignore some more files (David Sommerseth, 5ce9216)
+  * Fixed a bug where PolarSSL gave an error when using an inline file tag. (Adriaan de Jong, a4b9962)
+  * Fix v3 plugins to support returning values back to OpenVPN. (Kenneth Rose, aa1a1d9)
+  * Document man agent-external-key (Arne Schwabe, 7ab52ad)
+
+ -- Samuli Seppänen <samuli@openvpn.net>  Wed, 31 Oct 2012 13:00:00 +0000
+
+openvpn (2.3-beta1-debian0) stable; urgency=low
+ 
+  * Preparing for v2.3_beta1 (David Sommerseth, 6abd293)
+  * Add --compat-names option (Heiko Hund, e7412ca)
+  * Fix reconnect issues when --push and UDP is used on the server (David Sommerseth, 5d4f543)
+  * make "ipv6 ifconfig" on linux compatible with busybox ifconfig (Gert Doering, cae102a)
+  * Add checks for external-key-managements (Arne Schwabe, 6dad4f8)
+  * Document that keep alive will double the second value in server mode and give a short explanation why the value is chosen. (Arne Schwabe, 341e6bb)
+  * Document --management-client and --management-signal a bit better (Arne Schwabe, c447b42)
+  * Merge getaddr_multi and getaddr6 into one function (Arne Schwabe, f2d6f3b)
+  * Keep pre-existing tun/tap devices around on *BSD (Gert Doering, 3630a7a)
+  * remove unused flag SSLF_NO_NAME_REMAPPING (Heiko Hund, 7f69654)
+  * Put actual OpenVPN command line on top of corresponding log file. (Gert Doering, cc43956)
+  * Reduce --version string detail about IPv6 to just "[IPv6]". (Gert Doering, cb13e30)
+  * remove stale _openssl_get_subject() prototype (Heiko Hund, c0cd314)
+  * Document the inlining of files in openvpn and document key-direction (Arne Schwabe, 0979ec7)
+  * Merge almost identical create_socket_tcp and create_socket_tcp6 (Arne Schwabe, e1f6121)
+  * Fixes error: --key fails with EXTERNAL_PRIVATE_KEY: No such file or directory if --management-external-key is used (Arne Schwabe, 4806cc1)
+  * add API for plug-ins to write to openvpn log (Heiko Hund, be532e0)
+  * add x_msg_va() log function (Heiko Hund, 004ca97)
+  * fix regression with --http-proxy[-*] options (Heiko Hund, 4f879da)
+
+ -- Samuli Seppänen <samuli@openvpn.net>  Fri, 14 Sep 2012 10:00:00 +0000
+
+openvpn (2.3-alpha3-debian0) stable; urgency=low
+ 
+ * Preparing for OpenVPN 2.3_alpha3 (David Sommerseth, 6dcb126)
+  * add option --management-query-proxy (Heiko Hund, af1bf85)
+  * remove unused show_connection_list debug function (Heiko Hund, af417ba)
+  * don't treat socket related errors special anymore (Heiko Hund, 910675d)
+  * make non-blocking connect work on Windows (Heiko Hund, 9081e0a)
+  * Fix compiling with --disable-management (Arne Schwabe, cf93f0e)
+  * Update version.m4 - we're past 2.3_alpha2 now (David Sommerseth, 0bf9d14)
+  * Repair "tap server" mode brokenness caused by <stdbool.h> fallout (Gert Doering, 8df08de)
+
+ -- Samuli Seppänen <samuli@openvpn.net>  Fri, 20 Jul 2012 12:46:00 +0000

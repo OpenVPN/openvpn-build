@@ -1,0 +1,117 @@
+#!/usr/bin/make -f
+# Sample debian/rules that uses debhelper.
+# GNU copyright 1997 to 1999 by Joey Hess.
+
+# Uncomment this to turn on verbose mode.
+#export DH_VERBOSE=1
+
+include /usr/share/quilt/quilt.make
+
+
+# These are used for cross-compiling and for saving the configure script
+# from having to guess our platform (since we know it already)
+DEB_HOST_GNU_TYPE   ?= $(shell dpkg-architecture -qDEB_HOST_GNU_TYPE)
+DEB_BUILD_GNU_TYPE  ?= $(shell dpkg-architecture -qDEB_BUILD_GNU_TYPE)
+
+CFLAGS:=-g
+
+ifneq (,$(filter noopt,$(DEB_BUILD_OPTIONS)))
+	CFLAGS += -O0
+else
+	CFLAGS += -O2
+endif
+ifneq (,$(filter parallel=%,$(DEB_BUILD_OPTIONS)))
+	NUMJOBS = $(patsubst parallel=%,%,$(filter parallel=%,$(DEB_BUILD_OPTIONS)))
+	MAKEFLAGS += -j$(NUMJOBS)
+endif
+ifeq (,$(findstring nostrip,$(DEB_BUILD_OPTIONS)))
+	INSTALL_PROGRAM += -s
+endif
+
+config.status: $(QUILT_STAMPFN)
+	dh_testdir
+	# Add here commands to configure the package.
+	autoreconf -vi
+	./configure --disable-debug --enable-pkcs11 --enable-plugin-down-root --enable-plugin-auth-pam --enable-password-save --host=$(DEB_HOST_GNU_TYPE) --build=$(DEB_BUILD_GNU_TYPE) --prefix=/usr --mandir=\$${prefix}/share/man CFLAGS='$(CFLAGS)'
+
+build: build-stamp
+
+build-stamp: config.status
+	dh_testdir
+
+	# Add here commands to compile the package.
+	$(MAKE)
+
+	touch build-stamp
+
+clean: unpatch
+	dh_testdir
+	dh_testroot
+	rm -f build-stamp 
+
+	# Add here commands to clean up after the build process.
+	[ ! -f Makefile ] || $(MAKE) distclean
+
+	dh_clean
+
+install: build
+	dh_testdir
+	dh_testroot
+	dh_prep
+	dh_installdirs
+
+	# Add here commands to install the package into debian/openvpn
+	$(MAKE) install prefix=$(CURDIR)/debian/openvpn/usr
+	install -m 755 sample/sample-scripts/verify-cn $(CURDIR)/debian/openvpn/usr/share/openvpn
+	install -m 755 debian/openvpn.if-up.d $(CURDIR)/debian/openvpn/etc/network/if-up.d/openvpn
+	install -m 755 debian/openvpn.if-down.d $(CURDIR)/debian/openvpn/etc/network/if-down.d/openvpn
+	#install plugins
+	install -m 644 src/plugins/auth-pam/.libs/openvpn-plugin-auth-pam.so $(CURDIR)/debian/openvpn/usr/lib/openvpn
+	install -m 644 src/plugins/auth-pam/README.auth-pam $(CURDIR)/debian/openvpn/usr/share/doc/openvpn/README.auth-pam
+	install -m 755 sample/sample-scripts/auth-pam.pl $(CURDIR)/debian/openvpn/usr/share/openvpn
+	install -m 644 src/plugins/down-root/.libs/openvpn-plugin-down-root.so $(CURDIR)/debian/openvpn/usr/lib/openvpn
+	install -m 644 src/plugins/down-root/README.down-root $(CURDIR)/debian/openvpn/usr/share/doc/openvpn/README.down-root
+	# intall plugin headers 
+	install -m 644 include/openvpn-plugin.h $(CURDIR)/debian/openvpn/usr/include/openvpn/openvpn-plugin.h
+	# resolvconf script
+	install -m 755 debian/update-resolv-conf $(CURDIR)/debian/openvpn/etc/openvpn/update-resolv-conf
+	# bash completion
+	install -m 644 debian/openvpn.bash_completion $(CURDIR)/debian/openvpn/etc/bash_completion.d/openvpn
+
+# Build architecture-independent files here.
+binary-indep: build install
+# We have nothing to do by default.
+
+# Build architecture-dependent files here.
+binary-arch: build install
+	dh_testdir
+	dh_testroot
+	dh_installdebconf	
+	dh_installdocs
+	dh_installexamples
+	# clean permissions to make lintian happy
+	dh_installmenu
+#	dh_installlogrotate
+#	dh_installemacsen
+#	dh_installpam
+#	dh_installmime
+	dh_installinit --no-start -- defaults 16 80
+	dh_installcron
+	dh_installman
+	dh_installinfo
+#	dh_undocumented
+	dh_installchangelogs ChangeLog
+	dh_link
+	dh_strip
+	dh_compress --exclude=openssl.cnf --exclude=pkitool
+	dh_fixperms
+#	dh_makeshlibs
+	dh_installdeb
+#	dh_perl
+	dh_shlibdeps
+	dh_gencontrol
+	dh_md5sums
+	dh_builddeb
+
+binary: binary-indep binary-arch
+.PHONY: build clean binary-indep binary-arch binary install 

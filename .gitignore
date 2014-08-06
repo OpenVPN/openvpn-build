@@ -1,0 +1,7 @@
+/chroots
+/output
+/build
+*.deb
+*.dsc
+*.tar.gz
+*.bak
