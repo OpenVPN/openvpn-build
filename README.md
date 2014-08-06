@@ -146,13 +146,13 @@ do so at this point. Finally you can generate the .dsc file:
 Repeat the same steps for the "openvpn-with-openssl-1.0.0" directory.
 
 Finally, update the PROGRAM_VERSION and PACKAGE_VERSION variables in 
-<sbuild_wrapper_dir>/config/version.conf. Then run build-all.sh:
+\<sbuild_wrapper_dir\>/config/version.conf. Then run build-all.sh:
 
     $ cd <sbuild_wrapper_basedir>
     $ scripts/build-all.sh
 
 The .deb files can be found from the "output" directory. They are also packaged 
-into "output.tar.gz" file at <sbuild_wrapper_basedir>.
+into "output.tar.gz" file at \<sbuild_wrapper_basedir\>.
 
 Applying patches
 ================
