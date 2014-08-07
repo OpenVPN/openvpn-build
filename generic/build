@@ -363,8 +363,8 @@ solaris_common() {
 }
 
 main() {
-	export CFLAGS="${TARGET_CFLAGS} ${EXTRA_TARGET_CFLAGS}"
-	export LDFLAGS="${TARGET_LDFLAGS} ${EXTRA_TARGET_LDFLAGS}"
+	export CFLAGS="${TARGET_CFLAGS} ${EXTRA_TARGET_CFLAGS} ${CFLAGS}"
+	export LDFLAGS="${TARGET_LDFLAGS} ${EXTRA_TARGET_LDFLAGS} ${LDFLAGS}"
 	download
 	create_layout
 	extract
