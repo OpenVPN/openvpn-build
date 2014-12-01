@@ -5,3 +5,6 @@ tools
 tmp
 *.exe
 *.gz
+*.pfx
+*.cer
+*.crt
