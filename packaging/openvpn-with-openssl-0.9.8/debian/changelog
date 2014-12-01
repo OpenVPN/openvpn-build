@@ -1,3 +1,61 @@
+openvpn (2.3.6-debian0) stable; urgency=high
+
+  * Preparing for release v2.3.6 (ChangeLog, version.m4) (Gert Doering, 0d8da22)
+  * Drop too-short control channel packets instead of asserting out. (Steffan Karger, 97597e7)
+  * Add client-only support for peer-id. (Gert Doering, 0e1fd33)
+  * systemd: Reworked the systemd unit file to handle server and client configs better (David Sommerseth, 28bd79a)
+  * Modernize sample keys and sample configs (Steffan Karger, b77c27a)
+  * Fix to --shaper documentation on the man-page (Samuli Seppänen, e9b07dc)
+  * Add --tls-version-max (Steffan Karger, c807276)
+  * Fix assertion error when using --cipher none (Steffan Karger, 4429456)
+
+ -- Samuli Seppänen <samuli@openvpn.net>  Mon, 1 Dec 2014 07:00:00 +0000
+
+openvpn (2.3.5-debian0) stable; urgency=low
+
+  * Preparing for release v2.3.5 (ChangeLog, version.m4) (Gert Doering, b677a3d)
+  * Remove unused variables from ssl_verify_openssl.c extract_x509_extension() (Steffan Karger, 6e469f4)
+  * ssl_polarssl.c: fix includes and make casts explicit (Steffan Karger, 35b2ffd)
+  * Fix regression with password protected private keys (polarssl) (Steffan Karger, f056c8e)
+  * Fix "code=995" bug with windows NDIS6 tap driver. (TDivine, 4fe957a)
+  * Ensure that client-connect files are always deleted (Samuel Thibault, 10cbaea)
+  * systemd: Use systemd functions to consider systemd availability (David Sommerseth, 027dd7f)
+  * Add systemd unit file for OpenVPN (David Sommerseth, a831030)
+  * Don't let openvpn_popen() keep zombies around (David Sommerseth, f54cdc9)
+  * Add configure check for the path to systemd-ask-password (Mike Gilbert, ef21281)
+  * Implement on-link route adding for iproute2 (Philipp Hagemeister, a76fcf1)
+  * ocsp_check - double check if ocsp didn't report any errors in execution (Hubert Kario, 27ab61c)
+  * ocsp_check - signature verification and cert staus results are separate (Hubert Kario, 99400ef)
+  * Remove quadratic complexity from openvpn_base64_decode() (Jann Horn, 72cbc10)
+  * Fix typo in cipher_kt_mode_{cbc, ofb_cfb}() doxygen. (Steffan Karger, d6865ba)
+  * Add topology in sample server configuration file (Philipp Hagemeister, 6fa97d0)
+  * Fix server routes not working in topology subnet with --server [v3] (Arne Schwabe, 3a3da8d)
+  * Don't exit daemon if opening or parsing the CRL fails. (Steffan Karger, 132b67f)
+  * Do not upcase x509-username-field for mixed-case arguments. (Andris Kalnozols, a2da658)
+  * Call init script helpers with explicit path (./) (Gert Doering, 75c3a82)
+  * Fix t_lpback.sh platform-dependent failures (Gert Doering, 9ce3670)
+  * Extend t_lpback tests to test all ciphers reported by --show-ciphers (Steffan Karger, e97aa06)
+  * Improve --show-ciphers to show if a cipher can be used in static key mode (Steffan Karger, d66ba9b)
+  * Add proper check for crypto modes (CBC or OFB/CFB) (Steffan Karger, deff485)
+  * Rename ALLOW_NON_CBC_CIPHERS to ENABLE_OFB_CFB_MODE, and add to configure. (Steffan Karger, f71a780)
+  * refine assertion to allow other modes than CBC (Heiko Hund, f1b532d)
+  * Fix socket-flag/TCP_NODELAY on Mac OS X (James Bekkema, 066202d)
+  * Fix some typos in the man page. (Andris Kalnozols, ce884e2)
+  * Update README.polarssl (Steffan Karger, f704885)
+  * Fix bug that incorrectly refuses oid representation eku's in polar builds (Steffan Karger, 991e357)
+  * Improve error reporting on file access to --client-config-dir and --ccd-exclusive (David Sommerseth, 488994b)
+  * Drop incoming fe80:: packets silently now. (Gert Doering, 45f5a0a)
+  * Remove unneeded wrapper functions in crypto_openssl.c (Steffan Karger, c570c19)
+  * Remove function without effect (cipher_ok() always returned true). (Steffan Karger, ad4da1a)
+  * Fixed some compile issues with show_library_versions() (James Yonan, a91a2d6)
+  * Define PATH_SEPARATOR for MSVC builds. (James Yonan, 3e8e496)
+  * MSVC 2008 doesn't support dimensioning an array with a const var nor using %z as a printf format specifier. (James Yonan, 11fbe93)
+  * Explicitly cast the third parameter of setsockopt to const void * to avoid warning. (James Yonan, 36c2165)
+  * In socket.c, fixed issue where uninitialized value (err) is being passed to to gai_strerror. (James Yonan, 302655c)
+  * Fixed several instances of declarations after statements. (James Yonan, 8adb295)
+
+ -- Samuli Seppänen <samuli@openvpn.net>  Tue, 28 Oct 2014 04:00:00 +0000
+
 openvpn (2.3.4-debian0) stable; urgency=low
 
   * Preparing for release v2.3.4 (ChangeLog, version.m4) (Gert Doering, 024454a)
