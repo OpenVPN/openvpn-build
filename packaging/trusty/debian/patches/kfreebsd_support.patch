@@ -1,0 +1,29 @@
+Description: Improve kFreeBSD support
+Author: Gonéri Le Bouder <goneri@rulezlan.org>
+Bug-Debian: http://bugs.debian.org/626062
+Index: openvpn/src/openvpn/route.c
+===================================================================
+--- openvpn.orig/src/openvpn/route.c	2013-06-03 18:48:16.854749664 +0200
++++ openvpn/src/openvpn/route.c	2013-06-03 18:48:16.842749606 +0200
+@@ -1416,7 +1416,7 @@
+   argv_msg (D_ROUTE, &argv);
+   status = openvpn_execve_check (&argv, es, 0, "ERROR: Solaris route add command failed");
+ 
+-#elif defined(TARGET_FREEBSD)
++#elif defined(TARGET_FREEBSD)||defined(__FreeBSD_kernel__)
+ 
+   argv_printf (&argv, "%s add",
+ 		ROUTE_PATH);
+Index: openvpn/src/openvpn/tun.c
+===================================================================
+--- openvpn.orig/src/openvpn/tun.c	2013-06-03 18:48:16.854749664 +0200
++++ openvpn/src/openvpn/tun.c	2013-06-03 18:48:16.846749625 +0200
+@@ -1089,7 +1089,7 @@
+ 	  add_route_connected_v6_net(tt, es);
+ 	}
+ 
+-#elif defined(TARGET_FREEBSD)||defined(TARGET_DRAGONFLY)
++#elif defined(TARGET_FREEBSD)||defined(TARGET_DRAGONFLY)||defined(__FreeBSD_kernel__)
+ 
+       /* example: ifconfig tun2 10.2.0.2 10.2.0.1 mtu 1450 netmask 255.255.255.255 up */
+       if (tun)

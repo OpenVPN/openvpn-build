@@ -1,0 +1,130 @@
+Description: Man page fixes
+Author: Alberto Gonzalez Iniesta <agi@inittab.org>
+Index: openvpn/doc/openvpn.8
+===================================================================
+--- openvpn.orig/doc/openvpn.8	2013-05-17 12:04:17.678140187 +0200
++++ openvpn/doc/openvpn.8	2013-05-17 12:04:17.674140147 +0200
+@@ -21,13 +21,13 @@
+ .\"  59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ .\"
+ .\" Manual page for openvpn
+-.\
++.\"
+ .\" SH section heading
+ .\" SS subsection heading
+ .\" LP paragraph
+ .\" IP indented paragraph
+ .\" TP hanging label
+-.\
++.\"
+ .\" .nf -- no formatting
+ .\" .fi -- resume formatting
+ .\" .ft 3 -- boldface
+@@ -2513,7 +2513,7 @@
+ .B \-\-management-signal
+ Send SIGUSR1 signal to OpenVPN if management session disconnects.
+ This is useful when you wish to disconnect an OpenVPN session on
+-user logoff. For --management-client this option is not needed since
++user logoff. For \-\-management-client this option is not needed since
+ a disconnect will always generate a SIGTERM.
+ .\"*********************************************************
+ .TP
+@@ -3889,7 +3889,7 @@
+ This option is only relevant in UDP mode, i.e.
+ when either
+ .B \-\-proto udp
+-is specifed, or no
++is specified, or no
+ .B \-\-proto
+ option is specified.
+ 
+@@ -5012,7 +5012,7 @@
+ 
+ This option have changed behaviour in OpenVPN 2.3.  Earlier you had to
+ define
+-.B --win-sys env
++.B \-\-win-sys env
+ to use the SystemRoot environment variable, otherwise it defaulted to C:\\WINDOWS.
+ It is not needed to use the
+ .B env
+@@ -5055,7 +5055,7 @@
+ .B \-\-dev tun
+ mode, OpenVPN will cause the DHCP server to masquerade as if it were
+ coming from the remote endpoint.  The optional offset parameter is
+-an integer which is > -256 and < 256 and which defaults to 0.
++an integer which is > \-256 and < 256 and which defaults to 0.
+ If offset is positive, the DHCP server will masquerade as the IP
+ address at network address + offset.
+ If offset is negative, the DHCP server will masquerade as the IP
+@@ -5349,26 +5349,26 @@
+ documentation of the IPv6-related options. More documentation can be
+ found on http://www.greenie.net/ipv6/openvpn.html.
+ .TP
+-.B --ifconfig-ipv6 ipv6addr/bits ipv6remote
++.B \-\-ifconfig-ipv6 ipv6addr/bits ipv6remote
+ configure IPv6 address
+ .B ipv6addr/bits
+ on the ``tun'' device.  The second parameter is used as route target for
+-.B --route-ipv6
++.B \-\-route-ipv6
+ if no gateway is specified.
+ .TP
+-.B --route-ipv6 ipv6addr/bits [gateway] [metric]
++.B \-\-route-ipv6 ipv6addr/bits [gateway] [metric]
+ setup IPv6 routing in the system to send the specified IPv6 network
+ into OpenVPN's ``tun'' device
+ .TP
+-.B --server-ipv6 ipv6addr/bits
++.B \-\-server-ipv6 ipv6addr/bits
+ convenience-function to enable a number of IPv6 related options at
+ once, namely
+-.B --ifconfig-ipv6, --ifconfig-ipv6-pool, --tun-ipv6
++.B \-\-ifconfig-ipv6, \-\-ifconfig-ipv6-pool, \-\-tun-ipv6
+ and
+-.B --push tun-ipv6
+-Is only accepted if ``--mode server'' or ``--server'' is set.
++.B \-\-push tun-ipv6
++Is only accepted if ``\-\-mode server'' or ``\-\-server'' is set.
+ .TP
+-.B --ifconfig-ipv6-pool ipv6addr/bits
++.B \-\-ifconfig-ipv6-pool ipv6addr/bits
+ Specify an IPv6 address pool for dynamic assignment to clients.  The
+ pool starts at
+ .B ipv6addr
+@@ -5376,20 +5376,20 @@
+ .B /bits
+ setting controls the size of the pool.
+ .TP
+-.B --ifconfig-ipv6-push ipv6addr/bits ipv6remote
++.B \-\-ifconfig-ipv6-push ipv6addr/bits ipv6remote
+ for ccd/ per-client static IPv6 interface configuration, see
+-.B --client-config-dir
++.B \-\-client-config-dir
+ and
+-.B --ifconfig-push
++.B \-\-ifconfig-push
+ for more details.
+ .TP
+-.B --iroute-ipv6 ipv6addr/bits
++.B \-\-iroute-ipv6 ipv6addr/bits
+ for ccd/ per-client static IPv6 route configuration, see
+-.B --iroute
++.B \-\-iroute
+ for more details how to setup and use this, and how
+-.B --iroute
++.B \-\-iroute
+ and
+-.B --route
++.B \-\-route
+ interact.
+ 
+ .\"*********************************************************
+@@ -5875,7 +5875,7 @@
+ .TP
+ .B peer_cert
+ Temporary file name containing the client certificate upon
+-connection.  Useful in conjunction with --tls-verify
++connection.  Useful in conjunction with \-\-tls-verify
+ .\"*********************************************************
+ .TP
+ .B script_context

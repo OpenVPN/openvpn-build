@@ -128,9 +128,12 @@ Before building update all the packages in the schroots:
     $ cd <sbuild_wrapper_dir>
     $ scripts/update-all.sh
 
-While the schroots are updating you can update the Debian changelog file:
+While the schroots are updating you can update the Debian changelog files:
 
-\<sbuild_wrapper_dir\>/packaging/openvpn-with-openssl-0.9.8/debian/changelog
+\<sbuild_wrapper_dir\>/packaging/\<osrelease\>/debian/changelog
+
+Replace \<osrelease\> with the operating system release name, e.g. "wheezy" or
+"trusty".
 
 You can generate Debian-compatible changelog entries using this Git magic:
 
@@ -138,20 +141,21 @@ $ git log --pretty=short --abbrev-commit --format="  * %s (%an, %h) <old>...<ne
 
 If you need to add patches, then do so at this point.
 
-Next update the OpenVPN sources which sbuild uses:
+Next update the OpenVPN sources which sbuild will use:
 
-    $ cd <sbuild_wrapper_dir>/build/openvpn-with-openssl-0.9.8
+    $ cd <sbuild_wrapper_dir>/build/<osrelease>
     $ wget <openvpn-tarball>
     $ mv <openvpn-tarball> openvpn_<version>.orig.tar.gz
     $ tar -zxf openvpn_<version>.orig.tar.gz
     $ cd openvpn-<version>
-    $ cp -a <sbuild_wrapper_dir>/packaging/openvpn-with-openssl-0.9.8/debian .
+    $ cp -a <sbuild_wrapper_dir>/packaging/<osrelease>/debian .
 
 Finally you can generate the .dsc file:
 
     $ dpkg-buildpackage -S -uc -us
 
-Repeat the same steps for the "openvpn-with-openssl-1.0.0" directory.
+Repeat the same steps for every operating system release directory you have.
+Note that by default some of the directories are symbolic links.
 
 Finally, update the PROGRAM_VERSION and PACKAGE_VERSION variables in 
 \<sbuild_wrapper_dir\>/config/version.conf. Then run build-all.sh:

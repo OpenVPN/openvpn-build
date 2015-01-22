@@ -1,0 +1,15 @@
+Description: Fix small wording in man page.
+Author: Alberto Gonzalez Iniesta <agi@inittab.org>
+Index: openvpn/doc/openvpn.8
+===================================================================
+--- openvpn.orig/doc/openvpn.8	2013-05-17 12:04:01.742061149 +0200
++++ openvpn/doc/openvpn.8	2013-05-17 12:04:01.738061129 +0200
+@@ -952,7 +952,7 @@
+ otherwise 0.
+ 
+ The default can be specified by leaving an option blank or setting
+-it to "default".
++it to "nil".
+ 
+ The
+ .B network

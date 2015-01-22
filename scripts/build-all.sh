@@ -22,11 +22,8 @@ cat $VARIANTS_FILE|while read LINE; do
 
     # This is highly openvpn-specific - fix later
     case "$OSRELEASE" in
-        wheezy|raring|saucy|trusty)
-            SOURCES_DIR="$BUILD_BASEDIR/openvpn-with-openssl-1.0.0"
-            ;;
-        squeeze|precise|lucid)
-            SOURCES_DIR="$BUILD_BASEDIR/openvpn-with-openssl-0.9.8"
+        squeeze|wheezy|lucid|precise|trusty)
+            SOURCES_DIR="$BUILD_BASEDIR/$OSRELEASE"
             ;;
         *)
             echo "Operating system release not detected, can't build!"
