@@ -3,7 +3,7 @@ OpenVPN project buildsystems
 About
 
     These directories contain scripts to help build and
-    package OpenVPN and it's dependencies for various
+    package OpenVPN and its dependencies for various
     hardware platforms and operating systems (e.g. Windows,
     ARM). You do not need any of these scripts if you're
     building a native version of OpenVPN on a UNIX-like
