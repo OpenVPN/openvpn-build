@@ -141,24 +141,14 @@ $ git log --pretty=short --abbrev-commit --format="  * %s (%an, %h) <old>...<ne
 
 If you need to add patches, then do so at this point.
 
-Next update the OpenVPN sources which sbuild will use:
+Next update the PROGRAM_VERSION and PACKAGE_VERSION variables in 
+\<sbuild_wrapper_dir\>/config/version.conf. After this you can update
+the sources which sbuild will use:
 
-    $ cd <sbuild_wrapper_dir>/build/<osrelease>
-    $ wget <openvpn-tarball>
-    $ mv <openvpn-tarball> openvpn_<version>.orig.tar.gz
-    $ tar -zxf openvpn_<version>.orig.tar.gz
-    $ cd openvpn-<version>
-    $ cp -a <sbuild_wrapper_dir>/packaging/<osrelease>/debian .
+    $ cd <sbuild_wrapper_basedir>
+    $ scripts/prepare-all.sh
 
-Finally you can generate the .dsc file:
-
-    $ dpkg-buildpackage -S -uc -us
-
-Repeat the same steps for every operating system release directory you have.
-Note that by default some of the directories are symbolic links.
-
-Finally, update the PROGRAM_VERSION and PACKAGE_VERSION variables in 
-\<sbuild_wrapper_dir\>/config/version.conf. Then run build-all.sh:
+Finally you can build on all platforms:
 
     $ cd <sbuild_wrapper_basedir>
     $ scripts/build-all.sh
