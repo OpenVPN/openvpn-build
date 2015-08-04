@@ -1,3 +1,20 @@
+openvpn (2.3.8-debian0) stable; urgency=low
+
+  * Preparing for release v2.3.8 (ChangeLog, version.m4) (Gert Doering, 0e58729)
+  * Fix overflow check in openvpn_decrypt() (Steffan Karger, 338f118)
+  * Fix commit e473b7c if an inline file happens to have a line break exactly at buffer limit (Arne Schwabe, 5757647)
+  * Fix using management interface to get passwords. (Steffan Karger, 710bfb8)
+  * Document --daemon changes and consequences (--askpass, --auth-nocache). (Gert Doering, dda40ae)
+  * Fix --askpass not allowing for password input via stdin (James Geboski, 4d093ff)
+  * Produce a meaningful error message if --daemon gets in the way of asking for passwords. (Gert Doering, b131c7b)
+  * fix regression: query password before becoming daemon (Steffan Karger, 7bde2e1)
+  * Make __func__ work with Visual Studio too (Steffan Karger, 4188a2d)
+  * Report missing endtags of inline files as warnings (Arne Schwabe, 1947525)
+  * Del ipv6 addr on close of linux tun interface (Holger Kummert, 40e6c58)
+  * write pid file immediately after daemonizing (Steffan Karger, bce656d)
+
+ -- Samuli Seppänen <samuli@openvpn.net>  Tue, 4 Aug 2015 10:00:00 +0000
+
 openvpn (2.3.7-debian0) stable; urgency=low
 
   * Preparing for release v2.3.7 (ChangeLog, version.m4) (Gert Doering, e566452)
