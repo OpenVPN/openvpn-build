@@ -6,6 +6,8 @@ ROOT="${ROOT:-tmp}"
 OPENVPN_ROOT="${ROOT}/openvpn"
 EASYRSA_ROOT="${ROOT}/easy-rsa"
 
+SIGN_DIGEST=${SIGN_DIGEST:-sha256}
+
 die() {
 	local m="$1"
 	echo "FATAL: ${m}" >&2
@@ -21,7 +23,8 @@ codesign() {
 	local f="$1"
 	if [ -n "${DO_SIGN}" ]; then
 		echo "Signing '${f}'"
-		"${OSSLSIGNCODE}" \
+	        "${OSSLSIGNCODE}"
+			-h "${SIGN_DIGEST}" \
 			-pkcs12 "${SIGN_PKCS12}" \
 			-pass "${SIGN_PKCS12_PASS}" \
 			-t "${SIGN_TIMESTAMP_URL}" \
@@ -124,6 +127,9 @@ while [ -n "$1" ]; do
 		--sign)
 			DO_SIGN=1
 			;;
+		--sign-digest)
+			SIGN_DIGEST="${v}"
+			;;
 		--sign-pkcs12=*)
 			SIGN_PKCS12="${v}"
 			;;
@@ -145,6 +151,7 @@ Usage: $0
 	--easy-rsa-tarball=tarball	easy-rsa source tarball
 	--tap-windows=installer         tap-windows installer
 	--sign				do sign
+	--sign-digest=digest		specify signing digest (default: sha256)
 	--sign-pkcs12=pkcs12-file	signing PKCS#12 file
 	--sign-pkcs12-pass=password	PKCS#12 file password
 	--sign-timestamp=url            URL to be used for timestamp
