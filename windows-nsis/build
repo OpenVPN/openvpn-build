@@ -23,7 +23,7 @@ codesign() {
 	local f="$1"
 	if [ -n "${DO_SIGN}" ]; then
 		echo "Signing '${f}'"
-	        "${OSSLSIGNCODE}"
+		"${OSSLSIGNCODE}" \
 			-h "${SIGN_DIGEST}" \
 			-pkcs12 "${SIGN_PKCS12}" \
 			-pass "${SIGN_PKCS12_PASS}" \
