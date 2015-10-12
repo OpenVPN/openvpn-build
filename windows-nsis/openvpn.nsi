@@ -258,9 +258,14 @@ Section /o "${PACKAGE_NAME} Service" SecService
 	SetOutPath "$INSTDIR\bin"
 	File "${OPENVPN_ROOT}\bin\openvpnserv.exe"
 
-	SetOutPath "$INSTDIR\config"
-
-	FileOpen $R0 "$INSTDIR\config\README.txt" w
+	${If} ${SectionIsSelected} ${SecProgData}
+		SetOutPath "$APPDATA\${PACKAGE_NAME}\config"
+	${else}
+		SetOutPath "$INSTDIR\config"
+	${EndIf}
+	
+	CreateDirectory "$OUTDIR"
+	FileOpen $R0 "$OUTDIR\README.txt" w
 	FileWrite $R0 "This directory should contain ${PACKAGE_NAME} configuration files$\r$\n"
 	FileWrite $R0 "each having an extension of .${OPENVPN_CONFIG_EXT}$\r$\n"
 	FileWrite $R0 "$\r$\n"
@@ -273,8 +278,15 @@ Section /o "${PACKAGE_NAME} Service" SecService
 	File "${OPENVPN_ROOT}\share\doc\openvpn\sample\client.${OPENVPN_CONFIG_EXT}"
 	File "${OPENVPN_ROOT}\share\doc\openvpn\sample\server.${OPENVPN_CONFIG_EXT}"
 
-	CreateDirectory "$INSTDIR\log"
-	FileOpen $R0 "$INSTDIR\log\README.txt" w
+	
+	${If} ${SectionIsSelected} ${SecProgData}
+		SetOutPath "$APPDATA\${PACKAGE_NAME}\log"
+	${else}
+		SetOutPath "$INSTDIR\log"
+	${EndIf}
+	
+	CreateDirectory "$OUTDIR"
+	FileOpen $R0 "$OUTDIR\README.txt" w
 	FileWrite $R0 "This directory will contain the log files for ${PACKAGE_NAME}$\r$\n"
 	FileWrite $R0 "sessions which are being run as a service.$\r$\n"
 	FileClose $R0
@@ -286,8 +298,8 @@ Section /o "${PACKAGE_NAME} Service" SecService
 		CreateShortCut "$SMPROGRAMS\${PACKAGE_NAME}\Shortcuts\${PACKAGE_NAME} Sample Configuration Files.lnk" "$INSTDIR\sample-config" ""
 		${If} ${SectionIsSelected} ${SecProgData}
 			; If the user select to use ProgramData directory instead of Instalation directory for logs and configuration files
-			CreateShortCut "$SMPROGRAMS\${PACKAGE_NAME}\Shortcuts\${PACKAGE_NAME} log file directory.lnk"						"$APPDATA\OpenVPN\log" 		""
-			CreateShortCut "$SMPROGRAMS\${PACKAGE_NAME}\Shortcuts\${PACKAGE_NAME} configuration file directory.lnk" "$APPDATA\OpenVPN\config" ""
+			CreateShortCut "$SMPROGRAMS\${PACKAGE_NAME}\Shortcuts\${PACKAGE_NAME} log file directory.lnk"						"$APPDATA\${PACKAGE_NAME}\log" 		""
+			CreateShortCut "$SMPROGRAMS\${PACKAGE_NAME}\Shortcuts\${PACKAGE_NAME} configuration file directory.lnk" "$APPDATA\${PACKAGE_NAME}\config" ""
 		${else}
 			CreateShortCut "$SMPROGRAMS\${PACKAGE_NAME}\Shortcuts\${PACKAGE_NAME} log file directory.lnk"						"$INSTDIR\log" 		""
 			CreateShortCut "$SMPROGRAMS\${PACKAGE_NAME}\Shortcuts\${PACKAGE_NAME} configuration file directory.lnk" "$INSTDIR\config" ""
@@ -297,8 +309,8 @@ Section /o "${PACKAGE_NAME} Service" SecService
 	; set registry parameters for openvpnserv	
 	${If} ${SectionIsSelected} ${SecProgData}
 		; If the user select to use ProgramData directory instead of Instalation directory for logs and configuration files
-		!insertmacro WriteRegStringIfUndef HKLM "SOFTWARE\${PACKAGE_NAME}" "config_dir" "$APPDATA\OpenVPN\config"
-		!insertmacro WriteRegStringIfUndef HKLM "SOFTWARE\${PACKAGE_NAME}" "log_dir"		"$APPDATA\OpenVPN\log"
+		!insertmacro WriteRegStringIfUndef HKLM "SOFTWARE\${PACKAGE_NAME}" "config_dir" "$APPDATA\${PACKAGE_NAME}\config"
+		!insertmacro WriteRegStringIfUndef HKLM "SOFTWARE\${PACKAGE_NAME}" "log_dir"		"$APPDATA\${PACKAGE_NAME}\log"
 	${else}
 		!insertmacro WriteRegStringIfUndef HKLM "SOFTWARE\${PACKAGE_NAME}" "config_dir" "$INSTDIR\config" 
 		!insertmacro WriteRegStringIfUndef HKLM "SOFTWARE\${PACKAGE_NAME}" "log_dir"    "$INSTDIR\log"
@@ -345,8 +357,9 @@ Section /o "${PACKAGE_NAME} GUI" SecOpenVPNGUI
 
 	${If} ${SectionIsSelected} ${SecProgData}
 		; Add registry infos for logs and configuration files
-		!insertmacro WriteRegStringIfUndef HKLM "SOFTWARE\${PACKAGE_NAME}-GUI" "config_dir" "$APPDATA\OpenVPN\config"
-		!insertmacro WriteRegStringIfUndef HKLM "SOFTWARE\${PACKAGE_NAME}-GUI" "log_dir" "$APPDATA\OpenVPN\log"
+		; These regirty values will be create on the first start of OpenVPN GUI with default values if necessary
+		!insertmacro WriteRegStringIfUndef HKLM "SOFTWARE\${PACKAGE_NAME}-GUI" "config_dir" "$APPDATA\${PACKAGE_NAME}\config"
+		!insertmacro WriteRegStringIfUndef HKLM "SOFTWARE\${PACKAGE_NAME}-GUI" "log_dir" "$APPDATA\${PACKAGE_NAME}\log"
 	${EndIf}
 
 	${If} ${SectionIsSelected} ${SecAddShortcutsWorkaround}
@@ -425,8 +438,8 @@ Section /o "Use ProgramData folder to store configuration Files and logs (Vista 
 	; SetShellVarContext must be set to 'all' to allow a proper configuration for all users of the PC.
 	; if set to 'current' the directories may not be readable/writable for all users.
 	; creating directories
-	CreateDirectory "$APPDATA\OpenVPN\config"
-	CreateDirectory "$APPDATA\OpenVPN\log"
+	CreateDirectory "$APPDATA\${PACKAGE_NAME}\config"
+	CreateDirectory "$APPDATA\${PACKAGE_NAME}\log"
 	
 SectionEnd
 
