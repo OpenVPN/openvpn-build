@@ -284,18 +284,32 @@ Section /o "${PACKAGE_NAME} Service" SecService
 		CreateShortCut "$SMPROGRAMS\${PACKAGE_NAME}\Utilities\Generate a static ${PACKAGE_NAME} key.lnk" "$INSTDIR\bin\openvpn.exe" '--pause-exit --verb 3 --genkey --secret "$INSTDIR\config\key.txt"' "$INSTDIR\icon.ico" 0
 		CreateDirectory "$SMPROGRAMS\${PACKAGE_NAME}\Shortcuts"
 		CreateShortCut "$SMPROGRAMS\${PACKAGE_NAME}\Shortcuts\${PACKAGE_NAME} Sample Configuration Files.lnk" "$INSTDIR\sample-config" ""
-		CreateShortCut "$SMPROGRAMS\${PACKAGE_NAME}\Shortcuts\${PACKAGE_NAME} log file directory.lnk" "$INSTDIR\log" ""
-		CreateShortCut "$SMPROGRAMS\${PACKAGE_NAME}\Shortcuts\${PACKAGE_NAME} configuration file directory.lnk" "$INSTDIR\config" ""
+		${If} ${SectionIsSelected} ${SecProgData}
+			; If the user select to use ProgramData directory instead of Instalation directory for logs and configuration files
+			CreateShortCut "$SMPROGRAMS\${PACKAGE_NAME}\Shortcuts\${PACKAGE_NAME} log file directory.lnk"						"$APPDATA\OpenVPN\log" 		""
+			CreateShortCut "$SMPROGRAMS\${PACKAGE_NAME}\Shortcuts\${PACKAGE_NAME} configuration file directory.lnk" "$APPDATA\OpenVPN\config" ""
+		${else}
+			CreateShortCut "$SMPROGRAMS\${PACKAGE_NAME}\Shortcuts\${PACKAGE_NAME} log file directory.lnk"						"$INSTDIR\log" 		""
+			CreateShortCut "$SMPROGRAMS\${PACKAGE_NAME}\Shortcuts\${PACKAGE_NAME} configuration file directory.lnk" "$INSTDIR\config" ""
+		${EndIf}
 	${EndIf}
 
 	; set registry parameters for openvpnserv	
-	!insertmacro WriteRegStringIfUndef HKLM "SOFTWARE\${PACKAGE_NAME}" "config_dir" "$INSTDIR\config" 
+	${If} ${SectionIsSelected} ${SecProgData}
+		; If the user select to use ProgramData directory instead of Instalation directory for logs and configuration files
+		!insertmacro WriteRegStringIfUndef HKLM "SOFTWARE\${PACKAGE_NAME}" "config_dir" "$APPDATA\OpenVPN\config"
+		!insertmacro WriteRegStringIfUndef HKLM "SOFTWARE\${PACKAGE_NAME}" "log_dir"		"$APPDATA\OpenVPN\log"
+	${else}
+		!insertmacro WriteRegStringIfUndef HKLM "SOFTWARE\${PACKAGE_NAME}" "config_dir" "$INSTDIR\config" 
+		!insertmacro WriteRegStringIfUndef HKLM "SOFTWARE\${PACKAGE_NAME}" "log_dir"    "$INSTDIR\log"
+	${EndIf}
 	!insertmacro WriteRegStringIfUndef HKLM "SOFTWARE\${PACKAGE_NAME}" "config_ext"  "${OPENVPN_CONFIG_EXT}"
 	!insertmacro WriteRegStringIfUndef HKLM "SOFTWARE\${PACKAGE_NAME}" "exe_path"    "$INSTDIR\bin\openvpn.exe"
-	!insertmacro WriteRegStringIfUndef HKLM "SOFTWARE\${PACKAGE_NAME}" "log_dir"     "$INSTDIR\log"
 	!insertmacro WriteRegStringIfUndef HKLM "SOFTWARE\${PACKAGE_NAME}" "priority"    "NORMAL_PRIORITY_CLASS"
 	!insertmacro WriteRegStringIfUndef HKLM "SOFTWARE\${PACKAGE_NAME}" "log_append"  "0"
-
+	; Add the keys for OpenVPN
+	
+	
 	; install openvpnserv as a service (to be started manually from service control manager)
 	DetailPrint "Installing OpenVPN Service..."
 	nsExec::ExecToLog '"$INSTDIR\bin\openvpnserv.exe" -install'
@@ -328,6 +342,12 @@ Section /o "${PACKAGE_NAME} GUI" SecOpenVPNGUI
 	SetOutPath "$INSTDIR\bin"
 
 	File "${OPENVPN_ROOT}\bin\openvpn-gui.exe"
+
+	${If} ${SectionIsSelected} ${SecProgData}
+		; Add registry infos for logs and configuration files
+		!insertmacro WriteRegStringIfUndef HKLM "SOFTWARE\${PACKAGE_NAME}-GUI" "config_dir" "$APPDATA\OpenVPN\config"
+		!insertmacro WriteRegStringIfUndef HKLM "SOFTWARE\${PACKAGE_NAME}-GUI" "log_dir" "$APPDATA\OpenVPN\log"
+	${EndIf}
 
 	${If} ${SectionIsSelected} ${SecAddShortcutsWorkaround}
 		CreateDirectory "$SMPROGRAMS\${PACKAGE_NAME}"
@@ -407,14 +427,7 @@ Section /o "Use ProgramData folder to store configuration Files and logs (Vista 
 	; creating directories
 	CreateDirectory "$APPDATA\OpenVPN\config"
 	CreateDirectory "$APPDATA\OpenVPN\log"
-	; Add the keys for OpenVPN
-	WriteRegStr HKLM "SOFTWARE\${PACKAGE_NAME}" "config_dir" "$APPDATA\OpenVPN\config"
-	WriteRegStr HKLM "SOFTWARE\${PACKAGE_NAME}" "log_dir" "$APPDATA\OpenVPN\log"
-	; Add the keys for OpenVPN-GUI (only if GUI is selected)
-	${If} ${SectionIsSelected} ${SecOpenVPNGUI}
-		WriteRegStr HKLM "SOFTWARE\${PACKAGE_NAME}-GUI" "config_dir" "$APPDATA\OpenVPN\config"
-		WriteRegStr HKLM "SOFTWARE\${PACKAGE_NAME}-GUI" "log_dir" "$APPDATA\OpenVPN\log"
-	${EndIf}
+	
 SectionEnd
 
 SectionGroup "!Dependencies (Advanced)"
@@ -683,4 +696,3 @@ Section "Uninstall"
 	DeleteRegKey HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\${PACKAGE_NAME}"
 
 SectionEnd
-
