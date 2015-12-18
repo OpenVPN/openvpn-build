@@ -1,12 +1,13 @@
 Source: openvpn
 Section: net
 Priority: optional
-Maintainer: Alberto Gonzalez Iniesta <agi@inittab.org>
+Maintainer: Samuli Seppänen <samuli@openvpn.net>
+XSBC-Original-Maintainer: Alberto Gonzalez Iniesta <agi@inittab.org>
 Build-Depends: debhelper (>= 7.0.50~), libssl-dev (>> 0.9.8g-9), liblzo2-dev, libpam0g-dev, libpkcs11-helper1-dev, pkg-config, dpkg-dev (>= 1.16.1), iproute2 [linux-any], net-tools [!linux-any], dh-systemd (>= 1.5)
 Standards-Version: 3.9.5
 Homepage: http://www.openvpn.net/
-Vcs-Git: git://anonscm.debian.org/collab-maint/openvpn.git
-Vcs-Browser: http://anonscm.debian.org/gitweb/?p=collab-maint/openvpn.git
+Vcs-Git: https://github.com/OpenVPN/openvpn.git
+Vcs-Browser: https://github.com/OpenVPN/openvpn
 
 Package: openvpn
 Architecture: any
