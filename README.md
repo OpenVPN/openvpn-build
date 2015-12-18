@@ -134,6 +134,13 @@ be done from the schroot shell, for example like this
     $ sbuild-shell trusty-amd64
     # apt-get build-dep openvpn
     --- snip ---
+
+For Debian 8 you will additionally need to
+
+    # apt-get install libsystemd-daemon-dev
+
+Finally exit the schroot with
+
     # exit
 
 It is a good idea to try to build OpenVPN manually inside the schroot first and 
