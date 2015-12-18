@@ -67,7 +67,7 @@ Adding new sbuild schroots
 
 Before you can build anything you need to setup chroots using sbuild. First of 
 all, you will need a debootstrap script for the operating system you're creating 
-the chroot for. You can easyly check if your target platforms are already 
+the chroot for. You can easily check if your target platforms are already 
 supported by your operating system's debootstrap scripts:
 
     $ ls /usr/share/debootstrap/scripts
