@@ -80,8 +80,8 @@ version of debootstrap in Debian is:
 
 Next download latest debootstrap source tarball:
 
-    $ wget http://ftp.de.debian.org/debian/pool/main/d/debootstrap/debootstrap_<version>.tar.xz
-    $ tar -Jxf debootstrap_<version>.tar.xz
+    $ wget http://ftp.de.debian.org/debian/pool/main/d/debootstrap/debootstrap_<version>.tar.gz
+    $ tar -zxf debootstrap_<version>.tar.gz
 
 If you were adding Ubuntu 14.04 ("Trust Tahr"), you'd do a check like this:
 
