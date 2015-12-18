@@ -65,6 +65,9 @@ whenever a new release or build is made.
 Adding new sbuild schroots
 ==========================
 
+Ensure that debootstrap scripts are in place
+--------------------------------------------
+
 Before you can build anything you need to setup chroots using sbuild. First of 
 all, you will need a debootstrap script for the operating system you're creating 
 the chroot for. You can easily check if your target platforms are already 
@@ -97,6 +100,9 @@ add a new symbolic link:
 If the file for your target platform is _not_ a symbolic link, copy the 
 debootstrap script to /usr/share/debootstrap/scripts/ on the build computer.
 
+Setting the schroots
+--------------------
+
 Once debootstrap is configured properly you can create the schroot. Go to the 
 sbuild_wrapper directory, add a new variant to "config/variants.conf" (see below 
 for syntax) and then setup the new schroot(s):
@@ -119,6 +125,19 @@ This should display a bunch of schroots, for example something like this:
     source:wheezy-amd64-sbuild
     source:wheezy-i386-sbuild
 
+Installing build dependencies to the schroots
+---------------------------------------------
+
+Finally you need ensure that OpenVPN can be built inside the schroot. This can 
+be done from the schroot shell, for example like this
+
+    $ sbuild-shell trusty-amd64
+    # apt-get build-dep openvpn
+    --- snip ---
+    # exit
+
+It is a good idea to try to build OpenVPN manually inside the schroot first and 
+once that works move to the next step.
 
 Building
 ========
