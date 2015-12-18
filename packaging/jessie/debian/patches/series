@@ -1,0 +1,12 @@
+auth-pam_libpam_so_filename.patch
+close_socket_before_scripts.patch
+debian_nogroup_for_sample_files.patch
+openvpn-pkcs11warn.patch
+route_default_nil.patch
+kfreebsd_support.patch
+accommodate_typo.patch
+manpage_fixes.patch
+better_systemd_detection.patch
+client_connect_tmp_files.patch
+0001-Drop-too-short-control-channel-packets-instead-of-as.patch
+update_sample_certs.patch
