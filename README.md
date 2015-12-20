@@ -1,22 +1,33 @@
 sbuild_wrapper
 ==============
 
-A set of scripts for easily building a set of Debian/Ubuntu packages. Currently 
-the scripts are highly OpenVPN-specific, and therefore patches that improve and make these 
-scripts more general purpose are _most_ welcome!
+A set of scripts for easily building a set of Debian/Ubuntu packages. Currently
+the scripts are highly OpenVPN-specific, and therefore patches that improve and
+make these scripts more general purpose are _most_ welcome!
 
 Note that all scripts should be run from the sbuild_wrapper base directory, e.g.
 
     $ scripts/update-all.sh
 
 Before you start using sbuild_wrapper you should familiarize yourself with the 
-basics of sbuild and schroot:
+basics of Debian packaging, sbuild and schroot:
 
+* https://wiki.debian.org/Packaging
 * https://wiki.debian.org/sbuild
 * https://wiki.debian.org/Schroot
 
+If you're not familiar with these tools and technologies you will run into 
+trouble.
+
 Installation
 ============
+
+Use a recent Debian or Ubuntu version as the build rig, or you will run into 
+various troubles during the _prepare-all.sh_ phase. For example, building Debian 
+8 packages on Debian 7 will require the use of a backported iproute2 package, 
+which conflicts with ifupdown package, which causes the network configuration on 
+the build computer to break, unless it is a desktop computer using 
+NetworkManager.
 
 Check out sbuild_wrapper code from GitHub:
 
