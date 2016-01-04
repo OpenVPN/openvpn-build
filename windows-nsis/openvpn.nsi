@@ -333,6 +333,11 @@ Section /o "${PACKAGE_NAME} GUI" SecOpenVPNGUI
 		CreateDirectory "$SMPROGRAMS\${PACKAGE_NAME}"
 		CreateShortCut "$SMPROGRAMS\${PACKAGE_NAME}\${PACKAGE_NAME} GUI.lnk" "$INSTDIR\bin\openvpn-gui.exe" ""
 		CreateShortcut "$DESKTOP\${PACKAGE_NAME} GUI.lnk" "$INSTDIR\bin\openvpn-gui.exe"
+
+		# This is required because of commit 2bb1726764344 ("Do not disconnect on suspend").
+		# Without this users will experience weired disconnections after suspend/resume.
+		WriteRegStr "HKLM" "Software\OpenVPN-GUI" "disconnect_on_suspend" "0"
+
 	${EndIf}
 SectionEnd
 !endif
