@@ -14,7 +14,7 @@ export DEB_BUILD_MAINT_OPTIONS = hardening=+all
 	dh $@
 
 override_dh_auto_configure:
-	dh_auto_configure -- $(shell dpkg-buildflags --export=configure) --enable-password-save --host=$(DEB_HOST_GNU_TYPE) --build=$(DEB_BUILD_GNU_TYPE) --prefix=/usr --mandir=\$${prefix}/share/man --with-ifconfig-path=/sbin/ifconfig $(ROUTE_ARGS) --with-plugindir=\$${prefix}/lib/openvpn --includedir=\$${prefix}/include/openvpn --enable-pkcs11 --enable-x509-alt-username
+	dh_auto_configure -- $(shell dpkg-buildflags --export=configure) --host=$(DEB_HOST_GNU_TYPE) --build=$(DEB_BUILD_GNU_TYPE) --prefix=/usr --mandir=\$${prefix}/share/man --with-ifconfig-path=/sbin/ifconfig $(ROUTE_ARGS) --with-plugindir=\$${prefix}/lib/openvpn --includedir=\$${prefix}/include/openvpn --enable-pkcs11 --enable-x509-alt-username
 
 
 override_dh_auto_build:
@@ -26,7 +26,7 @@ override_dh_auto_build:
 	# $(MAKE) -C plugin/down-root/ $(shell dpkg-buildflags --export=configure)
 
 # we may not want to run dh_auto_test
-#override_dh_auto_test:
+override_dh_auto_test:
 
 override_dh_auto_clean:
 	# These two get deleted on "make clean", but come in the tarball
