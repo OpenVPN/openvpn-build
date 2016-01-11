@@ -28,6 +28,7 @@ Cross compile
 			Packages:
 				diffutils
 				m4
+				make
 				mingw64-i686-binutils
 				mingw64-i686-gcc-core
 				mingw64-i686-headers
