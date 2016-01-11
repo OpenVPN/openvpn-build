@@ -24,5 +24,6 @@ before_script:
     - unset CC; unset CXX
 
 script:
+    - ls
     - cd openvpn-build/generic
     - ./build
