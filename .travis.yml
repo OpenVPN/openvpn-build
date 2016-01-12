@@ -1,8 +1,8 @@
+sudo: required
 dist: trusty
-sudo: no
 
 os: linux
-language: c
+language: cpp
 compiler: gcc
 
 matrix:
@@ -14,12 +14,11 @@ matrix:
       env: IMAGEROOT=${HOME}/image-win64 CHOST=x86_64-w64-mingw32 CBUILD=x86_64-pc-linux-gnu
   exclude:
     - compiler: gcc
-    
-addons:
-  apt:
-    packages:
-      - gcc-mingw-w64
-      - man2html
+
+install:
+    - sudo apt-get update -qq
+    - sudo apt-get install -qq -y gcc-mingw-w64
+    - sudo apt-get install -qq -y man2html
     
 before_script:
     - unset CC; unset CXX
