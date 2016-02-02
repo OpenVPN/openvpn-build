@@ -257,8 +257,8 @@ build_dep() {
 		./configure ${CONFIGOPTS} ${EXTRA_PKCS11_HELPER_CONFIG} \
 			--disable-crypto-engine-gnutls \
 			--disable-crypto-engine-nss \
-			OPENSSL_CFLAGS="${OPENSSL_CRYPTO_CFLAGS}" \
-			OPENSSL_LIBS="${OPENSSL_CRYPTO_LIBS}" \
+			OPENSSL_CFLAGS="${OPENSSL_CFLAGS}" \
+			OPENSSL_LIBS="${OPENSSL_LIBS}" \
 			|| die "Configure pkcs11-helper"
 		${MAKE} ${MAKEOPTS} ${MAKE_AUTOCONF_INSTALL_TARGET} DESTDIR="${INSTALL_ROOT}" \
 			|| die "make pkcs11-helper"
@@ -414,10 +414,12 @@ else
 	MAKE_AUTOCONF_INSTALL_TARGET="install"
 fi
 
+# OpenVPN-GUI build expects the OPENSSL_CRYPTO_* variables to be set, even
+# though they were removed from openvpn/configure.ac by commit 31b0bebe.
 export OPENSSL_CRYPTO_CFLAGS="-I${OPENVPN_ROOT}/include"
 export OPENSSL_CRYPTO_LIBS="-L${OPENVPN_ROOT}/lib -lcrypto"
-export OPENSSL_SSL_CFLAGS="-I${OPENVPN_ROOT}/include"
-export OPENSSL_SSL_LIBS="-L${OPENVPN_ROOT}/lib -lssl"
+export OPENSSL_CFLAGS="-I${OPENVPN_ROOT}/include"
+export OPENSSL_LIBS="-L${OPENVPN_ROOT}/lib -lssl -lcrypto"
 export LZO_CFLAGS="-I${OPENVPN_ROOT}/include"
 export LZO_LIBS="-L${OPENVPN_ROOT}/lib -llzo2"
 export PKCS11_HELPER_CFLAGS="-I${OPENVPN_ROOT}/include"
