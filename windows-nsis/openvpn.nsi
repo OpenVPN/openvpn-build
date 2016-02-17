@@ -28,6 +28,11 @@ SetCompressor lzma
 !addplugindir .
 !include "nsProcess.nsh"
 
+; WinVer.nsh is needed for detecting the Windows version and bailing out if the
+; installation cannot possibly succeed, e.g. when using I60x installers that
+; have tap-windows6 on Windows XP.
+!include "WinVer.nsh"
+
 ; x64.nsh for architecture detection
 !include "x64.nsh"
 
@@ -462,6 +467,24 @@ Function .onInit
 	!insertmacro SelectByParameter ${SecPKCS11DLLs} SELECT_PKCS11DLLS 1
 
 	!insertmacro MULTIUSER_INIT
+
+    ; Fail if trying to use tap-windows6 on Windows XP/Server 2003 or older
+    ;
+    ; Check whether the minor version number of the tap-windows driver has two
+    ; numbers (tap-windows6) or just one (tap-windows). In the former case $0
+    ; will have a number in it (9.2[1].1), and in the latter case a dot
+    ; (9.9[.]2_3).
+    StrCpy $0 "${TAP_WINDOWS_INSTALLER}" 1 15
+    StrCmp $0 "." has_tap_windows has_tap_windows6
+
+    has_tap_windows6:
+        ${If} ${AtMostWinXP}
+        ${OrIf} ${IsWin2003}
+            MessageBox MB_OK "This installer only works on Windows Vista, Windows Server 2008 and above"
+            Quit
+        ${EndIf}
+    has_tap_windows:
+
 	SetShellVarContext all
 
 	; Check if the installer was built for x86_64
