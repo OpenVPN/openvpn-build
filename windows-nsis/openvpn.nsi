@@ -107,17 +107,11 @@ Var /Global strGuiKilled ; Track if GUI was killed so we can tick the checkbox t
 
 LangString DESC_SecOpenVPNUserSpace ${LANG_ENGLISH} "Install ${PACKAGE_NAME} user-space components, including openvpn.exe."
 
-!ifdef USE_OPENVPN_GUI
-	LangString DESC_SecOpenVPNGUI ${LANG_ENGLISH} "Install ${PACKAGE_NAME} GUI by Mathias Sundman"
-!endif
+LangString DESC_SecOpenVPNGUI ${LANG_ENGLISH} "Install ${PACKAGE_NAME} GUI by Mathias Sundman"
 
-!ifdef USE_TAP_WINDOWS
-	LangString DESC_SecTAP ${LANG_ENGLISH} "Install/upgrade the TAP virtual device driver."
-!endif
+LangString DESC_SecTAP ${LANG_ENGLISH} "Install/upgrade the TAP virtual device driver."
 
-!ifdef USE_EASYRSA
-	LangString DESC_SecOpenVPNEasyRSA ${LANG_ENGLISH} "Install ${PACKAGE_NAME} RSA scripts for X509 certificate management."
-!endif
+LangString DESC_SecOpenVPNEasyRSA ${LANG_ENGLISH} "Install ${PACKAGE_NAME} RSA scripts for X509 certificate management."
 
 LangString DESC_SecOpenSSLDLLs ${LANG_ENGLISH} "Install OpenSSL DLLs locally (may be omitted if DLLs are already installed globally)."
 
@@ -303,7 +297,6 @@ Section /o "${PACKAGE_NAME} Service" SecService
 
 SectionEnd
 
-!ifdef USE_TAP_WINDOWS
 Section /o "TAP Virtual Ethernet Adapter" SecTAP
 
 	SetOverwrite on
@@ -319,9 +312,7 @@ Section /o "TAP Virtual Ethernet Adapter" SecTAP
 
 	WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\${PACKAGE_NAME}" "tap" "installed"
 SectionEnd
-!endif
 
-!ifdef USE_OPENVPN_GUI
 Section /o "${PACKAGE_NAME} GUI" SecOpenVPNGUI
 
 	SetOverwrite on
@@ -340,7 +331,6 @@ Section /o "${PACKAGE_NAME} GUI" SecOpenVPNGUI
 
 	${EndIf}
 SectionEnd
-!endif
 
 Section /o "${PACKAGE_NAME} File Associations" SecFileAssociation
 	WriteRegStr HKCR ".${OPENVPN_CONFIG_EXT}" "" "${PACKAGE_NAME}File"
@@ -360,7 +350,6 @@ Section /o "OpenSSL Utilities" SecOpenSSLUtilities
 
 SectionEnd
 
-!ifdef USE_EASYRSA
 Section /o "${PACKAGE_NAME} RSA Certificate Management Scripts" SecOpenVPNEasyRSA
 
 	SetOverwrite on
@@ -384,7 +373,6 @@ Section /o "${PACKAGE_NAME} RSA Certificate Management Scripts" SecOpenVPNEasyRS
 	File "${EASYRSA_ROOT}\Windows\serial.start"
 
 SectionEnd
-!endif
 
 Section /o "Add ${PACKAGE_NAME} to PATH" SecAddPath
 
@@ -444,17 +432,11 @@ Function .onInit
 	!insertmacro SelectByParameter ${SecAddShortcutsWorkaround} SELECT_SHORTCUTS 1
 	!insertmacro SelectByParameter ${SecOpenVPNUserSpace} SELECT_OPENVPN 1
 	!insertmacro SelectByParameter ${SecService} SELECT_SERVICE 1
-!ifdef USE_TAP_WINDOWS
 	!insertmacro SelectByParameter ${SecTAP} SELECT_TAP 1
-!endif
-!ifdef USE_OPENVPN_GUI
 	!insertmacro SelectByParameter ${SecOpenVPNGUI} SELECT_OPENVPNGUI 1
-!endif
 	!insertmacro SelectByParameter ${SecFileAssociation} SELECT_ASSOCIATIONS 1
 	!insertmacro SelectByParameter ${SecOpenSSLUtilities} SELECT_OPENSSL_UTILITIES 0
-!ifdef USE_EASYRSA
 	!insertmacro SelectByParameter ${SecOpenVPNEasyRSA} SELECT_EASYRSA 0
-!endif
 	!insertmacro SelectByParameter ${SecAddPath} SELECT_PATH 1
 	!insertmacro SelectByParameter ${SecAddShortcuts} SELECT_SHORTCUTS 1
 	!insertmacro SelectByParameter ${SecOpenSSLDLLs} SELECT_OPENSSLDLLS 1
@@ -491,11 +473,9 @@ Function .onSelChange
 	${If} ${SectionIsSelected} ${SecService}
 		!insertmacro SelectSection ${SecOpenVPNUserSpace}
 	${EndIf}
-!ifdef USE_EASYRSA
 	${If} ${SectionIsSelected} ${SecOpenVPNEasyRSA}
 		!insertmacro SelectSection ${SecOpenSSLUtilities}
 	${EndIf}
-!endif
 	${If} ${SectionIsSelected} ${SecAddShortcuts}
 		!insertmacro SelectSection ${SecAddShortcutsWorkaround}
 	${Else}
@@ -547,15 +527,9 @@ SectionEnd
 !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
 	!insertmacro MUI_DESCRIPTION_TEXT ${SecOpenVPNUserSpace} $(DESC_SecOpenVPNUserSpace)
 	!insertmacro MUI_DESCRIPTION_TEXT ${SecService} $(DESC_SecService)
-	!ifdef USE_OPENVPN_GUI
-		!insertmacro MUI_DESCRIPTION_TEXT ${SecOpenVPNGUI} $(DESC_SecOpenVPNGUI)
-	!endif
-	!ifdef USE_TAP_WINDOWS
-		!insertmacro MUI_DESCRIPTION_TEXT ${SecTAP} $(DESC_SecTAP)
-	!endif
-	!ifdef USE_EASYRSA
-		!insertmacro MUI_DESCRIPTION_TEXT ${SecOpenVPNEasyRSA} $(DESC_SecOpenVPNEasyRSA)
-	!endif
+	!insertmacro MUI_DESCRIPTION_TEXT ${SecOpenVPNGUI} $(DESC_SecOpenVPNGUI)
+	!insertmacro MUI_DESCRIPTION_TEXT ${SecTAP} $(DESC_SecTAP)
+	!insertmacro MUI_DESCRIPTION_TEXT ${SecOpenVPNEasyRSA} $(DESC_SecOpenVPNEasyRSA)
 	!insertmacro MUI_DESCRIPTION_TEXT ${SecOpenSSLUtilities} $(DESC_SecOpenSSLUtilities)
 	!insertmacro MUI_DESCRIPTION_TEXT ${SecOpenSSLDLLs} $(DESC_SecOpenSSLDLLs)
 	!insertmacro MUI_DESCRIPTION_TEXT ${SecLZODLLs} $(DESC_SecLZODLLs)
@@ -598,24 +572,20 @@ Section "Uninstall"
 
 	Sleep 3000
 
-	!ifdef USE_TAP_WINDOWS
-		ReadRegStr $R0 HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\${PACKAGE_NAME}" "tap"
-		${If} $R0 == "installed"
-			ReadRegStr $R0 HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\TAP-Windows" "UninstallString"
-			${If} $R0 != ""
-				DetailPrint "Uninstalling TAP..."
-				nsExec::ExecToLog '"$R0" /S'
-				Pop $R0 # return value/error/timeout
-			${EndIf}
+	ReadRegStr $R0 HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\${PACKAGE_NAME}" "tap"
+	${If} $R0 == "installed"
+		ReadRegStr $R0 HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\TAP-Windows" "UninstallString"
+		${If} $R0 != ""
+			DetailPrint "Uninstalling TAP..."
+			nsExec::ExecToLog '"$R0" /S'
+			Pop $R0 # return value/error/timeout
 		${EndIf}
-	!endif
+	${EndIf}
 
 	${un.EnvVarUpdate} $R0 "PATH" "R" "HKLM" "$INSTDIR\bin"
 
-	!ifdef USE_OPENVPN_GUI
-		Delete "$INSTDIR\bin\openvpn-gui.exe"
-		Delete "$DESKTOP\${PACKAGE_NAME} GUI.lnk"
-	!endif
+	Delete "$INSTDIR\bin\openvpn-gui.exe"
+	Delete "$DESKTOP\${PACKAGE_NAME} GUI.lnk"
 
 	Delete "$INSTDIR\bin\openvpn.exe"
 	Delete "$INSTDIR\bin\openvpnserv.exe"
@@ -637,22 +607,20 @@ Section "Uninstall"
 	Delete "$INSTDIR\icon.ico"
 	Delete "$INSTDIR\Uninstall.exe"
 
-	!ifdef USE_EASYRSA
-		Delete "$INSTDIR\easy-rsa\openssl-1.0.0.cnf"
-		Delete "$INSTDIR\easy-rsa\vars.bat.sample"
-		Delete "$INSTDIR\easy-rsa\init-config.bat"
-		Delete "$INSTDIR\easy-rsa\README.txt"
-		Delete "$INSTDIR\easy-rsa\build-ca.bat"
-		Delete "$INSTDIR\easy-rsa\build-dh.bat"
-		Delete "$INSTDIR\easy-rsa\build-key-server.bat"
-		Delete "$INSTDIR\easy-rsa\build-key.bat"
-		Delete "$INSTDIR\easy-rsa\build-key-pass.bat"
-		Delete "$INSTDIR\easy-rsa\build-key-pkcs12.bat"
-		Delete "$INSTDIR\easy-rsa\clean-all.bat"
-		Delete "$INSTDIR\easy-rsa\index.txt.start"
-		Delete "$INSTDIR\easy-rsa\revoke-full.bat"
-		Delete "$INSTDIR\easy-rsa\serial.start"
-	!endif
+	Delete "$INSTDIR\easy-rsa\openssl-1.0.0.cnf"
+	Delete "$INSTDIR\easy-rsa\vars.bat.sample"
+	Delete "$INSTDIR\easy-rsa\init-config.bat"
+	Delete "$INSTDIR\easy-rsa\README.txt"
+	Delete "$INSTDIR\easy-rsa\build-ca.bat"
+	Delete "$INSTDIR\easy-rsa\build-dh.bat"
+	Delete "$INSTDIR\easy-rsa\build-key-server.bat"
+	Delete "$INSTDIR\easy-rsa\build-key.bat"
+	Delete "$INSTDIR\easy-rsa\build-key-pass.bat"
+	Delete "$INSTDIR\easy-rsa\build-key-pkcs12.bat"
+	Delete "$INSTDIR\easy-rsa\clean-all.bat"
+	Delete "$INSTDIR\easy-rsa\index.txt.start"
+	Delete "$INSTDIR\easy-rsa\revoke-full.bat"
+	Delete "$INSTDIR\easy-rsa\serial.start"
 
 	Delete "$INSTDIR\sample-config\*.${OPENVPN_CONFIG_EXT}"
 
