@@ -1,3 +1,9 @@
+openvpn (2.3.10-debian0) xenial; urgency=low
+
+  * Upstream version, Ubuntu patches removed
+
+ -- Samuli Seppänen <samuli@openvpn.net>  Mon, 09 May 2016 12:20:00 +0000
+
 openvpn (2.3.10-1ubuntu2) xenial; urgency=medium
 
   * debian/openvpn@.service: Add --script-security similar to what got added
