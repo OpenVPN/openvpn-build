@@ -1,0 +1,40 @@
+Description: Man page fixes
+Author: Alberto Gonzalez Iniesta <agi@inittab.org>
+Index: openvpn/doc/openvpn.8
+===================================================================
+--- openvpn.orig/doc/openvpn.8	2016-01-20 12:02:48.997189277 +0100
++++ openvpn/doc/openvpn.8	2016-01-20 12:02:48.993189319 +0100
+@@ -21,13 +21,13 @@
+ .\"  59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ .\"
+ .\" Manual page for openvpn
+-.\
++.\"
+ .\" SH section heading
+ .\" SS subsection heading
+ .\" LP paragraph
+ .\" IP indented paragraph
+ .\" TP hanging label
+-.\
++.\"
+ .\" .nf -- no formatting
+ .\" .fi -- resume formatting
+ .\" .ft 3 -- boldface
+@@ -4005,7 +4005,7 @@
+ This option is only relevant in UDP mode, i.e.
+ when either
+ .B \-\-proto udp
+-is specifed, or no
++is specified, or no
+ .B \-\-proto
+ option is specified.
+ 
+@@ -5277,7 +5277,7 @@
+ .B \-\-dev tun
+ mode, OpenVPN will cause the DHCP server to masquerade as if it were
+ coming from the remote endpoint.  The optional offset parameter is
+-an integer which is > -256 and < 256 and which defaults to 0.
++an integer which is > \-256 and < 256 and which defaults to 0.
+ If offset is positive, the DHCP server will masquerade as the IP
+ address at network address + offset.
+ If offset is negative, the DHCP server will masquerade as the IP

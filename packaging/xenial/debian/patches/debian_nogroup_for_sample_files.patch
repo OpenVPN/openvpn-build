@@ -1,0 +1,81 @@
+Description: Unpriviledged group in Debian is called nogroup instead of nobody
+Author: Alberto Gonzalez Iniesta <agi@inittab.org>
+Bug-Debian: http://bugs.debian.org/317987
+Index: openvpn/sample/sample-config-files/server.conf
+===================================================================
+--- openvpn.orig/sample/sample-config-files/server.conf	2015-07-01 14:10:18.547999233 +0200
++++ openvpn/sample/sample-config-files/server.conf	2015-07-01 14:10:18.543999276 +0200
+@@ -265,7 +265,7 @@
+ # You can uncomment this out on
+ # non-Windows systems.
+ ;user nobody
+-;group nobody
++;group nogroup
+ 
+ # The persist options will try to avoid
+ # accessing certain resources on restart
+Index: openvpn/sample/sample-config-files/tls-home.conf
+===================================================================
+--- openvpn.orig/sample/sample-config-files/tls-home.conf	2015-07-01 14:10:18.547999233 +0200
++++ openvpn/sample/sample-config-files/tls-home.conf	2015-07-01 14:10:18.543999276 +0200
+@@ -51,7 +51,7 @@
+ # "nobody" after initialization
+ # for extra security.
+ ; user nobody
+-; group nobody
++; group nogroup
+ 
+ # If you built OpenVPN with
+ # LZO compression, uncomment
+Index: openvpn/sample/sample-config-files/static-home.conf
+===================================================================
+--- openvpn.orig/sample/sample-config-files/static-home.conf	2015-07-01 14:10:18.547999233 +0200
++++ openvpn/sample/sample-config-files/static-home.conf	2015-07-01 14:10:18.543999276 +0200
+@@ -40,7 +40,7 @@
+ # "nobody" after initialization
+ # for extra security.
+ ; user nobody
+-; group nobody
++; group nogroup
+ 
+ # If you built OpenVPN with
+ # LZO compression, uncomment
+Index: openvpn/sample/sample-config-files/static-office.conf
+===================================================================
+--- openvpn.orig/sample/sample-config-files/static-office.conf	2015-07-01 14:10:18.547999233 +0200
++++ openvpn/sample/sample-config-files/static-office.conf	2015-07-01 14:10:18.543999276 +0200
+@@ -37,7 +37,7 @@
+ # "nobody" after initialization
+ # for extra security.
+ ; user nobody
+-; group nobody
++; group nogroup
+ 
+ # If you built OpenVPN with
+ # LZO compression, uncomment
+Index: openvpn/sample/sample-config-files/client.conf
+===================================================================
+--- openvpn.orig/sample/sample-config-files/client.conf	2015-07-01 14:10:18.547999233 +0200
++++ openvpn/sample/sample-config-files/client.conf	2015-07-01 14:10:18.543999276 +0200
+@@ -59,7 +59,7 @@
+ 
+ # Downgrade privileges after initialization (non-Windows only)
+ ;user nobody
+-;group nobody
++;group nogroup
+ 
+ # Try to preserve some state across restarts.
+ persist-key
+Index: openvpn/sample/sample-config-files/tls-office.conf
+===================================================================
+--- openvpn.orig/sample/sample-config-files/tls-office.conf	2015-07-01 14:10:18.547999233 +0200
++++ openvpn/sample/sample-config-files/tls-office.conf	2015-07-01 14:10:18.543999276 +0200
+@@ -51,7 +51,7 @@
+ # "nobody" after initialization
+ # for extra security.
+ ; user nobody
+-; group nobody
++; group nogroup
+ 
+ # If you built OpenVPN with
+ # LZO compression, uncomment
