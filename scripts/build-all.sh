@@ -22,7 +22,7 @@ cat $VARIANTS_FILE|while read LINE; do
 
     # This is highly openvpn-specific - fix later
     case "$OSRELEASE" in
-        squeeze|wheezy|jessie|lucid|precise|trusty)
+        squeeze|wheezy|jessie|lucid|precise|trusty|xenial)
             SOURCES_DIR="$BUILD_BASEDIR/$OSRELEASE"
             ;;
         *)
