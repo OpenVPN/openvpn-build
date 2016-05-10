@@ -1,3 +1,32 @@
+openvpn (2.3.11-debian0) stable; urgency=medium
+
+  * Preparing for release v2.3.11 (ChangeLog, version.m4) (Gert Doering, 6d83573)
+  * Improve LZO, PAM and OpenSSL documentation (Samuli Seppänen, 7369420)
+  * Fixed port-share bug with DoS potential (James Yonan, 9030fd4)
+  * Fix buffer overflow by user supplied data (Jens Neuhalfen, b15d511)
+  * Various Changes.rst fixes (Steffan Karger, fab3856)
+  * Support reading the challenge-response from console (Selva Nair, 6f31a83)
+  * Restrict default TLS cipher list (Steffan Karger, 8a399cd)
+  * Make intent of utun device name validation clear (Jens Neuhalfen, b582af4)
+  * Ensure input read using systemd-ask-password is null terminated (Selva Nair, 17b22f9)
+  * Replace MSG_TEST() macro for static inline msg_test() (Steffan Karger, 68a8c3a)
+  * Fix memory leak in argv_extract_cmd_name() (Steffan Karger, f8da749)
+  * hardening: add safe FD_SET() wrapper openvpn_fd_set() (Steffan Karger, 1746908)
+  * Report Windows bitness (Lev Stipakov, 6a8e946)
+  * Fix OCSP_check.sh (Steffan Karger, 22f399f)
+  * Update --block-outside-dns to work on Windows Vista (ValdikSS, 0209faf)
+  * Correctly report TCP connection timeout on windows. (Leonardo Basilio, 7107fef)
+  * Fix undefined signed shift overflow (Michael McConville, d9eeaab)
+  * Clarify --block-outside-dns documentation (ValdikSS, 6aef2d0)
+  * Clarify mssfix documentation (ValdikSS, e1dc8d2)
+  * Fix build with libressl (Niels Ole Salscheider, 4bb0d8d)
+  * socks.c: fix check on get_user_pass() return value(s) (Steffan Karger, 8a64911)
+  * Update manpage: OpenSSL might also need /dev/urandom inside chroot (Steffan Karger, 9453885)
+  * polarssl: improve logging (Steffan Karger, a9226fb)
+  * openssl: improve logging (Steffan Karger, 8e95e20)
+
+ -- Samuli Seppänen <samuli@openvpn.net>  Tue, 10 May 2016 06:15:00 +0000
+
 openvpn (2.3.10-debian0) stable; urgency=low
 
   * Preparing for release v2.3.10 (ChangeLog, version.m4) (Gert Doering, 0828429)
