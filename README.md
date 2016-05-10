@@ -149,8 +149,9 @@ sources.list or apt will choke on missing dh-systemd package:
 
     # echo "deb http://fi.archive.ubuntu.com/ubuntu xenial main universe" > /etc/apt/sources.list
     # echo "deb-src http://fi.archive.ubuntu.com/ubuntu xenial main universe" >> /etc/apt/sources.list
+    # apt-get install libsystemd-daemon-dev
 
-On Debian Jsssie (8.x) do
+On Debian Jessie (8.x) you need 
 
     # apt-get install libsystemd-daemon-dev
 
