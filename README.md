@@ -216,17 +216,12 @@ apply the patch:
     $ QUILT_PATCHES=debian/patches quilt next
     $ QUILT_PATCHES=debian/patches quilt push
 
-There are more details here:
-
-<http://raphaelhertzog.com/2012/08/08/how-to-use-quilt-to-manage-patches-in-debian-packages>
+There are more details [here](http://raphaelhertzog.com/2012/08/08/how-to-use-quilt-to-manage-patches-in-debian-packages).
 
 Publishing the packages
 =======================
 
-I prefer to use freight for apt repository management:
-
-<https://github.com/freight-team/freight>
-
-Copy the output.tar.gz to the apt repository host and run 
+I prefer to use [freight](https://github.com/freight-team/freight) for apt 
+repository management: Copy the output.tar.gz to the apt repository host and run 
 "scripts/freight-add-all.py" there. If freight is properly configured that's all 
 you need to do.
