@@ -250,6 +250,7 @@ Section /o "${PACKAGE_NAME} Service" SecService
 	SetOverwrite on
 
 	SetOutPath "$INSTDIR\bin"
+	File /oname=openvpnserv2.exe "${OPENVPNSERV2_EXECUTABLE}"
 	File "${OPENVPN_ROOT}\bin\openvpnserv.exe"
 
 	SetOutPath "$INSTDIR\config"
@@ -589,6 +590,7 @@ Section "Uninstall"
 
 	Delete "$INSTDIR\bin\openvpn.exe"
 	Delete "$INSTDIR\bin\openvpnserv.exe"
+	Delete "$INSTDIR\bin\openvpnserv2.exe"
 	Delete "$INSTDIR\bin\libeay32.dll"
 	Delete "$INSTDIR\bin\ssleay32.dll"
 	Delete "$INSTDIR\bin\liblzo2-2.dll"

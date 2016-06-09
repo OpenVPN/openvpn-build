@@ -11,6 +11,7 @@ main() {
 
 	"${WGET}" ${WGET_OPTS} --directory-prefix=${TMPDIR} "${EASY_RSA_URL}" || die "get easy-rsa"
 	"${WGET}" ${WGET_OPTS} --directory-prefix=${TMPDIR} "${TAP_WINDOWS_INSTALLER_URL}" || die "get tap-windows"
+	"${WGET}" ${WGET_OPTS} --directory-prefix=${TMPDIR} "${OPENVPNSERV2_URL}" || die "get openvpnserv2"
 
 	for arch in i686 x86_64; do
 		echo "BUILDING ${arch}"
@@ -35,6 +36,7 @@ main() {
 			--openvpn-bin-tarball=$(ls ${TMPDIR}/image-${arch}/openvpn-${arch}-*-bin.*) \
 			--easy-rsa-tarball=$(ls ${TMPDIR}/easy-rsa-*) \
 			--tap-windows=$(ls ${TMPDIR}/tap-windows-*) \
+			--openvpnserv2=$(ls ${TMPDIR}/openvpnserv2*) \
 			--output-dir="${OUTPUT_DIR}" \
 			${DO_SIGN:+--sign} \
 			--sign-pkcs12="${SIGN_PKCS12}" \

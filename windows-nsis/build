@@ -93,6 +93,7 @@ main() {
 		-DOPENVPN_ROOT="$(dospath "${OPENVPN_ROOT}")" \
 		-DTAP_WINDOWS_INSTALLER="$(dospath "${TAP_WINDOWS_INSTALLER}")" \
 		${TAP_WINDOWS_INSTALLER:+-DUSE_TAP_WINDOWS} \
+		-DOPENVPNSERV2_EXECUTABLE="$(dospath "${OPENVPNSERV2_EXECUTABLE}")" \
 		-DEASYRSA_ROOT="$(dospath "${EASYRSA_ROOT}")" \
 		${EASYRSA_TARBALL:+-DUSE_EASYRSA} \
 		-DUSE_OPENVPN_GUI \
@@ -124,6 +125,9 @@ while [ -n "$1" ]; do
 		--tap-windows=*)
 			TAP_WINDOWS_INSTALLER="${v}"
 			;;
+		--openvpnserv2=*)
+			OPENVPNSERV2_EXECUTABLE="${v}"
+			;;
 		--sign)
 			DO_SIGN=1
 			;;
@@ -150,6 +154,7 @@ Usage: $0
 	--openvpn-bin-tarball=tarball	openvpn binary tarball
 	--easy-rsa-tarball=tarball	easy-rsa source tarball
 	--tap-windows=installer         tap-windows installer
+	--openvpnserv2=executable	openvpnserv2 executable
 	--sign				do sign
 	--sign-digest=digest		specify signing digest (default: sha256)
 	--sign-pkcs12=pkcs12-file	signing PKCS#12 file
@@ -165,6 +170,7 @@ done
 
 [ -n "${OPENVPN_TARBALL}" ] || die "please specify openvpn binary tarball"
 [ -f "${OPENVPN_TARBALL}" ] || die "cannot find openvpn binary tarball '${OPENVPN_TARBALL}'"
+[ -f "${OPENVPNSERV2_EXECUTABLE}" ] || die "cannot find openvpnserv2 executable '${OPENVPNSERV2_EXECUTABLE}'"
 if [ -n "${EASYRSA_TARBALL}" ]; then
 	[ -f "${EASYRSA_TARBALL}" ] || die "cannot find easy-rsa tarball '${EASYRSA_TARBALL}'"
 fi
