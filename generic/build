@@ -365,8 +365,8 @@ solaris_common() {
 main() {
 	export CFLAGS="${TARGET_CFLAGS} ${EXTRA_TARGET_CFLAGS}"
 	export LDFLAGS="${TARGET_LDFLAGS} ${EXTRA_TARGET_LDFLAGS}"
-	download
 	create_layout
+	download
 	extract
 	build_dep
 	if [ -z "${DO_ONLY_DEPS}" ]; then
