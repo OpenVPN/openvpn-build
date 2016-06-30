@@ -212,8 +212,9 @@ Section -pre
 		RMDir /r "$SMPROGRAMS\${PACKAGE_NAME}"
 
 		; Stop & Remove previous OpenVPN service
-		DetailPrint "Removing any previous OpenVPN service..."
+		DetailPrint "Removing any previous OpenVPN services..."
 		nsExec::ExecToLog '"$INSTDIR\bin\openvpnserv.exe" -remove'
+		nsExec::ExecToLog '"$INSTDIR\bin\openvpnserv2.exe" -remove'
 		Pop $R0 # return value/error/timeout
 
 		Sleep 3000
@@ -291,9 +292,11 @@ Section /o "${PACKAGE_NAME} Service" SecService
 	!insertmacro WriteRegStringIfUndef HKLM "SOFTWARE\${PACKAGE_NAME}" "priority"    "NORMAL_PRIORITY_CLASS"
 	!insertmacro WriteRegStringIfUndef HKLM "SOFTWARE\${PACKAGE_NAME}" "log_append"  "0"
 
-	; install openvpnserv as a service (to be started manually from service control manager)
-	DetailPrint "Installing OpenVPN Service..."
+	; install openvpnserv.exe as a services
+	DetailPrint "Installing OpenVPN Services..."
 	nsExec::ExecToLog '"$INSTDIR\bin\openvpnserv.exe" -install'
+	nsExec::ExecToLog '"$INSTDIR\bin\openvpnserv2.exe" -install'
+
 	Pop $R0 # return value/error/timeout
 
 SectionEnd
@@ -567,8 +570,9 @@ Section "Uninstall"
 	guiClosed:
 
 	; Stop OpenVPN if currently running
-	DetailPrint "Removing OpenVPN Service..."
+	DetailPrint "Removing OpenVPN Services..."
 	nsExec::ExecToLog '"$INSTDIR\bin\openvpnserv.exe" -remove'
+	nsExec::ExecToLog '"$INSTDIR\bin\openvpnserv2.exe" -remove'
 	Pop $R0 # return value/error/timeout
 
 	Sleep 3000
