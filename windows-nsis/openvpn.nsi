@@ -119,7 +119,9 @@ LangString DESC_SecLZODLLs ${LANG_ENGLISH} "Install LZO DLLs locally (may be omi
 
 LangString DESC_SecPKCS11DLLs ${LANG_ENGLISH} "Install PKCS#11 helper DLLs locally (may be omitted if DLLs are already installed globally)."
 
-LangString DESC_SecService ${LANG_ENGLISH} "Install the ${PACKAGE_NAME} service wrapper (openvpnserv.exe)"
+LangString DESC_SecService ${LANG_ENGLISH} "Install the ${PACKAGE_NAME} service wrappers"
+
+LangString DESC_SecInteractiveService ${LANG_ENGLISH} "Install the ${PACKAGE_NAME} Interactive Service (allows running OpenVPN-GUI without admin privileges)"
 
 LangString DESC_SecOpenSSLUtilities ${LANG_ENGLISH} "Install the OpenSSL Utilities (used for generating public/private key pairs)."
 
@@ -301,6 +303,9 @@ Section /o "${PACKAGE_NAME} Service" SecService
 
 SectionEnd
 
+Section "${PACKAGE_NAME} Interactive Service" SecInteractiveService
+SectionEnd
+
 Section /o "TAP Virtual Ethernet Adapter" SecTAP
 
 	SetOverwrite on
@@ -436,6 +441,7 @@ Function .onInit
 	!insertmacro SelectByParameter ${SecAddShortcutsWorkaround} SELECT_SHORTCUTS 1
 	!insertmacro SelectByParameter ${SecOpenVPNUserSpace} SELECT_OPENVPN 1
 	!insertmacro SelectByParameter ${SecService} SELECT_SERVICE 1
+	!insertmacro SelectByParameter ${SecInteractiveService} SELECT_INTERACTIVE_SERVICE 1
 	!insertmacro SelectByParameter ${SecTAP} SELECT_TAP 1
 	!insertmacro SelectByParameter ${SecOpenVPNGUI} SELECT_OPENVPNGUI 1
 	!insertmacro SelectByParameter ${SecFileAssociation} SELECT_ASSOCIATIONS 1
@@ -476,6 +482,8 @@ FunctionEnd
 Function .onSelChange
 	${If} ${SectionIsSelected} ${SecService}
 		!insertmacro SelectSection ${SecOpenVPNUserSpace}
+	${Else}
+		!insertmacro UnselectSection ${SecInteractiveService}
 	${EndIf}
 	${If} ${SectionIsSelected} ${SecOpenVPNEasyRSA}
 		!insertmacro SelectSection ${SecOpenSSLUtilities}
@@ -523,6 +531,14 @@ Section -post
 	WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\${PACKAGE_NAME}" "DisplayIcon" "$INSTDIR\icon.ico"
 	WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\${PACKAGE_NAME}" "DisplayVersion" "${VERSION_STRING}"
 
+	; Enable and start the Interactive Service
+	${If} ${SectionIsSelected} ${SecInteractiveService}
+		nsExec::ExecToLog '"$SYSDIR\sc.exe" config OpenVPNServiceInteractive start= auto'
+		nsExec::ExecToLog '"$SYSDIR\sc.exe" start OpenVPNServiceInteractive'
+	${Else}
+		nsExec::ExecToLog '"$SYSDIR\sc.exe" config OpenVPNServiceInteractive start= demand'
+	${EndIf}
+
 SectionEnd
 
 ;--------------------------------
@@ -531,6 +547,7 @@ SectionEnd
 !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
 	!insertmacro MUI_DESCRIPTION_TEXT ${SecOpenVPNUserSpace} $(DESC_SecOpenVPNUserSpace)
 	!insertmacro MUI_DESCRIPTION_TEXT ${SecService} $(DESC_SecService)
+	!insertmacro MUI_DESCRIPTION_TEXT ${SecInteractiveService} $(DESC_SecInteractiveService)
 	!insertmacro MUI_DESCRIPTION_TEXT ${SecOpenVPNGUI} $(DESC_SecOpenVPNGUI)
 	!insertmacro MUI_DESCRIPTION_TEXT ${SecTAP} $(DESC_SecTAP)
 	!insertmacro MUI_DESCRIPTION_TEXT ${SecOpenVPNEasyRSA} $(DESC_SecOpenVPNEasyRSA)
