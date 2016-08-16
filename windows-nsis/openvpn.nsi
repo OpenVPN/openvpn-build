@@ -71,9 +71,6 @@ InstallDirRegKey HKLM "SOFTWARE\${PACKAGE_NAME}" ""
 
 !define MUI_COMPONENTSPAGE_SMALLDESC
 !define MUI_FINISHPAGE_SHOWREADME "$INSTDIR\doc\INSTALL-win32.txt"
-!define MUI_FINISHPAGE_RUN_TEXT "Start OpenVPN GUI"
-!define MUI_FINISHPAGE_RUN "$INSTDIR\bin\openvpn-gui.exe"
-!define MUI_FINISHPAGE_RUN_NOTCHECKED
 
 !define MUI_FINISHPAGE_NOAUTOCLOSE
 !define MUI_ABORTWARNING
@@ -88,14 +85,11 @@ InstallDirRegKey HKLM "SOFTWARE\${PACKAGE_NAME}" ""
 !insertmacro MUI_PAGE_COMPONENTS
 !insertmacro MUI_PAGE_DIRECTORY
 !insertmacro MUI_PAGE_INSTFILES
-!define MUI_PAGE_CUSTOMFUNCTION_SHOW StartGUI.show
 !insertmacro MUI_PAGE_FINISH
 
 !insertmacro MUI_UNPAGE_CONFIRM
 !insertmacro MUI_UNPAGE_INSTFILES
 !insertmacro MUI_UNPAGE_FINISH
-
-Var /Global strGuiKilled ; Track if GUI was killed so we can tick the checkbox to start it upon installer finish
 
 ;--------------------------------
 ;Languages
@@ -119,7 +113,9 @@ LangString DESC_SecLZODLLs ${LANG_ENGLISH} "Install LZO DLLs locally (may be omi
 
 LangString DESC_SecPKCS11DLLs ${LANG_ENGLISH} "Install PKCS#11 helper DLLs locally (may be omitted if DLLs are already installed globally)."
 
-LangString DESC_SecService ${LANG_ENGLISH} "Install the ${PACKAGE_NAME} service wrapper (openvpnserv.exe)"
+LangString DESC_SecService ${LANG_ENGLISH} "Install the ${PACKAGE_NAME} service wrappers"
+
+LangString DESC_SecInteractiveService ${LANG_ENGLISH} "Install the ${PACKAGE_NAME} Interactive Service (allows running OpenVPN-GUI without admin privileges)"
 
 LangString DESC_SecOpenSSLUtilities ${LANG_ENGLISH} "Install the OpenSSL Utilities (used for generating public/private key pairs)."
 
@@ -179,7 +175,7 @@ Section -pre
 	FindWindow $0 "OpenVPN-GUI"
 	StrCmp $0 0 guiNotRunning
 
-	MessageBox MB_YESNO|MB_ICONEXCLAMATION "To perform the specified operation, OpenVPN-GUI needs to be closed. Shall I close it?" /SD IDYES IDNO guiEndNo
+	MessageBox MB_YESNO|MB_ICONEXCLAMATION "To perform the specified operation, OpenVPN-GUI needs to be closed. You will have to restart it manually after the installation has completed. Shall I close it?" /SD IDYES IDNO guiEndNo
 	DetailPrint "Closing OpenVPN-GUI..."
 	Goto guiEndYes
 
@@ -189,14 +185,10 @@ Section -pre
 	guiEndYes:
 		; user wants to close GUI as part of install/upgrade
 		FindWindow $0 "OpenVPN-GUI"
-		IntCmp $0 0 guiClosed
+		IntCmp $0 0 guiNotRunning
 		SendMessage $0 ${WM_CLOSE} 0 0
 		Sleep 100
 		Goto guiEndYes
-
-	guiClosed:
-		; Keep track that we closed the GUI so we can offer to auto (re)start it later
-		StrCpy $strGuiKilled "1"
 
 	guiNotRunning:
 		; check for running openvpn.exe processes
@@ -212,8 +204,9 @@ Section -pre
 		RMDir /r "$SMPROGRAMS\${PACKAGE_NAME}"
 
 		; Stop & Remove previous OpenVPN service
-		DetailPrint "Removing any previous OpenVPN service..."
+		DetailPrint "Removing any previous OpenVPN services..."
 		nsExec::ExecToLog '"$INSTDIR\bin\openvpnserv.exe" -remove'
+		nsExec::ExecToLog '"$INSTDIR\bin\openvpnserv2.exe" -remove'
 		Pop $R0 # return value/error/timeout
 
 		Sleep 3000
@@ -291,11 +284,16 @@ Section /o "${PACKAGE_NAME} Service" SecService
 	!insertmacro WriteRegStringIfUndef HKLM "SOFTWARE\${PACKAGE_NAME}" "priority"    "NORMAL_PRIORITY_CLASS"
 	!insertmacro WriteRegStringIfUndef HKLM "SOFTWARE\${PACKAGE_NAME}" "log_append"  "0"
 
-	; install openvpnserv as a service (to be started manually from service control manager)
-	DetailPrint "Installing OpenVPN Service..."
+	; install openvpnserv.exe as a services
+	DetailPrint "Installing OpenVPN Services..."
 	nsExec::ExecToLog '"$INSTDIR\bin\openvpnserv.exe" -install'
+	nsExec::ExecToLog '"$INSTDIR\bin\openvpnserv2.exe" -install'
+
 	Pop $R0 # return value/error/timeout
 
+SectionEnd
+
+Section "${PACKAGE_NAME} Interactive Service" SecInteractiveService
 SectionEnd
 
 Section /o "TAP Virtual Ethernet Adapter" SecTAP
@@ -433,6 +431,7 @@ Function .onInit
 	!insertmacro SelectByParameter ${SecAddShortcutsWorkaround} SELECT_SHORTCUTS 1
 	!insertmacro SelectByParameter ${SecOpenVPNUserSpace} SELECT_OPENVPN 1
 	!insertmacro SelectByParameter ${SecService} SELECT_SERVICE 1
+	!insertmacro SelectByParameter ${SecInteractiveService} SELECT_INTERACTIVE_SERVICE 1
 	!insertmacro SelectByParameter ${SecTAP} SELECT_TAP 1
 	!insertmacro SelectByParameter ${SecOpenVPNGUI} SELECT_OPENVPNGUI 1
 	!insertmacro SelectByParameter ${SecFileAssociation} SELECT_ASSOCIATIONS 1
@@ -473,6 +472,8 @@ FunctionEnd
 Function .onSelChange
 	${If} ${SectionIsSelected} ${SecService}
 		!insertmacro SelectSection ${SecOpenVPNUserSpace}
+	${Else}
+		!insertmacro UnselectSection ${SecInteractiveService}
 	${EndIf}
 	${If} ${SectionIsSelected} ${SecOpenVPNEasyRSA}
 		!insertmacro SelectSection ${SecOpenSSLUtilities}
@@ -481,19 +482,6 @@ Function .onSelChange
 		!insertmacro SelectSection ${SecAddShortcutsWorkaround}
 	${Else}
 		!insertmacro UnselectSection ${SecAddShortcutsWorkaround}
-	${EndIf}
-FunctionEnd
-
-Function StartGUI.show
-	; if the user chooses not to install the GUI, do not offer to start it
-	${IfNot} ${SectionIsSelected} ${SecOpenVPNGUI}
-		SendMessage $mui.FinishPage.Run ${BM_SETCHECK} ${BST_CHECKED} 0
-		ShowWindow $mui.FinishPage.Run 0
-	${EndIf}
-
-	; if we killed the GUI to do the install/upgrade, automatically tick the "Start OpenVPN GUI" option
-	${If} $strGuiKilled == "1"
-		SendMessage $mui.FinishPage.Run ${BM_SETCHECK} ${BST_CHECKED} 1
 	${EndIf}
 FunctionEnd
 
@@ -520,6 +508,14 @@ Section -post
 	WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\${PACKAGE_NAME}" "DisplayIcon" "$INSTDIR\icon.ico"
 	WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\${PACKAGE_NAME}" "DisplayVersion" "${VERSION_STRING}"
 
+	; Enable and start the Interactive Service
+	${If} ${SectionIsSelected} ${SecInteractiveService}
+		nsExec::ExecToLog '"$SYSDIR\sc.exe" config OpenVPNServiceInteractive start= auto'
+		nsExec::ExecToLog '"$SYSDIR\sc.exe" start OpenVPNServiceInteractive'
+	${Else}
+		nsExec::ExecToLog '"$SYSDIR\sc.exe" config OpenVPNServiceInteractive start= demand'
+	${EndIf}
+
 SectionEnd
 
 ;--------------------------------
@@ -528,6 +524,7 @@ SectionEnd
 !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
 	!insertmacro MUI_DESCRIPTION_TEXT ${SecOpenVPNUserSpace} $(DESC_SecOpenVPNUserSpace)
 	!insertmacro MUI_DESCRIPTION_TEXT ${SecService} $(DESC_SecService)
+	!insertmacro MUI_DESCRIPTION_TEXT ${SecInteractiveService} $(DESC_SecInteractiveService)
 	!insertmacro MUI_DESCRIPTION_TEXT ${SecOpenVPNGUI} $(DESC_SecOpenVPNGUI)
 	!insertmacro MUI_DESCRIPTION_TEXT ${SecTAP} $(DESC_SecTAP)
 	!insertmacro MUI_DESCRIPTION_TEXT ${SecOpenVPNEasyRSA} $(DESC_SecOpenVPNEasyRSA)
@@ -567,8 +564,9 @@ Section "Uninstall"
 	guiClosed:
 
 	; Stop OpenVPN if currently running
-	DetailPrint "Removing OpenVPN Service..."
+	DetailPrint "Removing OpenVPN Services..."
 	nsExec::ExecToLog '"$INSTDIR\bin\openvpnserv.exe" -remove'
+	nsExec::ExecToLog '"$INSTDIR\bin\openvpnserv2.exe" -remove'
 	Pop $R0 # return value/error/timeout
 
 	Sleep 3000
