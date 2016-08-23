@@ -31,7 +31,7 @@ main() {
 	git clone -q --depth 1 --branch "${OPENVPN_BRANCH}" "${OPENVPN_URL}" || die "openvpn.clone"
 	cd openvpn
 	autoreconf -ivf || die "autoreconf.openvpn"
-	./configure --disable-lzo --disable-snappy --disable-lz4 || die "openvpn.configure"
+	./configure --disable-lzo --disable-lz4 || die "openvpn.configure"
 	make dist || die "openvpn.dist"
 	cd "${SCRIPTROOT}"
 	CONFIGURE_GIT_REVISION="`GIT_DIR="${TMPDIR}/openvpn/.git" ${GIT} rev-parse --symbolic-full-name HEAD`/`GIT_DIR="${TMPDIR}/openvpn/.git" ${GIT} rev-parse --short=16 HEAD`"
