@@ -1,3 +1,33 @@
+openvpn (2.3.12-debian0) stable; urgency=medium
+
+  * Preparing release of v2.3.12 (David Sommerseth, 8990b21)
+  * Revert "Drop recursively routed packets" (David Sommerseth, 2bf9954)
+  * Drop recursively routed packets (Lev Stipakov, 122469f)
+  * Discourage using 64-bit block ciphers (Steffan Karger, 610fdbb)
+  * Fix '--cipher none --cipher' crash (Steffan Karger, d1c08ab)
+  * Promptly close the netcmd_semaphore handle after use (Selva Nair, 13f3526)
+  * Remove NOP function and callers (David Sommerseth, 735c90c)
+  * Move ASSERT so external-key with OpenSSL works again (Arne Schwabe, 5f3d28b)
+  * Complete push-peer-info documentation and allow IV_PLAT_VER for other platforms than Windows if the client UI supplies it. (Arne Schwabe, 769bbd6)
+  * Don't limit max incoming message size based on c2->frame (Steffan Karger, 358f513)
+  * Ignore SIGUSR1/SIGHUP during exit notification (Selva Nair, 859c9f4)
+  * Another fix related to unit test framework (David Sommerseth, b76acd7)
+  * Make block-outside-dns work with persist-tun (Selva Nair, 1aa9d28)
+  * Clarify the fact that build instructions in README are for release tarballs (Samuli Seppänen, 2a9434f)
+  * Plug memory leak in mbedTLS backend (Ivo Manca, 8b3b74a)
+  * Only build and run cmocka unit tests if its submodule is initialized (David Sommerseth, 987910e)
+  * Update contrib/pull-resolv-conf/client.up for no DOMAIN (Jeffrey Cutter, 7a22be4)
+  * Add link to bug tracker (Leon Klingele, 19eecc6)
+  * Add a test for auth-pam searchandreplace (Jens Neuhalfen, 0b8e0f5)
+  * Add unit testing support via cmocka (Jens Neuhalfen, 1739c10)
+  * Update CONTRIBUTING.rst to allow GitHub PRs for code review purposes (Samuli Seppänen, 85f6a2b)
+  * Push an IPv6 CIDR mask used by the server, not the pool's size (Josh Cepek, b8c4684)
+  * Make error non-fatal while deleting address using netsh (Selva Nair, d368abb)
+  * Add CHACHA20-POLY1305 ciphersuite IANA name translations. (Dorian Harmans, 1cccceb)
+  * Fix polarssl / mbedtls builds (Steffan Karger, 629baad)
+
+ -- Samuli Seppänen <samuli@openvpn.net>  Tue, 23 Aug 2016 14:30:00 +0000
+
 openvpn (2.3.11-debian0) stable; urgency=medium
 
   * Preparing for release v2.3.11 (ChangeLog, version.m4) (Gert Doering, 6d83573)
