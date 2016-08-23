@@ -185,7 +185,7 @@ Replace \<osrelease\> with the operating system release name, e.g. "wheezy" or
 
 You can generate Debian-compatible changelog entries using this Git magic:
 
-$ git log --pretty=short --abbrev-commit --format="  * %s (%an, %h) <old>...<new>
+    $ git log --pretty=short --abbrev-commit --format="  * %s (%an, %h)" <old>...<new>
 
 If you need to add patches, then do so at this point.
 
