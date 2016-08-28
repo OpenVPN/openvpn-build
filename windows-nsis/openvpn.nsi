@@ -336,9 +336,11 @@ Section /o "${PACKAGE_NAME} File Associations" SecFileAssociation
 	WriteRegStr HKCR "${PACKAGE_NAME}File" "" "${PACKAGE_NAME} Config File"
 	WriteRegStr HKCR "${PACKAGE_NAME}File\shell" "" "open"
 	WriteRegStr HKCR "${PACKAGE_NAME}File\DefaultIcon" "" "$INSTDIR\icon.ico,0"
-	WriteRegStr HKCR "${PACKAGE_NAME}File\shell\open\command" "" 'notepad.exe "%1"'
+	WriteRegStr HKCR "${PACKAGE_NAME}File\shell\open\command" "" '"$INSTDIR\bin\openvpn-gui.exe" --import "%1"'
 	WriteRegStr HKCR "${PACKAGE_NAME}File\shell\run" "" "Start ${PACKAGE_NAME} on this config file"
 	WriteRegStr HKCR "${PACKAGE_NAME}File\shell\run\command" "" '"$INSTDIR\bin\openvpn.exe" --pause-exit --config "%1"'
+	WriteRegStr HKCR "${PACKAGE_NAME}File\shell\edit" "" "Edit config file"
+	WriteRegStr HKCR "${PACKAGE_NAME}File\shell\edit\command" "" 'notepad.exe "%1"'
 SectionEnd
 
 Section /o "OpenSSL Utilities" SecOpenSSLUtilities
