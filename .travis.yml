@@ -5,23 +5,34 @@ os: linux
 language: cpp
 compiler: gcc
 
+addons:
+  apt:
+    packages:
+      - gcc-mingw-w64
+      - man2html
+      - dos2unix
+      - nsis
+
+cache:
+  apt: true
+
 matrix:
   fast_finish: true
   include:
     - compiler: ": Win32"
-      env: IMAGEROOT=${HOME}/image-win32 CHOST=i686-w64-mingw32 CBUILD=x86_64-pc-linux-gnu
+      env: IMAGEROOT=${HOME}/image-win32 CHOST=i686-w64-mingw32 CBUILD=x86_64-pc-linux-gnu SCRIPT=generic/build
     - compiler: ": Win64"
-      env: IMAGEROOT=${HOME}/image-win64 CHOST=x86_64-w64-mingw32 CBUILD=x86_64-pc-linux-gnu
+      env: IMAGEROOT=${HOME}/image-win64 CHOST=x86_64-w64-mingw32 CBUILD=x86_64-pc-linux-gnu SCRIPT=generic/build
+    - compiler: ": snapshot"
+      env: SCRIPT=windows-nsis/build-snapshot
+    - compiler: ": complete"
+      env: SCRIPT=windows-nsis/build-complete
+
   exclude:
     - compiler: gcc
 
-install:
-    - sudo apt-get update -qq
-    - sudo apt-get install -qq -y gcc-mingw-w64
-    - sudo apt-get install -qq -y man2html
-    
 before_script:
     - unset CC; unset CXX
 
 script:
-    - cd generic && ./build
+    - $SCRIPT
