@@ -27,9 +27,11 @@ matrix:
       env: SCRIPT=windows-nsis/build-snapshot
     - compiler: ": complete"
       env: SCRIPT=windows-nsis/build-complete
-
   exclude:
     - compiler: gcc
+  allow_failures:
+    - compiler: ": snapshot"
+      env: SCRIPT=windows-nsis/build-snapshot
 
 before_script:
     - unset CC; unset CXX
