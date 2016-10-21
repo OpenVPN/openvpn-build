@@ -511,7 +511,18 @@ Section -post
 	; Enable and start the Interactive Service
 	${If} ${SectionIsSelected} ${SecInteractiveService}
 		nsExec::ExecToLog '"$SYSDIR\sc.exe" config OpenVPNServiceInteractive start= auto'
-		nsExec::ExecToLog '"$SYSDIR\sc.exe" start OpenVPNServiceInteractive'
+
+		; Get location of cmd.exe and launch sc.exe inside it to allow
+		; redirecting to nul. This is done because "sc.exe start" output looks a
+		; lot like an error in addition to being too verbose.
+		ReadEnvStr $R0 COMSPEC
+		nsExec::ExecToLog '"$R0" /c "$SYSDIR\sc.exe" start OpenVPNServiceInteractive >nul'
+		Pop $R1
+		${If} "$R1" == "0"
+			DetailPrint "Started OpenVPNServiceInteractive"
+		${Else}
+			DetailPrint "WARNING: $\"sc.exe start OpenVPNServiceInteractive$\" failed with return value of $R1"
+		${EndIf}
 	${Else}
 		nsExec::ExecToLog '"$SYSDIR\sc.exe" config OpenVPNServiceInteractive start= demand'
 	${EndIf}
