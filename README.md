@@ -111,8 +111,8 @@ add a new symbolic link:
 If the file for your target platform is _not_ a symbolic link, copy the 
 debootstrap script to /usr/share/debootstrap/scripts/ on the build computer.
 
-Setting the schroots
---------------------
+Setting up the schroots
+-----------------------
 
 Once debootstrap is configured properly you can create the schroot. Go to the 
 sbuild_wrapper directory, add a new variant to "config/variants.conf" (see below 
