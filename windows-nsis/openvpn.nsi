@@ -234,7 +234,7 @@ Section /o "${PACKAGE_NAME} User-Space Components" SecOpenVPNUserSpace
 	File "${OPENVPN_ROOT}\bin\openvpn.exe"
 
 	SetOutPath "$INSTDIR\doc"
-	File "${OPENVPN_ROOT}\share\doc\openvpn\INSTALL-win32.txt"
+	File "INSTALL-win32.txt"
 	File "${OPENVPN_ROOT}\share\doc\openvpn\openvpn.8.html"
 
 	${If} ${SectionIsSelected} ${SecAddShortcutsWorkaround}
