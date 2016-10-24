@@ -17,7 +17,7 @@ cat $VARIANTS_FILE|grep -v "^#"|while read LINE; do
     ARCH=`echo $LINE|cut -d " " -f 3`
 
     # Create a target directory for this build
-    TARGET_DIR=$OUTPUT_DIR/$OS/$OSRELEASE
+    TARGET_DIR=$OUTPUT_DIR
     mkdir -p $TARGET_DIR
 
     # This is highly openvpn-specific - fix later
@@ -35,11 +35,11 @@ cat $VARIANTS_FILE|grep -v "^#"|while read LINE; do
     OLD_DIR=`pwd`
 
     # If the package exists already, skip the build
-    if [ -f "${TARGET_DIR}/openvpn_${PROGRAM_VERSION}-debian${PACKAGE_VERSION}_${ARCH}.deb" ]; then
-        echo "$OS $OSRELEASE $ARCH has been built already"
+    if [ -f "${TARGET_DIR}/openvpn_${PROGRAM_VERSION_CLEAN}-${OSRELEASE}${PACKAGE_VERSION}_${ARCH}.deb" ]; then
+        echo "OpenVPN $PROGRAM_VERSION for $OS $OSRELEASE $ARCH has been built already"
     else
         cd $SOURCES_DIR
-        sbuild --verbose --arch=${ARCH} --dist=${OSRELEASE} openvpn_${PROGRAM_VERSION}-debian${PACKAGE_VERSION}.dsc && cp openvpn_${PROGRAM_VERSION}-debian${PACKAGE_VERSION}_${ARCH}.deb ${TARGET_DIR}/
+        sbuild --verbose --arch=${ARCH} --dist=${OSRELEASE} openvpn_${PROGRAM_VERSION_CLEAN}-${OSRELEASE}${PACKAGE_VERSION}.dsc && cp openvpn_${PROGRAM_VERSION_CLEAN}-${OSRELEASE}${PACKAGE_VERSION}_${ARCH}.deb ${TARGET_DIR}/
         cd $OLD_DIR
     fi
 

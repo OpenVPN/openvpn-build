@@ -71,7 +71,8 @@ Edit config/version.conf
 ------------------------
 
 This file determines the release and build numbers. It should be updated 
-whenever a new release or build is made.
+whenever a new release or build is made. Alternatively the version information
+can be defined on the command-line (see below).
 
 Adding new sbuild schroots
 ==========================
@@ -176,14 +177,20 @@ Before building update all the packages in the schroots:
     $ cd <sbuild_wrapper_dir>
     $ scripts/update-all.sh
 
-While the schroots are updating you can update the Debian changelog files:
+While the schroots are updating you can update the Debian changelog file:
 
-\<sbuild_wrapper_dir\>/packaging/\<osrelease\>/debian/changelog
+\<sbuild_wrapper_dir\>/packaging/debian/changelog-\<openvpn_version\>
 
-Replace \<osrelease\> with the operating system release name, e.g. "wheezy" or
-"trusty".
+Make sure that the version header matches PROGRAM_VERSION and PACKAGE_VERSION
+variables set in version.conf. For example in
 
-You can generate Debian-compatible changelog entries using this Git magic:
+    openvpn (2.4_alpha2-debian0) stable; urgency=medium
+
+the word "debian" will be replaced with "jessie", "xenial" or such, depending on 
+the values in variants.conf. If a matching changelog entry is not found, the
+_prepare_all.sh_ script will exit with an error.
+
+You can generate Debian-compatible change entries using this Git magic:
 
     $ git log --pretty=short --abbrev-commit --format="  * %s (%an, %h)" <old>...<new>
 
@@ -201,8 +208,19 @@ Finally you can build on all platforms:
     $ cd <sbuild_wrapper_basedir>
     $ scripts/build-all.sh
 
-The .deb files can be found from the "output" directory. They are also packaged 
-into "output.tar.gz" file at \<sbuild_wrapper_basedir\>.
+Alternatively you can define version information on the command-line, if you 
+need to build several OpenVPN versions using the same sbuild_wrapper:
+
+    $ cd <sbuild_wrapper_basedir>
+    $ PROGRAM_VERSION=2.3.12 PACKAGE_VERSION=0 scripts/prepare-all.sh
+    $ PROGRAM_VERSION=2.3.12 PACKAGE_VERSION=0 scripts/build-all.sh
+    $ PROGRAM_VERSION=2.4_alpha2 PACKAGE_VERSION=0 scripts/prepare-all.sh
+    $ PROGRAM_VERSION=2.4_alpha2 PACKAGE_VERSION=0 scripts/build-all.sh
+
+The above commands build both 2.3.12 and 2.4_alpha2.
+
+The resulting .deb files can be found from the "output" directory. They are also
+packaged into "output.tar.gz" file at \<sbuild_wrapper_basedir\>.
 
 Applying patches
 ================
