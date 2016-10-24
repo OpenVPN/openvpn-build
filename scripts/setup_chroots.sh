@@ -25,6 +25,6 @@ function setup_sbuild_schroot {
 }
 
 # Cycle through all the variants
-cat $VARIANTS_FILE|while read LINE; do
+cat $VARIANTS_FILE|grep -v "^#"|while read LINE; do
     setup_sbuild_schroot $LINE
 done

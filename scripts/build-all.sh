@@ -9,7 +9,7 @@ export QUILT_PATCHES=debian/patches
 . $VERSION_FILE
 
 # Loop through all OS/release/ARCH combinations we need to cover
-cat $VARIANTS_FILE|while read LINE; do
+cat $VARIANTS_FILE|grep -v "^#"|while read LINE; do
 
     # Using awk might be cleaner?
     OS=`echo $LINE|cut -d " " -f 1`
