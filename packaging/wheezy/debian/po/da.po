@@ -1,0 +1,186 @@
+# translation of openvpn_1.5.0-2-da.po to Danish
+# translation of openvpn_1.5.0-2_templates.po to Danish
+#
+#    Translators, if you are not familiar with the PO format, gettext
+#    documentation is worth reading, especially sections dedicated to
+#    this format, e.g. by running:
+#         info -n '(gettext)PO Files'
+#         info -n '(gettext)Header Entry'
+#    Some information specific to po-debconf are available at
+#            /usr/share/doc/po-debconf/README-trans
+#         or http://www.debian.org/intl/l10n/po-debconf/README-trans#
+#    Developers do not need to manually edit POT or PO files.
+#
+# Claus Hindsgaul <claus_h@image.dk>, 2004, 2005.
+# Claus Hindsgaul <claus.hindsgaul@gmail.com>, 2006.
+msgid ""
+msgstr ""
+"Project-Id-Version: openvpn_1.5.0-2-da\n"
+"Report-Msgid-Bugs-To: openvpn@packages.debian.org\n"
+"POT-Creation-Date: 2008-06-24 20:24+0200\n"
+"PO-Revision-Date: 2006-07-04 13:40+0200\n"
+"Last-Translator: Claus Hindsgaul <claus.hindsgaul@gmail.com>\n"
+"Language-Team: Danish\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=ISO-8859-1\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: KBabel 1.11.2\n"
+
+#. Type: boolean
+#. Description
+#: ../templates:2001
+msgid "Create the TUN/TAP device?"
+msgstr ""
+
+#. Type: boolean
+#. Description
+#: ../templates:2001
+msgid ""
+"If you choose this option, the /dev/net/tun device needed by OpenVPN will be "
+"created."
+msgstr ""
+
+#. Type: boolean
+#. Description
+#: ../templates:2001
+msgid "You should not choose this option if you're using devfs."
+msgstr ""
+
+#. Type: note
+#. Description
+#: ../templates:3001
+msgid "Vulnerable random number generator"
+msgstr ""
+
+#. Type: note
+#. Description
+#: ../templates:3001
+msgid ""
+"A weakness has been discovered in the random number generator used by "
+"OpenSSL on Ubuntu and Debian systems.  As a result of this weakness, certain "
+"encryption keys are generated much more frequently than they should be, such "
+"that an attacker could guess the key through a brute-force attack given "
+"minimal knowledge of the system."
+msgstr ""
+
+#. Type: note
+#. Description
+#: ../templates:3001
+msgid ""
+"Any keys created on a vulnerable system may be affected by this problem. The "
+"'openssl-vulnkey' command may be used as a partial test for RSA keys with "
+"certain bit sizes, and the 'openvpn-vulnkey' for OpenVPN shared secret keys. "
+"Users are urged to verify their keys or simply regenerate any server or "
+"client certificates and keys in use on the system."
+msgstr ""
+
+#~ msgid "Would you like to start openvpn sooner?"
+#~ msgstr "Ønsker du at starte openvpn tidligere?"
+
+#~ msgid ""
+#~ "Previous versions of openvpn started at the same time as most of other "
+#~ "services. This means that most of these services couldn't use openvpn "
+#~ "since it may have been unavailable when they started. Newer versions of "
+#~ "the openvpn package will start earlier. (i.e. a S16openvpn link in rc"
+#~ "[235].d instead of a S20openvpn)"
+#~ msgstr ""
+#~ "Tidligere udgaver af openvpn startede samtidig med de fleste andre "
+#~ "services. Det betyder at de fleste af disse services ikke kunne benytte "
+#~ "openvpn, da den kunne være utilgængelig når de startede. Nyere versioner "
+#~ "af openvpn-pakken vil starte tidligere (ved hjælp af en S16openvpn-lænke "
+#~ "i rc[235].d i stedet for S20openvpn)"
+
+#~ msgid ""
+#~ "If you accept here, the package upgrade will make this change for you. If "
+#~ "you refuse, nothing will change, and openvpn will be working just like it "
+#~ "did before."
+#~ msgstr ""
+#~ "Hvis du accepterer her, vil pakkeopgraderingen udføre denne ændring for "
+#~ "dig. Hvis du afviser, bliver intet ændret, og openvpn vil fungere "
+#~ "nøjagtig som før."
+
+#, fuzzy
+#~| msgid ""
+#~| "Unless you do your upgrades locally, it is advised NOT to stop openvpn "
+#~| "before it gets upgraded. The installation process will restart it once "
+#~| "it's done."
+#~ msgid ""
+#~ "Unless upgrades are performed locally, you should choose to not stop "
+#~ "OpenVPN before it is upgraded. The installation process will restart it "
+#~ "once the upgrade is completed."
+#~ msgstr ""
+#~ "Medmindre du udfører dine opgraderinger lokalt, anbefales det IKKE at "
+#~ "stoppe openvpn før den opgraderes. Installationsprocessen vil genstarte "
+#~ "den så snart den er færdig."
+
+#, fuzzy
+#~| msgid "This option will take effect in your next upgrade."
+#~ msgid "This option will take effect for the next upgrade."
+#~ msgstr "Denne indstilling vil træde i kraft ved din næste opgradering."
+
+#~ msgid "Default port has changed"
+#~ msgstr "Standard-portnummeret er ændret"
+
+#~ msgid ""
+#~ "OpenVPN's default port has changed from 5000 to 1194 (IANA assigned). If "
+#~ "you don't specify the port to be used on your VPNs, this upgrade may "
+#~ "break them."
+#~ msgstr ""
+#~ "OpenVPNs standardport er ændret fra 5000 til 1194 (tildelt af IANA). Hvis "
+#~ "du ikke angiver hvilken port, der skal bruges i dine VPN'er, kan denne "
+#~ "opgradering resultere i at de ikke vil fungere."
+
+#~ msgid ""
+#~ "Use the option 'port 5000' if you want to keep the old port "
+#~ "configuration, or take a look at your firewall rules to allow the new "
+#~ "default port configuration to work."
+#~ msgstr ""
+#~ "Vælg 'port 5000' hvis du vil beholde den gamle port-opsætning, eller sørg "
+#~ "for at din brandmur er sat op så den nye standard-portopsætning kan "
+#~ "fungere."
+
+#~ msgid "Would you like to stop openvpn later?"
+#~ msgstr "Ønsker du at stoppe openvpn senere?"
+
+#~ msgid ""
+#~ "Previous versions of openvpn stopped at the same time as most of other "
+#~ "services. This meant that some of services stopping later couldn't use  "
+#~ "openvpn since it may have been stopped before them. Newer versions of the "
+#~ "openvpn package will stop the service later. (i.e. a K80openvpn link in  "
+#~ "rc[06].d instead of a K20openvpn)"
+#~ msgstr ""
+#~ "Tidligere udgaver af openvpn stoppede samtidig med de fleste andre "
+#~ "services. Det betyder at nogle af de services, der stoppede senere, ikke "
+#~ "kunne benytte openvpn, da den kunne være stoppet før dem. Nyere versioner "
+#~ "af openvpn-pakken vil stoppe servicen senere (ved hjælp af en K80openvpn-"
+#~ "lænke i rc[06].d i stedet for K20openvpn)"
+
+#~ msgid "Would you like a TUN/TAP device to be created?"
+#~ msgstr "Ønsker du at der skal oprettes en TUN/TAP-enhed?"
+
+#~ msgid ""
+#~ "If you accept here, the package will make a special device called /dev/"
+#~ "net/tun for openvpn's use. If you refuse, the device won't be made now. "
+#~ "Read README.Debian for details on how to make it. If you are using devfs "
+#~ "refuse here."
+#~ msgstr ""
+#~ "Hvis du accepterer her, vil pakke oprette en specialenhed kaldet /dev/net/"
+#~ "tun til brug for openvpn. Hvis du afviser, vil enheden ikke blive oprette "
+#~ "nu. Læs README.Debian for detaljer om, hvordan den skal oprettes. Hvis du "
+#~ "bruger devfs, skal du afvise her."
+
+#~ msgid "Would you like to stop openvpn before it gets upgraded?"
+#~ msgstr "Ønsker du at stoppe openvpn før den opgraderes?"
+
+#~ msgid ""
+#~ "In some cases you may be upgrading openvpn in a remote server using a VPN "
+#~ "to do so. The upgrade process stops the running daemon before  installing "
+#~ "the new version, in that case you may lose your connection, the upgrade "
+#~ "may be interrupted, and you may not be able to reconnect to the remote "
+#~ "host."
+#~ msgstr ""
+#~ "I nogle tilfælde skal du opgradere openvpn på en fjern server via VPN for "
+#~ "at gøre dette. Opgraderingsprocessen stopper den kørende dæmon før den "
+#~ "installerer den nye version. I så fald kan du miste forbindelsen, "
+#~ "opgraderingen kan bliveforstyrret, og du kan muligvis ikke forbinde dig "
+#~ "til den fjerne vært igen."
