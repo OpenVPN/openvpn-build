@@ -7,11 +7,7 @@ compiler: gcc
 
 addons:
   apt:
-    packages:
-      - gcc-mingw-w64
-      - man2html
-      - dos2unix
-      - nsis
+    packages: [ man2html, dos2unix, nsis ]
 
 cache:
   apt: true
@@ -27,9 +23,14 @@ matrix:
       env: SCRIPT=windows-nsis/build-snapshot
     - compiler: ": complete"
       env: SCRIPT=windows-nsis/build-complete
-
   exclude:
     - compiler: gcc
+
+install:
+    - echo "deb http://archive.ubuntu.com/ubuntu xenial main universe" | sudo tee -a /etc/apt/sources.list.d/xenial.list
+    - echo "deb http://archive.ubuntu.com/ubuntu xenial main" | sudo tee -a /etc/apt/sources.list.d/xenial.list
+    - sudo apt-get update
+    - sudo apt-get -y install dpkg gcc-mingw-w64
 
 before_script:
     - unset CC; unset CXX
