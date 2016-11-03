@@ -179,7 +179,7 @@ Before building update all the packages in the schroots:
 
 While the schroots are updating you can update the Debian changelog file:
 
-\<sbuild_wrapper_dir\>/packaging/debian/changelog-\<openvpn_version\>
+\<sbuild_wrapper_dir\>/packaging/changelog-\<openvpn_version\>
 
 Make sure that the version header matches PROGRAM_VERSION and PACKAGE_VERSION
 variables set in version.conf. For example in
