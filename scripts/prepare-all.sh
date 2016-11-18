@@ -23,6 +23,7 @@ cat $VARIANTS_FILE|grep -v "^#"|while read LINE; do
     # Only build in directories which are _not_ symbolic links
     if ! [ -L $DIR ] && [ -d $DIR ]; then
         cd $DIR
+        rm -rf openvpn*
         wget $BASEURL/openvpn-$PROGRAM_VERSION.tar.gz
         mv openvpn-$PROGRAM_VERSION.tar.gz openvpn_$PROGRAM_VERSION_CLEAN.orig.tar.gz
         tar -zxf openvpn_$PROGRAM_VERSION_CLEAN.orig.tar.gz
