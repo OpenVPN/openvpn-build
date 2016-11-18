@@ -14,18 +14,18 @@ fi
 
 cd $BUILD_BASEDIR
 
-# Find out which operating system versions we are supposed to build.
-ls|while read DIR; do
-
+# Prepare all builds given in variants.conf
+cat $VARIANTS_FILE|grep -v "^#"|while read LINE; do
+    OSRELEASE=`echo $LINE|cut -d " " -f 2`
+    DIR=$OSRELEASE
     OLD_DIR=`pwd`
-    OSRELEASE=$DIR
 
     # Only build in directories which are _not_ symbolic links
     if ! [ -L $DIR ] && [ -d $DIR ]; then
         cd $DIR
         wget $BASEURL/openvpn-$PROGRAM_VERSION.tar.gz
         mv openvpn-$PROGRAM_VERSION.tar.gz openvpn_$PROGRAM_VERSION_CLEAN.orig.tar.gz
-        tar -zxf openvpn_$PROGRAM_VERSION.orig.tar.gz
+        tar -zxf openvpn_$PROGRAM_VERSION_CLEAN.orig.tar.gz
         cd openvpn-$PROGRAM_VERSION
         cp -a $BASEDIR/packaging/$OSRELEASE/debian .
         # Generate changelog from the template
