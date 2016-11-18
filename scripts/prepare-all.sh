@@ -29,8 +29,18 @@ cat $VARIANTS_FILE|grep -v "^#"|while read LINE; do
         tar -zxf openvpn_$PROGRAM_VERSION_CLEAN.orig.tar.gz
         cd openvpn-$PROGRAM_VERSION
         cp -a $BASEDIR/packaging/$OSRELEASE/debian .
-        # Generate changelog from the template
-        sed s/"($PROGRAM_VERSION-debian$PACKAGE_VERSION)"/"($PROGRAM_VERSION_CLEAN-$OSRELEASE$PACKAGE_VERSION)"/g $CHANGELOG > debian/changelog
+
+        # Generate changelog from the template using sed with regular expression
+        # capture groups. The purpose is twofold:
+        #
+        # - Ensure that "debian" in the version numbers are converted into real distribution codenames (e.g. "jessie")
+        # - Get rid off underscores in version names (e.g. 2.4_beta1 -> 2.4-beta1)
+        #
+        # The latter has to be done for all version definitions in the changelog
+        # or the Debian packaging tools will explode.
+        #
+        sed -E s/'^(openvpn \([[:digit:]]\.[[:digit:]])_([[:alnum:]]+)-debian([[:digit:]])'/"\1-\2-$OSRELEASE\3"/g $CHANGELOG > debian/changelog
+
         dpkg-buildpackage -S -uc -us
     fi
 
