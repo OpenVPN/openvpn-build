@@ -4,6 +4,8 @@ MAKENSIS="${MAKENSIS:-makensis}"
 OSSLSIGNCODE="${OSSLSIGNCODE:-osslsigncode}"
 ROOT="${ROOT:-tmp}"
 OPENVPN_ROOT="${ROOT}/openvpn"
+OPENVPN_ROOT_I686="${ROOT}/i686"
+OPENVPN_ROOT_X86_64="${ROOT}/x86_64"
 EASYRSA_ROOT="${ROOT}/easy-rsa"
 
 SIGN_DIGEST=${SIGN_DIGEST:-sha256}
@@ -41,7 +43,13 @@ layout() {
 	rm -fr "${ROOT}"
 	mkdir "${ROOT}"
 	mkdir "${OPENVPN_ROOT}"
-	tar -C "${OPENVPN_ROOT}" -xf "${OPENVPN_TARBALL}" || die "extract openvpn"
+
+	mkdir "${OPENVPN_ROOT_I686}"
+	mkdir "${OPENVPN_ROOT_X86_64}"
+
+	tar -C "${OPENVPN_ROOT_I686}" -xf "${OPENVPN_TARBALL_I686}" || die "extract openvpn: ${OPENVPN_TARBALL_I686}"
+	tar -C "${OPENVPN_ROOT_X86_64}" -xf "${OPENVPN_TARBALL_X86_64}" || die "extract openvpn: ${OPENVPN_TARBALL_X86_64}"
+
 	if [ -n "${EASYRSA_TARBALL}" ]; then
 		tar -C "${ROOT}" -xf "${EASYRSA_TARBALL}" || die "extract easy rsa"
 		mv "${ROOT}"/easy-rsa-*/easy-rsa "${EASYRSA_ROOT}"
@@ -64,26 +72,20 @@ sign() {
 main() {
 	layout
 
-	. "${OPENVPN_ROOT}/version.sh" || die "cannot find openvpn version.sh"
-	case "${OPENVPN_PACKAGE_HOST}" in
-		*-*-mingw*)
-			ARCH="${OPENVPN_PACKAGE_HOST%%-*}"
-			;;
-		*)
-			die "invalid openvpn tarball architecture '${OPENVPN_PACKAGE_HOST}'"
-			;;
-	esac
+	. "${OPENVPN_ROOT_I686}/version.sh" || die "cannot find openvpn version.sh"
 
 	text
 	sign
 
+	mkdir -p ${OPENVPN_ROOT}/share/doc/openvpn/
+
 	cat \
-		"${OPENVPN_ROOT}/share/doc/openvpn/COPYING" \
-		"${OPENVPN_ROOT}/share/doc/openvpn/COPYRIGHT.GPL" \
+		"${OPENVPN_ROOT_I686}/share/doc/openvpn/COPYING" \
+		"${OPENVPN_ROOT_I686}/share/doc/openvpn/COPYRIGHT.GPL" \
 		> "${OPENVPN_ROOT}/share/doc/openvpn/license.txt" || die "license.txt"
 	
 	VERSION_STRING="${OPENVPN_PACKAGE_VERSION}-I${INSTALLER_VERSION}${INSTALLER_SUFFIX}"
-	OUTPUT="${OUTPUT_DIR}/openvpn-install-${VERSION_STRING}-${ARCH}.exe"
+	OUTPUT="${OUTPUT_DIR}/openvpn-install-${VERSION_STRING}.exe"
 
 	"${MAKENSIS}" \
 		-DARCH="${ARCH}" \
@@ -91,6 +93,8 @@ main() {
 		-DVERSION_STRING="${VERSION_STRING}" \
 		-DSPECIAL_BUILD="${SPECIAL_BUILD}" \
 		-DOPENVPN_ROOT="$(dospath "${OPENVPN_ROOT}")" \
+		-DOPENVPN_ROOT_I686="$(dospath "${OPENVPN_ROOT_I686}")" \
+		-DOPENVPN_ROOT_X86_64="$(dospath "${OPENVPN_ROOT_X86_64}")" \
 		-DTAP_WINDOWS_INSTALLER="$(dospath "${TAP_WINDOWS_INSTALLER}")" \
 		${TAP_WINDOWS_INSTALLER:+-DUSE_TAP_WINDOWS} \
 		-DOPENVPNSERV2_EXECUTABLE="$(dospath "${OPENVPNSERV2_EXECUTABLE}")" \
@@ -116,8 +120,11 @@ while [ -n "$1" ]; do
 		--special-build=*)
 			SPECIAL_BUILD="${v}"
 			;;
-		--openvpn-bin-tarball=*)
-			OPENVPN_TARBALL="${v}"
+		--openvpn-bin-tarball-i686=*)
+			OPENVPN_TARBALL_I686="${v}"
+			;;
+                --openvpn-bin-tarball-x86_64=*)
+                        OPENVPN_TARBALL_X86_64="${v}"
 			;;
 		--easy-rsa-tarball=*)
 			EASYRSA_TARBALL="${v}"
@@ -151,7 +158,8 @@ while [ -n "$1" ]; do
 Usage: $0
 	--installer-version=version     installer version
 	--special-build=string	        special build string
-	--openvpn-bin-tarball=tarball	openvpn binary tarball
+	--openvpn-bin-tarball-i686=tarball	openvpn binary tarball
+	--openvpn-bin-tarball-x86_64=tarball	openvpn binary tarball
 	--easy-rsa-tarball=tarball	easy-rsa source tarball
 	--tap-windows=installer         tap-windows installer
 	--openvpnserv2=executable	openvpnserv2 executable
@@ -168,8 +176,10 @@ __EOF__
 	shift
 done
 
-[ -n "${OPENVPN_TARBALL}" ] || die "please specify openvpn binary tarball"
-[ -f "${OPENVPN_TARBALL}" ] || die "cannot find openvpn binary tarball '${OPENVPN_TARBALL}'"
+[ -n "${OPENVPN_TARBALL_I686}" ] || die "please specify openvpn binary tarball"
+[ -n "${OPENVPN_TARBALL_X86_64}" ] || die "please specify openvpn binary tarball"
+[ -f "${OPENVPN_TARBALL_I686}" ] || die "cannot find openvpn binary tarball '${OPENVPN_TARBALL_I686}'"
+[ -f "${OPENVPN_TARBALL_X86_64}" ] || die "cannot find openvpn binary tarball '${OPENVPN_TARBALL_X86_64}'"
 [ -f "${OPENVPNSERV2_EXECUTABLE}" ] || die "cannot find openvpnserv2 executable '${OPENVPNSERV2_EXECUTABLE}'"
 if [ -n "${EASYRSA_TARBALL}" ]; then
 	[ -f "${EASYRSA_TARBALL}" ] || die "cannot find easy-rsa tarball '${EASYRSA_TARBALL}'"

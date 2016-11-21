@@ -10,6 +10,8 @@
 
 SetCompressor lzma
 
+!define PRODUCT_PUBLISHER "OpenVPN Technologies, Inc."
+
 ; Modern user interface
 !include "MUI2.nsh"
 
@@ -224,11 +226,15 @@ Section /o "${PACKAGE_NAME} User-Space Components" SecOpenVPNUserSpace
 	SetOverwrite on
 
 	SetOutPath "$INSTDIR\bin"
-	File "${OPENVPN_ROOT}\bin\openvpn.exe"
+	${If} ${RunningX64}
+		File "${OPENVPN_ROOT_X86_64}\bin\openvpn.exe"
+	${Else}
+		File "${OPENVPN_ROOT_I686}\bin\openvpn.exe"
+	${EndIf}
 
 	SetOutPath "$INSTDIR\doc"
 	File "INSTALL-win32.txt"
-	File "${OPENVPN_ROOT}\share\doc\openvpn\openvpn.8.html"
+	File "${OPENVPN_ROOT_I686}\share\doc\openvpn\openvpn.8.html"
 
 	${If} ${SectionIsSelected} ${SecAddShortcutsWorkaround}
 		CreateDirectory "$SMPROGRAMS\${PACKAGE_NAME}\Documentation"
@@ -244,7 +250,11 @@ Section /o "${PACKAGE_NAME} Service" SecService
 
 	SetOutPath "$INSTDIR\bin"
 	File /oname=openvpnserv2.exe "${OPENVPNSERV2_EXECUTABLE}"
-	File "${OPENVPN_ROOT}\bin\openvpnserv.exe"
+	${If} ${RunningX64}
+		File "${OPENVPN_ROOT_X86_64}\bin\openvpnserv.exe"
+	${Else}
+		File "${OPENVPN_ROOT_I686}\bin\openvpnserv.exe"
+	${EndIf}
 
 	SetOutPath "$INSTDIR\config"
 
@@ -257,9 +267,9 @@ Section /o "${PACKAGE_NAME} Service" SecService
 	FileClose $R0
 
 	SetOutPath "$INSTDIR\sample-config"
-	File "${OPENVPN_ROOT}\share\doc\openvpn\sample\sample.${OPENVPN_CONFIG_EXT}"
-	File "${OPENVPN_ROOT}\share\doc\openvpn\sample\client.${OPENVPN_CONFIG_EXT}"
-	File "${OPENVPN_ROOT}\share\doc\openvpn\sample\server.${OPENVPN_CONFIG_EXT}"
+	File "${OPENVPN_ROOT_I686}\share\doc\openvpn\sample\sample.${OPENVPN_CONFIG_EXT}"
+	File "${OPENVPN_ROOT_I686}\share\doc\openvpn\sample\client.${OPENVPN_CONFIG_EXT}"
+	File "${OPENVPN_ROOT_I686}\share\doc\openvpn\sample\server.${OPENVPN_CONFIG_EXT}"
 
 	CreateDirectory "$INSTDIR\log"
 	FileOpen $R0 "$INSTDIR\log\README.txt" w
@@ -317,17 +327,16 @@ Section /o "${PACKAGE_NAME} GUI" SecOpenVPNGUI
 	SetOverwrite on
 	SetOutPath "$INSTDIR\bin"
 
-	File "${OPENVPN_ROOT}\bin\openvpn-gui.exe"
+	${If} ${RunningX64}
+		File "${OPENVPN_ROOT_X86_64}\bin\openvpn-gui.exe"
+	${Else}
+		File "${OPENVPN_ROOT_I686}\bin\openvpn-gui.exe"
+	${EndIf}
 
 	${If} ${SectionIsSelected} ${SecAddShortcutsWorkaround}
 		CreateDirectory "$SMPROGRAMS\${PACKAGE_NAME}"
 		CreateShortCut "$SMPROGRAMS\${PACKAGE_NAME}\${PACKAGE_NAME} GUI.lnk" "$INSTDIR\bin\openvpn-gui.exe" ""
 		CreateShortcut "$DESKTOP\${PACKAGE_NAME} GUI.lnk" "$INSTDIR\bin\openvpn-gui.exe"
-
-		# This is required because of commit 2bb1726764344 ("Do not disconnect on suspend").
-		# Without this users will experience weired disconnections after suspend/resume.
-		WriteRegStr "HKLM" "Software\OpenVPN-GUI" "disconnect_on_suspend" "0"
-
 	${EndIf}
 SectionEnd
 
@@ -345,7 +354,11 @@ Section /o "OpenSSL Utilities" SecOpenSSLUtilities
 
 	SetOverwrite on
 	SetOutPath "$INSTDIR\bin"
-	File "${OPENVPN_ROOT}\bin\openssl.exe"
+	${If} ${RunningX64}
+		File "${OPENVPN_ROOT_X86_64}\bin\openssl.exe"
+	${Else}
+		File "${OPENVPN_ROOT_I686}\bin\openssl.exe"
+	${EndIf}
 
 SectionEnd
 
@@ -398,8 +411,13 @@ SectionGroup "!Dependencies (Advanced)"
 
 		SetOverwrite on
 		SetOutPath "$INSTDIR\bin"
-		File "${OPENVPN_ROOT}\bin\libeay32.dll"
-		File "${OPENVPN_ROOT}\bin\ssleay32.dll"
+		${If} ${RunningX64}
+			File "${OPENVPN_ROOT_X86_64}\bin\libeay32.dll"
+			File "${OPENVPN_ROOT_X86_64}\bin\ssleay32.dll"
+		${Else}
+			File "${OPENVPN_ROOT_I686}\bin\libeay32.dll"
+			File "${OPENVPN_ROOT_I686}\bin\ssleay32.dll"
+		${EndIf}
 
 	SectionEnd
 
@@ -407,7 +425,11 @@ SectionGroup "!Dependencies (Advanced)"
 
 		SetOverwrite on
 		SetOutPath "$INSTDIR\bin"
-		File "${OPENVPN_ROOT}\bin\liblzo2-2.dll"
+		${If} ${RunningX64}
+			File "${OPENVPN_ROOT_X86_64}\bin\liblzo2-2.dll"
+		${Else}
+			File "${OPENVPN_ROOT_I686}\bin\liblzo2-2.dll"
+		${EndIf}
 
 	SectionEnd
 
@@ -415,7 +437,11 @@ SectionGroup "!Dependencies (Advanced)"
 
 		SetOverwrite on
 		SetOutPath "$INSTDIR\bin"
-		File "${OPENVPN_ROOT}\bin\libpkcs11-helper-1.dll"
+		${If} ${RunningX64}
+			File "${OPENVPN_ROOT_X86_64}\bin\libpkcs11-helper-1.dll"
+		${Else}
+			File "${OPENVPN_ROOT_I686}\bin\libpkcs11-helper-1.dll"
+		${EndIf}
 
 	SectionEnd
 
@@ -427,6 +453,15 @@ SectionGroupEnd
 Function .onInit
 	${GetParameters} $R0
 	ClearErrors
+
+	${If} ${RunningX64}
+		SetRegView 64
+		; Change the installation directory to C:\Program Files, but only if the
+		; user has not provided a custom install location.
+		${If} "$INSTDIR" == "$PROGRAMFILES\${PACKAGE_NAME}"
+			StrCpy $INSTDIR "$PROGRAMFILES64\${PACKAGE_NAME}"
+		${EndIf}
+	${EndIf}
 
 	!insertmacro SelectByParameter ${SecAddShortcutsWorkaround} SELECT_SHORTCUTS 1
 	!insertmacro SelectByParameter ${SecOpenVPNUserSpace} SELECT_OPENVPN 1
@@ -445,24 +480,6 @@ Function .onInit
 
 	!insertmacro MULTIUSER_INIT
 	SetShellVarContext all
-
-	; Check if the installer was built for x86_64
-	${If} "${ARCH}" == "x86_64"
-
-		${IfNot} ${RunningX64}
-			; User is running 64 bit installer on 32 bit OS
-			MessageBox MB_OK|MB_ICONEXCLAMATION "This installer is designed to run only on 64-bit systems."
-			Quit
-		${EndIf}
-	
-		SetRegView 64
-
-		; Change the installation directory to C:\Program Files, but only if the
-		; user has not provided a custom install location.
-		${If} "$INSTDIR" == "$PROGRAMFILES\${PACKAGE_NAME}"
-			StrCpy $INSTDIR "$PROGRAMFILES64\${PACKAGE_NAME}"
-		${EndIf}
-	${EndIf}
 
 FunctionEnd
 
@@ -507,6 +524,18 @@ Section -post
 	WriteRegExpandStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\${PACKAGE_NAME}" "UninstallString" "$INSTDIR\Uninstall.exe"
 	WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\${PACKAGE_NAME}" "DisplayIcon" "$INSTDIR\icon.ico"
 	WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\${PACKAGE_NAME}" "DisplayVersion" "${VERSION_STRING}"
+	WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\${PACKAGE_NAME}" "HelpLink" "https://openvpn.net/index.php/open-source.html"
+	WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\${PACKAGE_NAME}" "InstallLocation" "$INSTDIR\"
+	WriteRegDWORD HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\${PACKAGE_NAME}" "Language" 1033
+	WriteRegDWORD HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\${PACKAGE_NAME}" "NoModify" 1
+	WriteRegDWORD HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\${PACKAGE_NAME}" "NoRepair" 1
+	WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\${PACKAGE_NAME}" "Publisher" "${PRODUCT_PUBLISHER}"
+	WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\${PACKAGE_NAME}" "UninstallString" "$INSTDIR\Uninstall.exe"
+	WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\${PACKAGE_NAME}" "URLInfoAbout" "https://openvpn.net"
+
+	${GetSize} "$INSTDIR" "/S=0K" $0 $1 $2
+	IntFmt $0 "0x%08X" $0
+	WriteRegDWORD HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\${PACKAGE_NAME}" "EstimatedSize" "$0"
 
 	; Enable and start the Interactive Service
 	${If} ${SectionIsSelected} ${SecInteractiveService}

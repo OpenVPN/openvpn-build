@@ -29,11 +29,14 @@ main() {
 		# Loop here if building the depcache:
 		[ -n "${DO_ONLY_DEPS}" ] && continue
 
+	done
+
 		ROOT="${TMPDIR}/installer" \
 			./build \
 			--installer-version="${INSTALLER_VERSION}" \
 			--special-build="${SPECIAL_BUILD}" \
-			--openvpn-bin-tarball=$(ls ${TMPDIR}/image-${arch}/openvpn-${arch}-*-bin.*) \
+			--openvpn-bin-tarball-i686=$(ls ${TMPDIR}/image-i686/openvpn-i686-*-bin.*) \
+			--openvpn-bin-tarball-x86_64=$(ls ${TMPDIR}/image-x86_64/openvpn-x86_64-*-bin.*) \
 			--easy-rsa-tarball=$(ls ${TMPDIR}/easy-rsa-*) \
 			--tap-windows=$(ls ${TMPDIR}/tap-windows-*) \
 			--openvpnserv2=$(ls ${TMPDIR}/openvpnserv2*) \
@@ -42,8 +45,7 @@ main() {
 			--sign-pkcs12="${SIGN_PKCS12}" \
 			--sign-pkcs12-pass="${SIGN_PKCS12_PASS}" \
 			--sign-timestamp="${SIGN_TIMESTAMP_URL}" \
-			|| die "pack ${arch}"
-	done
+			|| die "pack installer"
 
 	echo
 	if [ -z "${DO_ONLY_DEPS}" ]; then
