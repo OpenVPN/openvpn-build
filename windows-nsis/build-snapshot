@@ -12,7 +12,7 @@ get_full_path() {
 }
 
 GIT="${GIT:-git}"
-OPENVPN_VERSION="${OPENVPN_VERSION:-2.4_beta1}"; export OPENVPN_VERSION
+OPENVPN_VERSION="${OPENVPN_VERSION:-2.4_beta2}"; export OPENVPN_VERSION
 OPENVPN_BRANCH="${OPENVPN_BRANCH:-master}"
 OPENVPN_URL="${OPENVPN_URL:-http://github.com/OpenVPN/openvpn.git}"
 
