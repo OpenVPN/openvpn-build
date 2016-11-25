@@ -127,6 +127,7 @@ LangString DESC_SecAddShortcuts ${LANG_ENGLISH} "Add ${PACKAGE_NAME} shortcuts t
 
 LangString DESC_SecFileAssociation ${LANG_ENGLISH} "Register ${PACKAGE_NAME} config file association (*.${OPENVPN_CONFIG_EXT})"
 
+LangString DESC_SecLaunchGUIOnLogon ${LANG_ENGLISH} "Launch ${PACKAGE_NAME} GUI on user logon."
 ;--------------------------------
 ;Reserve Files
   
@@ -322,6 +323,9 @@ Section /o "TAP Virtual Ethernet Adapter" SecTAP
 	WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\${PACKAGE_NAME}" "tap" "installed"
 SectionEnd
 
+Section /o "Launch ${PACKAGE_NAME} GUI on User Logon" SecLaunchGUIOnLogon
+SectionEnd
+
 Section /o "${PACKAGE_NAME} GUI" SecOpenVPNGUI
 
 	SetOverwrite on
@@ -337,6 +341,21 @@ Section /o "${PACKAGE_NAME} GUI" SecOpenVPNGUI
 		CreateDirectory "$SMPROGRAMS\${PACKAGE_NAME}"
 		CreateShortCut "$SMPROGRAMS\${PACKAGE_NAME}\${PACKAGE_NAME} GUI.lnk" "$INSTDIR\bin\openvpn-gui.exe" ""
 		CreateShortcut "$DESKTOP\${PACKAGE_NAME} GUI.lnk" "$INSTDIR\bin\openvpn-gui.exe"
+	${EndIf}
+
+	; Using active setup registry entries to set/unset GUI to launch on logon for each user.
+	; If the user removes the GUI from startup items it will not be re-added or removed on subsequent
+	; installs unless the value of "Version" is updated (do this only if/when really necessary).
+	; Ref: https://helgeklein.com/blog/2010/04/active-setup-explained/
+	WriteRegStr HKLM "Software\Microsoft\Active Setup\Installed Components\${PACKAGE_NAME}_UserSetup" "" "OpenVPN Setup"
+	WriteRegStr HKLM "Software\Microsoft\Active Setup\Installed Components\${PACKAGE_NAME}_UserSetup" "Version" "2,4,0,0"
+	WriteRegDword HKLM "Software\Microsoft\Active Setup\Installed Components\${PACKAGE_NAME}_UserSetup" "IsInstalled" 0x1
+        ; DontAsk = 2 is used to not prompt the user
+	WriteRegDword HKLM "Software\Microsoft\Active Setup\Installed Components\${PACKAGE_NAME}_UserSetup" "DontAsk" 0x2
+	${If} ${SectionIsSelected} ${SecLaunchGUIOnLogon}
+		WriteRegStr HKLM "Software\Microsoft\Active Setup\Installed Components\${PACKAGE_NAME}_UserSetup" "StubPath" "reg add HKCU\Software\Microsoft\Windows\CurrentVersion\Run /v OPENVPN-GUI /t REG_SZ /d $\"$INSTDIR\bin\openvpn-gui.exe$\" /f"
+	${Else}
+		WriteRegStr HKLM "Software\Microsoft\Active Setup\Installed Components\${PACKAGE_NAME}_UserSetup" "StubPath" "reg delete HKCU\Software\Microsoft\Windows\CurrentVersion\Run /v OPENVPN-GUI /f"
 	${EndIf}
 SectionEnd
 
@@ -494,6 +513,7 @@ ${EndIf}
 	!insertmacro SelectByParameter ${SecOpenVPNEasyRSA} SELECT_EASYRSA 0
 	!insertmacro SelectByParameter ${SecAddPath} SELECT_PATH 1
 	!insertmacro SelectByParameter ${SecAddShortcuts} SELECT_SHORTCUTS 1
+	!insertmacro SelectByParameter ${SecLaunchGUIOnLogon} SELECT_LAUNCH 1
 	!insertmacro SelectByParameter ${SecOpenSSLDLLs} SELECT_OPENSSLDLLS 1
 	!insertmacro SelectByParameter ${SecLZODLLs} SELECT_LZODLLS 1
 	!insertmacro SelectByParameter ${SecPKCS11DLLs} SELECT_PKCS11DLLS 1
@@ -594,6 +614,7 @@ SectionEnd
 	!insertmacro MUI_DESCRIPTION_TEXT ${SecPKCS11DLLs} $(DESC_SecPKCS11DLLs)
 	!insertmacro MUI_DESCRIPTION_TEXT ${SecAddPath} $(DESC_SecAddPath)
 	!insertmacro MUI_DESCRIPTION_TEXT ${SecAddShortcuts} $(DESC_SecAddShortcuts)
+	!insertmacro MUI_DESCRIPTION_TEXT ${SecLaunchGUIOnLogon} $(DESC_SecLaunchGUIOnLogon)
 	!insertmacro MUI_DESCRIPTION_TEXT ${SecFileAssociation} $(DESC_SecFileAssociation)
 !insertmacro MUI_FUNCTION_DESCRIPTION_END
 
@@ -697,6 +718,7 @@ Section "Uninstall"
 	DeleteRegKey HKCR "${PACKAGE_NAME}File"
 	DeleteRegKey HKLM "SOFTWARE\${PACKAGE_NAME}"
 	DeleteRegKey HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\${PACKAGE_NAME}"
-
+        ; Set installed status to 0 in Active Setup
+	WriteRegDword HKLM "Software\Microsoft\Active Setup\Installed Components\${PACKAGE_NAME}_UserSetup" "IsInstalled" 0x0
+	WriteRegStr HKLM "Software\Microsoft\Active Setup\Installed Components\${PACKAGE_NAME}_UserSetup" "StubPath" "reg delete HKCU\Software\Microsoft\Windows\CurrentVersion\Run /v OPENVPN-GUI /f"
 SectionEnd
-
