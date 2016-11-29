@@ -67,7 +67,7 @@ InstallDirRegKey HKLM "SOFTWARE\${PACKAGE_NAME}" ""
 ;Modern UI Configuration
 
 ; Compile-time constants which we'll need during install
-!define MUI_WELCOMEPAGE_TEXT "This wizard will guide you through the installation of ${PACKAGE_NAME} ${SPECIAL_BUILD}, an Open Source VPN package by James Yonan.$\r$\n$\r$\nNote that the Windows version of ${PACKAGE_NAME} will only run on Windows XP, or higher.$\r$\n$\r$\n$\r$\n"
+!define MUI_WELCOMEPAGE_TEXT "This wizard will guide you through the installation of ${PACKAGE_NAME} ${SPECIAL_BUILD}, an Open Source VPN package by James Yonan.$\r$\n$\r$\nNote that the Windows version of ${PACKAGE_NAME} will only run on Windows Vista, or higher.$\r$\n$\r$\n$\r$\n"
 
 !define MUI_COMPONENTSPAGE_TEXT_TOP "Select the components to install/upgrade.  Stop any ${PACKAGE_NAME} processes or the ${PACKAGE_NAME} service if it is running.  All DLLs are installed locally."
 
@@ -178,13 +178,13 @@ Section -pre
 	StrCmp $0 0 guiNotRunning
 
 	MessageBox MB_YESNO|MB_ICONEXCLAMATION "To perform the specified operation, OpenVPN-GUI needs to be closed. You will have to restart it manually after the installation has completed. Shall I close it?" /SD IDYES IDNO guiEndNo
-	DetailPrint "Closing OpenVPN-GUI..."
 	Goto guiEndYes
 
 	guiEndNo:
 		Quit
 
 	guiEndYes:
+		DetailPrint "Closing OpenVPN-GUI..."
 		; user wants to close GUI as part of install/upgrade
 		FindWindow $0 "OpenVPN-GUI"
 		IntCmp $0 0 guiNotRunning
@@ -453,6 +453,26 @@ SectionGroupEnd
 Function .onInit
 	${GetParameters} $R0
 	ClearErrors
+
+${IfNot} ${AtLeastWinVista}
+
+	MessageBox MB_YESNO|MB_ICONEXCLAMATION "This package does not work on your operating system.  The last version of OpenVPN supported on your OS is 2.3. Shall I open a web browser for you to download it?" /SD IDYES IDNO guiEndNo
+	Goto guiEndYes
+
+	guiEndNo:
+	Quit
+
+	guiEndYes:
+	DetailPrint "Downloading the latest WinXP build ..."
+	${If} ${RunningX64}
+		ExecShell "open" "https://build.openvpn.net/downloads/releases/latest/openvpn-install-latest-winxp-x86_64.exe" 
+	${Else}
+		ExecShell "open" "https://build.openvpn.net/downloads/releases/latest/openvpn-install-latest-winxp-i686.exe"
+	${EndIf}
+
+	Quit
+
+${EndIf}
 
 	${If} ${RunningX64}
 		SetRegView 64
