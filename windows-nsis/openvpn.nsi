@@ -26,9 +26,14 @@ SetCompressor lzma
 ; WinMessages.nsh is needed to send WM_CLOSE to the GUI if it is still running
 !include "WinMessages.nsh"
 
-; nsProcess.nsh to detect whether OpenVPN process is running ( http://nsis.sourceforge.net/NsProcess_plugin )
+; !addplugindir ensures that nsProcess.nsh and DotNetChecker.nsh can be included
 !addplugindir .
+
+; nsProcess.nsh to detect whether OpenVPN process is running ( http://nsis.sourceforge.net/NsProcess_plugin )
 !include "nsProcess.nsh"
+
+; DotNetChecker.nsh to detect whether .net 4.0 is enabled, which is required for openvpnserv2 ( https://github.com/ReVolly/NsisDotNetChecker )
+!include "DotNetChecker.nsh"
 
 ; x64.nsh for architecture detection
 !include "x64.nsh"
@@ -249,6 +254,8 @@ Section /o "${PACKAGE_NAME} User-Space Components" SecOpenVPNUserSpace
 SectionEnd
 
 Section /o "${PACKAGE_NAME} Service" SecService
+
+	!insertmacro CheckNetFramework 40Full
 
 	SetOverwrite on
 
