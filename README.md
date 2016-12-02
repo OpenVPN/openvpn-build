@@ -242,5 +242,5 @@ Publishing the packages
 
 I prefer to use [freight](https://github.com/freight-team/freight) for apt 
 repository management: Copy the output.tar.gz to the apt repository host and run 
-"scripts/freight-add-all.py" there. If freight is properly configured that's all 
+"scripts/freight-add-many.py" there. If freight is properly configured that's all 
 you need to do.
