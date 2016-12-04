@@ -193,6 +193,14 @@ Section -pre
 		Goto guiEndYes
 
 	guiNotRunning:
+		; Stop & Remove previous OpenVPN service
+		DetailPrint "Removing any previous OpenVPN services..."
+		nsExec::ExecToLog '"$INSTDIR\bin\openvpnserv.exe" -remove'
+		nsExec::ExecToLog '"$INSTDIR\bin\openvpnserv2.exe" -remove'
+		Pop $R0 # return value/error/timeout
+
+		Sleep 3000
+
 		; check for running openvpn.exe processes
 		${nsProcess::FindProcess} "openvpn.exe" $R0
 		${If} $R0 == 0
@@ -205,13 +213,6 @@ Section -pre
 		; Delete previous start menu folder
 		RMDir /r "$SMPROGRAMS\${PACKAGE_NAME}"
 
-		; Stop & Remove previous OpenVPN service
-		DetailPrint "Removing any previous OpenVPN services..."
-		nsExec::ExecToLog '"$INSTDIR\bin\openvpnserv.exe" -remove'
-		nsExec::ExecToLog '"$INSTDIR\bin\openvpnserv2.exe" -remove'
-		Pop $R0 # return value/error/timeout
-
-		Sleep 3000
 	Pop $0 ; for FindWindow
 
 SectionEnd
@@ -242,6 +243,9 @@ Section /o "${PACKAGE_NAME} User-Space Components" SecOpenVPNUserSpace
 		CreateShortCut "$SMPROGRAMS\${PACKAGE_NAME}\Documentation\${PACKAGE_NAME} Windows Notes.lnk" "$INSTDIR\doc\INSTALL-win32.txt"
 	${EndIf}
 
+	; Setup config, log directories, utilities and interactive service
+	Call CoreSetup
+
 SectionEnd
 
 Section /o "${PACKAGE_NAME} Service" SecService
@@ -249,7 +253,21 @@ Section /o "${PACKAGE_NAME} Service" SecService
 	SetOverwrite on
 
 	SetOutPath "$INSTDIR\bin"
+	; Copy openvpnserv2.exe for automatic service
 	File /oname=openvpnserv2.exe "${OPENVPNSERV2_EXECUTABLE}"
+	DetailPrint "Installing OpenVPN Service..."
+	nsExec::ExecToLog '"$INSTDIR\bin\openvpnserv2.exe" -install'
+
+	Pop $R0 # return value/error/timeout
+
+SectionEnd
+
+Function CoreSetup
+
+	SetOverwrite on
+
+	SetOutPath "$INSTDIR\bin"
+	; Copy openvpnserv.exe for interactive service
 	${If} ${RunningX64}
 		File "${OPENVPN_ROOT_X86_64}\bin\openvpnserv.exe"
 	${Else}
@@ -259,11 +277,14 @@ Section /o "${PACKAGE_NAME} Service" SecService
 	SetOutPath "$INSTDIR\config"
 
 	FileOpen $R0 "$INSTDIR\config\README.txt" w
-	FileWrite $R0 "This directory should contain ${PACKAGE_NAME} configuration files$\r$\n"
-	FileWrite $R0 "each having an extension of .${OPENVPN_CONFIG_EXT}$\r$\n"
+	FileWrite $R0 "This directory or its subdirectories should contain ${PACKAGE_NAME}$\r$\n"
+	FileWrite $R0 "configuration files each having an extension of .${OPENVPN_CONFIG_EXT}$\r$\n"
 	FileWrite $R0 "$\r$\n"
 	FileWrite $R0 "When ${PACKAGE_NAME} is started as a service, a separate ${PACKAGE_NAME}$\r$\n"
 	FileWrite $R0 "process will be instantiated for each configuration file.$\r$\n"
+	FileWrite $R0 "$\r$\n"
+	FileWrite $R0 "When ${PACKAGE_NAME} GUI is started configs in this directory are added$\r$\n"
+	FileWrite $R0 "to the list of available connections$\r$\n"
 	FileClose $R0
 
 	SetOutPath "$INSTDIR\sample-config"
@@ -275,6 +296,7 @@ Section /o "${PACKAGE_NAME} Service" SecService
 	FileOpen $R0 "$INSTDIR\log\README.txt" w
 	FileWrite $R0 "This directory will contain the log files for ${PACKAGE_NAME}$\r$\n"
 	FileWrite $R0 "sessions which are being run as a service.$\r$\n"
+	FileWrite $R0 "Logs for connections started by the GUI are kept in USERPROFILE\OpenVPN\log$\r$\n"
 	FileClose $R0
 
 	${If} ${SectionIsSelected} ${SecAddShortcutsWorkaround}
@@ -286,7 +308,7 @@ Section /o "${PACKAGE_NAME} Service" SecService
 		CreateShortCut "$SMPROGRAMS\${PACKAGE_NAME}\Shortcuts\${PACKAGE_NAME} configuration file directory.lnk" "$INSTDIR\config" ""
 	${EndIf}
 
-	; set registry parameters for openvpnserv	
+	; set registry parameters for services and GUI
 	!insertmacro WriteRegStringIfUndef HKLM "SOFTWARE\${PACKAGE_NAME}" "config_dir" "$INSTDIR\config" 
 	!insertmacro WriteRegStringIfUndef HKLM "SOFTWARE\${PACKAGE_NAME}" "config_ext"  "${OPENVPN_CONFIG_EXT}"
 	!insertmacro WriteRegStringIfUndef HKLM "SOFTWARE\${PACKAGE_NAME}" "exe_path"    "$INSTDIR\bin\openvpn.exe"
@@ -295,16 +317,12 @@ Section /o "${PACKAGE_NAME} Service" SecService
 	!insertmacro WriteRegStringIfUndef HKLM "SOFTWARE\${PACKAGE_NAME}" "log_append"  "0"
 
 	; install openvpnserv.exe as a services
-	DetailPrint "Installing OpenVPN Services..."
+	DetailPrint "Installing OpenVPN Interactive Service..."
 	nsExec::ExecToLog '"$INSTDIR\bin\openvpnserv.exe" -install'
-	nsExec::ExecToLog '"$INSTDIR\bin\openvpnserv2.exe" -install'
 
 	Pop $R0 # return value/error/timeout
 
-SectionEnd
-
-Section "${PACKAGE_NAME} Interactive Service" SecInteractiveService
-SectionEnd
+FunctionEnd
 
 Section /o "TAP Virtual Ethernet Adapter" SecTAP
 
@@ -486,7 +504,6 @@ ${EndIf}
 	!insertmacro SelectByParameter ${SecAddShortcutsWorkaround} SELECT_SHORTCUTS 1
 	!insertmacro SelectByParameter ${SecOpenVPNUserSpace} SELECT_OPENVPN 1
 	!insertmacro SelectByParameter ${SecService} SELECT_SERVICE 1
-	!insertmacro SelectByParameter ${SecInteractiveService} SELECT_INTERACTIVE_SERVICE 1
 	!insertmacro SelectByParameter ${SecTAP} SELECT_TAP 1
 	!insertmacro SelectByParameter ${SecOpenVPNGUI} SELECT_OPENVPNGUI 1
 	!insertmacro SelectByParameter ${SecFileAssociation} SELECT_ASSOCIATIONS 1
@@ -509,8 +526,6 @@ FunctionEnd
 Function .onSelChange
 	${If} ${SectionIsSelected} ${SecService}
 		!insertmacro SelectSection ${SecOpenVPNUserSpace}
-	${Else}
-		!insertmacro UnselectSection ${SecInteractiveService}
 	${EndIf}
 	${If} ${SectionIsSelected} ${SecOpenVPNEasyRSA}
 		!insertmacro SelectSection ${SecOpenSSLUtilities}
@@ -558,22 +573,18 @@ Section -post
 	WriteRegDWORD HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\${PACKAGE_NAME}" "EstimatedSize" "$0"
 
 	; Enable and start the Interactive Service
-	${If} ${SectionIsSelected} ${SecInteractiveService}
-		nsExec::ExecToLog '"$SYSDIR\sc.exe" config OpenVPNServiceInteractive start= auto'
+	nsExec::ExecToLog '"$SYSDIR\sc.exe" config OpenVPNServiceInteractive start= auto'
 
-		; Get location of cmd.exe and launch sc.exe inside it to allow
-		; redirecting to nul. This is done because "sc.exe start" output looks a
-		; lot like an error in addition to being too verbose.
-		ReadEnvStr $R0 COMSPEC
-		nsExec::ExecToLog '"$R0" /c "$SYSDIR\sc.exe" start OpenVPNServiceInteractive >nul'
-		Pop $R1
-		${If} "$R1" == "0"
-			DetailPrint "Started OpenVPNServiceInteractive"
-		${Else}
-			DetailPrint "WARNING: $\"sc.exe start OpenVPNServiceInteractive$\" failed with return value of $R1"
-		${EndIf}
+	; Get location of cmd.exe and launch sc.exe inside it to allow
+	; redirecting to nul. This is done because "sc.exe start" output looks a
+	; lot like an error in addition to being too verbose.
+	ReadEnvStr $R0 COMSPEC
+	nsExec::ExecToLog '"$R0" /c "$SYSDIR\sc.exe" start OpenVPNServiceInteractive >nul'
+	Pop $R1
+	${If} "$R1" == "0"
+		DetailPrint "Started OpenVPNServiceInteractive"
 	${Else}
-		nsExec::ExecToLog '"$SYSDIR\sc.exe" config OpenVPNServiceInteractive start= demand'
+		DetailPrint "WARNING: $\"sc.exe start OpenVPNServiceInteractive$\" failed with return value of $R1"
 	${EndIf}
 
 SectionEnd
@@ -584,7 +595,6 @@ SectionEnd
 !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
 	!insertmacro MUI_DESCRIPTION_TEXT ${SecOpenVPNUserSpace} $(DESC_SecOpenVPNUserSpace)
 	!insertmacro MUI_DESCRIPTION_TEXT ${SecService} $(DESC_SecService)
-	!insertmacro MUI_DESCRIPTION_TEXT ${SecInteractiveService} $(DESC_SecInteractiveService)
 	!insertmacro MUI_DESCRIPTION_TEXT ${SecOpenVPNGUI} $(DESC_SecOpenVPNGUI)
 	!insertmacro MUI_DESCRIPTION_TEXT ${SecTAP} $(DESC_SecTAP)
 	!insertmacro MUI_DESCRIPTION_TEXT ${SecOpenVPNEasyRSA} $(DESC_SecOpenVPNEasyRSA)
