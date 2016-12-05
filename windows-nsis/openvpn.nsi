@@ -127,6 +127,8 @@ LangString DESC_SecAddShortcuts ${LANG_ENGLISH} "Add ${PACKAGE_NAME} shortcuts t
 
 LangString DESC_SecFileAssociation ${LANG_ENGLISH} "Register ${PACKAGE_NAME} config file association (*.${OPENVPN_CONFIG_EXT})"
 
+LangString DESC_SecLaunchGUIOnStartup ${LANG_ENGLISH} "Launch ${PACKAGE_NAME} GUI on Windows startup."
+
 ;--------------------------------
 ;Reserve Files
   
@@ -338,6 +340,11 @@ Section /o "${PACKAGE_NAME} GUI" SecOpenVPNGUI
 		CreateShortCut "$SMPROGRAMS\${PACKAGE_NAME}\${PACKAGE_NAME} GUI.lnk" "$INSTDIR\bin\openvpn-gui.exe" ""
 		CreateShortcut "$DESKTOP\${PACKAGE_NAME} GUI.lnk" "$INSTDIR\bin\openvpn-gui.exe"
 	${EndIf}
+
+	${If} ${SectionIsSelected} ${SecLaunchGUIOnStartup}
+		WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Run" "OpenVPN-GUI" "$INSTDIR\bin\openvpn-gui.exe"
+	${EndIf}
+
 SectionEnd
 
 Section /o "${PACKAGE_NAME} File Associations" SecFileAssociation
@@ -403,6 +410,9 @@ Section /o "Add Shortcuts to Start Menu" SecAddShortcuts
 	WriteINIStr "$SMPROGRAMS\${PACKAGE_NAME}\Documentation\${PACKAGE_NAME} Support.url" "InternetShortcut" "URL" "https://community.openvpn.net/openvpn/wiki/GettingHelp"
 
 	CreateShortCut "$SMPROGRAMS\${PACKAGE_NAME}\Uninstall ${PACKAGE_NAME}.lnk" "$INSTDIR\Uninstall.exe"
+SectionEnd
+
+Section /o "Launch ${PACKAGE_NAME} GUI on Windows startup" SecLaunchGUIOnStartup
 SectionEnd
 
 SectionGroup "!Dependencies (Advanced)"
@@ -494,6 +504,7 @@ ${EndIf}
 	!insertmacro SelectByParameter ${SecOpenVPNEasyRSA} SELECT_EASYRSA 0
 	!insertmacro SelectByParameter ${SecAddPath} SELECT_PATH 1
 	!insertmacro SelectByParameter ${SecAddShortcuts} SELECT_SHORTCUTS 1
+	!insertmacro SelectByParameter ${SecLaunchGUIOnStartup} SELECT_LAUNCH 1
 	!insertmacro SelectByParameter ${SecOpenSSLDLLs} SELECT_OPENSSLDLLS 1
 	!insertmacro SelectByParameter ${SecLZODLLs} SELECT_LZODLLS 1
 	!insertmacro SelectByParameter ${SecPKCS11DLLs} SELECT_PKCS11DLLS 1
