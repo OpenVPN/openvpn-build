@@ -251,7 +251,16 @@ SectionEnd
 
 Section /o "${PACKAGE_NAME} Service" SecService
 
-	!insertmacro CheckNetFramework 40Full
+	DotNetChecker::IsDotNet40FullInstalled
+	Pop $0
+
+	${If} $0 == "false"
+		DetailPrint ".NET Framework 4.0 Full not found, download is required for openvpnserv2.exe to run."
+		MessageBox MB_OK|MB_ICONEXCLAMATION "The installation cannot continue as no .NET Framework 4.0 is found."
+		Quit
+	${EndIf}
+
+	DetailPrint ".NET Framework 4.0 Full found, no need to install."
 
 	SetOverwrite on
 
