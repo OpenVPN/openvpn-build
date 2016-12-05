@@ -255,15 +255,23 @@ SectionEnd
 
 Section /o "${PACKAGE_NAME} Service" SecService
 
-	!insertmacro CheckNetFramework 40Full
-
 	SetOverwrite on
 
 	SetOutPath "$INSTDIR\bin"
 	; Copy openvpnserv2.exe for automatic service
 	File /oname=openvpnserv2.exe "${OPENVPNSERV2_EXECUTABLE}"
 	DetailPrint "Installing OpenVPN Service..."
-	nsExec::ExecToLog '"$INSTDIR\bin\openvpnserv2.exe" -install'
+
+	DotNetChecker::IsDotNet40FullInstalled
+	Pop $0
+	${If} $0 == "false"
+	${OrIf} $0 == "f" ; could be either false or f as per dotnetchecker.nsh
+		DetailPrint "NET 4.0 not found. Using sc.exe to install openvpnservice"
+		nsExec::ExecToLog '$SYSDIR\sc.exe create OpenVPNService binPath= "$INSTDIR\bin\openvpnserv2.exe" depend= tap0901/dhcp'
+	${Else}
+		DetailPrint "Running openvpnserv2.exe -install"
+		nsExec::ExecToLog '"$INSTDIR\bin\openvpnserv2.exe" -install'
+	${EndIf}
 
 	Pop $R0 # return value/error/timeout
 
@@ -593,6 +601,15 @@ Section -post
 	${Else}
 		DetailPrint "WARNING: $\"sc.exe start OpenVPNServiceInteractive$\" failed with return value of $R1"
 	${EndIf}
+
+	; if no .NET 4, offer to  install it unless silent install
+	IfSilent 0 +2
+	Goto skipNet40
+	${If} ${SectionIsSelected} ${SecService}
+		!insertmacro CheckNetFramework 40Full
+	${Endif}
+
+	skipNet40:
 
 SectionEnd
 
