@@ -200,9 +200,12 @@ Section -pre
 
 	guiNotRunning:
 		; Stop & Remove previous OpenVPN service
-		DetailPrint "Removing any previous OpenVPN services..."
+		DetailPrint "Removing any previous OpenVPN interactive service..."
 		nsExec::ExecToLog '"$INSTDIR\bin\openvpnserv.exe" -remove'
-		nsExec::ExecToLog '"$INSTDIR\bin\openvpnserv2.exe" -remove'
+		Pop $R0 # return value/error/timeout
+		DetailPrint "Stopping OpenVPN automatic service (may fail if not found)..."
+		; Only stop now, will be removed in SecService if selected
+		nsExec::ExecToLog '"$SYSDIR\net.exe" stop OpenVPNService /yes'
 		Pop $R0 # return value/error/timeout
 
 		Sleep 3000
@@ -228,8 +231,15 @@ Section /o "-workaround" SecAddShortcutsWorkaround
 	; as we don't want to move SecAddShortcuts to top of selection
 SectionEnd
 
-Section /o "${PACKAGE_NAME} User-Space Components" SecOpenVPNUserSpace
+Section /o "-launchondummy" SecLaunchGUIOnLogon0
+	; this section should be selected as SecLaunchGUIOnLogon
+	; this is here as we don't want to move that section to the top
+SectionEnd
 
+; We do not make this hidden as its informative to have displayed, but make it readonly (always selected)
+Section "${PACKAGE_NAME} User-Space Components" SecOpenVPNUserSpace
+
+	SectionIn RO ; section cannot be unchecked by user
 	SetOverwrite on
 
 	SetOutPath "$INSTDIR\bin"
@@ -254,10 +264,12 @@ Section /o "${PACKAGE_NAME} User-Space Components" SecOpenVPNUserSpace
 
 SectionEnd
 
-Section /o "${PACKAGE_NAME} Service" SecService
+Section "${PACKAGE_NAME} Service" SecService
 
 	SetOverwrite on
 
+	nsExec::ExecToLog '"$INSTDIR\bin\openvpnserv2.exe" -remove'
+	Pop $R0 # return value/error/timeout
 	SetOutPath "$INSTDIR\bin"
 	; Copy openvpnserv2.exe for automatic service
 	File /oname=openvpnserv2.exe "${OPENVPNSERV2_EXECUTABLE}"
@@ -356,9 +368,6 @@ Section /o "TAP Virtual Ethernet Adapter" SecTAP
 	WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\${PACKAGE_NAME}" "tap" "installed"
 SectionEnd
 
-Section /o "Launch ${PACKAGE_NAME} GUI on User Logon" SecLaunchGUIOnLogon
-SectionEnd
-
 Section /o "${PACKAGE_NAME} GUI" SecOpenVPNGUI
 
 	SetOverwrite on
@@ -385,24 +394,14 @@ Section /o "${PACKAGE_NAME} GUI" SecOpenVPNGUI
 	WriteRegDword HKLM "Software\Microsoft\Active Setup\Installed Components\${PACKAGE_NAME}_UserSetup" "IsInstalled" 0x1
         ; DontAsk = 2 is used to not prompt the user
 	WriteRegDword HKLM "Software\Microsoft\Active Setup\Installed Components\${PACKAGE_NAME}_UserSetup" "DontAsk" 0x2
-	${If} ${SectionIsSelected} ${SecLaunchGUIOnLogon}
+	${If} ${SectionIsSelected} ${SecLaunchGUIOnLogon0}
 		WriteRegStr HKLM "Software\Microsoft\Active Setup\Installed Components\${PACKAGE_NAME}_UserSetup" "StubPath" "reg add HKCU\Software\Microsoft\Windows\CurrentVersion\Run /v OPENVPN-GUI /t REG_SZ /d $\"$INSTDIR\bin\openvpn-gui.exe$\" /f"
 	${Else}
 		WriteRegStr HKLM "Software\Microsoft\Active Setup\Installed Components\${PACKAGE_NAME}_UserSetup" "StubPath" "reg delete HKCU\Software\Microsoft\Windows\CurrentVersion\Run /v OPENVPN-GUI /f"
 	${EndIf}
 SectionEnd
 
-Section /o "${PACKAGE_NAME} File Associations" SecFileAssociation
-	WriteRegStr HKCR ".${OPENVPN_CONFIG_EXT}" "" "${PACKAGE_NAME}File"
-	WriteRegStr HKCR "${PACKAGE_NAME}File" "" "${PACKAGE_NAME} Config File"
-	WriteRegStr HKCR "${PACKAGE_NAME}File\shell" "" "open"
-	WriteRegStr HKCR "${PACKAGE_NAME}File\DefaultIcon" "" "$INSTDIR\icon.ico,0"
-	WriteRegStr HKCR "${PACKAGE_NAME}File\shell\open\command" "" 'notepad.exe "%1"'
-	WriteRegStr HKCR "${PACKAGE_NAME}File\shell\run" "" "Start ${PACKAGE_NAME} on this config file"
-	WriteRegStr HKCR "${PACKAGE_NAME}File\shell\run\command" "" '"$INSTDIR\bin\openvpn.exe" --pause-exit --config "%1"'
-SectionEnd
-
-Section /o "OpenSSL Utilities" SecOpenSSLUtilities
+Section "-OpenSSL Utilities" SecOpenSSLUtilities
 
 	SetOverwrite on
 	SetOutPath "$INSTDIR\bin"
@@ -438,66 +437,81 @@ Section /o "${PACKAGE_NAME} RSA Certificate Management Scripts" SecOpenVPNEasyRS
 
 SectionEnd
 
-Section /o "Add ${PACKAGE_NAME} to PATH" SecAddPath
+SectionGroup "!Advanced"
 
-	; append our bin directory to end of current user path
-	${EnvVarUpdate} $R0 "PATH" "A" "HKLM" "$INSTDIR\bin"
+	Section /o "${PACKAGE_NAME} File Associations" SecFileAssociation
+		WriteRegStr HKCR ".${OPENVPN_CONFIG_EXT}" "" "${PACKAGE_NAME}File"
+		WriteRegStr HKCR "${PACKAGE_NAME}File" "" "${PACKAGE_NAME} Config File"
+		WriteRegStr HKCR "${PACKAGE_NAME}File\shell" "" "open"
+		WriteRegStr HKCR "${PACKAGE_NAME}File\DefaultIcon" "" "$INSTDIR\icon.ico,0"
+		WriteRegStr HKCR "${PACKAGE_NAME}File\shell\open\command" "" 'notepad.exe "%1"'
+		WriteRegStr HKCR "${PACKAGE_NAME}File\shell\run" "" "Start ${PACKAGE_NAME} on this config file"
+		WriteRegStr HKCR "${PACKAGE_NAME}File\shell\run\command" "" '"$INSTDIR\bin\openvpn.exe" --pause-exit --config "%1"'
+	SectionEnd
 
-SectionEnd
+	Section /o "Add ${PACKAGE_NAME} to PATH" SecAddPath
 
-Section /o "Add Shortcuts to Start Menu" SecAddShortcuts
-
-	SetOverwrite on
-	CreateDirectory "$SMPROGRAMS\${PACKAGE_NAME}\Documentation"
-	WriteINIStr "$SMPROGRAMS\${PACKAGE_NAME}\Documentation\${PACKAGE_NAME} HOWTO.url" "InternetShortcut" "URL" "https://openvpn.net/howto.html"
-	WriteINIStr "$SMPROGRAMS\${PACKAGE_NAME}\Documentation\${PACKAGE_NAME} Web Site.url" "InternetShortcut" "URL" "https://openvpn.net/"
-	WriteINIStr "$SMPROGRAMS\${PACKAGE_NAME}\Documentation\${PACKAGE_NAME} Wiki.url" "InternetShortcut" "URL" "https://community.openvpn.net/openvpn/wiki/"
-	WriteINIStr "$SMPROGRAMS\${PACKAGE_NAME}\Documentation\${PACKAGE_NAME} Support.url" "InternetShortcut" "URL" "https://community.openvpn.net/openvpn/wiki/GettingHelp"
-
-	CreateShortCut "$SMPROGRAMS\${PACKAGE_NAME}\Uninstall ${PACKAGE_NAME}.lnk" "$INSTDIR\Uninstall.exe"
-SectionEnd
-
-SectionGroup "!Dependencies (Advanced)"
-
-	Section /o "OpenSSL DLLs" SecOpenSSLDLLs
-
-		SetOverwrite on
-		SetOutPath "$INSTDIR\bin"
-		${If} ${RunningX64}
-			File "${OPENVPN_ROOT_X86_64}\bin\libeay32.dll"
-			File "${OPENVPN_ROOT_X86_64}\bin\ssleay32.dll"
-		${Else}
-			File "${OPENVPN_ROOT_I686}\bin\libeay32.dll"
-			File "${OPENVPN_ROOT_I686}\bin\ssleay32.dll"
-		${EndIf}
+		; append our bin directory to end of current user path
+		${EnvVarUpdate} $R0 "PATH" "A" "HKLM" "$INSTDIR\bin"
 
 	SectionEnd
 
-	Section /o "LZO DLLs" SecLZODLLs
+	Section /o "Add Shortcuts to Start Menu" SecAddShortcuts
 
 		SetOverwrite on
-		SetOutPath "$INSTDIR\bin"
-		${If} ${RunningX64}
-			File "${OPENVPN_ROOT_X86_64}\bin\liblzo2-2.dll"
-		${Else}
-			File "${OPENVPN_ROOT_I686}\bin\liblzo2-2.dll"
-		${EndIf}
+		CreateDirectory "$SMPROGRAMS\${PACKAGE_NAME}\Documentation"
+		WriteINIStr "$SMPROGRAMS\${PACKAGE_NAME}\Documentation\${PACKAGE_NAME} HOWTO.url" "InternetShortcut" "URL" "https://openvpn.net/howto.html"
+		WriteINIStr "$SMPROGRAMS\${PACKAGE_NAME}\Documentation\${PACKAGE_NAME} Web Site.url" "InternetShortcut" "URL" "https://openvpn.net/"
+		WriteINIStr "$SMPROGRAMS\${PACKAGE_NAME}\Documentation\${PACKAGE_NAME} Wiki.url" "InternetShortcut" "URL" "https://community.openvpn.net/openvpn/wiki/"
+		WriteINIStr "$SMPROGRAMS\${PACKAGE_NAME}\Documentation\${PACKAGE_NAME} Support.url" "InternetShortcut" "URL" "https://community.openvpn.net/openvpn/wiki/GettingHelp"
 
+		CreateShortCut "$SMPROGRAMS\${PACKAGE_NAME}\Uninstall ${PACKAGE_NAME}.lnk" "$INSTDIR\Uninstall.exe"
 	SectionEnd
 
-	Section /o "PKCS#11 DLLs" SecPKCS11DLLs
-
-		SetOverwrite on
-		SetOutPath "$INSTDIR\bin"
-		${If} ${RunningX64}
-			File "${OPENVPN_ROOT_X86_64}\bin\libpkcs11-helper-1.dll"
-		${Else}
-			File "${OPENVPN_ROOT_I686}\bin\libpkcs11-helper-1.dll"
-		${EndIf}
-
+	Section /o "Launch ${PACKAGE_NAME} GUI on User Logon" SecLaunchGUIOnLogon
 	SectionEnd
 
 SectionGroupEnd
+
+
+Section "-OpenSSL DLLs" SecOpenSSLDLLs
+
+	SetOverwrite on
+	SetOutPath "$INSTDIR\bin"
+	${If} ${RunningX64}
+		File "${OPENVPN_ROOT_X86_64}\bin\libeay32.dll"
+		File "${OPENVPN_ROOT_X86_64}\bin\ssleay32.dll"
+	${Else}
+		File "${OPENVPN_ROOT_I686}\bin\libeay32.dll"
+		File "${OPENVPN_ROOT_I686}\bin\ssleay32.dll"
+	${EndIf}
+
+SectionEnd
+
+Section "-LZO DLLs" SecLZODLLs
+
+	SetOverwrite on
+	SetOutPath "$INSTDIR\bin"
+	${If} ${RunningX64}
+		File "${OPENVPN_ROOT_X86_64}\bin\liblzo2-2.dll"
+	${Else}
+		File "${OPENVPN_ROOT_I686}\bin\liblzo2-2.dll"
+	${EndIf}
+
+SectionEnd
+
+Section "-PKCS#11 DLLs" SecPKCS11DLLs
+
+	SetOverwrite on
+	SetOutPath "$INSTDIR\bin"
+	${If} ${RunningX64}
+		File "${OPENVPN_ROOT_X86_64}\bin\libpkcs11-helper-1.dll"
+	${Else}
+		File "${OPENVPN_ROOT_I686}\bin\libpkcs11-helper-1.dll"
+	${EndIf}
+
+SectionEnd
+
 
 ;--------------------------------
 ;Installer Sections
@@ -540,11 +554,12 @@ ${EndIf}
 	!insertmacro SelectByParameter ${SecTAP} SELECT_TAP 1
 	!insertmacro SelectByParameter ${SecOpenVPNGUI} SELECT_OPENVPNGUI 1
 	!insertmacro SelectByParameter ${SecFileAssociation} SELECT_ASSOCIATIONS 1
-	!insertmacro SelectByParameter ${SecOpenSSLUtilities} SELECT_OPENSSL_UTILITIES 0
+	!insertmacro SelectByParameter ${SecOpenSSLUtilities} SELECT_OPENSSL_UTILITIES 1
 	!insertmacro SelectByParameter ${SecOpenVPNEasyRSA} SELECT_EASYRSA 0
 	!insertmacro SelectByParameter ${SecAddPath} SELECT_PATH 1
 	!insertmacro SelectByParameter ${SecAddShortcuts} SELECT_SHORTCUTS 1
 	!insertmacro SelectByParameter ${SecLaunchGUIOnLogon} SELECT_LAUNCH 1
+	!insertmacro SelectByParameter ${SecLaunchGUIOnLogon0} SELECT_LAUNCH 1
 	!insertmacro SelectByParameter ${SecOpenSSLDLLs} SELECT_OPENSSLDLLS 1
 	!insertmacro SelectByParameter ${SecLZODLLs} SELECT_LZODLLS 1
 	!insertmacro SelectByParameter ${SecPKCS11DLLs} SELECT_PKCS11DLLS 1
@@ -571,6 +586,11 @@ Function .onSelChange
 		!insertmacro SelectSection ${SecAddShortcutsWorkaround}
 	${Else}
 		!insertmacro UnselectSection ${SecAddShortcutsWorkaround}
+	${EndIf}
+	${If} ${SectionIsSelected} ${SecLaunchGUIOnLogon}
+		!insertmacro SelectSection ${SecLaunchGUIOnLogon0}
+	${Else}
+		!insertmacro UnSelectSection ${SecLaunchGUIOnLogon0}
 	${EndIf}
 FunctionEnd
 
