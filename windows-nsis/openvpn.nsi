@@ -26,9 +26,14 @@ SetCompressor lzma
 ; WinMessages.nsh is needed to send WM_CLOSE to the GUI if it is still running
 !include "WinMessages.nsh"
 
-; nsProcess.nsh to detect whether OpenVPN process is running ( http://nsis.sourceforge.net/NsProcess_plugin )
+; !addplugindir ensures that nsProcess.nsh and DotNetChecker.nsh can be included
 !addplugindir .
+
+; nsProcess.nsh to detect whether OpenVPN process is running ( http://nsis.sourceforge.net/NsProcess_plugin )
 !include "nsProcess.nsh"
+
+; DotNetChecker.nsh to detect whether .net 4.0 is enabled, which is required for openvpnserv2 ( https://github.com/ReVolly/NsisDotNetChecker )
+!include "DotNetChecker.nsh"
 
 ; x64.nsh for architecture detection
 !include "x64.nsh"
@@ -246,6 +251,17 @@ Section /o "${PACKAGE_NAME} User-Space Components" SecOpenVPNUserSpace
 SectionEnd
 
 Section /o "${PACKAGE_NAME} Service" SecService
+
+	DotNetChecker::IsDotNet40FullInstalled
+	Pop $0
+
+	${If} $0 == "false"
+		DetailPrint ".NET Framework 4.0 Full not found, download is required for openvpnserv2.exe to run."
+		MessageBox MB_OK|MB_ICONEXCLAMATION "The installation cannot continue as no .NET Framework 4.0 is found."
+		Quit
+	${EndIf}
+
+	DetailPrint ".NET Framework 4.0 Full found, no need to install."
 
 	SetOverwrite on
 
