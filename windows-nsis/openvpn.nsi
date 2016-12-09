@@ -561,6 +561,9 @@ Function .onSelChange
 	${If} ${SectionIsSelected} ${SecService}
 		!insertmacro SelectSection ${SecOpenVPNUserSpace}
 	${EndIf}
+	${If} ${SectionIsSelected} ${SecOpenVPNGUI}
+		!insertmacro SelectSection ${SecOpenVPNUserSpace}
+	${EndIf}
 	${If} ${SectionIsSelected} ${SecOpenVPNEasyRSA}
 		!insertmacro SelectSection ${SecOpenSSLUtilities}
 	${EndIf}
