@@ -12,6 +12,9 @@ SetCompressor lzma
 
 !define PRODUCT_PUBLISHER "OpenVPN Technologies, Inc."
 
+; !addplugindir ensures that nsProcess.nsh and DotNetChecker.nsh can be included
+!addplugindir .
+
 ; Modern user interface
 !include "MUI2.nsh"
 
@@ -25,9 +28,6 @@ SetCompressor lzma
 
 ; WinMessages.nsh is needed to send WM_CLOSE to the GUI if it is still running
 !include "WinMessages.nsh"
-
-; !addplugindir ensures that nsProcess.nsh and DotNetChecker.nsh can be included
-!addplugindir .
 
 ; nsProcess.nsh to detect whether OpenVPN process is running ( http://nsis.sourceforge.net/NsProcess_plugin )
 !include "nsProcess.nsh"
