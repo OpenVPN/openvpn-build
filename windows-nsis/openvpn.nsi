@@ -264,7 +264,7 @@ Section "${PACKAGE_NAME} User-Space Components" SecOpenVPNUserSpace
 
 SectionEnd
 
-Section "${PACKAGE_NAME} Service" SecService
+Section /o "${PACKAGE_NAME} Service" SecService
 
 	SetOverwrite on
 
