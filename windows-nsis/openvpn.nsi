@@ -508,13 +508,12 @@ Function .onInit
 
 ${IfNot} ${AtLeastWinVista}
 
-	MessageBox MB_YESNO|MB_ICONEXCLAMATION "This package does not work on your operating system.  The last version of OpenVPN supported on your OS is 2.3. Shall I open a web browser for you to download it?" /SD IDYES IDNO guiEndNo
-	Goto guiEndYes
+	MessageBox MB_YESNO|MB_ICONEXCLAMATION "This package does not work on your operating system.  The last version of OpenVPN supported on your OS is 2.3. Shall I open a web browser for you to download it?" /SD IDNO IDYES DownloadForWinXP IDNO DontDownloadForWinXP
 
-	guiEndNo:
+	DontDownloadForWinXP:
 	Quit
 
-	guiEndYes:
+	DownloadForWinXP:
 	DetailPrint "Downloading the latest WinXP build ..."
 	${If} ${RunningX64}
 		ExecShell "open" "https://build.openvpn.net/downloads/releases/latest/openvpn-install-latest-winxp-x86_64.exe" 
