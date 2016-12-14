@@ -12,6 +12,9 @@ SetCompressor lzma
 
 !define PRODUCT_PUBLISHER "OpenVPN Technologies, Inc."
 
+; !addplugindir ensures that nsProcess.nsh and DotNetChecker.nsh can be included
+!addplugindir .
+
 ; Modern user interface
 !include "MUI2.nsh"
 
@@ -25,9 +28,6 @@ SetCompressor lzma
 
 ; WinMessages.nsh is needed to send WM_CLOSE to the GUI if it is still running
 !include "WinMessages.nsh"
-
-; !addplugindir ensures that nsProcess.nsh and DotNetChecker.nsh can be included
-!addplugindir .
 
 ; nsProcess.nsh to detect whether OpenVPN process is running ( http://nsis.sourceforge.net/NsProcess_plugin )
 !include "nsProcess.nsh"
@@ -449,8 +449,8 @@ Section /o "Add Shortcuts to Start Menu" SecAddShortcuts
 
 	SetOverwrite on
 	CreateDirectory "$SMPROGRAMS\${PACKAGE_NAME}\Documentation"
-	WriteINIStr "$SMPROGRAMS\${PACKAGE_NAME}\Documentation\${PACKAGE_NAME} HOWTO.url" "InternetShortcut" "URL" "http://openvpn.net/howto.html"
-	WriteINIStr "$SMPROGRAMS\${PACKAGE_NAME}\Documentation\${PACKAGE_NAME} Web Site.url" "InternetShortcut" "URL" "http://openvpn.net/"
+	WriteINIStr "$SMPROGRAMS\${PACKAGE_NAME}\Documentation\${PACKAGE_NAME} HOWTO.url" "InternetShortcut" "URL" "https://openvpn.net/howto.html"
+	WriteINIStr "$SMPROGRAMS\${PACKAGE_NAME}\Documentation\${PACKAGE_NAME} Web Site.url" "InternetShortcut" "URL" "https://openvpn.net/"
 	WriteINIStr "$SMPROGRAMS\${PACKAGE_NAME}\Documentation\${PACKAGE_NAME} Wiki.url" "InternetShortcut" "URL" "https://community.openvpn.net/openvpn/wiki/"
 	WriteINIStr "$SMPROGRAMS\${PACKAGE_NAME}\Documentation\${PACKAGE_NAME} Support.url" "InternetShortcut" "URL" "https://community.openvpn.net/openvpn/wiki/GettingHelp"
 
@@ -508,13 +508,12 @@ Function .onInit
 
 ${IfNot} ${AtLeastWinVista}
 
-	MessageBox MB_YESNO|MB_ICONEXCLAMATION "This package does not work on your operating system.  The last version of OpenVPN supported on your OS is 2.3. Shall I open a web browser for you to download it?" /SD IDYES IDNO guiEndNo
-	Goto guiEndYes
+	MessageBox MB_YESNO|MB_ICONEXCLAMATION "This package does not work on your operating system.  The last version of OpenVPN supported on your OS is 2.3. Shall I open a web browser for you to download it?" /SD IDNO IDYES DownloadForWinXP IDNO DontDownloadForWinXP
 
-	guiEndNo:
+	DontDownloadForWinXP:
 	Quit
 
-	guiEndYes:
+	DownloadForWinXP:
 	DetailPrint "Downloading the latest WinXP build ..."
 	${If} ${RunningX64}
 		ExecShell "open" "https://build.openvpn.net/downloads/releases/latest/openvpn-install-latest-winxp-x86_64.exe" 
@@ -560,6 +559,9 @@ FunctionEnd
 
 Function .onSelChange
 	${If} ${SectionIsSelected} ${SecService}
+		!insertmacro SelectSection ${SecOpenVPNUserSpace}
+	${EndIf}
+	${If} ${SectionIsSelected} ${SecOpenVPNGUI}
 		!insertmacro SelectSection ${SecOpenVPNUserSpace}
 	${EndIf}
 	${If} ${SectionIsSelected} ${SecOpenVPNEasyRSA}
