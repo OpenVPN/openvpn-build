@@ -39,7 +39,19 @@ cat $VARIANTS_FILE|grep -v "^#"|while read LINE; do
         # The latter has to be done for all version definitions in the changelog
         # or the Debian packaging tools will explode.
         #
-        sed -E s/'^(openvpn \([[:digit:]]\.[[:digit:]])_([[:alnum:]]+)-debian([[:digit:]])'/"\1-\2-$OSRELEASE\3"/g $CHANGELOG > debian/changelog
+        # Trying to manage versions like 2.3.14 and 2.4_rc2 with one regular 
+        # expression gets very tricky, becomes hard to read easily and is 
+        # fragile. Therefore we have two sed "profiles" depending on the version 
+        # number type we're given.
+
+        echo $PROGRAM_VERSION|grep "_" > /dev/null 
+        if [ $? -eq 0 ]; then
+            # This works for openvpn-2.4_rc2-debian0 and such
+            sed -E s/'^(openvpn \([[:digit:]]\.[[:digit:]])_([[:alnum:]]+)-debian([[:digit:]])'/"\1-\2-$OSRELEASE\3"/g $CHANGELOG > debian/changelog
+        else
+            # This works for openvpn-2.3.14-debian0 and such
+            sed -E s/'^(openvpn \([[:digit:]]\.[[:digit:]]\.[[:digit:]]+)-debian([[:digit:]])'/"\1-$OSRELEASE\2"/g $CHANGELOG > debian/changelog
+        fi
 
         dpkg-buildpackage -S -uc -us
     fi
