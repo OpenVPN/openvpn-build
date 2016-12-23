@@ -217,9 +217,18 @@ need to build several OpenVPN versions using the same sbuild_wrapper:
     $ PROGRAM_VERSION=2.4_alpha2 PACKAGE_VERSION=0 scripts/prepare-all.sh
     $ PROGRAM_VERSION=2.4_alpha2 PACKAGE_VERSION=0 scripts/build-all.sh
 
-The above commands build both 2.3.12 and 2.4_alpha2.
+The above commands would build both 2.3.12 and 2.4_alpha2.
 
-The resulting .deb files can be found from the "output" directory. They are also
+You can also customize the patch series file to use in prepare-all.sh:
+
+    $ PROGRAM_VERSION=2.3.14 PACKAGE_VERSION=0 PATCH_SERIES=series-2.3 scripts/prepare-all.sh
+    $ PROGRAM_VERSION=2.3.14 PACKAGE_VERSION=0 scripts/build-all.sh 
+
+This can be useful when the same patch will not work on different OpenVPN 
+versions. The series file is looked for from 
+_packaging/\<lsbdistcodename\>/debian/patches/_.
+
+The produced .deb files can be found from the "output" directory. They are also
 packaged into "output.tar.gz" file at \<sbuild_wrapper_basedir\>.
 
 Applying patches

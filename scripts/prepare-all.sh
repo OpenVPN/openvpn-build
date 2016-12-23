@@ -5,6 +5,10 @@
 # Determine the release and build numbers
 . $VERSION_FILE
 
+# The series file to use. Required because a single patch (series) may not work 
+# on all OpenVPN versions we're building (e.g. due to the "Great Reformatting").
+PATCH_SERIES="${PATCH_SERIES:-series}"
+
 CHANGELOG="$BASEDIR/packaging/changelog-$PROGRAM_VERSION"
 
 if ! [ -r "${CHANGELOG}" ]; then
@@ -29,6 +33,10 @@ cat $VARIANTS_FILE|grep -v "^#"|while read LINE; do
         tar -zxf openvpn_$PROGRAM_VERSION_CLEAN.orig.tar.gz
         cd openvpn-$PROGRAM_VERSION
         cp -a $BASEDIR/packaging/$OSRELEASE/debian .
+
+        # Make sure the correct patch series is used
+        PATCHESDIR="debian/patches"
+        cp -a $PATCHESDIR/$PATCH_SERIES $PATCHESDIR/series
 
         # Generate changelog from the template using sed with regular expression
         # capture groups. The purpose is twofold:
