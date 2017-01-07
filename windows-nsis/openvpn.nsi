@@ -205,7 +205,8 @@ Section -pre
 		Pop $R0 # return value/error/timeout
 		DetailPrint "Stopping OpenVPN automatic service (may fail if not found)..."
 		; Only stop now, will be removed in SecService if selected
-		nsExec::ExecToLog '"$SYSDIR\net.exe" stop OpenVPNService /yes'
+		ReadEnvStr $R0 COMSPEC
+		nsExec::ExecToLog '"$R0" /c "$SYSDIR\sc.exe" stop OpenVPNService >nul'
 		Pop $R0 # return value/error/timeout
 
 		Sleep 3000
@@ -276,15 +277,7 @@ Section /o "${PACKAGE_NAME} Service" SecService
 	DetailPrint "Installing OpenVPN Service..."
 
 	DotNetChecker::IsDotNet40FullInstalled
-	Pop $0
-	${If} $0 == "false"
-	${OrIf} $0 == "f" ; could be either false or f as per dotnetchecker.nsh
-		DetailPrint "NET 4.0 not found. Using sc.exe to install openvpnservice"
-		nsExec::ExecToLog '$SYSDIR\sc.exe create OpenVPNService binPath= "$INSTDIR\bin\openvpnserv2.exe" depend= tap0901/dhcp'
-	${Else}
-		DetailPrint "Running openvpnserv2.exe -install"
-		nsExec::ExecToLog '"$INSTDIR\bin\openvpnserv2.exe" -install'
-	${EndIf}
+	nsExec::ExecToLog '$SYSDIR\sc.exe create OpenVPNService binPath= "$INSTDIR\bin\openvpnserv2.exe" depend= tap0901/dhcp'
 
 	Pop $R0 # return value/error/timeout
 
