@@ -133,6 +133,8 @@ LangString DESC_SecAddShortcuts ${LANG_ENGLISH} "Add ${PACKAGE_NAME} shortcuts t
 LangString DESC_SecFileAssociation ${LANG_ENGLISH} "Register ${PACKAGE_NAME} config file association (*.${OPENVPN_CONFIG_EXT})"
 
 LangString DESC_SecLaunchGUIOnLogon ${LANG_ENGLISH} "Launch ${PACKAGE_NAME} GUI on user logon."
+
+LangString DESC_SecDisableSavePass ${LANG_ENGLISH} "Do not allow passwords to be saved in ${PACKAGE_NAME} GUI."
 ;--------------------------------
 ;Reserve Files
   
@@ -162,6 +164,15 @@ ReserveFile "install-whirl.bmp"
 	ReadRegStr $R0 "${ROOT}" "${SUBKEY}" "${KEY}"
 	${If} $R0 == ""
 		WriteRegStr "${ROOT}" "${SUBKEY}" "${KEY}" '${VALUE}'
+	${EndIf}
+	Pop $R0
+!macroend
+
+!macro WriteRegDWORDIfUndef ROOT SUBKEY KEY VALUE
+	Push $R0
+	ReadRegDWORD $R0 "${ROOT}" "${SUBKEY}" "${KEY}"
+	${If} $R0 == ""
+		WriteRegDWORD "${ROOT}" "${SUBKEY}" "${KEY}" '${VALUE}'
 	${EndIf}
 	Pop $R0
 !macroend
@@ -343,6 +354,7 @@ Function CoreSetup
 	!insertmacro WriteRegStringIfUndef HKLM "SOFTWARE\${PACKAGE_NAME}" "log_dir"     "$INSTDIR\log"
 	!insertmacro WriteRegStringIfUndef HKLM "SOFTWARE\${PACKAGE_NAME}" "priority"    "NORMAL_PRIORITY_CLASS"
 	!insertmacro WriteRegStringIfUndef HKLM "SOFTWARE\${PACKAGE_NAME}" "log_append"  "0"
+	!insertmacro WriteRegDWORDIfUndef  HKLM "SOFTWARE\${PACKAGE_NAME}" "disable_save_passwords"  0
 
 	; install openvpnserv.exe as a services
 	DetailPrint "Installing OpenVPN Interactive Service..."
@@ -471,6 +483,10 @@ SectionGroup "!Advanced"
 	Section /o "Launch ${PACKAGE_NAME} GUI on User Logon" SecLaunchGUIOnLogon
 	SectionEnd
 
+	Section /o "Disable Password Save Feature in ${PACKAGE_NAME} GUI" SecDisableSavePass
+		WriteRegDWORD HKLM "SOFTWARE\${PACKAGE_NAME}" "disable_save_passwords"  1
+	SectionEnd
+
 SectionGroupEnd
 
 
@@ -560,6 +576,7 @@ ${EndIf}
 	!insertmacro SelectByParameter ${SecAddShortcuts} SELECT_SHORTCUTS 1
 	!insertmacro SelectByParameter ${SecLaunchGUIOnLogon} SELECT_LAUNCH 1
 	!insertmacro SelectByParameter ${SecLaunchGUIOnLogon0} SELECT_LAUNCH 1
+	!insertmacro SelectByParameter ${SecDisableSavePass} SELECT_DISABLE_SAVEPASS 0
 	!insertmacro SelectByParameter ${SecOpenSSLDLLs} SELECT_OPENSSLDLLS 1
 	!insertmacro SelectByParameter ${SecLZODLLs} SELECT_LZODLLS 1
 	!insertmacro SelectByParameter ${SecPKCS11DLLs} SELECT_PKCS11DLLS 1
@@ -671,6 +688,7 @@ SectionEnd
 	!insertmacro MUI_DESCRIPTION_TEXT ${SecAddPath} $(DESC_SecAddPath)
 	!insertmacro MUI_DESCRIPTION_TEXT ${SecAddShortcuts} $(DESC_SecAddShortcuts)
 	!insertmacro MUI_DESCRIPTION_TEXT ${SecLaunchGUIOnLogon} $(DESC_SecLaunchGUIOnLogon)
+	!insertmacro MUI_DESCRIPTION_TEXT ${SecDisableSavePass} $(DESC_SecDisableSavePass)
 	!insertmacro MUI_DESCRIPTION_TEXT ${SecFileAssociation} $(DESC_SecFileAssociation)
 !insertmacro MUI_FUNCTION_DESCRIPTION_END
 
