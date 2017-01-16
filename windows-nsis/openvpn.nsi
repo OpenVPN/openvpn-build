@@ -201,11 +201,11 @@ Section -pre
 	guiNotRunning:
 		; Stop & Remove previous OpenVPN service
 		DetailPrint "Removing any previous OpenVPN interactive service..."
-		nsExec::ExecToLog '"$INSTDIR\bin\openvpnserv.exe" -remove'
+		nsExec::ExecToLog /OEM '"$INSTDIR\bin\openvpnserv.exe" -remove'
 		Pop $R0 # return value/error/timeout
 		DetailPrint "Stopping OpenVPN automatic service (may fail if not found)..."
 		; Only stop now, will be removed in SecService if selected
-		nsExec::ExecToLog '"$SYSDIR\net.exe" stop OpenVPNService /yes'
+		nsExec::ExecToLog /OEM '"$SYSDIR\net.exe" stop OpenVPNService /yes'
 		Pop $R0 # return value/error/timeout
 
 		Sleep 3000
@@ -268,7 +268,7 @@ Section /o "${PACKAGE_NAME} Service" SecService
 
 	SetOverwrite on
 
-	nsExec::ExecToLog '"$INSTDIR\bin\openvpnserv2.exe" -remove'
+	nsExec::ExecToLog /OEM '"$INSTDIR\bin\openvpnserv2.exe" -remove'
 	Pop $R0 # return value/error/timeout
 	SetOutPath "$INSTDIR\bin"
 	; Copy openvpnserv2.exe for automatic service
@@ -280,10 +280,10 @@ Section /o "${PACKAGE_NAME} Service" SecService
 	${If} $0 == "false"
 	${OrIf} $0 == "f" ; could be either false or f as per dotnetchecker.nsh
 		DetailPrint "NET 4.0 not found. Using sc.exe to install openvpnservice"
-		nsExec::ExecToLog '$SYSDIR\sc.exe create OpenVPNService binPath= "$INSTDIR\bin\openvpnserv2.exe" depend= tap0901/dhcp'
+		nsExec::ExecToLog /OEM '$SYSDIR\sc.exe create OpenVPNService binPath= "$INSTDIR\bin\openvpnserv2.exe" depend= tap0901/dhcp'
 	${Else}
 		DetailPrint "Running openvpnserv2.exe -install"
-		nsExec::ExecToLog '"$INSTDIR\bin\openvpnserv2.exe" -install'
+		nsExec::ExecToLog /OEM '"$INSTDIR\bin\openvpnserv2.exe" -install'
 	${EndIf}
 
 	Pop $R0 # return value/error/timeout
@@ -346,7 +346,7 @@ Function CoreSetup
 
 	; install openvpnserv.exe as a services
 	DetailPrint "Installing OpenVPN Interactive Service..."
-	nsExec::ExecToLog '"$INSTDIR\bin\openvpnserv.exe" -install'
+	nsExec::ExecToLog /OEM '"$INSTDIR\bin\openvpnserv.exe" -install'
 
 	Pop $R0 # return value/error/timeout
 
@@ -360,7 +360,7 @@ Section /o "TAP Virtual Ethernet Adapter" SecTAP
 	File /oname=tap-windows.exe "${TAP_WINDOWS_INSTALLER}"
 
 	DetailPrint "Installing TAP (may need confirmation)..."
-	nsExec::ExecToLog '"$TEMP\tap-windows.exe" /S /SELECT_UTILITIES=1'
+	nsExec::ExecToLog /OEM '"$TEMP\tap-windows.exe" /S /SELECT_UTILITIES=1'
 	Pop $R0 # return value/error/timeout
 
 	Delete "$TEMP\tap-windows.exe"
@@ -630,13 +630,13 @@ Section -post
 	WriteRegDWORD HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\${PACKAGE_NAME}" "EstimatedSize" "$0"
 
 	; Enable and start the Interactive Service
-	nsExec::ExecToLog '"$SYSDIR\sc.exe" config OpenVPNServiceInteractive start= auto'
+	nsExec::ExecToLog /OEM '"$SYSDIR\sc.exe" config OpenVPNServiceInteractive start= auto'
 
 	; Get location of cmd.exe and launch sc.exe inside it to allow
 	; redirecting to nul. This is done because "sc.exe start" output looks a
 	; lot like an error in addition to being too verbose.
 	ReadEnvStr $R0 COMSPEC
-	nsExec::ExecToLog '"$R0" /c "$SYSDIR\sc.exe" start OpenVPNServiceInteractive >nul'
+	nsExec::ExecToLog /OEM '"$R0" /c "$SYSDIR\sc.exe" start OpenVPNServiceInteractive >nul'
 	Pop $R1
 	${If} "$R1" == "0"
 		DetailPrint "Started OpenVPNServiceInteractive"
@@ -702,8 +702,8 @@ Section "Uninstall"
 
 	; Stop OpenVPN if currently running
 	DetailPrint "Removing OpenVPN Services..."
-	nsExec::ExecToLog '"$INSTDIR\bin\openvpnserv.exe" -remove'
-	nsExec::ExecToLog '"$INSTDIR\bin\openvpnserv2.exe" -remove'
+	nsExec::ExecToLog /OEM '"$INSTDIR\bin\openvpnserv.exe" -remove'
+	nsExec::ExecToLog /OEM '"$INSTDIR\bin\openvpnserv2.exe" -remove'
 	Pop $R0 # return value/error/timeout
 
 	Sleep 3000
@@ -713,7 +713,7 @@ Section "Uninstall"
 		ReadRegStr $R0 HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\TAP-Windows" "UninstallString"
 		${If} $R0 != ""
 			DetailPrint "Uninstalling TAP..."
-			nsExec::ExecToLog '"$R0" /S'
+			nsExec::ExecToLog /OEM '"$R0" /S'
 			Pop $R0 # return value/error/timeout
 		${EndIf}
 	${EndIf}
