@@ -175,6 +175,75 @@ ReserveFile "install-whirl.bmp"
 	Pop $R0
 !macroend
 
+Function CacheServiceState
+	; We will set the defaults for a service only if it did not exist before:
+	; otherwise we restore the previous state. Startuptype is cached for
+	; OpenVPNService as we need to reinstall it, and it might be pointing to
+	; the old legacy service.
+	Var /GLOBAL iservice_existed
+	Var /GLOBAL iservice_was_running
+	Var /GLOBAL legacy_service_existed
+	Var /GLOBAL legacy_service_was_running
+	Var /GLOBAL service_existed
+	Var /GLOBAL service_starttype
+	Var /GLOBAL service_was_running
+
+	DetailPrint "Caching service states"
+
+	SimpleSC::ExistsService "OpenVPNServiceInteractive"
+	Pop $iservice_existed
+	SimpleSC::GetServiceStatus "OpenVPNServiceInteractive"
+	Pop $0
+	Pop $iservice_was_running
+
+	SimpleSC::ExistsService "OpenVPNServiceLegacy"
+	Pop $legacy_service_existed
+	SimpleSC::GetServiceStatus "OpenVPNServiceLegacy"
+	Pop $0
+	Pop $legacy_service_was_running
+
+	SimpleSC::ExistsService "OpenVPNService"
+	Pop $service_existed
+	SimpleSC::GetServiceStartType "OpenVPNService"
+	Pop $0
+	Pop $service_starttype
+	SimpleSC::GetServiceStatus "OpenVPNService"
+	Pop $0
+	Pop $service_was_running
+FunctionEnd
+
+Function RestoreServiceState
+
+	${If} $iservice_was_running == 4
+	${OrIf} $iservice_existed != 0
+		DetailPrint "Starting OpenVPN Interactive Service"
+		SimpleSC::StartService "OpenVPNServiceInteractive" "" 5
+	${EndIf}
+
+	${If} $legacy_service_was_running == 4
+		DetailPrint "Restarting OpenVPN Legacy Service"
+		SimpleSC::StartService "OpenVPNServiceLegacy" "" 10
+	${EndIf}
+
+	${If} $service_existed == 0
+		DetailPrint "Restoring starttype of OpenVPN Service"
+		SimpleSC::SetServiceStartType "OpenVPNService" $service_starttype
+
+		${If} $service_was_running == 4
+			DetailPrint "Restarting OpenVPN Service"
+			SimpleSC::StartService "OpenVPNService" "" 10
+		${EndIf}
+	${EndIf}
+
+FunctionEnd
+
+Function StopServices
+	DetailPrint "Stopping OpenVPN services..."
+	SimpleSC::StopService "OpenVPNServiceInteractive" 0 10
+	SimpleSC::StopService "OpenVPNServiceLegacy" 0 10
+	SimpleSC::StopService "OpenVPNService" 0 10
+FunctionEnd
+
 ;--------------------
 ;Pre-install section
 
@@ -199,14 +268,9 @@ Section -pre
 		Goto guiEndYes
 
 	guiNotRunning:
-		; Stop & Remove previous OpenVPN service
-		DetailPrint "Removing any previous OpenVPN interactive service..."
-		nsExec::ExecToLog /OEM '"$INSTDIR\bin\openvpnserv.exe" -remove'
-		Pop $R0 # return value/error/timeout
-		DetailPrint "Stopping OpenVPN automatic service (may fail if not found)..."
-		; Only stop now, will be removed in SecService if selected
-		nsExec::ExecToLog /OEM '"$SYSDIR\net.exe" stop OpenVPNService /yes'
-		Pop $R0 # return value/error/timeout
+		; Store the current state of OpenVPN services
+		Call CacheServiceState
+		Call StopServices
 
 		Sleep 3000
 
@@ -214,6 +278,7 @@ Section -pre
 		${nsProcess::FindProcess} "openvpn.exe" $R0
 		${If} $R0 == 0
 			MessageBox MB_OK|MB_ICONEXCLAMATION "The installation cannot continue as OpenVPN is currently running. Please close all OpenVPN instances and re-run the installer."
+			Call RestoreServiceState
 			Quit
 		${EndIf}
 
@@ -268,26 +333,15 @@ Section /o "${PACKAGE_NAME} Service" SecService
 
 	SetOverwrite on
 
-	nsExec::ExecToLog /OEM '"$INSTDIR\bin\openvpnserv2.exe" -remove'
-	Pop $R0 # return value/error/timeout
+	DetailPrint "Removing OpenVPN Service..."
+	SimpleSC::RemoveService "OpenVPNService"
+
 	SetOutPath "$INSTDIR\bin"
 	; Copy openvpnserv2.exe for automatic service
 	File /oname=openvpnserv2.exe "${OPENVPNSERV2_EXECUTABLE}"
+
 	DetailPrint "Installing OpenVPN Service..."
-
-	DotNetChecker::IsDotNet40FullInstalled
-	Pop $0
-	${If} $0 == "false"
-	${OrIf} $0 == "f" ; could be either false or f as per dotnetchecker.nsh
-		DetailPrint "NET 4.0 not found. Using sc.exe to install openvpnservice"
-		nsExec::ExecToLog /OEM '$SYSDIR\sc.exe create OpenVPNService binPath= "$INSTDIR\bin\openvpnserv2.exe" depend= tap0901/dhcp'
-	${Else}
-		DetailPrint "Running openvpnserv2.exe -install"
-		nsExec::ExecToLog /OEM '"$INSTDIR\bin\openvpnserv2.exe" -install'
-	${EndIf}
-
-	Pop $R0 # return value/error/timeout
-
+	SimpleSC::InstallService "OpenVPNService" "OpenVPNService" "16" "3" "$INSTDIR\bin\openvpnserv2.exe" "tap0901/dhcp" "" ""
 SectionEnd
 
 Function CoreSetup
@@ -344,11 +398,20 @@ Function CoreSetup
 	!insertmacro WriteRegStringIfUndef HKLM "SOFTWARE\${PACKAGE_NAME}" "priority"    "NORMAL_PRIORITY_CLASS"
 	!insertmacro WriteRegStringIfUndef HKLM "SOFTWARE\${PACKAGE_NAME}" "log_append"  "0"
 
-	; install openvpnserv.exe as a services
-	DetailPrint "Installing OpenVPN Interactive Service..."
-	nsExec::ExecToLog /OEM '"$INSTDIR\bin\openvpnserv.exe" -install'
+	${If} $iservice_existed == 0
+		; This is required because the install directory may have changed
+		SimpleSC::SetServiceBinaryPath "OpenVPNServiceInteractive" "$INSTDIR\bin\openvpnserv.exe"
+	${Else}
+		DetailPrint "Installing OpenVPN Interactive Service..."
+		SimpleSC::InstallService "OpenVPNServiceInteractive" "OpenVPN Interactive Service" "32" "2" "$INSTDIR\bin\openvpnserv.exe" "tap0901/dhcp" "" ""
+	${EndIf}
 
-	Pop $R0 # return value/error/timeout
+	${If} $legacy_service_existed == 0
+		SimpleSC::SetServiceBinaryPath "OpenVPNServiceLegacy" "$INSTDIR\bin\openvpnserv.exe"
+	${Else}
+		DetailPrint "Installing OpenVPN Legacy Service..."
+		SimpleSC::InstallService "OpenVPNServiceLegacy" "OpenVPN Legacy Service" "32" "3" "$INSTDIR\bin\openvpnserv.exe" "tap0901/dhcp" "" ""
+	${EndIf}
 
 FunctionEnd
 
@@ -629,20 +692,7 @@ Section -post
 	IntFmt $0 "0x%08X" $0
 	WriteRegDWORD HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\${PACKAGE_NAME}" "EstimatedSize" "$0"
 
-	; Enable and start the Interactive Service
-	nsExec::ExecToLog /OEM '"$SYSDIR\sc.exe" config OpenVPNServiceInteractive start= auto'
-
-	; Get location of cmd.exe and launch sc.exe inside it to allow
-	; redirecting to nul. This is done because "sc.exe start" output looks a
-	; lot like an error in addition to being too verbose.
-	ReadEnvStr $R0 COMSPEC
-	nsExec::ExecToLog /OEM '"$R0" /c "$SYSDIR\sc.exe" start OpenVPNServiceInteractive >nul'
-	Pop $R1
-	${If} "$R1" == "0"
-		DetailPrint "Started OpenVPNServiceInteractive"
-	${Else}
-		DetailPrint "WARNING: $\"sc.exe start OpenVPNServiceInteractive$\" failed with return value of $R1"
-	${EndIf}
+	Call RestoreServiceState
 
 	; if no .NET 4, offer to  install it unless silent install
 	IfSilent 0 +2
@@ -700,12 +750,15 @@ Section "Uninstall"
 
 	guiClosed:
 
-	; Stop OpenVPN if currently running
+	; Services have to be explicitly stopped before they are removed
+	DetailPrint "Stopping OpenVPN Services..."
+	SimpleSC::StopService "OpenVPNService" 0 10
+	SimpleSC::StopService "OpenVPNServiceInteractive" 0 10
+	SimpleSC::StopService "OpenVPNServiceLegacy" 0 10
 	DetailPrint "Removing OpenVPN Services..."
-	nsExec::ExecToLog /OEM '"$INSTDIR\bin\openvpnserv.exe" -remove'
-	nsExec::ExecToLog /OEM '"$INSTDIR\bin\openvpnserv2.exe" -remove'
-	Pop $R0 # return value/error/timeout
-
+	SimpleSC::RemoveService "OpenVPNService"
+	SimpleSC::RemoveService "OpenVPNServiceInteractive"
+	SimpleSC::RemoveService "OpenVPNServiceLegacy"
 	Sleep 3000
 
 	ReadRegStr $R0 HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\${PACKAGE_NAME}" "tap"
