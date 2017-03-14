@@ -263,11 +263,8 @@ Section -pre
 	FindWindow $0 "OpenVPN-GUI"
 	StrCmp $0 0 guiNotRunning
 
-	MessageBox MB_YESNO|MB_ICONEXCLAMATION "To perform the specified operation, OpenVPN-GUI needs to be closed. You will have to restart it manually after the installation has completed. Shall I close it?" /SD IDYES IDNO guiEndNo
-	Goto guiEndYes
-
-	guiEndNo:
-		Quit
+	MessageBox MB_YESNO|MB_ICONEXCLAMATION "To perform the specified operation, OpenVPN-GUI needs to be closed. You will have to restart it manually after the installation has completed. Shall I close it?" /SD IDYES IDYES guiEndYes
+	Quit
 
 	guiEndYes:
 		DetailPrint "Closing OpenVPN-GUI..."
@@ -601,9 +598,7 @@ Function .onInit
 
 ${IfNot} ${AtLeastWinVista}
 
-	MessageBox MB_YESNO|MB_ICONEXCLAMATION "This package does not work on your operating system.  The last version of OpenVPN supported on your OS is 2.3. Shall I open a web browser for you to download it?" /SD IDNO IDYES DownloadForWinXP IDNO DontDownloadForWinXP
-
-	DontDownloadForWinXP:
+	MessageBox MB_YESNO|MB_ICONEXCLAMATION "This package does not work on your operating system.  The last version of OpenVPN supported on your OS is 2.3. Shall I open a web browser for you to download it?" /SD IDNO IDYES DownloadForWinXP
 	Quit
 
 	DownloadForWinXP:
