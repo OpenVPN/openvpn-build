@@ -112,7 +112,7 @@ LangString DESC_SecOpenVPNGUI ${LANG_ENGLISH} "Install ${PACKAGE_NAME} GUI by Ma
 
 LangString DESC_SecTAP ${LANG_ENGLISH} "Install/upgrade the TAP virtual device driver."
 
-LangString DESC_SecOpenVPNEasyRSA ${LANG_ENGLISH} "Install ${PACKAGE_NAME} RSA scripts for X509 certificate management."
+LangString DESC_SecOpenVPNEasyRSA ${LANG_ENGLISH} "Install EasyRSA 2 scripts for X509 certificate management."
 
 LangString DESC_SecOpenSSLDLLs ${LANG_ENGLISH} "Install OpenSSL DLLs locally (may be omitted if DLLs are already installed globally)."
 
@@ -485,7 +485,7 @@ Section "-OpenSSL Utilities" SecOpenSSLUtilities
 
 SectionEnd
 
-Section /o "${PACKAGE_NAME} RSA Certificate Management Scripts" SecOpenVPNEasyRSA
+Section /o "EasyRSA 2 Certificate Management Scripts" SecOpenVPNEasyRSA
 
 	SetOverwrite on
 	SetOutPath "$INSTDIR\easy-rsa"
