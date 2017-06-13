@@ -405,6 +405,7 @@ Function CoreSetup
 	!insertmacro WriteRegStringIfUndef HKLM "SOFTWARE\${PACKAGE_NAME}" "log_dir"     "$INSTDIR\log"
 	!insertmacro WriteRegStringIfUndef HKLM "SOFTWARE\${PACKAGE_NAME}" "priority"    "NORMAL_PRIORITY_CLASS"
 	!insertmacro WriteRegStringIfUndef HKLM "SOFTWARE\${PACKAGE_NAME}" "log_append"  "0"
+	!insertmacro WriteRegStringIfUndef HKLM "SOFTWARE\${PACKAGE_NAME}" "ovpn_admin_group" "OpenVPN Administrators"
 	!insertmacro WriteRegDWORDIfUndef  HKLM "SOFTWARE\${PACKAGE_NAME}" "disable_save_passwords"  0
 
 	${If} $iservice_existed == 0
