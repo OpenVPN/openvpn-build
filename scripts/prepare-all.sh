@@ -25,7 +25,8 @@ cat $VARIANTS_FILE|grep -v "^#"|while read LINE; do
     OLD_DIR=`pwd`
 
     # Only build in directories which are _not_ symbolic links
-    if ! [ -L $DIR ] && [ -d $DIR ]; then
+    if ! [ -L $DIR ]; then
+        test -d "$DIR" || mkdir "$DIR"
         cd $DIR
         rm -rf openvpn*
         wget $BASEURL/openvpn-$PROGRAM_VERSION.tar.gz
