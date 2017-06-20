@@ -20,16 +20,7 @@ cat $VARIANTS_FILE|grep -v "^#"|while read LINE; do
     TARGET_DIR=$OUTPUT_DIR
     mkdir -p $TARGET_DIR
 
-    # This is highly openvpn-specific - fix later
-    case "$OSRELEASE" in
-        squeeze|wheezy|jessie|lucid|precise|trusty|xenial)
-            SOURCES_DIR="$BUILD_BASEDIR/$OSRELEASE"
-            ;;
-        *)
-            echo "Operating system release not detected, can't build!"
-            exit 1
-            ;;
-    esac
+    SOURCES_DIR="$BUILD_BASEDIR/$OSRELEASE"
 
     # Build
     OLD_DIR=`pwd`
