@@ -156,6 +156,15 @@ On Debian Jessie (8.x) you need
 
     # apt-get install libsystemd-daemon-dev
 
+On Debian Stretch (9.x) you need
+
+    # apt-get install gnupg1
+    # ln -s /usr/bin/gpg1 /usr/bin/gpg
+
+For details on the "ln" command look here:
+
+    * https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=827315
+
 On older platforms these additional tricks are not necessary. Next install 
 OpenVPN's build dependencies:
 
