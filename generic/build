@@ -27,6 +27,8 @@
 # CHOST=i586-pc-linux-uclibc CBUILD=i686-pc-linux-gnu ./build
 #
 
+set -e
+
 die() {
 	local m="$1"
 
@@ -290,7 +292,7 @@ copy_sources() {
 
 clean_empty_dirs() {
 	echo "Cleaning empty directories"
-	find "${IMAGEROOT}" -type d | sort -r | xargs rmdir 2> /dev/null
+	find "${IMAGEROOT}" -type d | sort -r | xargs rmdir 2> /dev/null || true
 }
 
 pack() {
