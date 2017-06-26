@@ -47,28 +47,6 @@ empty_ifelse() {
 	[ -z "${v}" ] && echo "$2" || echo "$3"
 }
 
-fixup_la() {
-	local f
-
-	echo "Fixup libtool files"
-	find "${IMAGEROOT}" -name '*.la' | while read f; do
-		local top="$(dirname "$(dirname "$(echo "${f}")")" | sed 's#//#/#g')"
-		sed 's#//#'"${top}"'/#g' "${f}" > "${f}.tmp"
-		mv "${f}.tmp" "${f}"
-	done
-}
-
-restore_la() {
-	local f
-
-	echo "Restore libtool files"
-	find "${IMAGEROOT}" -name '*.la' | while read f; do
-		local x="$(echo "${IMAGEROOT}" | sed 's#/$##')"
-		sed 's#'"${x}"'/[^/]*/lib#//lib#g' "${f}" > "${f}.tmp"
-		mv "${f}.tmp" "${f}"
-	done
-}
-
 geturl() {
 	if [ -n "${WGET_MODE}" ]; then
 		"${WGET}" ${WGET_OPTS} --directory-prefix="${SOURCESROOT}" "${url}"
@@ -226,7 +204,6 @@ build_dep() {
 		${MAKE} install INSTALL_PREFIX="${INSTALL_ROOT}" INSTALLTOP="/" MANDIR="/tmp" \
 			|| die "make openssl"
 		rm -fr "${INSTALL_ROOT}/tmp"
-		fixup_la
 
 		[ -n "${SAVE_DEP_CACHE}" ] && depcache_save openssl
 	fi
@@ -242,8 +219,6 @@ build_dep() {
 			|| die "Configure lzo"
 		${MAKE} ${MAKEOPTS} ${MAKE_AUTOCONF_INSTALL_TARGET} DESTDIR="${INSTALL_ROOT}" \
 			|| die "make lzo"
-
-		fixup_la
 
 		[ -n "${SAVE_DEP_CACHE}" ] && depcache_save lzo
 	fi
@@ -270,15 +245,10 @@ build_dep() {
 	echo "tap-windows"
 	cp "${BUILDROOT}"/tap-windows-*/include/* "${OPENVPN_ROOT}/include" || die "tap-windows copy"
 
-	fixup_la
-
 	cd "${SCRIPTROOT}"
-	restore_la
 }
 
 build_openvpn() {
-
-	fixup_la
 
 	echo "Build openvpn"
 	cd "${BUILDROOT}/openvpn-${OPENVPN_VERSION}" || die "cd openvpn"
@@ -289,15 +259,10 @@ build_openvpn() {
 		|| die "Configure openvpn"
 	${MAKE} ${MAKEOPTS} ${MAKE_AUTOCONF_INSTALL_TARGET} DESTDIR="${OPENVPN_ROOT}" || die "make openvpn"
 
-	fixup_la
-
 	cd "${SCRIPTROOT}"
-	restore_la
 }
 
 build_openvpn_gui() {
-
-	fixup_la
 
 	echo "Build openvpn-gui"
 	cd "${BUILDROOT}/openvpn-gui"* || die "cd openvpn gui"
@@ -305,10 +270,7 @@ build_openvpn_gui() {
 		|| die "Configure openvpn-gui"
 	${MAKE} ${MAKEOPTS} ${MAKE_AUTOCONF_INSTALL_TARGET} DESTDIR="${OPENVPN_ROOT}" || die "make openvpn-gui"
 
-	fixup_la
-
 	cd "${SCRIPTROOT}"
-	restore_la
 }
 
 copy_docs() {
