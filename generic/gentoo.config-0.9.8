@@ -40,6 +40,7 @@ if [ "$1" = "test" ] ; then
 		"hppa64-aldsF-linux-gnu5.3    |linux-generic32 -DB_ENDIAN" \
 		"powerpc-gentOO-linux-uclibc  |linux-ppc" \
 		"powerpc64-unk-linux-gnu      |linux-ppc64" \
+		"aarch64-unknown-linux-gnu    |linux-aarch64" \
 	;do
 		CHOST=${c/|*}
 		ret_want=${c/*|}
@@ -62,6 +63,7 @@ fi
 case "${CHOST}" in
 	i*86-*-mingw*|i*86-mingw*|mingw*)	system="mingw";;
 	x86_64-*-mingw*)	system="mingw64";;
+	aarch64-*-linux-*)	system="linux-aarch64";;
 	*-linux*)		system="linux";;
 	*-freebsd*)		system="BSD";;
 	*-solaris*)
