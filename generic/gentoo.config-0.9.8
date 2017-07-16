@@ -45,7 +45,7 @@ if [ "$1" = "test" ] ; then
 		ret_want=${c/*|}
 		ret_got=$(CHOST=${CHOST} "$0")
 
-		if [ ${ret_want} = "${ret_got}" ] ; then
+		if [ "${ret_want}" = "${ret_got}" ] ; then
 			echo "PASS: ${CHOST}"
 		else
 			echo "FAIL: ${CHOST}"
