@@ -23,8 +23,10 @@ SetCompressor /SOLID lzma
 !define MULTIUSER_EXECUTIONLEVEL Admin
 !include "MultiUser.nsh"
 
-; EnvVarUpdate.nsh is needed to update the PATH environment variable
-!include "EnvVarUpdate.nsh"
+; Default maximum string length is 1024, the proper way of dealing with $PATH
+; is described here: http://nsis.sourceforge.net/Path_Manipulation
+;
+!include "AddToPath.nsh"
 
 ; WinMessages.nsh is needed to send WM_CLOSE to the GUI if it is still running
 !include "WinMessages.nsh"
@@ -524,8 +526,8 @@ SectionGroup "!Advanced"
 
 	Section /o "Add ${PACKAGE_NAME} to PATH" SecAddPath
 
-		; append our bin directory to end of current user path
-		${EnvVarUpdate} $R0 "PATH" "A" "HKLM" "$INSTDIR\bin"
+		PUSH "$INSTDIR\bin"
+		Call AddToPath
 
 	SectionEnd
 
@@ -785,7 +787,8 @@ Section "Uninstall"
 		${EndIf}
 	${EndIf}
 
-	${un.EnvVarUpdate} $R0 "PATH" "R" "HKLM" "$INSTDIR\bin"
+	Push "$INSTDIR\bin"
+	Call un.RemoveFromPath
 
 	Delete "$INSTDIR\bin\openvpn-gui.exe"
 	Delete "$DESKTOP\${PACKAGE_NAME} GUI.lnk"
