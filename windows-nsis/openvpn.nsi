@@ -23,9 +23,6 @@ SetCompressor /SOLID lzma
 !define MULTIUSER_EXECUTIONLEVEL Admin
 !include "MultiUser.nsh"
 
-; EnvVarUpdate.nsh is needed to update the PATH environment variable
-!include "EnvVarUpdate.nsh"
-
 ; WinMessages.nsh is needed to send WM_CLOSE to the GUI if it is still running
 !include "WinMessages.nsh"
 
@@ -125,8 +122,6 @@ LangString DESC_SecService ${LANG_ENGLISH} "Install the ${PACKAGE_NAME} service 
 LangString DESC_SecInteractiveService ${LANG_ENGLISH} "Install the ${PACKAGE_NAME} Interactive Service (allows running OpenVPN-GUI without admin privileges)"
 
 LangString DESC_SecOpenSSLUtilities ${LANG_ENGLISH} "Install the OpenSSL Utilities (used for generating public/private key pairs)."
-
-LangString DESC_SecAddPath ${LANG_ENGLISH} "Add ${PACKAGE_NAME} executable directory to the current user's PATH."
 
 LangString DESC_SecAddShortcuts ${LANG_ENGLISH} "Add ${PACKAGE_NAME} shortcuts to the current user's Start Menu."
 
@@ -522,13 +517,6 @@ SectionGroup "!Advanced"
 		WriteRegStr HKCR "${PACKAGE_NAME}File\shell\run\command" "" '"$INSTDIR\bin\openvpn.exe" --pause-exit --config "%1"'
 	SectionEnd
 
-	Section /o "Add ${PACKAGE_NAME} to PATH" SecAddPath
-
-		; append our bin directory to end of current user path
-		${EnvVarUpdate} $R0 "PATH" "A" "HKLM" "$INSTDIR\bin"
-
-	SectionEnd
-
 	Section /o "Add Shortcuts to Start Menu" SecAddShortcuts
 
 		SetOverwrite on
@@ -631,7 +619,6 @@ ${EndIf}
 	!insertmacro SelectByParameter ${SecFileAssociation} SELECT_ASSOCIATIONS 1
 	!insertmacro SelectByParameter ${SecOpenSSLUtilities} SELECT_OPENSSL_UTILITIES 1
 	!insertmacro SelectByParameter ${SecOpenVPNEasyRSA} SELECT_EASYRSA 0
-	!insertmacro SelectByParameter ${SecAddPath} SELECT_PATH 1
 	!insertmacro SelectByParameter ${SecAddShortcuts} SELECT_SHORTCUTS 1
 	!insertmacro SelectByParameter ${SecLaunchGUIOnLogon} SELECT_LAUNCH 1
 	!insertmacro SelectByParameter ${SecLaunchGUIOnLogon0} SELECT_LAUNCH 1
@@ -731,7 +718,6 @@ SectionEnd
 	!insertmacro MUI_DESCRIPTION_TEXT ${SecOpenSSLDLLs} $(DESC_SecOpenSSLDLLs)
 	!insertmacro MUI_DESCRIPTION_TEXT ${SecLZODLLs} $(DESC_SecLZODLLs)
 	!insertmacro MUI_DESCRIPTION_TEXT ${SecPKCS11DLLs} $(DESC_SecPKCS11DLLs)
-	!insertmacro MUI_DESCRIPTION_TEXT ${SecAddPath} $(DESC_SecAddPath)
 	!insertmacro MUI_DESCRIPTION_TEXT ${SecAddShortcuts} $(DESC_SecAddShortcuts)
 	!insertmacro MUI_DESCRIPTION_TEXT ${SecLaunchGUIOnLogon} $(DESC_SecLaunchGUIOnLogon)
 	!insertmacro MUI_DESCRIPTION_TEXT ${SecDisableSavePass} $(DESC_SecDisableSavePass)
@@ -784,8 +770,6 @@ Section "Uninstall"
 			Pop $R0 # return value/error/timeout
 		${EndIf}
 	${EndIf}
-
-	${un.EnvVarUpdate} $R0 "PATH" "R" "HKLM" "$INSTDIR\bin"
 
 	Delete "$INSTDIR\bin\openvpn-gui.exe"
 	Delete "$DESKTOP\${PACKAGE_NAME} GUI.lnk"
