@@ -163,7 +163,9 @@ depcache_extract() {
 		|| die "Depcache for '${1}' not found at: '${src}'"
 	tar -xzf "${src}" -C "${OPENVPN_ROOT}" \
 		|| die "Cannot extract depcache '${1}'"
-	[ -z "${2}" ] && echo "Using a depcache tarball for '${1}"
+	if [ -z "${2}" ]; then
+		echo "Using a depcache tarball for '${1}"
+	fi
 }
 
 # Takes a short product name (eg: 'openssl') and creates a depcache tarball.

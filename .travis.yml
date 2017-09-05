@@ -9,13 +9,28 @@ addons:
   apt:
     packages: [ man2html, dos2unix, nsis ]
 
+env:
+  global:
+    - CBUILD=x86_64-pc-linux-gnu
+    - IMAGEROOT=${HOME}/image
+
 matrix:
   fast_finish: true
   include:
     - compiler: ": Win32"
-      env: IMAGEROOT=${HOME}/image-win32 CHOST=i686-w64-mingw32 CBUILD=x86_64-pc-linux-gnu SCRIPT=generic/build
+      env: CHOST=i686-w64-mingw32 SCRIPT=generic/build
     - compiler: ": Win64"
-      env: IMAGEROOT=${HOME}/image-win64 CHOST=x86_64-w64-mingw32 CBUILD=x86_64-pc-linux-gnu SCRIPT=generic/build
+      env: CHOST=x86_64-w64-mingw32 SCRIPT=generic/build
+    - compiler: ": Win32 + depcache"
+      env: CHOST=i686-w64-mingw32
+      script:
+        - generic/build --save-depcache=travis
+        - generic/build --use-depcache=travis
+    - compiler: ": Win64 + depcache"
+      env: CHOST=x86_64-w64-mingw32
+      script:
+        - generic/build --save-depcache=travis
+        - generic/build --use-depcache=travis
     - compiler: ": snapshot"
       env: SCRIPT=windows-nsis/build-snapshot
     - compiler: ": complete"
