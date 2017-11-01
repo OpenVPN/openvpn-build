@@ -21,6 +21,10 @@ matrix:
       env: CHOST=i686-w64-mingw32 SCRIPT=generic/build
     - compiler: ": Win64"
       env: CHOST=x86_64-w64-mingw32 SCRIPT=generic/build
+    - compiler: ": Win32 + static"
+      env: DO_REALLY_STATIC=1 CHOST=i686-w64-mingw32 SCRIPT=generic/build
+    - compiler: ": Win64 + static"
+      env: DO_REALLY_STATIC=1 CHOST=x86_64-w64-mingw32 SCRIPT=generic/build
     - compiler: ": Win32 + depcache"
       env: CHOST=i686-w64-mingw32
       script:

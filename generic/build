@@ -397,6 +397,13 @@ if [ -n "${BUILD_FOR_WINDOWS}" ]; then
 		${CONFIGOPTS} \
 		--sbindir=/bin \
 	"
+	if [ -n "${DO_STATIC}" ]; then
+		OPENSSL_LIBS=" \
+			${OPENSSL_LIBS} \
+			-lws2_32 \
+			-lgdi32 \
+		"
+	fi
 	export PKG_CONFIG="true"
 fi
 
