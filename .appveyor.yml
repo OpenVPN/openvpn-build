@@ -15,4 +15,4 @@ environment:
 build_script:
   - "%CYGWIN%\\setup-%ARCH%.exe -g -q -P mingw64-i686-openssl,mingw64-x86_64-openssl,cygwin-devel,unzip,dos2unix"
   - "%CYGWIN%\\bin\\bash -lc 'cp `which true` /usr/bin/man2html'"
-  - "%CYGWIN%\\bin\\bash -lc 'cd /cygdrive/c/projects/%APPVEYOR_PROJECT_NAME% ; %SCRIPT%'"
+  - "%CYGWIN%\\bin\\bash -lc 'cd /cygdrive/c/projects/%APPVEYOR_PROJECT_SLUG% ; %SCRIPT%'"
