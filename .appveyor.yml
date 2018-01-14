@@ -3,7 +3,6 @@ version: "cygwin-{build}"
 environment:
   CBUILD: x86_64-pc-linux-gnu
   SCRIPT: generic/build
-  IMAGEROOT: /cygdrive/c/projects/%APPVEYOR_PROJECT_NAME%/image
   matrix:
     - ARCH: x86
       CYGWIN: C:\Cygwin
