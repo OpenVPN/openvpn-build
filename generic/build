@@ -30,23 +30,20 @@
 set -e
 
 die() {
-	local m="$1"
-
-	echo "FATAL: ${m}" >&2
+	echo "FATAL: $1" >&2
 	exit 1
 }
 
 get_full_path() {
-	local d="$1"
-	( cd "${d}" 2> /dev/null && pwd )
+	( cd "$1" 2> /dev/null && pwd )
 }
 
 empty_ifelse() {
-	local v="$1"
-	local t="$2"
-	local f="$3"
+	[ -z "$1" ] && echo "$2" || echo "$3"
+}
 
-	[ -z "${v}" ] && echo "$2" || echo "$3"
+contains() {
+    [ "${1#*$2}" != "$1" ] && echo "$3" || echo "$4"
 }
 
 geturl() {
@@ -197,7 +194,6 @@ build_dep() {
 			$(empty_ifelse "${DO_STATIC}" shared no-dso) \
 			$(CHOST="${VIRTUAL_CHOST}" "${SCRIPTROOT}/gentoo.config-0.9.8") \
 			${CFLAGS} ${LDFLAGS} \
-			no-multilib \
 			no-capieng \
 			--openssldir=/etc/ssl \
 			--libdir=/lib \
@@ -205,7 +201,9 @@ build_dep() {
 			|| die "Configure openssl"
 		[ -n "${BUILD_FOR_WINDOWS}" ] && perl util/mkdef.pl crypto ssl NT update
 		[ -z "${OPENSSL_SKIP_DEPEND}" ] && ${MAKE} depend
-		${MAKE} install INSTALL_PREFIX="${INSTALL_ROOT}" INSTALLTOP="/" MANDIR="/tmp" \
+		${MAKE} install \
+			$(contains "${OPENSSL_VERSION}" "1.1.0" "DESTDIR" "INSTALL_PREFIX")="${INSTALL_ROOT}" \
+			INSTALLTOP="/" MANDIR="/tmp" \
 			|| die "make openssl"
 		rm -fr "${INSTALL_ROOT}/tmp"
 
