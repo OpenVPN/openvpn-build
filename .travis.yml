@@ -12,7 +12,6 @@ addons:
 env:
   global:
     - CBUILD=x86_64-pc-linux-gnu
-    - IMAGEROOT=${HOME}/image
 
 matrix:
   fast_finish: true
@@ -39,8 +38,13 @@ matrix:
       env: SCRIPT=windows-nsis/build-snapshot
     - compiler: ": complete"
       env: SCRIPT=windows-nsis/build-complete
+    - compiler: ": snapshot"
+      env: SCRIPT=windows-nsis/build-snapshot OPENSSL_VERSION=1.1.0g
   exclude:
     - compiler: gcc
+  allow_failures:
+    - compiler: ": snapshot"
+      env: SCRIPT=windows-nsis/build-snapshot OPENSSL_VERSION=1.1.0g
 
 install:
     - sudo apt-add-repository "deb http://archive.ubuntu.com/ubuntu xenial main universe"
