@@ -203,8 +203,8 @@ build_dep() {
 		[ -z "${OPENSSL_SKIP_DEPEND}" ] && ${MAKE} depend
 		${MAKE} install \
 			$(contains "${OPENSSL_VERSION}" "1.1.0" "DESTDIR" "INSTALL_PREFIX")="${INSTALL_ROOT}" \
-			INSTALLTOP="/" MANDIR="/tmp" \
-			|| die "make openssl"
+			INSTALLTOP="/" MANDIR="/tmp" > build.log 2>&1 \
+			|| (cat build.log && die "make openssl")
 		rm -fr "${INSTALL_ROOT}/tmp"
 
 		[ -n "${SAVE_DEP_CACHE}" ] && depcache_save openssl
