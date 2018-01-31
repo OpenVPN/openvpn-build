@@ -12,18 +12,19 @@ addons:
 env:
   global:
     - CBUILD=x86_64-pc-linux-gnu
+    - SCRIPT=generic/build
 
 matrix:
   fast_finish: true
   include:
     - compiler: ": Win32"
-      env: CHOST=i686-w64-mingw32 SCRIPT=generic/build
+      env: CHOST=i686-w64-mingw32
     - compiler: ": Win64"
-      env: CHOST=x86_64-w64-mingw32 SCRIPT=generic/build
+      env: CHOST=x86_64-w64-mingw32
     - compiler: ": Win32 + static"
-      env: DO_REALLY_STATIC=1 CHOST=i686-w64-mingw32 SCRIPT=generic/build
+      env: DO_REALLY_STATIC=1 CHOST=i686-w64-mingw32
     - compiler: ": Win64 + static"
-      env: DO_REALLY_STATIC=1 CHOST=x86_64-w64-mingw32 SCRIPT=generic/build
+      env: DO_REALLY_STATIC=1 CHOST=x86_64-w64-mingw32
     - compiler: ": Win32 + depcache"
       env: CHOST=i686-w64-mingw32
       script:
@@ -42,9 +43,6 @@ matrix:
       env: SCRIPT=windows-nsis/build-snapshot OPENSSL_VERSION=1.1.0g
   exclude:
     - compiler: gcc
-  allow_failures:
-    - compiler: ": snapshot"
-      env: SCRIPT=windows-nsis/build-snapshot OPENSSL_VERSION=1.1.0g
 
 install:
     - sudo apt-add-repository "deb http://archive.ubuntu.com/ubuntu xenial main universe"
