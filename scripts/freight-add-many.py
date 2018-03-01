@@ -25,6 +25,12 @@ def Usage():
     print
     print "  ./freight-add-many.py -p 2.3.12 -c /etc/freight-openvpn_stable.conf -d ~/output"
     print "  ./freight-add-many.py -p 2.4-alpha2 -c /etc/freight-openvpn_testing.conf -d ~/output"
+    print
+    print "If freight complains about GPG an ioctls you've likely hit freight bug #72. In that case"
+    print "run this command before running freight-add-many.py:"
+    print
+    print "  export GPG_TTY=$(tty)"
+    print
 
     sys.exit(1)
 
