@@ -39,8 +39,6 @@ matrix:
       env: SCRIPT=windows-nsis/build-snapshot
     - compiler: ": complete"
       env: SCRIPT=windows-nsis/build-complete
-    - compiler: ": snapshot"
-      env: SCRIPT=windows-nsis/build-snapshot OPENSSL_VERSION=1.1.0g
   exclude:
     - compiler: gcc
 
