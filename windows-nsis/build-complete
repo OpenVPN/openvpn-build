@@ -26,11 +26,9 @@ main() {
 				${WIN_SAVE_DEPCACHE:+--save-depcache=win-$arch} \
 				|| die "build ${arch}"
 
-		# Loop here if building the depcache:
-		[ -n "${DO_ONLY_DEPS}" ] && continue
-
 	done
 
+	if [ -z "${DO_ONLY_DEPS}" ]; then
 		ROOT="${TMPDIR}/installer" \
 			./build \
 			--installer-version="${INSTALLER_VERSION}" \
@@ -47,8 +45,7 @@ main() {
 			--sign-timestamp="${SIGN_TIMESTAMP_URL}" \
 			|| die "pack installer"
 
-	echo
-	if [ -z "${DO_ONLY_DEPS}" ]; then
+		echo
 		echo "NOTICE: OpenVPN Installers are at '${OUTPUT_DIR}'"
 	else
 		echo "NOTICE: depcache prepared for future use"
