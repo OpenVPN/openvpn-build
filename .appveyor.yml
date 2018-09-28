@@ -1,16 +1,37 @@
-version: "cygwin-{build}"
+version: "openvpn-build-{build}"
+
+image:
+- Visual Studio 2017
 
 environment:
   CBUILD: x86_64-pc-linux-gnu
   matrix:
-    - ARCH: x86
+    - BUILDSYSTEM: cygwin
+      ARCH: x86
       CYGWIN: C:\Cygwin
       CHOST: i686-w64-mingw32
-    - ARCH: x86_64
+    - BUILDSYSTEM: cygwin
+      ARCH: x86_64
       CYGWIN: C:\Cygwin64
       CHOST: x86_64-w64-mingw32
+    - BUILDSYSTEM: VS2017
 
-build_script:
-  - "%CYGWIN%\\setup-%ARCH%.exe -g -q -P mingw64-i686-openssl,mingw64-x86_64-openssl,cygwin-devel,unzip,dos2unix,patch"
-  - "%CYGWIN%\\bin\\bash -lc 'cp `which true` /usr/bin/man2html'"
-  - "%CYGWIN%\\bin\\bash -lc 'cd /cygdrive/c/projects/%APPVEYOR_PROJECT_SLUG% ; generic/build'"
+for:
+  -
+    matrix:
+      only:
+        - BUILDSYSTEM: cygwin
+    build_script:
+      - "%CYGWIN%\\setup-%ARCH%.exe -g -q -P mingw64-i686-openssl,mingw64-x86_64-openssl,cygwin-devel,unzip,dos2unix,patch"
+      - "%CYGWIN%\\bin\\bash -lc 'cp `which true` /usr/bin/man2html'"
+      - "%CYGWIN%\\bin\\bash -lc 'cd /cygdrive/c/projects/%APPVEYOR_PROJECT_SLUG% ; generic/build'"
+
+  -
+    matrix:
+      only:
+        - BUILDSYSTEM: VS2017
+    build_script:
+      - msvc/build.bat
+
+    artifacts:
+      - path: msvc/image/bin

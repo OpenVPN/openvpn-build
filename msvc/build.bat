@@ -17,13 +17,13 @@ rem along with this program.  If not, see <http://www.gnu.org/licenses/>.
 rem
 
 rem Required software:
-rem - visual studio 2008
+rem - Visual Studio 2017
 rem - perl
 rem
-rem NOTE:
-rem To build only dependencies set DO_ONLY_DEPS=true before building
-rem Useful for own development.
-rem
+rem To build only openvpn, run
+rem    set MODE=OPENVPN&& build.bat
+rem To build only dependencies, run
+rem    set MODE=DEPS&& build.bat
 
 setlocal ENABLEDELAYEDEXPANSION
 
@@ -35,9 +35,10 @@ if exist build-env-local.bat call build-env-local.bat
 
 if exist "%VCHOME%\vcvarsall.bat" (
 	call "%VCHOME%\vcvarsall.bat"
-) else if exist "%VCHOME%\bin\vcvars32.bat" (
-	call "%VCHOME%\bin\vcvars32.bat"
-	goto have_vars
+) else if exist "%VCHOME%\bin\vcvars64.bat" (
+	call "%VCHOME%\bin\vcvars64.bat"
+) else if exist "%VCHOME%\Auxiliary\Build\vcvars64.bat" (
+	call "%VCHOME%\Auxiliary\Build\vcvars64.bat"
 ) else (
 	echo Cannot detect visual studio environment
 	goto error
@@ -48,6 +49,8 @@ if not errorlevel 1 goto cont1
 echo perl is required
 goto error
 :cont1
+
+if "%MODE%" == "OPENVPN" goto build_openvpn
 
 echo Cleanup
 
@@ -97,9 +100,9 @@ if errorlevel 1 goto error
 echo Build OpenSSL
 
 cd build.tmp\openssl*
-perl Configure VC-WIN32 --prefix="%TARGET%"
+perl Configure VC-WIN64A --prefix="%TARGET%"
 if errorlevel 1 goto error
-call ms\do_ms
+call ms\do_win64a.bat
 if errorlevel 1 goto error
 nmake -f ms\ntdll.mak
 if errorlevel 1 goto error
@@ -110,7 +113,7 @@ cd %ROOT%
 echo Build LZO
 
 cd build.tmp\lzo*
-call B\win32\vc_dll.bat
+call B\win64\vc_dll.bat
 rem if errorlevel 1 goto error - returns 1!!
 xcopy include\lzo "%TARGET%\include\lzo" /e /i /y
 if errorlevel 1 goto error
@@ -140,23 +143,25 @@ cd %ROOT%
 
 echo TAP
 
-copy build.tmp\tap-windows-%TAP_VERSION%\include\* "%TARGET%\include"
+copy build.tmp\tap-windows6-%TAP_VERSION%\src\tap-windows.h "%TARGET%\include"
 if errorlevel 1 goto error
 
-if "%DO_ONLY_DEPS%"=="" (
-	echo Build OpenVPN
+if "%MODE%" == "DEPS" goto end
 
-	cd build.tmp\openvpn*
-	if exist "%ROOT%\config\config-msvc-local.h" copy "%ROOT%\config\config-msvc-local.h" .
-	set OPENVPN_DEPROOT=%TARGET%
-	call msvc-build.bat
-	if errorlevel 1 goto error
-	copy "Win32-Output\%RELEASE%"\*.exe "%TARGET%\bin"
-	if errorlevel 1 goto error
-	copy include\openvpn-*.h "%TARGET%\include"
-	if errorlevel 1 goto error
-	cd %ROOT%
-)
+:build_openvpn
+
+echo Build OpenVPN
+
+cd build.tmp\openvpn*
+if exist "%ROOT%\config\config-msvc-local.h" copy "%ROOT%\config\config-msvc-local.h" .
+set OPENVPN_DEPROOT=%TARGET%
+call msvc-build.bat
+if errorlevel 1 goto error
+copy "x64-Output\%RELEASE%"\*.exe "%TARGET%\bin"
+if errorlevel 1 goto error
+copy include\openvpn-*.h "%TARGET%\include"
+if errorlevel 1 goto error
+cd %ROOT%
 
 echo SUCCESS
 set rc=0
