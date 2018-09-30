@@ -1,0 +1,18 @@
+Licensed under the Expat License, sometimes known as the MIT License:
+
+info.svg based on
+Icons8_flat_about.svg [https://commons.wikimedia.org/wiki/File:Icons8_flat_about.svg]
+
+warning.svg based on
+Icons8_flat_expired.svg [https://commons.wikimedia.org/wiki/File:Icons8_flat_expired.svg]
+
+folder_new.svg based on
+Icons8_flat_folder.svg [https://commons.wikimedia.org/wiki/File:Icons8_flat_folder.svg]
+Icons8_flat_add_column.svg [https://commons.wikimedia.org/wiki/File:Icons8_flat_add_column.svg]
+
+folder_up.svg based on
+Icons8_flat_folder.svg [https://commons.wikimedia.org/wiki/File:Icons8_flat_folder.svg]
+Icons8_flat_left_up2.svg [https://commons.wikimedia.org/wiki/File:Icons8_flat_left_up2.svg]
+
+openvpn.svg based on
+icons8-openvpn.svg [https://icons8.com/icon/38558/openvpn]
