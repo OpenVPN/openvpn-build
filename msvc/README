@@ -5,17 +5,32 @@ About
     This subdirectory contains scripts for building OpenVPN
     and all it's dependencies using Microsoft Visual C.
 
-    Note that this buildsystem is not actively maintained
-    anymore, and people are strongly encouraged to use the
-    cross-compile (mingw_w64) buildsystem instead. For
-    details look here:
-
-    ../generic/README
-    ../windows-nsis/README
+    You need to install Visual Studio 2017 (Community or Professional)
+    and ActiveState Perl.
 
 Usage
 
-    If you're sure you _need_ to build using MSVC, please
-    refer to instructions in the OpenVPN wiki:
+    Just run build.bat - this downloads and build dependencies and openvpn.
 
-    <https://community.openvpn.net/openvpn>
+    You can override build options either with build-dev-local.bat or by setting
+    enviromental variables in console. For example if you want to build from
+    another GitHub fork or branch:
+
+      c:\Temp\openvpn-build\msvc>set GITHUB_USER=lstipakov&& set OPENVPN_VERSION=vs2017&& build.bat
+
+    After command-line build you can use Visual Studio IDE - just open
+
+      openvpn-build\msvc\build.tmp\openvpn-<branch>\openvpn.sln
+
+    Note that by default build.bat builds dependencies for x64 architecture, so don't
+    forget to set "Solution Platforms" to "x64".
+
+    When running openvpn from IDE, you either need to copy dependencies (libeay32.dll etc) from
+
+      openvpn-build\msvc\image\bin
+
+    to
+
+      openvpn-build\msvc\build.tmp\openvpn-vs2017\x64-Output\Debug
+
+    or change "Working Directory" to openvpn-build\msvc\image\bin.
