@@ -1,6 +1,14 @@
 OpenVPN project buildsystems
+#####################################################
+.. image:: https://travis-ci.org/OpenVPN/openvpn-build.svg?branch=master
+  :target: https://travis-ci.org/OpenVPN/openvpn-build
+  :alt: TravisCI status
+.. image:: https://ci.appveyor.com/api/projects/status/github/OpenVPN/openvpn-build?branch=master&svg=true
+  :target: https://ci.appveyor.com/project/mattock/openvpn-build
+  :alt: AppVeyor status
 
 About
+**************************************************
 
     These directories contain scripts to help build and
     package OpenVPN and its dependencies for various
@@ -14,6 +22,7 @@ About
     <https://community.openvpn.net/openvpn>
 
 Directories
+**************************************************
 
     The "generic" subdir contains scripts to cross-compile
     OpenVPN using mingw_w64 (e.g. Linux -> Windows).
