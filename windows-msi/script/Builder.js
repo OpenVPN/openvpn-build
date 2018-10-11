@@ -49,6 +49,10 @@ function Builder()
     this.wixCandleFlags = ["-nologo"];
     this.wixLightFlags = ["-nologo", "-dcl:high"];
 
+    // Determine 7-Zip folder.
+    this.sevenZipPath = this.fso.GetParentFolderName(this.fso.GetAbsolutePathName(WScript.ScriptFullName)) + "\\lzma1805\\bin\\";
+    this.sevenZipFlags = ["-mx", "-mf=BCJ2"];
+
     // Get the codepage Windows is using for stdin/stdout/stderr.
     switch (parseInt(this.wsh.RegRead("HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Nls\\CodePage\\OEMCP"), 10)) {
         case  437: this.cpOEMMime = "cp437"       ; break;
@@ -93,8 +97,8 @@ Builder.prototype.build = function (outName)
                         // We found the rule to build builder file.
 
                         // Have we already build this rule in this session?
-                        if (rule.built != 0)
-                            return rule.built;
+                        if (rule.timeBuilt != 0)
+                            return rule.timeBuilt;
 
                         // Build dependencies.
                         var ts = 0;
@@ -131,7 +135,7 @@ Builder.prototype.build = function (outName)
                             throw err;
                         }
 
-                        return rule.build;
+                        return rule.timeBuilt;
                     }
                 }
             }
@@ -199,6 +203,30 @@ Builder.prototype.makeDir = function (path)
     }
 
     return makeDir(this.fso.GetAbsolutePathName(path));
+}
+
+
+/**
+ * Deletes folder including all files and subfolders
+ * 
+ * @param path  Path to folder to delete
+ * 
+ * @returns  true if the folder was deleted; false if the folder did not exist.
+ */
+Builder.prototype.removeDir = function (path)
+{
+    try {
+        // Delete folder.
+        this.fso.DeleteFolder(path);
+        return true;
+    } catch (err) {
+        switch (err.number) {
+            case -2146828212: // "Path not found"
+                return false;
+            default:
+                throw new Error(err.number, "Error deleting \"" + path + "\" folder: " + err.message);
+        }
+    }
 }
 
 
@@ -283,9 +311,9 @@ Builder.prototype.exec = function (cmd)
  */
 function BuildRule(outNames, inNames)
 {
-    this.outNames = outNames;
-    this.inNames  = inNames;
-    this.built    = 0;
+    this.outNames  = outNames;
+    this.inNames   = inNames;
+    this.timeBuilt = 0;
 
     return this;
 }
@@ -298,7 +326,7 @@ function BuildRule(outNames, inNames)
  */
 BuildRule.prototype.build = function ()
 {
-    this.built = (new Date()).getVarDate();
+    this.timeBuilt = (new Date()).getVarDate();
 }
 
 
@@ -487,5 +515,142 @@ WiXLinkBuildRule.prototype.build = function (builder)
  * @param builder  The builder object
  */
 WiXLinkBuildRule.prototype.clean = BuildRule.prototype.clean;
+
+
+/**
+ * Creates a 7-Zip SFX build rule
+ * 
+ * @param outName   Output .exe file name
+ * @param inNames   Input file names
+ * @param cfg       7-Zip SFX installer config
+ * @param depNames  Additional dependencies
+ *
+ * @returns  Build rule
+ */
+function SevenZipSFXBuildRule(outName, inNames, cfg, depNames)
+{
+    this.cfg = cfg;
+    this.payloadNames = inNames;
+
+    return BuildRule.call(this, [outName], inNames.concat(depNames));
+}
+
+
+/**
+ * Builds the rule
+ * 
+ * @param builder  The builder object
+ */
+SevenZipSFXBuildRule.prototype.build = function (builder)
+{
+    // Prepare installer config file.
+    var cfgPath = builder.tempPath + builder.fso.GetTempName();
+    try {
+        var datOut = WScript.CreateObject("ADODB.Stream");
+        datOut.Open();
+        try {
+            datOut.Type = adTypeText;
+            datOut.Charset = "utf-8";
+            datOut.LineSeparator = adCRLF;
+
+            // Write installer config.
+            datOut.WriteText(this.cfg);
+
+            // Persist stream to file.
+            datOut.SaveToFile(cfgPath, adSaveCreateOverWrite);
+        } finally {
+            datOut.Close();
+        }
+
+        // 7-Zip has no flag to pack all files in a flat arhive without laying them out into subfolder(s).
+        var payloadTempPath = builder.tempPath + builder.fso.GetTempName() + "\\";
+        try {
+            // Copy payload files to a temporary folder first. 
+            builder.makeDir(payloadTempPath);
+            for (var i in this.payloadNames)
+                builder.fso.CopyFile(this.payloadNames[i], payloadTempPath);
+
+            // 7-Zip is sensitive to file extension. Carefully select a temporary .7z file name.
+            var payloadPath = builder.tempPath + builder.fso.GetBaseName(builder.fso.GetTempName()) + ".7z";
+            try {
+                // As much as I personally hate this: we need to change folder.
+                var dirPrev = builder.wsh.CurrentDirectory;
+                try {
+                    // Compress the payload.
+                    builder.wsh.CurrentDirectory = payloadTempPath;
+                    if (builder.exec(
+                        "\"" + builder.sevenZipPath + "7zr.exe\" a " +
+                        builder.sevenZipFlags.join(" ") +
+                        " \"" + payloadPath + "\" *") != 0)
+                        throw new Error("7-Zip returned non-zero.");
+                } finally {
+                    builder.wsh.CurrentDirectory = dirPrev;
+                }
+
+                // Compile installer by concatenating: 7-Zip SFX module, installer config, and payload.
+                var datOut = WScript.CreateObject("ADODB.Stream");
+                datOut.Open();
+                try {
+                    datOut.Type = adTypeBinary;
+
+                    // Copy 7-Zip SFX module.
+                    var datIn = WScript.CreateObject("ADODB.Stream");
+                    datIn.Open();
+                    try {
+                        datIn.Type = adTypeBinary;
+                        datIn.LoadFromFile(builder.sevenZipPath + "7zSD-openvpn.sfx");
+                        datIn.CopyTo(datOut);
+                    } finally {
+                        datIn.Close();
+                    }
+
+                    // Copy installer config.
+                    var datIn = WScript.CreateObject("ADODB.Stream");
+                    datIn.Open();
+                    try {
+                        datIn.Type = adTypeBinary;
+                        datIn.LoadFromFile(cfgPath);
+                        datIn.Position = 3; // Skip UTF-8 BOM.
+                        datIn.CopyTo(datOut);
+                    } finally {
+                        datIn.Close();
+                    }
+
+                    // Copy payload.
+                    var datIn = WScript.CreateObject("ADODB.Stream");
+                    datIn.Open();
+                    try {
+                        datIn.Type = adTypeBinary;
+                        datIn.LoadFromFile(payloadPath);
+                        datIn.CopyTo(datOut);
+                    } finally {
+                        datIn.Close();
+                    }
+
+                    // Persist stream to file.
+                    datOut.SaveToFile(this.outNames[0], adSaveCreateOverWrite);
+                } finally {
+                    datOut.Close();
+                }
+            } finally {
+                builder.removeFile(payloadPath);
+            }
+        } finally {
+            builder.removeDir(payloadTempPath);
+        }
+    } finally {
+        builder.removeFile(cfgPath);
+    }
+
+    BuildRule.prototype.build.call(this, builder);
+}
+
+
+/**
+ * Removes all output files
+ * 
+ * @param builder  The builder object
+ */
+SevenZipSFXBuildRule.prototype.clean = BuildRule.prototype.clean;
 
 /*@end @*/

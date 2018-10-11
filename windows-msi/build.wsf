@@ -26,6 +26,7 @@
 			<example>
 Commands:
 all  	Builds MSI packages and EXE installer
+msi  	Builds MSI packages only
 clean	Cleans intermmediate and output files</example>
 		</runtime>
 		<reference object="ADODB.Stream"/>
@@ -86,6 +87,7 @@ clean	Cleans intermmediate and output files</example>
                 b.force = true;
 
             // Add platform-specific build rules.
+            var msiFiles = [];
             for (i in platforms) {
                 var
                     plat = platforms[i],
@@ -119,8 +121,10 @@ clean	Cleans intermmediate and output files</example>
                 ];
 
                 // WiX linking
+                var msiFile = outputPath + ver.define.PRODUCT_NAME + "-" + ver.define.PRODUCT_VERSION + "-" + plat + ".msi";
+                msiFiles.push(msiFile);
                 b.rules.push(new WiXLinkBuildRule(
-                    outputPath + ver.define.PRODUCT_NAME + "-" + ver.define.PRODUCT_VERSION + "-" + plat + ".msi",
+                    msiFile,
                     [
                         p.buildPath + "gui.wixobj",
                         p.buildPath + "msi.wixobj"
@@ -170,9 +174,27 @@ clean	Cleans intermmediate and output files</example>
             b.rules.push(new PreprocessBuildRule(buildPath + "README-config.txt", "utf-8", adCRLF, root + "doc\\config\\README.txt.in", "utf-8", adCRLF, ver, [root + "version.m4"]));
             b.rules.push(new PreprocessBuildRule(buildPath + "README-log.txt"   , "utf-8", adCRLF, root + "doc\\log\\README.txt.in"   , "utf-8", adCRLF, ver, [root + "version.m4"]));
 
+            // 7-Zip SFX creation
+            b.rules.push(new PreprocessBuildRule(buildPath + "boot.wsf", "utf-8", adCRLF, root + "boot.wsf.in", "utf-8", adCRLF, ver, [root + "version.m4"]));
+            b.rules.push(new SevenZipSFXBuildRule(
+                outputPath + ver.define.PRODUCT_NAME + "-install-" + ver.define.PRODUCT_VERSION + ".exe",
+                [buildPath + "boot.wsf"].concat(msiFiles),
+                ";!@Install@!UTF-8!\r\n" +
+                "Title=\"" + ver.define.PRODUCT_NAME + " " + ver.define.PRODUCT_VERSION + "\"\r\n" +
+                "ExecuteFile=\"wscript.exe\"\r\n" +
+                "ExecuteParameters=\"boot.wsf\"\r\n" +
+                ";!@InstallEnd@!\r\n",
+                [root + "version.m4"]));
+
             switch (WScript.Arguments.Unnamed.Length > 0 ? WScript.Arguments.Unnamed(0).toLowerCase() : "all")
             {
                 case "all":
+                    b.build(outputPath + ver.define.PRODUCT_NAME + "-" + ver.define.PRODUCT_VERSION + "-x86.msi");
+                    b.build(outputPath + ver.define.PRODUCT_NAME + "-" + ver.define.PRODUCT_VERSION + "-amd64.msi");
+                    b.build(outputPath + ver.define.PRODUCT_NAME + "-install-" + ver.define.PRODUCT_VERSION + ".exe");
+                    break;
+
+                case "msi":
                     b.build(outputPath + ver.define.PRODUCT_NAME + "-" + ver.define.PRODUCT_VERSION + "-x86.msi");
                     b.build(outputPath + ver.define.PRODUCT_NAME + "-" + ver.define.PRODUCT_VERSION + "-amd64.msi");
                     break;
