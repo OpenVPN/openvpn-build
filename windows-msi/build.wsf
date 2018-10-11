@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  openvpn-build — OpenVPN packaging
+
+  Copyright (C) 2018 Simon Rozman <simon@rozman.si>
+
+  This program is free software; you can redistribute it and/or modify
+  it under the terms of the GNU General Public License version 2
+  as published by the Free Software Foundation.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License along
+  with this program; if not, write to the Free Software Foundation, Inc.,
+  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+-->
+<package>
+	<job id="build">
+		<runtime>
+			<description>Packages OpenVPN for Windows.</description>
+			<unnamed name="&lt;command&gt;" helpstring="Command to execute (default: &quot;all&quot;)"/>
+			<named name="f" helpstring="Forces building even if output is newer than input" type="simple"/>
+			<example>
+Commands:
+all  	Builds MSI packages and EXE installer
+clean	Cleans intermmediate and output files</example>
+		</runtime>
+		<reference object="ADODB.Stream"/>
+		<reference object="Scripting.FileSystemObject"/>
+		<reference object="WScript.Shell"/>
+		<script language="JScript" src="script/Builder.js"/>
+		<script language="JScript" src="script/M4Parser.js"/>
+		<script language="JScript" src="script/String.js"/>
+		<script language="JScript"><![CDATA[
+            // Supported platforms.
+            var platforms = ["x86", "amd64"];
+
+            // Build root folder.
+            var fso = WScript.CreateObject("Scripting.FileSystemObject");
+            var root = fso.GetParentFolderName(fso.GetAbsolutePathName(WScript.ScriptFullName)) + "\\";
+
+            // Get package info.
+            var ver = new M4Parser();
+            ver.parse(root + "version.m4");
+
+            // Folder with compiled OpenVPN ("-x86_64\\" or "-i686\\" is appended)
+            var sourcePathTemplate = "image";
+
+            // Folder with Easy RSA
+            var easyRSAPath = "image-easy-rsa\\";
+
+            // Folder with openvpnserv2.exe
+            var openVPNServ2Path = "image-openvpnserv2\\";
+
+            // Folder to store intermmediate files while building
+            var buildPath = "build.tmp\\";
+
+            // Folder to store output files
+            var outputPath = "image\\";
+
+            // Platform specific info
+            var platformInfo = {
+                "x86": {
+                    "buildPath": buildPath + "x86\\",
+                    "sourcePath": sourcePathTemplate + "-i686\\",
+                    "programFilesPath": "ProgramFilesFolder",
+                    "openSSLPlat": "",
+                    "wixPlat": "x86"
+                },
+
+                "amd64": {
+                    "buildPath": buildPath + "amd64\\",
+                    "sourcePath": sourcePathTemplate + "-x86_64\\",
+                    "programFilesPath": "ProgramFiles64Folder",
+                    "openSSLPlat": "-x64",
+                    "wixPlat": "x64"
+                }
+            }
+
+            // Create and configure the builder.
+            var b = new Builder();
+            if (WScript.Arguments.Named.Exists("f"))
+                b.force = true;
+
+            // Add platform-specific build rules.
+            for (i in platforms) {
+                var
+                    plat = platforms[i],
+                    p = platformInfo[plat];
+
+                // WiX compiler flags
+                var wixCompilerFlags = [
+                    "-ext WixUtilExtension",
+                    "-arch \"" + _CMD(p.wixPlat) + "\"",
+                    "-dPRODUCT_PUBLISHER=\""    + _CMD(ver.define["PRODUCT_PUBLISHER"         ]) + "\"",
+                    "-dPRODUCT_NAME=\""         + _CMD(ver.define["PRODUCT_NAME"              ]) + "\"",
+                    "-dPRODUCT_VERSION=\""      + _CMD(ver.define["PRODUCT_VERSION"           ]) + "\"",
+                    "-dPRODUCT_VERSION_GUID=\"" + _CMD(ver.define["PRODUCT_VERSION_GUID"      ]) + "\"",
+                    "-dPRODUCT_UPGRADE_GUID=\"" + _CMD(ver.define["PRODUCT_UPGRADE_GUID_"+plat]) + "\"",
+                    "-dCONFIG_EXTENSION=\""     + _CMD(ver.define["CONFIG_EXTENSION"          ]) + "\"",
+                    "-dPROGRAM_FILES_DIR=\""    + _CMD(p.programFilesPath                      ) + "\"",
+                    "-dOPENSSL_PLAT=\""         + _CMD(p.openSSLPlat                           ) + "\""];
+
+                // WiX compiling
+                b.rules.push(new WiXCompileBuildRule(p.buildPath + "gui.wixobj", root + "gui.wxs", [root + "version.m4"], wixCompilerFlags));
+                b.rules.push(new WiXCompileBuildRule(p.buildPath + "msi.wixobj", root + "msi.wxs", [root + "version.m4"], wixCompilerFlags));
+
+                // WiX linker flags
+                var wixLinkerFlags = [
+                    "-spdb",
+                    "-ext WixUtilExtension",
+                    "-b build=\""        + fso.GetAbsolutePathName(buildPath       ) + "\"",
+                    "-b openvpn=\""      + fso.GetAbsolutePathName(p.sourcePath    ) + "\"",
+                    "-b easyrsa=\""      + fso.GetAbsolutePathName(easyRSAPath     ) + "\"",
+                    "-b openvpnserv2=\"" + fso.GetAbsolutePathName(openVPNServ2Path) + "\""
+                ];
+
+                // WiX linking
+                b.rules.push(new WiXLinkBuildRule(
+                    outputPath + ver.define.PRODUCT_NAME + "-" + ver.define.PRODUCT_VERSION + "-" + plat + ".msi",
+                    [
+                        p.buildPath + "gui.wixobj",
+                        p.buildPath + "msi.wixobj"
+                    ],
+                    [
+                        "artwork\\info.ico",
+                        "artwork\\folder_new.ico",
+                        "artwork\\folder_up.ico",
+                        "artwork\\header.bmp",
+                        "artwork\\openvpn.ico",
+                        p.sourcePath + "bin\\libcrypto-1_1" + p.openSSLPlat + ".dll",
+                        p.sourcePath + "bin\\liblzo2-2.dll",
+                        p.sourcePath + "bin\\libpkcs11-helper-1.dll",
+                        p.sourcePath + "bin\\libssl-1_1" + p.openSSLPlat + ".dll",
+                        p.sourcePath + "bin\\openssl.exe",
+                        p.sourcePath + "bin\\openvpn.exe",
+                        p.sourcePath + "bin\\openvpn-gui.exe",
+                        p.sourcePath + "bin\\openvpnserv.exe",
+                        openVPNServ2Path + "openvpnserv2.exe",
+                        buildPath + "README-config.txt",
+                        "..\\windows-nsis\\INSTALL-win32.txt",
+                        p.sourcePath + "share\\doc\\openvpn\\license.txt",
+                        p.sourcePath + "share\\doc\\openvpn\\openvpn.8.html",
+                        easyRSAPath + "Windows\\build-ca.bat",
+                        easyRSAPath + "Windows\\build-dh.bat",
+                        easyRSAPath + "Windows\\build-key.bat",
+                        easyRSAPath + "Windows\\build-key-pass.bat",
+                        easyRSAPath + "Windows\\build-key-pkcs12.bat",
+                        easyRSAPath + "Windows\\build-key-server.bat",
+                        easyRSAPath + "Windows\\clean-all.bat",
+                        easyRSAPath + "Windows\\index.txt.start",
+                        easyRSAPath + "Windows\\init-config.bat",
+                        easyRSAPath + "2.0\\openssl-1.0.0.cnf",
+                        easyRSAPath + "Windows\\README.txt",
+                        easyRSAPath + "Windows\\revoke-full.bat",
+                        easyRSAPath + "Windows\\serial.start",
+                        easyRSAPath + "Windows\\vars.bat.sample",
+                        buildPath + "README-log.txt",
+                        p.sourcePath + "share\\doc\\openvpn\\sample\\client.ovpn",
+                        p.sourcePath + "share\\doc\\openvpn\\sample\\sample.ovpn",
+                        p.sourcePath + "share\\doc\\openvpn\\sample\\server.ovpn"
+                    ],
+                    wixLinkerFlags));
+            }
+
+            // Readme files generation
+            b.rules.push(new PreprocessBuildRule(buildPath + "README-config.txt", "utf-8", adCRLF, root + "doc\\config\\README.txt.in", "utf-8", adCRLF, ver, [root + "version.m4"]));
+            b.rules.push(new PreprocessBuildRule(buildPath + "README-log.txt"   , "utf-8", adCRLF, root + "doc\\log\\README.txt.in"   , "utf-8", adCRLF, ver, [root + "version.m4"]));
+
+            switch (WScript.Arguments.Unnamed.Length > 0 ? WScript.Arguments.Unnamed(0).toLowerCase() : "all")
+            {
+                case "all":
+                    b.build(outputPath + ver.define.PRODUCT_NAME + "-" + ver.define.PRODUCT_VERSION + "-x86.msi");
+                    b.build(outputPath + ver.define.PRODUCT_NAME + "-" + ver.define.PRODUCT_VERSION + "-amd64.msi");
+                    break;
+
+                case "clean":
+                    b.clean();
+                    break;
+
+                default:
+                    WScript.Arguments.ShowUsage();
+                    WScript.Quit(1);
+            }
+
+        ]]></script>
+	</job>
+</package>
