@@ -511,13 +511,13 @@
 
                     <Directory Id="SAMPLECFGDIR" Name="sample-config">
                         <Component Id="samplecfg.client.$(var.CONFIG_EXTENSION)" Guid="{5A762634-C12E-4D34-B9C6-D6C33513FAF8}">
-                            <File Name="client.$(var.CONFIG_EXTENSION)" Source="!(bindpath.openvpn)share\doc\openvpn\sample\client.ovpn"/>
+                            <File Name="client.$(var.CONFIG_EXTENSION)" Source="!(bindpath.build)$(var.PRODUCT_PLATFORM)\client.ovpn"/>
                         </Component>
                         <Component Id="samplecfg.sample.$(var.CONFIG_EXTENSION)" Guid="{48ECE02F-3E2B-4708-B736-8D36CBCFF509}">
-                            <File Name="sample.$(var.CONFIG_EXTENSION)" Source="!(bindpath.openvpn)share\doc\openvpn\sample\sample.ovpn"/>
+                            <File Name="sample.$(var.CONFIG_EXTENSION)" Source="!(bindpath.build)$(var.PRODUCT_PLATFORM)\sample.ovpn"/>
                         </Component>
                         <Component Id="samplecfg.server.$(var.CONFIG_EXTENSION)" Guid="{B0B5E776-3C7A-4B86-87BF-6FAFF9F83E34}">
-                            <File Name="server.$(var.CONFIG_EXTENSION)" Source="!(bindpath.openvpn)share\doc\openvpn\sample\server.ovpn"/>
+                            <File Name="server.$(var.CONFIG_EXTENSION)" Source="!(bindpath.build)$(var.PRODUCT_PLATFORM)\server.ovpn"/>
                         </Component>
                     </Directory>
                 </Directory>
