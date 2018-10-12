@@ -19,3 +19,7 @@ icons8-openvpn.svg [https://icons8.com/icon/38558/openvpn]
 
 genkey.svg based on
 Icons8_flat_key.svg [https://commons.wikimedia.org/wiki/File:Icons8_flat_key.svg]
+
+ovpn.svg based on
+Icons8_flat_document.svg [https://commons.wikimedia.org/wiki/File:Icons8_flat_document.svg]
+icons8-openvpn.svg [https://icons8.com/icon/38558/openvpn]

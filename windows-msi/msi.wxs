@@ -335,25 +335,6 @@
                         </Component>
                         <Component Id="bin.openvpn.exe" Guid="{4D920FC9-DF3C-4D34-ADE6-3EEEF8AE901A}">
                             <File Id="bin.openvpn.exe" Name="openvpn.exe" Source="!(bindpath.openvpn)bin\openvpn.exe"/>
-                            <ProgId
-                                Id="$(var.PRODUCT_NAME)File"
-                                Advertise="no"
-                                Description="$(var.PRODUCT_NAME) Config File">
-                                <!-- TODO: Provide config file icon. -->
-                                <Extension
-                                    Id="$(var.CONFIG_EXTENSION)"
-                                    ContentType="text/x-openvpn-config">
-                                    <Verb
-                                        Id="open"
-                                        TargetProperty="EDITOR"
-                                        Argument="&quot;%1&quot;"/>
-                                    <Verb
-                                        Id="run"
-                                        Command="Start $(var.PRODUCT_NAME) on this config file"
-                                        TargetFile="bin.openvpn.exe"
-                                        Argument="--pause-exit --config &quot;%1&quot;"/>
-                                </Extension>
-                            </ProgId>
                         </Component>
                         <Component Id="bin.openvpn_gui.exe" Guid="{5A893CD4-EA7E-4887-89D0-15BBE904FE11}">
                             <File Name="openvpn-gui.exe" Source="!(bindpath.openvpn)bin\openvpn-gui.exe"/>
@@ -519,6 +500,12 @@
                     <Directory Id="LOGDIR" Name="log">
                         <Component Id="log.README.txt" Guid="{CD05C1F7-99E7-45C9-8DE5-9C7FB73EE911}">
                             <File Id="log.README.txt" Name="README.txt" Source="!(bindpath.build)README-log.txt"/>
+                        </Component>
+                    </Directory>
+
+                    <Directory Id="RESDIR" Name="res">
+                        <Component Id="res.ovpn.ico" Guid="{01C7FEE2-2F5B-4BBF-A7CF-7B7B5E2B44D2}">
+                            <File Id="res.ovpn.ico" Name="ovpn.ico" Source="artwork\ovpn.ico"/>
                         </Component>
                     </Directory>
 
@@ -753,7 +740,7 @@
                     Type="string"
                     Value="[PRIORITY]"/>
             </Component>
-            <!--<Component Id="reg.conf.extension" Guid="{D93FFD42-2380-490A-8764-52AAC4896ED7}">
+            <Component Id="reg.conf.extension" Guid="{D93FFD42-2380-490A-8764-52AAC4896ED7}">
                 <RegistryValue
                     Root="HKCR"
                     Key=".$(var.CONFIG_EXTENSION)"
@@ -779,7 +766,7 @@
                     Root="HKCR"
                     Key="$(var.PRODUCT_NAME)File\DefaultIcon"
                     Type="string"
-                    Value="[PRODUCTDIR]icon.ico,0"/>
+                    Value="[RESDIR]ovpn.ico,0"/>
             </Component>
             <Component Id="reg.conf.open.command" Guid="{F11A8A05-AB43-4C06-BF35-C59B77E3F7BB}">
                 <RegistryValue
@@ -801,7 +788,7 @@
                     Key="$(var.PRODUCT_NAME)File\shell\run\command"
                     Type="string"
                     Value="&quot;[BINDIR]openvpn.exe&quot; &#45;&#45;pause-exit &#45;&#45;config &quot;%1&quot;"/>
-            </Component>-->
+            </Component>
         </DirectoryRef>
 
 
@@ -930,6 +917,7 @@
             <ComponentRef Id="doc.website.url"/>
             <ComponentRef Id="doc.wiki.url"/>
             <ComponentRef Id="log.README.txt"/>
+            <ComponentRef Id="res.ovpn.ico"/>
             <ComponentRef Id="samplecfg.client.$(var.CONFIG_EXTENSION)"/>
             <ComponentRef Id="samplecfg.sample.$(var.CONFIG_EXTENSION)"/>
             <ComponentRef Id="samplecfg.server.$(var.CONFIG_EXTENSION)"/>
@@ -948,13 +936,13 @@
             <ComponentRef Id="reg.log_dir"/>
             <ComponentRef Id="reg.ovpn_admin_group"/>
             <ComponentRef Id="reg.priority"/>
-            <!--<ComponentRef Id="reg.conf.extension"/>
+            <ComponentRef Id="reg.conf.extension"/>
             <ComponentRef Id="reg.conf.descr"/>
             <ComponentRef Id="reg.conf.verb.default"/>
             <ComponentRef Id="reg.conf.icon"/>
             <ComponentRef Id="reg.conf.open.command"/>
             <ComponentRef Id="reg.conf.run"/>
-            <ComponentRef Id="reg.conf.run.command"/>-->
+            <ComponentRef Id="reg.conf.run.command"/>
             <ComponentRef Id="shortcut.cfg"/>
             <ComponentRef Id="shortcut.log"/>
             <ComponentRef Id="shortcut.samplecfg"/>
