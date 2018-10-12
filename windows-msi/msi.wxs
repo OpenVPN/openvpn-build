@@ -925,7 +925,7 @@
                 Id="OpenVPN.Service"
                 Title="$(var.PRODUCT_NAME) Service"
                 Description="Service wrappers"
-                Level="2"
+                Level="3"
                 ConfigurableDirectory="PRODUCTDIR"
                 AllowAdvertise="no">
                 <ComponentRef Id="bin.openvpnserv2.exe"/>
