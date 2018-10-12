@@ -46,6 +46,9 @@ clean	Cleans intermmediate and output files</example>
             // Folder with compiled OpenVPN ("-x86_64" or "-i686" is appended)
             var sourcePath = "image";
 
+            // Folder with compiled TAP-Windows6
+            var tapPath = "image-tap-windows6";
+
             // Folder with Easy RSA
             var easyRSAPath = "image-easy-rsa";
 
@@ -63,6 +66,7 @@ clean	Cleans intermmediate and output files</example>
                 "x86": {
                     "buildPath": BuildPath(buildPath, "x86"),
                     "sourcePath": sourcePath + "-i686",
+                    "tapPath": BuildPath(tapPath, "i386"),
                     "programFilesPath": "ProgramFilesFolder",
                     "openSSLPlat": "",
                     "wixPlat": "x86"
@@ -71,11 +75,14 @@ clean	Cleans intermmediate and output files</example>
                 "amd64": {
                     "buildPath": BuildPath(buildPath, "amd64"),
                     "sourcePath": sourcePath + "-x86_64",
+                    "tapPath": BuildPath(tapPath, "amd64"),
                     "programFilesPath": "ProgramFiles64Folder",
                     "openSSLPlat": "-x64",
                     "wixPlat": "x64"
                 }
             }
+
+            var env = WScript.CreateObject("WScript.Shell").Environment("Process");
 
             // Create and configure the builder.
             var b = new Builder();
@@ -91,16 +98,21 @@ clean	Cleans intermmediate and output files</example>
 
                 // WiX compiler flags
                 var wixCompilerFlags = [
+                    "-ext WixDifxAppExtension",
+                    "-ext WixIIsExtension",
                     "-ext WixUtilExtension",
                     "-arch \"" + _CMD(p.wixPlat) + "\"",
-                    "-dPRODUCT_PUBLISHER=\""    + _CMD(ver.define["PRODUCT_PUBLISHER"         ]) + "\"",
-                    "-dPRODUCT_NAME=\""         + _CMD(ver.define["PRODUCT_NAME"              ]) + "\"",
-                    "-dPRODUCT_VERSION=\""      + _CMD(ver.define["PRODUCT_VERSION"           ]) + "\"",
-                    "-dPRODUCT_VERSION_GUID=\"" + _CMD(ver.define["PRODUCT_VERSION_GUID"      ]) + "\"",
-                    "-dPRODUCT_UPGRADE_GUID=\"" + _CMD(ver.define["PRODUCT_UPGRADE_GUID_"+plat]) + "\"",
-                    "-dCONFIG_EXTENSION=\""     + _CMD(ver.define["CONFIG_EXTENSION"          ]) + "\"",
-                    "-dPROGRAM_FILES_DIR=\""    + _CMD(p.programFilesPath                      ) + "\"",
-                    "-dOPENSSL_PLAT=\""         + _CMD(p.openSSLPlat                           ) + "\""];
+                    "-dPRODUCT_PUBLISHER=\""            + _CMD(ver.define["PRODUCT_PUBLISHER"           ]) + "\"",
+                    "-dPRODUCT_NAME=\""                 + _CMD(ver.define["PRODUCT_NAME"                ]) + "\"",
+                    "-dPRODUCT_VERSION=\""              + _CMD(ver.define["PRODUCT_VERSION"             ]) + "\"",
+                    "-dPRODUCT_TAP_NAME=\""             + _CMD(ver.define["PRODUCT_TAP_NAME"            ]) + "\"",
+                    "-dPRODUCT_TAP_WIN_COMPONENT_ID=\"" + _CMD(ver.define["PRODUCT_TAP_WIN_COMPONENT_ID"]) + "\"",
+                    "-dPRODUCT_PLATFORM=\""             + plat                                             + "\"",
+                    "-dPRODUCT_VERSION_GUID=\""         + _CMD(ver.define["PRODUCT_VERSION_GUID"        ]) + "\"",
+                    "-dPRODUCT_UPGRADE_GUID=\""         + _CMD(ver.define["PRODUCT_UPGRADE_GUID_"+plat  ]) + "\"",
+                    "-dCONFIG_EXTENSION=\""             + _CMD(ver.define["CONFIG_EXTENSION"            ]) + "\"",
+                    "-dPROGRAM_FILES_DIR=\""            + _CMD(p.programFilesPath                        ) + "\"",
+                    "-dOPENSSL_PLAT=\""                 + _CMD(p.openSSLPlat                             ) + "\""];
 
                 // WiX compiling
                 b.rules.push(new WiXCompileBuildRule(BuildPath(p.buildPath, "gui.wixobj"), "gui.wxs", ["version.m4"], wixCompilerFlags));
@@ -109,9 +121,13 @@ clean	Cleans intermmediate and output files</example>
                 // WiX linker flags
                 var wixLinkerFlags = [
                     "-spdb",
+                    "-ext WixDifxAppExtension",
+                    "-ext WixIIsExtension",
                     "-ext WixUtilExtension",
                     "-b build=\""        + _CMD(buildPath       ) + "\"",
                     "-b openvpn=\""      + _CMD(p.sourcePath    ) + "\"",
+                    "-b tap=\""          + _CMD(tapPath         ) + "\"",
+                    "-b tapbin=\""       + _CMD(p.tapPath       ) + "\"",
                     "-b easyrsa=\""      + _CMD(easyRSAPath     ) + "\"",
                     "-b openvpnserv2=\"" + _CMD(openVPNServ2Path) + "\""
                 ];
@@ -123,7 +139,8 @@ clean	Cleans intermmediate and output files</example>
                     msiFile,
                     [
                         BuildPath(p.buildPath, "gui.wixobj"),
-                        BuildPath(p.buildPath, "msi.wixobj")
+                        BuildPath(p.buildPath, "msi.wixobj"),
+                        BuildPath(env("WIX"), "bin", "difxapp_" + p.wixPlat + ".wixlib")
                     ],
                     [
                         BuildPath("artwork", "info.ico"),
@@ -131,14 +148,22 @@ clean	Cleans intermmediate and output files</example>
                         BuildPath("artwork", "folder_up.ico"),
                         BuildPath("artwork", "header.bmp"),
                         BuildPath("artwork", "openvpn.ico"),
+                        BuildPath("artwork", "tapctl_create.ico"),
                         BuildPath(p.sourcePath, "bin", "libcrypto-1_1" + p.openSSLPlat + ".dll"),
                         BuildPath(p.sourcePath, "bin", "liblzo2-2.dll"),
+                        BuildPath(p.sourcePath, "bin", "libopenvpnmsica.dll"),
                         BuildPath(p.sourcePath, "bin", "libpkcs11-helper-1.dll"),
                         BuildPath(p.sourcePath, "bin", "libssl-1_1" + p.openSSLPlat + ".dll"),
                         BuildPath(p.sourcePath, "bin", "openssl.exe"),
                         BuildPath(p.sourcePath, "bin", "openvpn.exe"),
                         BuildPath(p.sourcePath, "bin", "openvpn-gui.exe"),
                         BuildPath(p.sourcePath, "bin", "openvpnserv.exe"),
+                        BuildPath(p.sourcePath, "bin", "tapctl.exe"),
+                        BuildPath(p.tapPath, "OemVista.inf"),
+                        BuildPath(p.tapPath, "signed_by.cer"),
+                        BuildPath(p.tapPath, "tap0901.cat"),
+                        BuildPath(p.tapPath, "tap0901.sys"),
+                        BuildPath(tapPath, "include", "tap-windows.h"),
                         BuildPath(openVPNServ2Path, "openvpnserv2.exe"),
                         BuildPath(buildPath, "README-config.txt"),
                         BuildPath("..", "windows-nsis", "INSTALL-win32.txt"),

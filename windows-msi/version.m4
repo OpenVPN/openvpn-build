@@ -2,6 +2,8 @@ dnl define the product version
 define([PRODUCT_NAME], [OpenVPN])
 define([PRODUCT_PUBLISHER], [OpenVPN Technologies, Inc.])
 define([PRODUCT_VERSION], [2.4.6])
+define([PRODUCT_TAP_NAME], [TAP-Windows])
+define([PRODUCT_TAP_WIN_COMPONENT_ID], [tap0901])
 
 dnl The version GUID MUST change for each release.
 define([PRODUCT_VERSION_GUID], [{80493CF5-3B4C-4B46-9054-BFC3D6E13C0E}])
