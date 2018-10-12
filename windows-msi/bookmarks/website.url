@@ -1,0 +1,4 @@
+[DEFAULT]
+BASEURL=https://openvpn.net/
+[InternetShortcut]
+URL=https://openvpn.net/
