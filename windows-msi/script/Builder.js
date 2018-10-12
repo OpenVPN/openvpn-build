@@ -227,6 +227,22 @@ Builder.prototype.removeDir = function (path)
 
 
 /**
+ * Copies file
+ * 
+ * @param inName   Source file name
+ * @param outName  Destination file name
+ */
+Builder.prototype.copyFile = function (inName, outName)
+{
+    try {
+        this.fso.CopyFile(inName, outName);
+    } catch (err) {
+        throw new Error(err.number, "Error copying \"" + inName + "\" to \"" + outName + "\": " + err.message);
+    }
+}
+
+
+/**
  * Deletes a file
  * 
  * @param fileName  Name of the file to delete
@@ -564,7 +580,7 @@ SevenZipSFXBuildRule.prototype.build = function (builder)
             // Copy payload files to a temporary folder first. 
             builder.makeDir(payloadTempPath);
             for (var i in this.payloadNames)
-                builder.fso.CopyFile(this.payloadNames[i], payloadTempPath);
+                builder.copyFile(this.payloadNames[i], payloadTempPath + "\\");
 
             // 7-Zip is sensitive to file extension. Carefully select a temporary .7z file name.
             var payloadPath = BuildPath(builder.tempPath, builder.fso.GetBaseName(builder.fso.GetTempName()) + ".7z");
