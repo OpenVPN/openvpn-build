@@ -34,8 +34,6 @@ function Builder()
 
     // Temporary folder.
     this.tempPath = this.env("TEMP");
-    if (this.tempPath.substring(this.tempPath.length - 1) != "\\")
-        this.tempPath += "\\";
 
     // Detect the WiX Toolset path.
     this.wixPath = this.env("WIX");
@@ -43,14 +41,12 @@ function Builder()
         // No WiX, no fun.
         throw new Error("The WIX environment is missing or empty. Please, make sure the WiX Toolset is installed correctly.");
     }
-    if (this.wixPath.substring(this.wixPath.length - 1) != "\\")
-        this.wixPath += "\\";
 
     this.wixCandleFlags = ["-nologo"];
     this.wixLightFlags = ["-nologo", "-dcl:high"];
 
-    // Determine 7-Zip folder.
-    this.sevenZipPath = this.fso.GetParentFolderName(this.fso.GetAbsolutePathName(WScript.ScriptFullName)) + "\\lzma1805\\bin\\";
+    // Determine 7-Zip folder. Must be absolute, as we need to change dir for 7-Zip to make the payload correctly.
+    this.sevenZipPath = BuildPath(this.fso.GetParentFolderName(this.fso.GetAbsolutePathName(WScript.ScriptFullName)), "lzma1805", "bin");
     this.sevenZipFlags = ["-mx", "-mf=BCJ2"];
 
     // Get the codepage Windows is using for stdin/stdout/stderr.
@@ -271,11 +267,11 @@ Builder.prototype.exec = function (cmd)
     }
 
     var result = -1;
-    var outputPath = this.tempPath + this.fso.GetTempName();
+    var outputPath = BuildPath(this.tempPath, this.fso.GetTempName());
     try {
         // Execute command and wait for it to finish. Redirect stdout and strerr to a temporary file.
         WScript.Echo("RUN: " + cmd);
-        result = this.wsh.Run("\"" + this.env("ComSpec") + "\" /S /C \"" + cmd + " > \"" + outputPath + "\" 2>&1\"", 0, true);
+        result = this.wsh.Run("\"" + _CMD(this.env("ComSpec")) + "\" /S /C \"" + cmd + " > \"" + _CMD(outputPath) + "\" 2>&1\"", 0, true);
 
         var dat = WScript.CreateObject("ADODB.Stream");
         var output = "";
@@ -455,9 +451,9 @@ WiXCompileBuildRule.prototype.build = function (builder)
 {
     // Compile .wxs file.
     if (builder.exec(
-        "\"" + builder.wixPath + "bin\\candle.exe\" " +
+        "\"" + _CMD(BuildPath(builder.wixPath, "bin", "candle.exe")) + "\" " +
         builder.wixCandleFlags.join(" ") + (this.flags && this.flags.length ? " " + this.flags.join(" ") : "") +
-        " -out \"" + this.outNames[0] + "\" \"" + this.inNames[0] + "\"") != 0)
+        " -out \"" + _CMD(this.outNames[0]) + "\" \"" + _CMD(this.inNames[0]) + "\"") != 0)
         throw new Error("WiX compiler returned non-zero.");
 
     BuildRule.prototype.build.call(this, builder);
@@ -500,7 +496,7 @@ WiXLinkBuildRule.prototype.build = function (builder)
 {
     // Link .wixobj files.
     if (builder.exec(
-        "\"" + builder.wixPath + "bin\\light.exe\" " +
+        "\"" + _CMD(BuildPath(builder.wixPath, "bin", "light.exe")) + "\" " +
         builder.wixLightFlags.join(" ") + (this.flags && this.flags.length ? " " + this.flags.join(" ") : "") +
         " -out \"" + this.outNames[0] + "\" \"" + this.objNames.join("\" \"") + "\"") != 0)
         throw new Error("WiX linker returned non-zero.");
@@ -544,7 +540,7 @@ function SevenZipSFXBuildRule(outName, inNames, cfg, depNames)
 SevenZipSFXBuildRule.prototype.build = function (builder)
 {
     // Prepare installer config file.
-    var cfgPath = builder.tempPath + builder.fso.GetTempName();
+    var cfgPath = BuildPath(builder.tempPath, builder.fso.GetTempName());
     try {
         var datOut = WScript.CreateObject("ADODB.Stream");
         datOut.Open();
@@ -563,7 +559,7 @@ SevenZipSFXBuildRule.prototype.build = function (builder)
         }
 
         // 7-Zip has no flag to pack all files in a flat arhive without laying them out into subfolder(s).
-        var payloadTempPath = builder.tempPath + builder.fso.GetTempName() + "\\";
+        var payloadTempPath = BuildPath(builder.tempPath, builder.fso.GetTempName());
         try {
             // Copy payload files to a temporary folder first. 
             builder.makeDir(payloadTempPath);
@@ -571,7 +567,7 @@ SevenZipSFXBuildRule.prototype.build = function (builder)
                 builder.fso.CopyFile(this.payloadNames[i], payloadTempPath);
 
             // 7-Zip is sensitive to file extension. Carefully select a temporary .7z file name.
-            var payloadPath = builder.tempPath + builder.fso.GetBaseName(builder.fso.GetTempName()) + ".7z";
+            var payloadPath = BuildPath(builder.tempPath, builder.fso.GetBaseName(builder.fso.GetTempName()) + ".7z");
             try {
                 // As much as I personally hate this: we need to change folder.
                 var dirPrev = builder.wsh.CurrentDirectory;
@@ -579,9 +575,9 @@ SevenZipSFXBuildRule.prototype.build = function (builder)
                     // Compress the payload.
                     builder.wsh.CurrentDirectory = payloadTempPath;
                     if (builder.exec(
-                        "\"" + builder.sevenZipPath + "7zr.exe\" a " +
+                        "\"" + _CMD(BuildPath(builder.sevenZipPath, "7zr.exe")) + "\" a " +
                         builder.sevenZipFlags.join(" ") +
-                        " \"" + payloadPath + "\" *") != 0)
+                        " \"" + _CMD(payloadPath) + "\" *") != 0)
                         throw new Error("7-Zip returned non-zero.");
                 } finally {
                     builder.wsh.CurrentDirectory = dirPrev;
@@ -598,7 +594,7 @@ SevenZipSFXBuildRule.prototype.build = function (builder)
                     datIn.Open();
                     try {
                         datIn.Type = adTypeBinary;
-                        datIn.LoadFromFile(builder.sevenZipPath + "7zSD-openvpn.sfx");
+                        datIn.LoadFromFile(BuildPath(builder.sevenZipPath, "7zSD-openvpn.sfx"));
                         datIn.CopyTo(datOut);
                     } finally {
                         datIn.Close();

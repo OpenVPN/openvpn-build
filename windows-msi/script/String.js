@@ -23,20 +23,39 @@
 var _CMD_stat = null;
 function _CMD(str)
 {
-	if (!_CMD_stat) {
-		_CMD_stat = {
-			"re_quot": new RegExp("\"", "g")
-		};
-	}
+    if (!_CMD_stat) {
+        _CMD_stat = {
+            "re_quot": new RegExp("\"", "g")
+        };
+    }
 
-	if (str == null) return null;
-	switch (typeof(str)) {
-		case "string":    break;
-		case "undefined": return null;
-		default:          try { str = str.toString(); } catch (err) { return null; }
-	}
+    if (str == null) return null;
+    switch (typeof(str)) {
+        case "string":    break;
+        case "undefined": return null;
+        default:          try { str = str.toString(); } catch (err) { return null; }
+    }
 
-	return str.replace(_CMD_stat.re_quot, "\"\"");
+    return str.replace(_CMD_stat.re_quot, "\"\"");
 }
+
+
+var BuildPath_stat = null;
+function BuildPath(str)
+{
+    if (!BuildPath_stat) {
+        BuildPath_stat = {
+            "fso": WScript.CreateObject("Scripting.FileSystemObject")
+        };
+    }
+
+    for (var i = 1, n_arg = arguments.length; i < n_arg; i++)
+        str = BuildPath_stat.fso.BuildPath(str, arguments[i]);
+
+    return str;
+}
+
+
+
 
 /*@end @*/
