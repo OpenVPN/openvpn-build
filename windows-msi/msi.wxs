@@ -798,10 +798,10 @@
         <InstallExecuteSequence>
             <Custom Action="FindTAPInterfaces"               After="FindRelatedProducts"/>
             <Custom Action="EvaluateTAPInterfaces"           After="ProcessComponents"/>
-            <Custom Action="UninstallTAPInterfaces"          After="ProcessComponents"/>
+            <Custom Action="UninstallTAPInterfaces"          After="DeleteServices"/>
             <Custom Action="UninstallTAPInterfacesCommit"    After="UninstallTAPInterfaces"/>
             <Custom Action="UninstallTAPInterfacesRollback" Before="UninstallTAPInterfaces"/>
-            <Custom Action="InstallTAPInterfaces"           Before="InstallFinalize"/>
+            <Custom Action="InstallTAPInterfaces"           Before="InstallServices"/>
             <Custom Action="InstallTAPInterfacesCommit"      After="InstallTAPInterfaces"/>
             <Custom Action="InstallTAPInterfacesRollback"   Before="InstallTAPInterfaces"/>
         </InstallExecuteSequence>
