@@ -50,6 +50,9 @@
         <Icon
             Id="tapctl_create.ico"
             SourceFile="artwork\tapctl_create.ico"/>
+        <Icon
+            Id="url.ico"
+            SourceFile="artwork\url.ico"/>
 
         <!--
             Code signing certificate the driver is signed with.
@@ -560,7 +563,8 @@
                                 Id="shortcut.doc.howto.url"
                                 Name="$(var.PRODUCT_NAME) HOWTO"
                                 Target="[DOCDIR]$(var.PRODUCT_NAME) HOWTO.url"
-                                WorkingDirectory="DOCDIR"/>
+                                WorkingDirectory="DOCDIR"
+                                Icon="url.ico"/>
                             <RemoveFolder Id="shortcut.doc.howto.url" On="uninstall"/>
                             <RegistryValue Root="HKCU" Key="Software\$(var.PRODUCT_NAME)\Shortcuts" Name="doc.howto.url" Type="integer" Value="1"/>
                         </Component>
@@ -569,7 +573,8 @@
                                 Id="shortcut.doc.support.url"
                                 Name="$(var.PRODUCT_NAME) Support"
                                 Target="[DOCDIR]$(var.PRODUCT_NAME) Support.url"
-                                WorkingDirectory="DOCDIR"/>
+                                WorkingDirectory="DOCDIR"
+                                Icon="url.ico"/>
                             <RemoveFolder Id="shortcut.doc.support.url" On="uninstall"/>
                             <RegistryValue Root="HKCU" Key="Software\$(var.PRODUCT_NAME)\Shortcuts" Name="doc.support.url" Type="integer" Value="1"/>
                         </Component>
@@ -578,7 +583,8 @@
                                 Id="shortcut.doc.website.url"
                                 Name="$(var.PRODUCT_NAME) Web Site"
                                 Target="[DOCDIR]$(var.PRODUCT_NAME) Web Site.url"
-                                WorkingDirectory="DOCDIR"/>
+                                WorkingDirectory="DOCDIR"
+                                Icon="url.ico"/>
                             <RemoveFolder Id="shortcut.doc.website.url" On="uninstall"/>
                             <RegistryValue Root="HKCU" Key="Software\$(var.PRODUCT_NAME)\Shortcuts" Name="doc.website.url" Type="integer" Value="1"/>
                         </Component>
@@ -587,7 +593,8 @@
                                 Id="shortcut.doc.wiki.url"
                                 Name="$(var.PRODUCT_NAME) Wiki"
                                 Target="[DOCDIR]$(var.PRODUCT_NAME) Wiki.url"
-                                WorkingDirectory="DOCDIR"/>
+                                WorkingDirectory="DOCDIR"
+                                Icon="url.ico"/>
                             <RemoveFolder Id="shortcut.doc.wiki.url" On="uninstall"/>
                             <RegistryValue Root="HKCU" Key="Software\$(var.PRODUCT_NAME)\Shortcuts" Name="doc.wiki.url" Type="integer" Value="1"/>
                         </Component>

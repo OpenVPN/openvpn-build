@@ -155,6 +155,7 @@ clean	Cleans intermmediate and output files</example>
                         BuildPath("artwork", "openvpn.ico"),
                         BuildPath("artwork", "ovpn.ico"),
                         BuildPath("artwork", "tapctl_create.ico"),
+                        BuildPath("artwork", "url.ico"),
                         BuildPath(p.buildPath, "license.txt"),
                         BuildPath(p.sourcePath, "bin", "libcrypto-1_1" + p.openSSLPlat + ".dll"),
                         BuildPath(p.sourcePath, "bin", "liblzo2-2.dll"),
