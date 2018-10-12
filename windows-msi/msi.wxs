@@ -27,7 +27,7 @@
         UpgradeCode="$(var.PRODUCT_UPGRADE_GUID)"
         Version="$(var.PRODUCT_VERSION)"
         Language="1033"
-        Name="$(var.PRODUCT_NAME) $(var.PRODUCT_VERSION) $(var.PRODUCT_PLATFORM)"
+        Name="$(var.PRODUCT_NAME) $(var.PRODUCT_VERSION)-$(var.PRODUCT_PLATFORM)"
         Manufacturer="$(var.PRODUCT_PUBLISHER)">
 
         <Package
