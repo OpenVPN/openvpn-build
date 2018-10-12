@@ -305,7 +305,7 @@
             <Directory Id="$(var.PROGRAM_FILES_DIR)">
                 <Directory Id="PRODUCTDIR" Name="$(var.PRODUCT_NAME)">
                     <Component Id="license.txt" Guid="{20A13016-5269-48AA-9932-F6E7CE044F40}">
-                        <File Name="license.txt" Source="!(bindpath.openvpn)share\doc\openvpn\license.txt"/>
+                        <File Name="license.txt" Source="!(bindpath.build)$(var.PRODUCT_PLATFORM)\license.txt"/>
 
                         <!-- Clean-up NSIS installation. -->
                         <!-- TODO: remove stale files. -->
