@@ -16,3 +16,6 @@ Icons8_flat_left_up2.svg [https://commons.wikimedia.org/wiki/File:Icons8_flat_le
 
 openvpn.svg based on
 icons8-openvpn.svg [https://icons8.com/icon/38558/openvpn]
+
+genkey.svg based on
+Icons8_flat_key.svg [https://commons.wikimedia.org/wiki/File:Icons8_flat_key.svg]

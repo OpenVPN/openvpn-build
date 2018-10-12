@@ -42,6 +42,9 @@
             EmbedCab="yes"/>
 
         <Icon
+            Id="genkey.ico"
+            SourceFile="artwork\genkey.ico"/>
+        <Icon
             Id="openvpn.ico"
             SourceFile="artwork\openvpn.ico"/>
         <Icon
@@ -641,7 +644,7 @@
                                 Target="[BINDIR]openvpn.exe"
                                 Arguments="--pause-exit --verb 3 --genkey --secret &quot;%USERPROFILE%\Desktop\My $(var.PRODUCT_NAME) Key.txt&quot;"
                                 WorkingDirectory="BINDIR"
-                                Icon="openvpn.ico"/>
+                                Icon="genkey.ico"/>
                             <RemoveFolder Id="shortcut.bin.openvpn.exe.genkey" On="uninstall"/>
                             <RegistryValue Root="HKCU" Key="Software\$(var.PRODUCT_NAME)\Shortcuts" Name="bin.openvpn.exe.genkey" Type="integer" Value="1"/>
                         </Component>
