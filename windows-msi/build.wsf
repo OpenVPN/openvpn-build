@@ -22,7 +22,7 @@
 		<runtime>
 			<description>Packages OpenVPN for Windows.</description>
 			<unnamed name="&lt;command&gt;" helpstring="Command to execute (default: &quot;all&quot;)"/>
-			<named name="f" helpstring="Forces building even if output is newer than input" type="simple"/>
+			<named name="a" helpstring="Builds all targets even if output is newer than input" type="simple"/>
 			<example>
 Commands:
 all  	Builds MSI packages and EXE installer
@@ -86,7 +86,7 @@ clean	Cleans intermmediate and output files</example>
 
             // Create and configure the builder.
             var b = new Builder();
-            if (WScript.Arguments.Named.Exists("f"))
+            if (WScript.Arguments.Named.Exists("a"))
                 b.force = true;
 
             // Add platform-specific build rules.
