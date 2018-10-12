@@ -882,7 +882,7 @@
             Id="OpenVPN"
             Title="$(var.PRODUCT_NAME) User-Space Components"
             Description="User-space components, including openvpn.exe"
-            Level="1"
+            Level="2"
             ConfigurableDirectory="PRODUCTDIR"
             AllowAdvertise="no"
             Display="expand">
@@ -953,7 +953,8 @@
             Level="1"
             ConfigurableDirectory="PRODUCTDIR"
             AllowAdvertise="no"
-            Display="expand">
+            Display="expand"
+            Absent="disallow">
             <ComponentRef Id="license.txt"/>
             <ComponentRef Id="driver.OemVista.inf"/>
             <ComponentRef Id="driver.$(var.PRODUCT_TAP_WIN_COMPONENT_ID).cat"/>
