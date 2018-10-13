@@ -118,10 +118,10 @@ clean	Cleans intermmediate and output files</example>
                 b.rules.push(new WiXCompileBuildRule(BuildPath(p.buildPath, "msi.wixobj"), "msi.wxs", ["version.m4"], wixCompilerFlags));
 
                 // Text file generation
-                b.rules.push(new PreprocessBuildRule(BuildPath(p.buildPath, "license.txt"), "utf-8", adCRLF, BuildPath(p.sourcePath, "share", "doc", "openvpn", "license.txt"          ), "utf-8", adLF, ver, ["version.m4"]));
-                b.rules.push(new PreprocessBuildRule(BuildPath(p.buildPath, "client.ovpn"), "utf-8", adCRLF, BuildPath(p.sourcePath, "share", "doc", "openvpn", "sample", "client.ovpn"), "utf-8", adLF, ver, ["version.m4"]));
-                b.rules.push(new PreprocessBuildRule(BuildPath(p.buildPath, "sample.ovpn"), "utf-8", adCRLF, BuildPath(p.sourcePath, "share", "doc", "openvpn", "sample", "sample.ovpn"), "utf-8", adLF, ver, ["version.m4"]));
-                b.rules.push(new PreprocessBuildRule(BuildPath(p.buildPath, "server.ovpn"), "utf-8", adCRLF, BuildPath(p.sourcePath, "share", "doc", "openvpn", "sample", "server.ovpn"), "utf-8", adLF, ver, ["version.m4"]));
+                b.rules.push(new ConvertTextBuildRule(BuildPath(p.buildPath, "license.txt"), "utf-8", adCRLF, BuildPath(p.sourcePath, "share", "doc", "openvpn", "license.txt"          ), "utf-8", adLF, []));
+                b.rules.push(new ConvertTextBuildRule(BuildPath(p.buildPath, "client.ovpn"), "utf-8", adCRLF, BuildPath(p.sourcePath, "share", "doc", "openvpn", "sample", "client.ovpn"), "utf-8", adLF, []));
+                b.rules.push(new ConvertTextBuildRule(BuildPath(p.buildPath, "sample.ovpn"), "utf-8", adCRLF, BuildPath(p.sourcePath, "share", "doc", "openvpn", "sample", "sample.ovpn"), "utf-8", adLF, []));
+                b.rules.push(new ConvertTextBuildRule(BuildPath(p.buildPath, "server.ovpn"), "utf-8", adCRLF, BuildPath(p.sourcePath, "share", "doc", "openvpn", "sample", "server.ovpn"), "utf-8", adLF, []));
 
                 // WiX linker flags
                 var wixLinkerFlags = [

@@ -355,7 +355,7 @@ BuildRule.prototype.clean = function (builder)
 
 
 /**
- * Creates a text preprocessing build rule
+ * Creates a text conversion build rule
  * 
  * @param outName     Output .txt file name
  * @param outCharset  Charset to use on output (e.g. "utf-8", "windows-1251" etc.)
@@ -363,12 +363,11 @@ BuildRule.prototype.clean = function (builder)
  * @param inName      Input .txt.in file name
  * @param inCharset   Charset to expect on input (e.g. "utf-8", "windows-1251" etc.)
  * @param inLineSep   Line separator on input (e.g. adCRLF, adLF)
- * @param ver         M4 parser
  * @param depNames    Additional dependencies
  *
  * @returns  Build rule
  */
-function PreprocessBuildRule(outName, outCharset, outLineSep, inName, inCharset, inLineSep, ver, depNames)
+function ConvertTextBuildRule(outName, outCharset, outLineSep, inName, inCharset, inLineSep, depNames)
 {
     BuildRule.call(this, [outName], [inName].concat(depNames));
 
@@ -376,7 +375,6 @@ function PreprocessBuildRule(outName, outCharset, outLineSep, inName, inCharset,
     this.outLineSep = outLineSep;
     this.inCharset = inCharset;
     this.inLineSep = inLineSep;
-    this.ver = ver;
 
     return this;
 }
@@ -387,16 +385,9 @@ function PreprocessBuildRule(outName, outCharset, outLineSep, inName, inCharset,
  * 
  * @param builder  The builder object
  */
-PreprocessBuildRule.prototype.build = function (builder)
+ConvertTextBuildRule.prototype.build = function (builder)
 {
-    if (!PreprocessBuildRule.prototype.__build) {
-        // Initialize static data.
-        PreprocessBuildRule.prototype.__build = {
-            "re_param": new RegExp("@(\\w+)@", "g")
-        };
-    }
-
-    WScript.Echo("PREPROCESS: " + this.inNames[0] + " >> " + this.outNames[0]);
+    WScript.Echo("CONVERT: " + this.inNames[0] + " >> " + this.outNames[0]);
     var datIn = WScript.CreateObject("ADODB.Stream");
     datIn.Open();
     try {
@@ -413,13 +404,8 @@ PreprocessBuildRule.prototype.build = function (builder)
             datOut.Charset = this.outCharset;
             datOut.LineSeparator = this.outLineSep;
 
-
-            var dict = this.ver.define;
-            while (!datIn.EOS) {
-                datOut.WriteText(datIn.ReadText(adReadLine).replace(PreprocessBuildRule.prototype.__build.re_param, function ($0, $1) {
-                    return $1 in dict ? dict[$1] : "@" + $1 + "@";
-                }), adWriteLine);
-            }
+            while (!datIn.EOS)
+                datOut.WriteText(this.transform(builder, datIn.ReadText(adReadLine)), adWriteLine);
 
             // Persist stream to file.
             datOut.SaveToFile(this.outNames[0], adSaveCreateOverWrite);
@@ -439,7 +425,88 @@ PreprocessBuildRule.prototype.build = function (builder)
  * 
  * @param builder  The builder object
  */
+ConvertTextBuildRule.prototype.clean = BuildRule.prototype.clean;
+
+
+/**
+ * Transforms one line of text
+ * 
+ * @param builder  The builder object
+ * @param str      Line of text to transform
+ * 
+ * @returns  Transformed text
+ */
+ConvertTextBuildRule.prototype.transform = function (builder, str)
+{
+    return str;
+}
+
+
+/**
+ * Creates a text preprocessing build rule
+ * 
+ * @param outName     Output .txt file name
+ * @param outCharset  Charset to use on output (e.g. "utf-8", "windows-1251" etc.)
+ * @param outLineSep  Line separator on output (e.g. adCRLF, adLF)
+ * @param inName      Input .txt.in file name
+ * @param inCharset   Charset to expect on input (e.g. "utf-8", "windows-1251" etc.)
+ * @param inLineSep   Line separator on input (e.g. adCRLF, adLF)
+ * @param ver         M4 parser
+ * @param depNames    Additional dependencies
+ *
+ * @returns  Build rule
+ */
+function PreprocessBuildRule(outName, outCharset, outLineSep, inName, inCharset, inLineSep, ver, depNames)
+{
+    ConvertTextBuildRule.call(this, outName, outCharset, outLineSep, inName, inCharset, inLineSep, depNames);
+
+    this.ver = ver;
+
+    return this;
+}
+
+
+/**
+ * Builds the rule
+ * 
+ * @param builder  The builder object
+ */
+PreprocessBuildRule.prototype.build = ConvertTextBuildRule.prototype.build;
+
+
+/**
+ * Removes all output files
+ * 
+ * @param builder  The builder object
+ */
 PreprocessBuildRule.prototype.clean = BuildRule.prototype.clean;
+
+
+/**
+ * Transforms one line of text
+ * 
+ * @param builder  The builder object
+ * @param str      Line of text to transform
+ * 
+ * @returns  Transformed text
+ */
+PreprocessBuildRule.prototype.transform = function (builder, str)
+{
+    if (!PreprocessBuildRule.prototype.__transform) {
+        // Initialize static data.
+        PreprocessBuildRule.prototype.__transform = {
+            "re_param": new RegExp("@(\\w+)@", "g")
+        };
+    }
+
+    var dict = this.ver.define;
+
+    str = str.replace(PreprocessBuildRule.prototype.__transform.re_param, function ($0, $1) {
+        return $1 in dict ? dict[$1] : "@" + $1 + "@";
+    });
+
+    return str;
+}
 
 
 /**
