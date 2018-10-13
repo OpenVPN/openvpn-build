@@ -370,13 +370,15 @@ BuildRule.prototype.clean = function (builder)
  */
 function PreprocessBuildRule(outName, outCharset, outLineSep, inName, inCharset, inLineSep, ver, depNames)
 {
+    BuildRule.call(this, [outName], [inName].concat(depNames));
+
     this.outCharset = outCharset;
     this.outLineSep = outLineSep;
     this.inCharset = inCharset;
     this.inLineSep = inLineSep;
     this.ver = ver;
 
-    return BuildRule.call(this, [outName], [inName].concat(depNames));
+    return this;
 }
 
 
@@ -452,9 +454,11 @@ PreprocessBuildRule.prototype.clean = BuildRule.prototype.clean;
  */
 function WiXCompileBuildRule(outName, inName, depNames, flags)
 {
+    BuildRule.call(this, [outName], [inName].concat(depNames));
+
     this.flags = flags;
 
-    return BuildRule.call(this, [outName], [inName].concat(depNames));
+    return this;
 }
 
 
@@ -496,10 +500,12 @@ WiXCompileBuildRule.prototype.clean = BuildRule.prototype.clean;
  */
 function WiXLinkBuildRule(outName, inNames, depNames, flags)
 {
+    BuildRule.call(this, [outName], inNames.concat(depNames));
+
     this.flags = flags;
     this.objNames = inNames;
 
-    return BuildRule.call(this, [outName], inNames.concat(depNames));
+    return this;
 }
 
 
@@ -541,10 +547,12 @@ WiXLinkBuildRule.prototype.clean = BuildRule.prototype.clean;
  */
 function SevenZipSFXBuildRule(outName, inNames, cfg, depNames)
 {
+    BuildRule.call(this, [outName], inNames.concat(depNames));
+
     this.cfg = cfg;
     this.payloadNames = inNames;
 
-    return BuildRule.call(this, [outName], inNames.concat(depNames));
+    return this;
 }
 
 
