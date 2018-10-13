@@ -28,7 +28,7 @@
 Notes:
 
 - This script launches msiexec.exe /i on selected MSI package.
-- Logging /l* to %TEMP%\@PRODUCT_NAME@-install-@PRODUCT_VERSION@.log file is arranged.
+- Logging /l* to %TEMP%\@PRODUCT_NAME@-install.log file is arranged.
 - All command line parameters passed to this script are forwarded to
   msiexec.exe call:
   - See msiexec.exe /? for reference.
@@ -102,8 +102,9 @@ Examples:
                 default:      plat = "x86"  ; break;
             }
             var
-                base_name = "@PRODUCT_NAME@-@PRODUCT_VERSION@-" + plat,
-                cmd = wsh.Run("msiexec.exe /i \"" + base_name + ".msi\" /l* \"%TEMP%\\" + base_name + ".log\"" + extra_args, 1, true);
+                msi_name = "@PRODUCT_NAME@-@PRODUCT_VERSION@-" + plat + ".msi",
+                log_name = "@PRODUCT_NAME@-install.log",
+                cmd = wsh.Run("msiexec.exe /i \"" + msi_name + "\" /l* \"%TEMP%\\" + log_name + "\"" + extra_args, 1, true);
 
             WScript.Quit(cmd);
 		]]></script>
