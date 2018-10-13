@@ -18,6 +18,7 @@ File List
 ``bin\7zSD-openvpn.sfx``
    Copy of the ``bin\7zSD.sfx`` with altered resources:
    - The icon has been replaced
+   - Version info block has been replaced
    - A manifest resource has been added to turn off the elevation prompt. User
      is prompted for elevation later in the MSI install phase, should user
      proceed so far at all.
@@ -27,6 +28,14 @@ File List
 
 ``bin\7zSD-openvpn.manifest``
    Manifest file that has been added to ``bin\7zSD-openvpn.sfx``.
+
+``bin\7zSD-openvpn.rc``
+   Version info resource source.
+
+``bin\7zSD-openvpn.res``
+   Binary version info resource compiled with ``rc.exe 7zSD-openvpn.rc``. This
+   resource is the ``bin\7zSD-openvpn.sfx``'s version info resource
+   replacement.
 
 ``DOC\installer.txt``
    Licence info and instructions
