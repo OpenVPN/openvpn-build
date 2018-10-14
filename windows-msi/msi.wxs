@@ -997,7 +997,7 @@
                 Id="TAP.Util"
                 Title="Utilities"
                 Description="Command-line utilities to manage TAP interfaces"
-                Level="3"
+                Level="2"
                 ConfigurableDirectory="PRODUCTDIR"
                 AllowAdvertise="no">
                 <ComponentRef Id="bin.tapctl.exe"/>
