@@ -796,7 +796,34 @@
                     Type="string"
                     Value="&quot;[BINDIR]openvpn.exe&quot; &#45;&#45;pause-exit &#45;&#45;config &quot;%1&quot;"/>
             </Component>
+            <Component Id="reg.openvpngui.startup" Guid="{073B129C-665D-4CF6-9E10-91A132C4B4BA}">
+                <RegistryKey
+                    Root="HKCU"
+                    Key="Software\Microsoft\Windows\CurrentVersion\Run"
+                    ForceCreateOnInstall="yes">
+                    <RegistryValue
+                        Name="$(var.PRODUCT_NAME)-GUI"
+                        Type="string"
+                        Value="[BINDIR]openvpn-gui.exe"/>
+                </RegistryKey>
+            </Component>
         </DirectoryRef>
+
+
+        <!--
+            Configure Active Setup to install HKCU registry entries by triggering a repair when other users logs in.
+        -->
+        <Binary
+            Id="ActiveSetupCA.js"
+            SourceFile="script\ActiveSetupCA.js"/>
+
+        <CustomAction Id="EvaluateActiveSetup" BinaryKey="ActiveSetupCA.js" JScriptCall="EvaluateActiveSetup"/>
+        <CustomAction Id="PublishActiveSetup"  BinaryKey="ActiveSetupCA.js" JScriptCall="PublishActiveSetup" Execute="commit" Impersonate="no"/>
+
+        <InstallExecuteSequence>
+            <Custom Action="EvaluateActiveSetup" After="ProcessComponents"/>
+            <Custom Action="PublishActiveSetup"  After="PublishProduct"/>
+        </InstallExecuteSequence>
 
 
         <!--
@@ -970,12 +997,22 @@
                 Description="GUI by Mathias Sundman"
                 Level="2"
                 ConfigurableDirectory="PRODUCTDIR"
-                AllowAdvertise="no">
+                AllowAdvertise="no"
+                Display="expand">
                 <ComponentRef Id="bin.openvpn_gui.exe"/>
                 <ComponentRef Id="bin.openvpnserv.exe"/>
                 <ComponentRef Id="shortcut.openvpn_gui.exe"/>
                 <ComponentRef Id="shortcut.openvpn_gui.exe.desktop"/>
                 <ComponentRef Id="reg.disable_save_passwords"/>
+
+                <Feature
+                    Id="OpenVPN.GUI.OnLogon"
+                    Title="Launch on User Logon"
+                    Level="2"
+                    ConfigurableDirectory="PRODUCTDIR"
+                    AllowAdvertise="no">
+                    <ComponentRef Id="reg.openvpngui.startup"/>
+                </Feature>
             </Feature>
         </Feature>
 
