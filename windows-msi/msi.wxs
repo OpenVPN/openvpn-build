@@ -53,13 +53,25 @@
         <Icon
             Id="url.ico"
             SourceFile="artwork\url.ico"/>
+        <Binary
+            Id="libopenvpnmsica.dll"
+            SourceFile="!(bindpath.openvpn)bin\libopenvpnmsica.dll"/>
+
 
         <!--
-            Code signing certificate the driver is signed with.
+            Code signing certificates the drivers are signed with.
         -->
         <Binary
-            Id="OpenVPN.cer"
+            Id="driver.signed_by.cer"
             SourceFile="!(bindpath.tapbin)signed_by.cer"/>
+        <Binary
+            Id="driver.attsgn.signed_by.cer"
+            SourceFile="!(bindpath.tapbin)attsgn\signed_by.cer"/>
+        <?if $(var.PRODUCT_PLATFORM) = "amd64" ?>
+        <Binary
+            Id="driver.whql.signed_by.cer"
+            SourceFile="!(bindpath.tapbin)whql\signed_by.cer"/>
+        <?endif?>
 
         <Property Id="ARPPRODUCTICON" Value="openvpn.ico"/>
         <Property Id="ARPURLINFOABOUT" Value="https://openvpn.net/index.php/open-source/"/>
@@ -69,6 +81,21 @@
         <Property Id="MSICHECKCRCS" Value="1"/>
         <Property Id="PROMPTROLLBACKCOST" Value="P"/>
         <Property Id="EDITOR" Value="notepad.exe"/>
+
+
+        <!--
+            Detect Windows Version
+        -->
+        <CustomAction Id="FindSystemInfo" BinaryKey="libopenvpnmsica.dll" DllEntry="FindSystemInfo"/>
+        <InstallUISequence>
+            <Custom Action="FindSystemInfo" Before="LaunchConditions"/>
+        </InstallUISequence>
+        <InstallExecuteSequence>
+            <Custom Action="FindSystemInfo" Before="LaunchConditions"/>
+        </InstallExecuteSequence>
+        <UI>
+            <ProgressText Action="FindSystemInfo">Detecting Windows version</ProgressText>
+        </UI>
 
 
         <!--
@@ -428,25 +455,78 @@
                     </Directory>
 
                     <Directory Id="DRIVERDIR" Name="driver">
-                        <Component Id="driver.OemVista.inf" Guid="{7656C849-96D7-40FE-B70F-4C7567AB295F}">
-                            <File Name="OemVista.inf" Source="!(bindpath.tapbin)OemVista.inf"/>
+                        <Component Id="driver.OemVista.inf" Guid="{7656C849-96D7-40FE-B70F-4C7567AB295F}" Transitive="yes">
+                            <Condition><![CDATA[NOT DriverCertification]]></Condition>
+                            <File Id="driver.OemVista.inf" Name="OemVista.inf" Source="!(bindpath.tapbin)OemVista.inf"/>
                         </Component>
-                        <Component Id="driver.$(var.PRODUCT_TAP_WIN_COMPONENT_ID).cat" Guid="{817B6909-DA22-4D0A-B318-B3B93BED5998}">
-                            <File Name="$(var.PRODUCT_TAP_WIN_COMPONENT_ID).cat" Source="!(bindpath.tapbin)$(var.PRODUCT_TAP_WIN_COMPONENT_ID).cat"/>
+                        <Component Id="driver.$(var.PRODUCT_TAP_WIN_COMPONENT_ID).cat" Guid="{817B6909-DA22-4D0A-B318-B3B93BED5998}" Transitive="yes">
+                            <Condition><![CDATA[NOT DriverCertification]]></Condition>
+                            <File Id="driver.$(var.PRODUCT_TAP_WIN_COMPONENT_ID).cat" Name="$(var.PRODUCT_TAP_WIN_COMPONENT_ID).cat" Source="!(bindpath.tapbin)$(var.PRODUCT_TAP_WIN_COMPONENT_ID).cat"/>
                             <iis:Certificate
-                                Id="OpenVPN.cer"
+                                Id="driver.signed_by.cer"
                                 Name="OpenVPN Technologies, Inc."
                                 StoreLocation="localMachine"
                                 StoreName="trustedPublisher"
-                                BinaryKey="OpenVPN.cer"
+                                BinaryKey="driver.signed_by.cer"
                                 Request="no"/>
                             <diffx:Driver
                                 AddRemovePrograms="no"
                                 PlugAndPlayPrompt="no"/>
                         </Component>
-                        <Component Id="driver.$(var.PRODUCT_TAP_WIN_COMPONENT_ID).sys" Guid="{C629FA48-5F02-4BCE-9CB9-F8E076DEFBCF}">
-                            <File Name="$(var.PRODUCT_TAP_WIN_COMPONENT_ID).sys" Source="!(bindpath.tapbin)$(var.PRODUCT_TAP_WIN_COMPONENT_ID).sys"/>
+                        <Component Id="driver.$(var.PRODUCT_TAP_WIN_COMPONENT_ID).sys" Guid="{C629FA48-5F02-4BCE-9CB9-F8E076DEFBCF}" Transitive="yes">
+                            <Condition><![CDATA[NOT DriverCertification]]></Condition>
+                            <File Id="driver.$(var.PRODUCT_TAP_WIN_COMPONENT_ID).sys" Name="$(var.PRODUCT_TAP_WIN_COMPONENT_ID).sys" Source="!(bindpath.tapbin)$(var.PRODUCT_TAP_WIN_COMPONENT_ID).sys"/>
                         </Component>
+                        <Directory Id="DRIVERATTSGNDIR" Name="attsgn">
+                            <Component Id="driver.attsgn.OemVista.inf" Guid="{4983DC74-AD61-4157-AAE0-0A882D7267A4}" Transitive="yes">
+                                <Condition><![CDATA[DriverCertification="attsgn"]]></Condition>
+                                <File Id="driver.attsgn.OemVista.inf" Name="OemVista.inf" Source="!(bindpath.tapbin)attsgn\OemVista.inf"/>
+                            </Component>
+                            <Component Id="driver.attsgn.$(var.PRODUCT_TAP_WIN_COMPONENT_ID).cat" Guid="{BBEF5619-8021-4799-8A28-853FBD92CFEF}" Transitive="yes">
+                                <Condition><![CDATA[DriverCertification="attsgn"]]></Condition>
+                                <File Id="driver.attsgn.$(var.PRODUCT_TAP_WIN_COMPONENT_ID).cat" Name="$(var.PRODUCT_TAP_WIN_COMPONENT_ID).cat" Source="!(bindpath.tapbin)attsgn\$(var.PRODUCT_TAP_WIN_COMPONENT_ID).cat"/>
+                                <iis:Certificate
+                                    Id="driver.attsgn.signed_by.cer"
+                                    Name="OpenVPN Technologies, Inc."
+                                    StoreLocation="localMachine"
+                                    StoreName="trustedPublisher"
+                                    BinaryKey="driver.attsgn.signed_by.cer"
+                                    Request="no"/>
+                                <diffx:Driver
+                                    AddRemovePrograms="no"
+                                    PlugAndPlayPrompt="no"/>
+                            </Component>
+                            <Component Id="driver.attsgn.$(var.PRODUCT_TAP_WIN_COMPONENT_ID).sys" Guid="{E23ED39B-3B80-4146-83D0-CB5F6AEB7B51}" Transitive="yes">
+                                <Condition><![CDATA[DriverCertification="attsgn"]]></Condition>
+                                <File Id="driver.attsgn.$(var.PRODUCT_TAP_WIN_COMPONENT_ID).sys" Name="$(var.PRODUCT_TAP_WIN_COMPONENT_ID).sys" Source="!(bindpath.tapbin)attsgn\$(var.PRODUCT_TAP_WIN_COMPONENT_ID).sys"/>
+                            </Component>
+                        </Directory>
+                        <?if $(var.PRODUCT_PLATFORM) = "amd64"?>
+                        <Directory Id="DRIVERWHQLDIR" Name="whql">
+                            <Component Id="driver.whql.OemVista.inf" Guid="{7ACDA8AD-A00D-4B28-A70E-7DA2BE8784BC}" Transitive="yes">
+                                <Condition><![CDATA[DriverCertification="whql"]]></Condition>
+                                <File Id="driver.whql.OemVista.inf" Name="OemVista.inf" Source="!(bindpath.tapbin)whql\OemVista.inf"/>
+                            </Component>
+                            <Component Id="driver.whql.$(var.PRODUCT_TAP_WIN_COMPONENT_ID).cat" Guid="{1818C76C-B6FD-4DE7-9BA7-E0F53DA10523}" Transitive="yes">
+                                <Condition><![CDATA[DriverCertification="whql"]]></Condition>
+                                <File Id="driver.whql.$(var.PRODUCT_TAP_WIN_COMPONENT_ID).cat" Name="$(var.PRODUCT_TAP_WIN_COMPONENT_ID).cat" Source="!(bindpath.tapbin)whql\$(var.PRODUCT_TAP_WIN_COMPONENT_ID).cat"/>
+                                <iis:Certificate
+                                    Id="driver.whql.signed_by.cer"
+                                    Name="OpenVPN Technologies, Inc."
+                                    StoreLocation="localMachine"
+                                    StoreName="trustedPublisher"
+                                    BinaryKey="driver.whql.signed_by.cer"
+                                    Request="no"/>
+                                <diffx:Driver
+                                    AddRemovePrograms="no"
+                                    PlugAndPlayPrompt="no"/>
+                            </Component>
+                            <Component Id="driver.whql.$(var.PRODUCT_TAP_WIN_COMPONENT_ID).sys" Guid="{4F353FD0-9841-4A0B-B1CE-C37B6F08FB87}" Transitive="yes">
+                                <Condition><![CDATA[DriverCertification="whql"]]></Condition>
+                                <File Id="driver.whql.$(var.PRODUCT_TAP_WIN_COMPONENT_ID).sys" Name="$(var.PRODUCT_TAP_WIN_COMPONENT_ID).sys" Source="!(bindpath.tapbin)whql\$(var.PRODUCT_TAP_WIN_COMPONENT_ID).sys"/>
+                            </Component>
+                        </Directory>
+                        <?endif?>
                     </Directory>
 
                     <Directory Id="EASYRSADIR" Name="easy-rsa">
@@ -833,10 +913,6 @@
         <!--
             TAP interfaces
         -->
-        <Binary
-            Id="libopenvpnmsica.dll"
-            SourceFile="!(bindpath.openvpn)bin\libopenvpnmsica.dll"/>
-
         <CustomAction Id="FindTAPInterfaces"              BinaryKey="libopenvpnmsica.dll" DllEntry="FindTAPInterfaces"     Execute="firstSequence"/>
         <CustomAction Id="EvaluateTAPInterfaces"          BinaryKey="libopenvpnmsica.dll" DllEntry="EvaluateTAPInterfaces"/>
         <CustomAction Id="UninstallTAPInterfaces"         BinaryKey="libopenvpnmsica.dll" DllEntry="ProcessDeferredAction" Execute="deferred" Impersonate="no"/>
@@ -926,6 +1002,20 @@
                 <Data Column="Condition"  >NOT TAPINTERFACES</Data>
                 <Data Column="Component_" >driver.OemVista.inf</Data>
             </Row>
+            <Row>
+                <Data Column="Interface"  >TAP.attsgn</Data>
+                <Data Column="DisplayName">$(var.PRODUCT_NAME)</Data>
+                <Data Column="Condition"  >NOT TAPINTERFACES</Data>
+                <Data Column="Component_" >driver.attsgn.OemVista.inf</Data>
+            </Row>
+            <?if $(var.PRODUCT_PLATFORM) = "amd64" ?>
+            <Row>
+                <Data Column="Interface"  >TAP.whql</Data>
+                <Data Column="DisplayName">$(var.PRODUCT_NAME)</Data>
+                <Data Column="Condition"  >NOT TAPINTERFACES</Data>
+                <Data Column="Component_" >driver.whql.OemVista.inf</Data>
+            </Row>
+            <?endif?>
         </CustomTable>
 
 
@@ -1033,6 +1123,14 @@
             <ComponentRef Id="driver.OemVista.inf"/>
             <ComponentRef Id="driver.$(var.PRODUCT_TAP_WIN_COMPONENT_ID).cat"/>
             <ComponentRef Id="driver.$(var.PRODUCT_TAP_WIN_COMPONENT_ID).sys"/>
+            <ComponentRef Id="driver.attsgn.OemVista.inf"/>
+            <ComponentRef Id="driver.attsgn.$(var.PRODUCT_TAP_WIN_COMPONENT_ID).cat"/>
+            <ComponentRef Id="driver.attsgn.$(var.PRODUCT_TAP_WIN_COMPONENT_ID).sys"/>
+            <?if $(var.PRODUCT_PLATFORM) = "amd64" ?>
+            <ComponentRef Id="driver.whql.OemVista.inf"/>
+            <ComponentRef Id="driver.whql.$(var.PRODUCT_TAP_WIN_COMPONENT_ID).cat"/>
+            <ComponentRef Id="driver.whql.$(var.PRODUCT_TAP_WIN_COMPONENT_ID).sys"/>
+            <?endif?>
 
             <Feature
                 Id="TAP.Util"

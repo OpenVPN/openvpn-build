@@ -69,7 +69,8 @@ clean	Cleans intermmediate and output files</example>
                     "tapPath": BuildPath(tapPath, "i386"),
                     "programFilesPath": "ProgramFilesFolder",
                     "openSSLPlat": "",
-                    "wixPlat": "x86"
+                    "wixPlat": "x86",
+                    "wixLinkDepenencies": []
                 },
 
                 "amd64": {
@@ -78,7 +79,13 @@ clean	Cleans intermmediate and output files</example>
                     "tapPath": BuildPath(tapPath, "amd64"),
                     "programFilesPath": "ProgramFiles64Folder",
                     "openSSLPlat": "-x64",
-                    "wixPlat": "x64"
+                    "wixPlat": "x64",
+                    "wixLinkDepenencies": [
+                        BuildPath(tapPath, "amd64", "whql", "OemVista.inf"),
+                        BuildPath(tapPath, "amd64", "whql", "signed_by.cer"),
+                        BuildPath(tapPath, "amd64", "whql", "tap0901.cat"),
+                        BuildPath(tapPath, "amd64", "whql", "tap0901.sys")
+                    ]
                 }
             }
 
@@ -172,6 +179,10 @@ clean	Cleans intermmediate and output files</example>
                         BuildPath(p.tapPath, "signed_by.cer"),
                         BuildPath(p.tapPath, "tap0901.cat"),
                         BuildPath(p.tapPath, "tap0901.sys"),
+                        BuildPath(p.tapPath, "attsgn", "OemVista.inf"),
+                        BuildPath(p.tapPath, "attsgn", "signed_by.cer"),
+                        BuildPath(p.tapPath, "attsgn", "tap0901.cat"),
+                        BuildPath(p.tapPath, "attsgn", "tap0901.sys"),
                         BuildPath(tapPath, "include", "tap-windows.h"),
                         BuildPath(openVPNServ2Path, "openvpnserv2.exe"),
                         BuildPath(buildPath, "README-config.txt"),
@@ -199,7 +210,7 @@ clean	Cleans intermmediate and output files</example>
                         BuildPath(p.buildPath, "client.ovpn"),
                         BuildPath(p.buildPath, "sample.ovpn"),
                         BuildPath(p.buildPath, "server.ovpn")
-                    ],
+                    ].concat(p.wixLinkDepenencies),
                     wixLinkerFlags));
             }
 
