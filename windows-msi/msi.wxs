@@ -819,11 +819,15 @@
 
         <CustomAction Id="EvaluateActiveSetup" BinaryKey="ActiveSetupCA.js" JScriptCall="EvaluateActiveSetup"/>
         <CustomAction Id="PublishActiveSetup"  BinaryKey="ActiveSetupCA.js" JScriptCall="PublishActiveSetup" Execute="commit" Impersonate="no"/>
-
         <InstallExecuteSequence>
             <Custom Action="EvaluateActiveSetup" After="ProcessComponents"/>
             <Custom Action="PublishActiveSetup"  After="PublishProduct"/>
         </InstallExecuteSequence>
+
+        <UI>
+            <ProgressText Action="EvaluateActiveSetup">Evaluating Active Setup components</ProgressText>
+            <ProgressText Action="PublishActiveSetup">Publishing Active Setup components</ProgressText>
+        </UI>
 
 
         <!--
