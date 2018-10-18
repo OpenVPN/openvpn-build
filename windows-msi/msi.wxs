@@ -1025,7 +1025,7 @@
         <Property Id="INSTALLLEVEL" Value="2"/>
         <Feature
             Id="OpenVPN"
-            Title="$(var.PRODUCT_NAME) User-Space Components"
+            Title="$(var.PRODUCT_NAME)"
             Description="User-space components, including openvpn.exe"
             Level="2"
             ConfigurableDirectory="PRODUCTDIR"
@@ -1037,21 +1037,15 @@
             <ComponentRef Id="bin.libpkcs11_helper_1.dll"/>
             <ComponentRef Id="bin.libssl_1_1.dll"/>
             <ComponentRef Id="bin.openvpn.exe"/>
+            <ComponentRef Id="bin.openvpnserv.exe"/>
             <ComponentRef Id="cfg.README.txt"/>
-            <ComponentRef Id="doc.INSTALL_win32.txt"/>
-            <ComponentRef Id="doc.openvpn.8.html"/>
             <ComponentRef Id="doc.howto.url"/>
             <ComponentRef Id="doc.support.url"/>
             <ComponentRef Id="doc.website.url"/>
             <ComponentRef Id="doc.wiki.url"/>
             <ComponentRef Id="log.README.txt"/>
             <ComponentRef Id="res.ovpn.ico"/>
-            <ComponentRef Id="samplecfg.client.$(var.CONFIG_EXTENSION)"/>
-            <ComponentRef Id="samplecfg.sample.$(var.CONFIG_EXTENSION)"/>
-            <ComponentRef Id="samplecfg.server.$(var.CONFIG_EXTENSION)"/>
             <ComponentRef Id="shortcut.bin.openvpn.exe.genkey"/>
-            <ComponentRef Id="shortcut.doc.INSTALL_win32.txt"/>
-            <ComponentRef Id="shortcut.doc.openvpn.8.html"/>
             <ComponentRef Id="shortcut.doc.howto.url"/>
             <ComponentRef Id="shortcut.doc.support.url"/>
             <ComponentRef Id="shortcut.doc.website.url"/>
@@ -1094,7 +1088,6 @@
                 AllowAdvertise="no"
                 Display="expand">
                 <ComponentRef Id="bin.openvpn_gui.exe"/>
-                <ComponentRef Id="bin.openvpnserv.exe"/>
                 <ComponentRef Id="shortcut.openvpn_gui.exe"/>
                 <ComponentRef Id="shortcut.openvpn_gui.exe.desktop"/>
                 <ComponentRef Id="reg.disable_save_passwords"/>
@@ -1107,6 +1100,31 @@
                     AllowAdvertise="no">
                     <ComponentRef Id="reg.openvpngui.startup"/>
                 </Feature>
+            </Feature>
+
+            <Feature
+                Id="OpenVPN.Documentation"
+                Title="Documentation"
+                Description="$(var.PRODUCT_NAME) documentation"
+                Level="2"
+                ConfigurableDirectory="DOCDIR"
+                AllowAdvertise="no">
+                <ComponentRef Id="doc.INSTALL_win32.txt"/>
+                <ComponentRef Id="doc.openvpn.8.html"/>
+                <ComponentRef Id="shortcut.doc.INSTALL_win32.txt"/>
+                <ComponentRef Id="shortcut.doc.openvpn.8.html"/>
+            </Feature>
+
+            <Feature
+                Id="OpenVPN.SampleCfg"
+                Title="Configuration Samples"
+                Description="$(var.PRODUCT_NAME) client/server configuration examples"
+                Level="2"
+                ConfigurableDirectory="SAMPLECFGDIR"
+                AllowAdvertise="no">
+                <ComponentRef Id="samplecfg.client.$(var.CONFIG_EXTENSION)"/>
+                <ComponentRef Id="samplecfg.sample.$(var.CONFIG_EXTENSION)"/>
+                <ComponentRef Id="samplecfg.server.$(var.CONFIG_EXTENSION)"/>
             </Feature>
         </Feature>
 
