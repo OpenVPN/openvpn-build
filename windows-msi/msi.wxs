@@ -113,15 +113,134 @@
 
 
         <!--
-            1. Initialize install folder with registry folder if detected.
-            2. Set install folder to the previous installation folder if detected. Use license.txt file to detect previous installation folder.
-            3. Allow overriding install folder by specifying INSTALLDIR=<folder> on the msiexec.exe command line.
+            NSIS Installation Detection
         -->
+        <Property Id="NSIS.OPENVPN">
+            <RegistrySearch Id="nsis.reg.path" Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(var.PRODUCT_NAME)" Name="UninstallString" Type="file"/>
+        </Property>
+        <Property Id="NSIS.OPENVPN.BIN">
+            <RegistrySearch Id="nsis.openvpn.reg.path.bin" Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(var.PRODUCT_NAME)" Name="UninstallString" Type="file">
+                <DirectorySearch Id="nsis.openvpn.reg.path.bin.dir" Path="bin" Depth="0" AssignToProperty="yes"/>
+            </RegistrySearch>
+        </Property>
+        <Property Id="NSIS.OPENVPN.BIN.OPENSSL.EXE">
+            <RegistrySearch Id="nsis.openvpn.reg.path.bin.openssl.exe" Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(var.PRODUCT_NAME)" Name="UninstallString" Type="file">
+                <DirectorySearch Id="nsis.openvpn.reg.path.bin.dir.openssl.exe" Path="bin" Depth="0" AssignToProperty="yes">
+                    <FileSearch Id="nsis.openvpn.reg.path.bin.file.openssl.exe" Name="openssl.exe"/>
+                </DirectorySearch>
+            </RegistrySearch>
+        </Property>
+        <Property Id="NSIS.OPENVPN.BIN.OPENVPN_GUI.EXE">
+            <RegistrySearch Id="nsis.openvpn.reg.path.bin.openvpn_gui.exe" Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(var.PRODUCT_NAME)" Name="UninstallString" Type="file">
+                <DirectorySearch Id="nsis.openvpn.reg.path.bin.dir.openvpn_gui.exe" Path="bin" Depth="0" AssignToProperty="yes">
+                    <FileSearch Id="nsis.openvpn.reg.path.bin.file.openvpn_gui.exe" Name="openvpn-gui.exe"/>
+                </DirectorySearch>
+            </RegistrySearch>
+        </Property>
+        <Property Id="NSIS.OPENVPN.BIN.OPENVPNSERV2.EXE">
+            <RegistrySearch Id="nsis.openvpn.reg.path.bin.openvpnserv2.exe" Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(var.PRODUCT_NAME)" Name="UninstallString" Type="file">
+                <DirectorySearch Id="nsis.openvpn.reg.path.bin.dir.openvpnserv2.exe" Path="bin" Depth="0" AssignToProperty="yes">
+                    <FileSearch Id="nsis.openvpn.reg.path.bin.file.openvpnserv2.exe" Name="openvpnserv2.exe"/>
+                </DirectorySearch>
+            </RegistrySearch>
+        </Property>
+        <Property Id="NSIS.OPENVPN.CONFIG">
+            <RegistrySearch Id="nsis.openvpn.reg.path.config" Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(var.PRODUCT_NAME)" Name="UninstallString" Type="file">
+                <DirectorySearch Id="nsis.openvpn.reg.path.config.dir" Path="config" Depth="0" AssignToProperty="yes"/>
+            </RegistrySearch>
+        </Property>
+        <Property Id="NSIS.OPENVPN.DOC">
+            <RegistrySearch Id="nsis.openvpn.reg.path.doc" Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(var.PRODUCT_NAME)" Name="UninstallString" Type="file">
+                <DirectorySearch Id="nsis.openvpn.reg.path.doc.dir" Path="doc" Depth="0" AssignToProperty="yes"/>
+            </RegistrySearch>
+        </Property>
+        <Property Id="NSIS.OPENVPN.DOC.INSTALL_WIN32.TXT">
+            <RegistrySearch Id="nsis.openvpn.reg.path.doc.INSTALL_win32.txt" Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(var.PRODUCT_NAME)" Name="UninstallString" Type="file">
+                <DirectorySearch Id="nsis.openvpn.reg.path.doc.dir.INSTALL_win32.txt" Path="doc" Depth="0" AssignToProperty="yes">
+                    <FileSearch Id="nsis.openvpn.reg.path.doc.file.INSTALL_win32.txt" Name="INSTALL-win32.txt"/>
+                </DirectorySearch>
+            </RegistrySearch>
+        </Property>
+        <Property Id="NSIS.OPENVPN.EASYRSA">
+            <RegistrySearch Id="nsis.openvpn.reg.path.easyrsa" Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(var.PRODUCT_NAME)" Name="UninstallString" Type="file">
+                <DirectorySearch Id="nsis.openvpn.reg.path.easyrsa.dir" Path="easy-rsa" Depth="0" AssignToProperty="yes"/>
+            </RegistrySearch>
+        </Property>
+        <Property Id="NSIS.OPENVPN.EASYRSA.README.TXT">
+            <RegistrySearch Id="nsis.openvpn.reg.path.easyrsa.README.txt" Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(var.PRODUCT_NAME)" Name="UninstallString" Type="file">
+                <DirectorySearch Id="nsis.openvpn.reg.path.easyrsa.dir.README.txt" Path="easy-rsa" Depth="0" AssignToProperty="yes">
+                    <FileSearch Id="nsis.openvpn.reg.path.easyrsa.file.README.txt" Name="README.txt"/>
+                </DirectorySearch>
+            </RegistrySearch>
+        </Property>
+        <Property Id="NSIS.OPENVPN.LOG">
+            <RegistrySearch Id="nsis.openvpn.reg.path.log" Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(var.PRODUCT_NAME)" Name="UninstallString" Type="file">
+                <DirectorySearch Id="nsis.openvpn.reg.path.log.dir" Path="log" Depth="0" AssignToProperty="yes"/>
+            </RegistrySearch>
+        </Property>
+        <Property Id="NSIS.OPENVPN.SAMPLECFG">
+            <RegistrySearch Id="nsis.openvpn.reg.path.samplecfg" Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(var.PRODUCT_NAME)" Name="UninstallString" Type="file">
+                <DirectorySearch Id="nsis.openvpn.reg.path.samplecfg.dir" Path="sample-config" Depth="0" AssignToProperty="yes"/>
+            </RegistrySearch>
+        </Property>
+        <Property Id="NSIS.OPENVPN.SAMPLECFG.SAMPLE.OVPN">
+            <RegistrySearch Id="nsis.openvpn.reg.path.samplecfg.sample.$(var.CONFIG_EXTENSION)" Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(var.PRODUCT_NAME)" Name="UninstallString" Type="file">
+                <DirectorySearch Id="nsis.openvpn.reg.path.samplecfg.dir.sample.$(var.CONFIG_EXTENSION)" Path="sample-config" Depth="0" AssignToProperty="yes">
+                    <FileSearch Id="nsis.openvpn.reg.path.samplecfg.file.sample.$(var.CONFIG_EXTENSION)" Name="sample.$(var.CONFIG_EXTENSION)"/>
+                </DirectorySearch>
+            </RegistrySearch>
+        </Property>
+        <Property Id="NSIS.TAP">
+            <RegistrySearch Id="nsis.tap.reg.path" Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(var.PRODUCT_TAP_NAME)" Name="UninstallString" Type="file"/>
+        </Property>
+        <Property Id="NSIS.TAP.BIN">
+            <RegistrySearch Id="nsis.tap.reg.path.bin" Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(var.PRODUCT_TAP_NAME)" Name="UninstallString" Type="file">
+                <DirectorySearch Id="nsis.tap.reg.path.bin.dir" Path="bin" Depth="0" AssignToProperty="yes"/>
+            </RegistrySearch>
+        </Property>
+        <Property Id="NSIS.TAP.BIN.ADDTAP.BAT">
+            <RegistrySearch Id="nsis.tap.reg.path.bin.addtap.bat" Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(var.PRODUCT_TAP_NAME)" Name="UninstallString" Type="file">
+                <DirectorySearch Id="nsis.tap.reg.path.bin.dir.addtap.bat" Path="bin" Depth="0" AssignToProperty="yes">
+                    <FileSearch Id="nsis.tap.reg.path.bin.file.addtap.bat" Name="addtap.bat"/>
+                </DirectorySearch>
+            </RegistrySearch>
+        </Property>
+        <Property Id="NSIS.TAP.DRIVER">
+            <RegistrySearch Id="nsis.tap.reg.path.driver" Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(var.PRODUCT_TAP_NAME)" Name="UninstallString" Type="file">
+                <DirectorySearch Id="nsis.tap.reg.path.driver.dir" Path="driver" Depth="0" AssignToProperty="yes"/>
+            </RegistrySearch>
+        </Property>
+        <Property Id="NSIS.TAP.INCLUDE">
+            <RegistrySearch Id="nsis.tap.reg.path.include" Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(var.PRODUCT_TAP_NAME)" Name="UninstallString" Type="file">
+                <DirectorySearch Id="nsis.tap.reg.path.include.dir" Path="include" Depth="0" AssignToProperty="yes"/>
+            </RegistrySearch>
+        </Property>
+        <Property Id="NSIS.TAP.INCLUDE.TAP_WINDOWS.H">
+            <RegistrySearch Id="nsis.tap.reg.path.include.tap_windows.h" Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(var.PRODUCT_TAP_NAME)" Name="UninstallString" Type="file">
+                <DirectorySearch Id="nsis.tap.reg.path.include.dir.tap_windows.h" Path="include" Depth="0" AssignToProperty="yes">
+                    <FileSearch Id="nsis.tap.reg.path.include.file.tap_windows.h" Name="tap-windows.h"/>
+                </DirectorySearch>
+            </RegistrySearch>
+        </Property>
+
+
+        <!--
+            1. Initialize install folder with NSIS install folder if detected.
+            2. Set install folder with registry folder if detected.
+            3. Set install folder to the previous installation folder if detected. Use license.txt file to detect previous installation folder.
+            4. Allow overriding install folder by specifying INSTALLDIR=<folder> on the msiexec.exe command line.
+        -->
+        <SetProperty
+            After="AppSearch"
+            Action="SetProductDirNSIS"
+            Id="PRODUCTDIR"
+            Value="[NSIS.OPENVPN]"
+            Sequence="first">NSIS.OPENVPN AND NOT Installed</SetProperty>
         <Property Id="PRODUCTDIRREG">
             <RegistrySearch Id="reg.path" Root="HKLM" Key="SOFTWARE\$(var.PRODUCT_NAME)" Type="directory"/>
         </Property>
         <SetProperty
-            After="AppSearch"
+            After="SetProductDirNSIS"
             Action="SetProductDirReg"
             Id="PRODUCTDIR"
             Value="[PRODUCTDIRREG]"
@@ -144,14 +263,21 @@
 
 
         <!--
+            1. Set executables folder from NSIS executables folder if detected.
             1. Set executables folder with registry folder if detected.
             2. Set executables folder to the previous executable folder if detected. Use openvpn.exe file to detect previous executable folder.
         -->
+        <SetProperty
+            After="AppSearch"
+            Action="SetBinDirNSIS"
+            Id="BINDIR"
+            Value="[NSIS.OPENVPN.BIN]"
+            Sequence="first">NSIS.OPENVPN.BIN AND NOT Installed</SetProperty>
         <Property Id="BINDIRREG">
             <RegistrySearch Id="reg.exe_path" Root="HKLM" Key="SOFTWARE\$(var.PRODUCT_NAME)" Name="exe_path" Type="file"/>
         </Property>
         <SetProperty
-            After="AppSearch"
+            After="SetBinDirNSIS"
             Action="SetBinDirReg"
             Id="BINDIR"
             Value="[BINDIRREG]"
@@ -168,15 +294,22 @@
 
 
         <!--
-            1. Set configuration folder with registry folder if detected.
-            2. Set configuration folder to the previous installation folder if detected. Use README.txt file to detect previous configuration folder.
-            3. Allow overriding configuration folder by specifying CONFIG=<folder> on the msiexec.exe command line.
+            1. Initialize configuration folder with NSIS configuration folder if detected.
+            2. Set configuration folder with registry folder if detected.
+            3. Set configuration folder to the previous installation folder if detected. Use README.txt file to detect previous configuration folder.
+            4. Allow overriding configuration folder by specifying CONFIG=<folder> on the msiexec.exe command line.
         -->
+        <SetProperty
+            After="AppSearch"
+            Action="SetConfigDirNSIS"
+            Id="CONFIGDIR"
+            Value="[NSIS.OPENVPN.CONFIG]"
+            Sequence="first">NSIS.OPENVPN.CONFIG AND NOT Installed</SetProperty>
         <Property Id="CONFIGDIRREG">
             <RegistrySearch Id="reg.config_dir" Root="HKLM" Key="SOFTWARE\$(var.PRODUCT_NAME)" Name="config_dir" Type="directory"/>
         </Property>
         <SetProperty
-            After="AppSearch"
+            After="SetConfigDirNSIS"
             Action="SetConfigDirReg"
             Id="CONFIGDIR"
             Value="[CONFIGDIRREG]"
@@ -199,14 +332,21 @@
 
 
         <!--
+            1. Initialize documentation folder from NSIS documentation folder if detected.
             1. Set documentation folder to the previous documentation folder if detected. Use INSTALL_win32.txt file to detect previous documentation folder.
             2. Allow overriding documentation folder by specifying DOC=<folder> on the msiexec.exe command line.
         -->
+        <SetProperty
+            After="AppSearch"
+            Action="SetDocDirNSIS"
+            Id="DOCDIR"
+            Value="[NSIS.OPENVPN.DOC]"
+            Sequence="first">NSIS.OPENVPN.DOC AND NOT Installed</SetProperty>
         <Property Id="DOCDIRPREV">
             <ComponentSearch Id="doc.INSTALL_win32.txt" Guid="{2437051B-8A0A-4391-BA43-C2DE4BCCBDD5}"/>
         </Property>
         <SetProperty
-            After="AppSearch"
+            After="SetDocDirNSIS"
             Action="SetDocDirPrev"
             Id="DOCDIR"
             Value="[DOCDIRPREV]"
@@ -220,14 +360,33 @@
 
 
         <!--
-            1. Set Easy RSA folder to the previous Easy RSA folder if detected. Use README.txt file to detect previous Easy RSA folder.
-            2. Allow overriding Easy RSA folder by specifying EASYRSA=<folder> on the msiexec.exe command line.
+            1. Initialize driver folder from NSIS driver folder if detected.
+               Note: We are migrating TAP-Windows folders into OpenVPN, ignore old path.
         -->
+        <!--<SetProperty
+            After="AppSearch"
+            Action="SetDriverDirNSIS"
+            Id="DRIVERDIR"
+            Value="[NSIS.TAP.DRIVER]"
+            Sequence="first">NSIS.TAP.DRIVER AND NOT Installed</SetProperty>-->
+
+
+        <!--
+            1. Initialize Easy RSA folder from NSIS Easy RSA folder if detected.
+            2. Set Easy RSA folder to the previous Easy RSA folder if detected. Use README.txt file to detect previous Easy RSA folder.
+            3. Allow overriding Easy RSA folder by specifying EASYRSA=<folder> on the msiexec.exe command line.
+        -->
+        <SetProperty
+            After="AppSearch"
+            Action="SetEasyRSADirNSIS"
+            Id="EASYRSADIR"
+            Value="[NSIS.OPENVPN.EASYRSA]"
+            Sequence="first">NSIS.OPENVPN.EASYRSA AND NOT Installed</SetProperty>
         <Property Id="EASYRSADIRPREV">
             <ComponentSearch Id="easyrsa.README.txt" Guid="{69F47537-3E49-4768-9953-BD880272A13B}"/>
         </Property>
         <SetProperty
-            After="AppSearch"
+            After="SetEasyRSADirNSIS"
             Action="SetEasyRSADirPrev"
             Id="EASYRSADIR"
             Value="[EASYRSADIRPREV]"
@@ -241,9 +400,17 @@
 
 
         <!--
-            1. Set SDK folder to the previous SDK folder if detected. Use tap_windows.h file to detect previous SDK folder.
-            2. Allow overriding SDK folder by specifying INCLUDE=<folder> on the msiexec.exe command line.
+            1. Initialize SDK folder with NSIS SDK folder if detected.
+               Note: We are migrating TAP-Windows folders into OpenVPN, ignore old path.
+            2. Set SDK folder to the previous SDK folder if detected. Use tap_windows.h file to detect previous SDK folder.
+            3. Allow overriding SDK folder by specifying INCLUDE=<folder> on the msiexec.exe command line.
         -->
+        <!--<SetProperty
+            After="AppSearch"
+            Action="SetIncludeDirNSIS"
+            Id="INCLUDEDIR"
+            Value="[NSIS.TAP.INCLUDE]"
+            Sequence="first">NSIS.TAP.INCLUDE AND NOT Installed</SetProperty>-->
         <Property Id="INCLUDEDIRPREV">
             <ComponentSearch Id="include.tap_windows.h" Guid="{55A1A7C4-202A-47A5-9066-1C96ADD232AC}"/>
         </Property>
@@ -262,15 +429,22 @@
 
 
         <!--
-            1. Set log folder with registry folder if detected.
-            2. Set log folder to the previous log folder if detected. Use README.txt file to detect previous log folder.
-            3. Allow overriding log folder by specifying LOG=<folder> on the msiexec.exe command line.
+            1. Initialize log folder with NSIS log folder if detected.
+            2. Set log folder with registry folder if detected.
+            3. Set log folder to the previous log folder if detected. Use README.txt file to detect previous log folder.
+            4. Allow overriding log folder by specifying LOG=<folder> on the msiexec.exe command line.
         -->
+        <SetProperty
+            After="AppSearch"
+            Action="SetLogDirNSIS"
+            Id="LOGDIR"
+            Value="[NSIS.OPENVPN.LOG]"
+            Sequence="first">NSIS.OPENVPN.LOG AND NOT Installed</SetProperty>
         <Property Id="LOGDIRREG">
             <RegistrySearch Id="reg.log_dir" Root="HKLM" Key="SOFTWARE\$(var.PRODUCT_NAME)" Name="log_dir" Type="directory"/>
         </Property>
         <SetProperty
-            After="AppSearch"
+            After="SetLogDirNSIS"
             Action="SetLogDirReg"
             Id="LOGDIR"
             Value="[LOGDIRREG]"
@@ -293,14 +467,21 @@
 
 
         <!--
-            1. Set sample configuration folder to the previous sample configuration folder if detected. Use sample.ovpn file to detect previous sample configuration folder.
-            2. Allow overriding sample configuration folder by specifying SAMPLECFG=<folder> on the msiexec.exe command line.
+            1. Initialize sample configuration folder from NSIS sample configuration folder if detected.
+            2. Set sample configuration folder to the previous sample configuration folder if detected. Use sample.ovpn file to detect previous sample configuration folder.
+            3. Allow overriding sample configuration folder by specifying SAMPLECFG=<folder> on the msiexec.exe command line.
         -->
+        <SetProperty
+            After="AppSearch"
+            Action="SetSampleCfgDirNSIS"
+            Id="SAMPLECFGDIR"
+            Value="[NSIS.OPENVPN.SAMPLECFG]"
+            Sequence="first">NSIS.OPENVPN.SAMPLECFG AND NOT Installed</SetProperty>
         <Property Id="SAMPLECFGDIRPREV">
             <ComponentSearch Id="samplecfg.sample.$(var.CONFIG_EXTENSION)" Guid="{48ECE02F-3E2B-4708-B736-8D36CBCFF509}"/>
         </Property>
         <SetProperty
-            After="AppSearch"
+            After="SetSampleCfgDirNSIS"
             Action="SetSampleCfgDirPrev"
             Id="SAMPLECFGDIR"
             Value="[SAMPLECFGDIRPREV]"
@@ -387,10 +568,68 @@
                         <File Name="license.txt" Source="!(bindpath.build)$(var.PRODUCT_PLATFORM)\license.txt"/>
 
                         <!-- Clean-up NSIS installation. -->
-                        <!-- TODO: remove stale files. -->
-                        <!--<RemoveRegistryKey Root="HKLM" Key="SOFTWARE\$(var.PRODUCT_TAP_NAME)"                                            Action="removeOnInstall"/>
+                        <RemoveFile Id="nsis.openvpn.shortcut.uninstall" Directory="ProductShortcutFolder" Name="Uninstall $(var.PRODUCT_NAME).lnk" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.bin.libcrypto_1_1.dll" Property="NSIS.OPENVPN.BIN" Name="libcrypto-1_1$(var.OPENSSL_PLAT).dll" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.bin.liblzo2_2.dll" Property="NSIS.OPENVPN.BIN" Name="liblzo2-2.dll" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.bin.libpkcs11_helper_1.dll" Property="NSIS.OPENVPN.BIN" Name="libpkcs11-helper-1.dll" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.bin.libssl_1_1.dll" Property="NSIS.OPENVPN.BIN" Name="libssl-1_1$(var.OPENSSL_PLAT).dll" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.bin.openssl.exe" Property="NSIS.OPENVPN.BIN" Name="openssl.exe" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.bin.openvpn.exe" Property="NSIS.OPENVPN.BIN" Name="openvpn.exe" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.bin.openvpn_gui.exe" Property="NSIS.OPENVPN.BIN" Name="openvpn-gui.exe" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.bin.openvpnserv.exe" Property="NSIS.OPENVPN.BIN" Name="openvpnserv.exe" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.bin.openvpnserv2.exe" Property="NSIS.OPENVPN.BIN" Name="openvpnserv2.exe" On="install"/>
+                        <RemoveFolder Id="nsis.openvpn.bin" Property="NSIS.OPENVPN.BIN" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.config.README.txt" Property="NSIS.OPENVPN.CONFIG" Name="README.txt" On="install"/>
+                        <RemoveFolder Id="nsis.openvpn.config" Property="NSIS.OPENVPN.CONFIG" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.doc.INSTALL_win32.txt" Property="NSIS.OPENVPN.DOC" Name="INSTALL-win32.txt" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.doc.license.txt" Property="NSIS.OPENVPN.DOC" Name="license.txt" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.doc.openvpn.8.html" Property="NSIS.OPENVPN.DOC" Name="openvpn.8.html" On="install"/>
+                        <RemoveFolder Id="nsis.openvpn.doc" Property="NSIS.OPENVPN.DOC" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.easyrsa.build_ca.bat" Property="NSIS.OPENVPN.EASYRSA" Name="build-ca.bat" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.easyrsa.build_dh.bat" Property="NSIS.OPENVPN.EASYRSA" Name="build-dh.bat" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.easyrsa.build_key.bat" Property="NSIS.OPENVPN.EASYRSA" Name="build-key.bat" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.easyrsa.build_key_pass.bat" Property="NSIS.OPENVPN.EASYRSA" Name="build-key-pass.bat" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.easyrsa.build_key_pkcs12.bat" Property="NSIS.OPENVPN.EASYRSA" Name="build-key-pkcs12.bat" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.easyrsa.build_key_server.bat" Property="NSIS.OPENVPN.EASYRSA" Name="build-key-server.bat" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.easyrsa.clean_all.bat" Property="NSIS.OPENVPN.EASYRSA" Name="clean-all.bat" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.easyrsa.index.txt.start" Property="NSIS.OPENVPN.EASYRSA" Name="index.txt.start" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.easyrsa.init_config.bat" Property="NSIS.OPENVPN.EASYRSA" Name="init-config.bat" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.easyrsa.openssl_1.0.0.cnf" Property="NSIS.OPENVPN.EASYRSA" Name="openssl-1.0.0.cnf" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.easyrsa.README.txt" Property="NSIS.OPENVPN.EASYRSA" Name="README.txt" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.easyrsa.revoke_full.bat" Property="NSIS.OPENVPN.EASYRSA" Name="revoke-full.bat" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.easyrsa.serial.start" Property="NSIS.OPENVPN.EASYRSA" Name="serial.start" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.easyrsa.vars.bat.sample" Property="NSIS.OPENVPN.EASYRSA" Name="vars.bat.sample" On="install"/>
+                        <RemoveFolder Id="nsis.openvpn.easyrsa" Property="NSIS.OPENVPN.EASYRSA" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.log.README.txt" Property="NSIS.OPENVPN.LOG" Name="README.txt" On="install"/>
+                        <RemoveFolder Id="nsis.openvpn.log" Property="NSIS.OPENVPN.LOG" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.samplecfg.client.$(var.CONFIG_EXTENSION)" Property="NSIS.OPENVPN.SAMPLECFG" Name="client.$(var.CONFIG_EXTENSION)" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.samplecfg.sample.$(var.CONFIG_EXTENSION)" Property="NSIS.OPENVPN.SAMPLECFG" Name="sample.$(var.CONFIG_EXTENSION)" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.samplecfg.server.$(var.CONFIG_EXTENSION)" Property="NSIS.OPENVPN.SAMPLECFG" Name="server.$(var.CONFIG_EXTENSION)" On="install"/>
+                        <RemoveFolder Id="nsis.openvpn.samplecfg" Property="NSIS.OPENVPN.SAMPLECFG" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.icon.ico" Property="NSIS.OPENVPN" Name="icon.ico" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.Uninstall.exe" Property="NSIS.OPENVPN" Name="Uninstall.exe" On="install"/>
+                        <RemoveFolder Id="nsis.openvpn" Property="NSIS.OPENVPN" On="install"/>
+                        <RemoveRegistryKey Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(var.PRODUCT_NAME)" Action="removeOnInstall"/>
+
+                        <RemoveFile Id="nsis.tap.shortcut.utilities.addtap.bat" Directory="TAPUtilitiesShortcutFolder" Name="Add a new TAP virtual ethernet adapter.lnk" On="install"/>
+                        <RemoveFile Id="nsis.tap.shortcut.utilities.deltapall.bat" Directory="TAPUtilitiesShortcutFolder" Name="Delete ALL TAP virtual ethernet adapters.lnk" On="install"/>
+                        <RemoveFolder Id="nsis.tap.shortcut.utilities" Property="TAPUtilitiesShortcutFolder" On="install"/>
+                        <RemoveFolder Id="nsis.tap.shortcut" Property="TAPShortcutFolder" On="install"/>
+                        <RemoveFile Id="nsis.tap.bin.addtap.bat" Property="NSIS.TAP.BIN" Name="addtap.bat" On="install"/>
+                        <RemoveFile Id="nsis.tap.bin.deltapall.bat" Property="NSIS.TAP.BIN" Name="deltapall.bat" On="install"/>
+                        <RemoveFile Id="nsis.tap.bin.tapinstall.exe" Property="NSIS.TAP.BIN" Name="tapinstall.exe" On="install"/>
+                        <RemoveFolder Id="nsis.tap.bin" Property="NSIS.TAP.BIN" On="install"/>
+                        <RemoveFile Id="nsis.tap.driver.OemVista.inf" Property="NSIS.TAP.DRIVER" Name="OemVista.inf" On="install"/>
+                        <RemoveFile Id="nsis.tap.driver.$(var.PRODUCT_TAP_WIN_COMPONENT_ID).cat" Property="NSIS.TAP.DRIVER" Name="$(var.PRODUCT_TAP_WIN_COMPONENT_ID).cat" On="install"/>
+                        <RemoveFile Id="nsis.tap.driver.$(var.PRODUCT_TAP_WIN_COMPONENT_ID).sys" Property="NSIS.TAP.DRIVER" Name="$(var.PRODUCT_TAP_WIN_COMPONENT_ID).sys" On="install"/>
+                        <RemoveFolder Id="nsis.tap.driver" Property="NSIS.TAP.DRIVER" On="install"/>
+                        <RemoveFile Id="nsis.tap.include.tap_windows.h" Property="NSIS.TAP.INCLUDE" Name="tap-windows.h" On="install"/>
+                        <RemoveFolder Id="nsis.tap.include" Property="NSIS.TAP.INCLUDE" On="install"/>
+                        <RemoveFile Id="nsis.tap.icon.ico" Property="NSIS.TAP" Name="icon.ico" On="install"/>
+                        <RemoveFile Id="nsis.tap.license.txt" Property="NSIS.TAP" Name="license.txt" On="install"/>
+                        <RemoveFile Id="nsis.tap.Uninstall.exe" Property="NSIS.TAP" Name="Uninstall.exe" On="install"/>
+                        <RemoveFolder Id="nsis.tap" Property="NSIS.TAP" On="install"/>
                         <RemoveRegistryKey Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(var.PRODUCT_TAP_NAME)" Action="removeOnInstall"/>
-                        <RemoveRegistryKey Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(var.PRODUCT_NAME)"     Action="removeOnInstall"/>-->
                     </Component>
 
                     <Directory Id="BINDIR" Name="bin">
@@ -749,6 +988,10 @@
                         </Component>
                     </Directory>
                 </Directory>
+
+                <Directory Id="TAPShortcutFolder" Name="$(var.PRODUCT_TAP_NAME)">
+                    <Directory Id="TAPUtilitiesShortcutFolder" Name="Utilities"/>
+                </Directory>
             </Directory>
 
             <Directory Id="DesktopFolder">
@@ -1090,6 +1333,7 @@
                 Level="3"
                 ConfigurableDirectory="PRODUCTDIR"
                 AllowAdvertise="no">
+                <Condition Level="1"><![CDATA[NSIS.OPENVPN.BIN.OPENVPNSERV2.EXE]]></Condition>
                 <ComponentRef Id="bin.openvpnserv2.exe"/>
             </Feature>
 
@@ -1101,6 +1345,7 @@
                 ConfigurableDirectory="PRODUCTDIR"
                 AllowAdvertise="no"
                 Display="expand">
+                <Condition Level="1"><![CDATA[NSIS.OPENVPN.BIN.OPENVPN_GUI.EXE]]></Condition>
                 <ComponentRef Id="bin.openvpn_gui.exe"/>
                 <ComponentRef Id="shortcut.openvpn_gui.exe"/>
                 <ComponentRef Id="shortcut.openvpn_gui.exe.desktop"/>
@@ -1123,6 +1368,7 @@
                 Level="2"
                 ConfigurableDirectory="DOCDIR"
                 AllowAdvertise="no">
+                <Condition Level="1"><![CDATA[NSIS.OPENVPN.DOC.INSTALL_WIN32.TXT]]></Condition>
                 <ComponentRef Id="doc.INSTALL_win32.txt"/>
                 <ComponentRef Id="doc.openvpn.8.html"/>
                 <ComponentRef Id="shortcut.doc.INSTALL_win32.txt"/>
@@ -1140,6 +1386,7 @@
                 Level="2"
                 ConfigurableDirectory="SAMPLECFGDIR"
                 AllowAdvertise="no">
+                <Condition Level="1"><![CDATA[NSIS.OPENVPN.SAMPLECFG.SAMPLE.OVPN]]></Condition>
                 <ComponentRef Id="samplecfg.client.$(var.CONFIG_EXTENSION)"/>
                 <ComponentRef Id="samplecfg.sample.$(var.CONFIG_EXTENSION)"/>
                 <ComponentRef Id="samplecfg.server.$(var.CONFIG_EXTENSION)"/>
@@ -1175,6 +1422,7 @@
                 Level="2"
                 ConfigurableDirectory="PRODUCTDIR"
                 AllowAdvertise="no">
+                <Condition Level="1"><![CDATA[NSIS.TAP.BIN.ADDTAP.BAT]]></Condition>
                 <ComponentRef Id="bin.tapctl.exe"/>
                 <ComponentRef Id="shortcut.bin.tapctl.exe.create"/>
             </Feature>
@@ -1199,6 +1447,7 @@
             ConfigurableDirectory="PRODUCTDIR"
             AllowAdvertise="no"
             Display="expand">
+            <Condition Level="1"><![CDATA[NSIS.OPENVPN.BIN.OPENSSL.EXE]]></Condition>
             <ComponentRef Id="license.txt"/>
             <ComponentRef Id="bin.openssl.exe"/>
             <ComponentRef Id="bin.libcrypto_1_1.dll"/>
@@ -1211,6 +1460,7 @@
                 Level="3"
                 ConfigurableDirectory="EASYRSADIR"
                 AllowAdvertise="no">
+                <Condition Level="1"><![CDATA[NSIS.OPENVPN.EASYRSA.README.TXT]]></Condition>
                 <ComponentRef Id="easyrsa.build_ca.bat"/>
                 <ComponentRef Id="easyrsa.build_dh.bat"/>
                 <ComponentRef Id="easyrsa.build_key.bat"/>
