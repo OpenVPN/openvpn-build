@@ -1327,17 +1327,6 @@
             <ComponentRef Id="shortcut.samplecfg"/>
 
             <Feature
-                Id="OpenVPN.Service"
-                Title="$(var.PRODUCT_NAME) Service"
-                Description="Service wrappers"
-                Level="3"
-                ConfigurableDirectory="PRODUCTDIR"
-                AllowAdvertise="no">
-                <Condition Level="1"><![CDATA[NSIS.OPENVPN.BIN.OPENVPNSERV2.EXE]]></Condition>
-                <ComponentRef Id="bin.openvpnserv2.exe"/>
-            </Feature>
-
-            <Feature
                 Id="OpenVPN.GUI"
                 Title="$(var.PRODUCT_NAME) GUI"
                 Description="GUI by Mathias Sundman"
@@ -1359,6 +1348,17 @@
                     AllowAdvertise="no">
                     <ComponentRef Id="reg.openvpngui.startup"/>
                 </Feature>
+            </Feature>
+
+            <Feature
+                Id="OpenVPN.Service"
+                Title="$(var.PRODUCT_NAME) Service"
+                Description="Service wrappers"
+                Level="3"
+                ConfigurableDirectory="PRODUCTDIR"
+                AllowAdvertise="no">
+                <Condition Level="1"><![CDATA[NSIS.OPENVPN.BIN.OPENVPNSERV2.EXE]]></Condition>
+                <ComponentRef Id="bin.openvpnserv2.exe"/>
             </Feature>
 
             <Feature
