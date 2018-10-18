@@ -777,6 +777,13 @@
                     Type="string"
                     Value="[PRODUCTDIR]"/>
             </Component>
+            <Component Id="reg.tap.path" Guid="{47E068D8-30B1-4C2A-A3F8-F96F0E7DC509}">
+                <RegistryValue
+                    Root="HKLM"
+                    Key="Software\$(var.PRODUCT_TAP_NAME)"
+                    Type="string"
+                    Value="[PRODUCTDIR]"/>
+            </Component>
             <Component Id="reg.config_dir" Guid="{FA8F296E-3808-4861-AEC1-A14062D060AF}">
                 <RegistryValue
                     Root="HKLM"
@@ -1057,6 +1064,7 @@
             <ComponentRef Id="res.ovpn.ico"/>
             <ComponentRef Id="shortcut.bin.openvpn.exe.genkey"/>
             <ComponentRef Id="reg.path"/>
+            <ComponentRef Id="reg.tap.path"/>
             <ComponentRef Id="reg.config_dir"/>
             <ComponentRef Id="reg.config_ext"/>
             <ComponentRef Id="reg.exe_path"/>
