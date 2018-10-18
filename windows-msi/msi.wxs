@@ -50,9 +50,6 @@
         <Icon
             Id="tapctl_create.ico"
             SourceFile="artwork\tapctl_create.ico"/>
-        <Icon
-            Id="url.ico"
-            SourceFile="artwork\url.ico"/>
         <Binary
             Id="libopenvpnmsica.dll"
             SourceFile="!(bindpath.openvpn)bin\libopenvpnmsica.dll"/>
@@ -489,18 +486,6 @@
                         <Component Id="doc.openvpn.8.html" Guid="{81E681BB-B296-44FC-B547-595459E7CE1B}">
                             <File Name="openvpn.8.html" Source="!(bindpath.openvpn)share\doc\openvpn\openvpn.8.html"/>
                         </Component>
-                        <Component Id="doc.howto.url" Guid="{B4C9CC15-3B27-429B-8AA5-E10B4C3EDB89}">
-                            <File Name="$(var.PRODUCT_NAME) HOWTO.url" Source="bookmarks\howto.url"/>
-                        </Component>
-                        <Component Id="doc.support.url" Guid="{3838426E-5464-4C29-8690-51F025DEAD99}">
-                            <File Name="$(var.PRODUCT_NAME) Support.url" Source="bookmarks\support.url"/>
-                        </Component>
-                        <Component Id="doc.website.url" Guid="{A09AD1CA-2296-48F3-B505-ECA592B097B0}">
-                            <File Name="$(var.PRODUCT_NAME) Web Site.url" Source="bookmarks\website.url"/>
-                        </Component>
-                        <Component Id="doc.wiki.url" Guid="{34EFDCA3-1A65-48A0-B41D-F73C0C481E7B}">
-                            <File Name="$(var.PRODUCT_NAME) Wiki.url" Source="bookmarks\wiki.url"/>
-                        </Component>
                     </Directory>
 
                     <Directory Id="DRIVERDIR" Name="driver">
@@ -688,44 +673,24 @@
                             <RegistryValue Root="HKCU" Key="Software\$(var.PRODUCT_NAME)\Shortcuts" Name="doc.openvpn.8.html" Type="integer" Value="1"/>
                         </Component>
                         <Component Id="shortcut.doc.howto.url" Guid="{0C89847F-45F6-4BBF-9B20-B5FA9BD69906}">
-                            <Shortcut
-                                Id="shortcut.doc.howto.url"
-                                Name="$(var.PRODUCT_NAME) HOWTO"
-                                Target="[DOCDIR]$(var.PRODUCT_NAME) HOWTO.url"
-                                WorkingDirectory="DOCDIR"
-                                Icon="url.ico"/>
+                            <File Name="$(var.PRODUCT_NAME) HOWTO.url" Source="bookmarks\howto.url"/>
                             <RemoveFolder Id="shortcut.doc.howto.url" On="uninstall"/>
-                            <RegistryValue Root="HKCU" Key="Software\$(var.PRODUCT_NAME)\Shortcuts" Name="doc.howto.url" Type="integer" Value="1"/>
+                            <RegistryValue Root="HKCU" Key="Software\$(var.PRODUCT_NAME)\Shortcuts" Name="doc.howto.url" Type="integer" Value="1" KeyPath="yes"/>
                         </Component>
                         <Component Id="shortcut.doc.support.url" Guid="{2CC129A7-745C-48A5-9C7B-8AFB770D0B85}">
-                            <Shortcut
-                                Id="shortcut.doc.support.url"
-                                Name="$(var.PRODUCT_NAME) Support"
-                                Target="[DOCDIR]$(var.PRODUCT_NAME) Support.url"
-                                WorkingDirectory="DOCDIR"
-                                Icon="url.ico"/>
+                            <File Name="$(var.PRODUCT_NAME) Support.url" Source="bookmarks\support.url"/>
                             <RemoveFolder Id="shortcut.doc.support.url" On="uninstall"/>
-                            <RegistryValue Root="HKCU" Key="Software\$(var.PRODUCT_NAME)\Shortcuts" Name="doc.support.url" Type="integer" Value="1"/>
+                            <RegistryValue Root="HKCU" Key="Software\$(var.PRODUCT_NAME)\Shortcuts" Name="doc.support.url" Type="integer" Value="1" KeyPath="yes"/>
                         </Component>
                         <Component Id="shortcut.doc.website.url" Guid="{9C270D5B-EDE6-4655-A01F-FD70F48C23AB}">
-                            <Shortcut
-                                Id="shortcut.doc.website.url"
-                                Name="$(var.PRODUCT_NAME) Web Site"
-                                Target="[DOCDIR]$(var.PRODUCT_NAME) Web Site.url"
-                                WorkingDirectory="DOCDIR"
-                                Icon="url.ico"/>
+                            <File Name="$(var.PRODUCT_NAME) Web Site.url" Source="bookmarks\website.url"/>
                             <RemoveFolder Id="shortcut.doc.website.url" On="uninstall"/>
-                            <RegistryValue Root="HKCU" Key="Software\$(var.PRODUCT_NAME)\Shortcuts" Name="doc.website.url" Type="integer" Value="1"/>
+                            <RegistryValue Root="HKCU" Key="Software\$(var.PRODUCT_NAME)\Shortcuts" Name="doc.website.url" Type="integer" Value="1" KeyPath="yes"/>
                         </Component>
                         <Component Id="shortcut.doc.wiki.url" Guid="{C36D5855-EBE3-4705-B851-96C8A01378DF}">
-                            <Shortcut
-                                Id="shortcut.doc.wiki.url"
-                                Name="$(var.PRODUCT_NAME) Wiki"
-                                Target="[DOCDIR]$(var.PRODUCT_NAME) Wiki.url"
-                                WorkingDirectory="DOCDIR"
-                                Icon="url.ico"/>
+                            <File Name="$(var.PRODUCT_NAME) Wiki.url" Source="bookmarks\wiki.url"/>
                             <RemoveFolder Id="shortcut.doc.wiki.url" On="uninstall"/>
-                            <RegistryValue Root="HKCU" Key="Software\$(var.PRODUCT_NAME)\Shortcuts" Name="doc.wiki.url" Type="integer" Value="1"/>
+                            <RegistryValue Root="HKCU" Key="Software\$(var.PRODUCT_NAME)\Shortcuts" Name="doc.wiki.url" Type="integer" Value="1" KeyPath="yes"/>
                         </Component>
                     </Directory>
 
@@ -1088,17 +1053,9 @@
             <ComponentRef Id="bin.openvpn.exe"/>
             <ComponentRef Id="bin.openvpnserv.exe"/>
             <ComponentRef Id="cfg.README.txt"/>
-            <ComponentRef Id="doc.howto.url"/>
-            <ComponentRef Id="doc.support.url"/>
-            <ComponentRef Id="doc.website.url"/>
-            <ComponentRef Id="doc.wiki.url"/>
             <ComponentRef Id="log.README.txt"/>
             <ComponentRef Id="res.ovpn.ico"/>
             <ComponentRef Id="shortcut.bin.openvpn.exe.genkey"/>
-            <ComponentRef Id="shortcut.doc.howto.url"/>
-            <ComponentRef Id="shortcut.doc.support.url"/>
-            <ComponentRef Id="shortcut.doc.website.url"/>
-            <ComponentRef Id="shortcut.doc.wiki.url"/>
             <ComponentRef Id="reg.path"/>
             <ComponentRef Id="reg.config_dir"/>
             <ComponentRef Id="reg.config_ext"/>
@@ -1162,6 +1119,10 @@
                 <ComponentRef Id="doc.openvpn.8.html"/>
                 <ComponentRef Id="shortcut.doc.INSTALL_win32.txt"/>
                 <ComponentRef Id="shortcut.doc.openvpn.8.html"/>
+                <ComponentRef Id="shortcut.doc.howto.url"/>
+                <ComponentRef Id="shortcut.doc.support.url"/>
+                <ComponentRef Id="shortcut.doc.website.url"/>
+                <ComponentRef Id="shortcut.doc.wiki.url"/>
             </Feature>
 
             <Feature
