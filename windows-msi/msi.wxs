@@ -101,9 +101,9 @@
         <!--
             Launch conditions
         -->
-        <Condition Message="[SimpleProductName] requires Windows Vista or later version of Windows.">Installed OR (VersionNT&gt;=600)</Condition>
+        <Condition Message="[SimpleProductName] requires Windows Vista or later version of Windows."><![CDATA[Installed OR (VersionNT>=600)]]></Condition>
         <?if $(sys.BUILDARCH)~="x86" Or $(sys.BUILDARCH)~="ARM" ?>
-        <Condition Message="You are attempting to install a 32-bit variant of [SimpleProductName] on a 64-bit operating system. The 32-bit variant will not work with your operating system. An installation of a 64-bit variant is recommended.">Installed OR NOT VersionNT64</Condition>
+        <Condition Message="You are attempting to install a 32-bit variant of [SimpleProductName] on a 64-bit operating system. The 32-bit variant will not work with your operating system. An installation of a 64-bit variant is recommended."><![CDATA[Installed OR NOT VersionNT64]]></Condition>
         <?endif?>
 
 
@@ -999,20 +999,20 @@
             <Row>
                 <Data Column="Interface"  >TAP</Data>
                 <Data Column="DisplayName">$(var.PRODUCT_NAME)</Data>
-                <Data Column="Condition"  >NOT TAPINTERFACES</Data>
+                <Data Column="Condition"  ><![CDATA[NOT TAPINTERFACES]]></Data>
                 <Data Column="Component_" >driver.OemVista.inf</Data>
             </Row>
             <Row>
                 <Data Column="Interface"  >TAP.attsgn</Data>
                 <Data Column="DisplayName">$(var.PRODUCT_NAME)</Data>
-                <Data Column="Condition"  >NOT TAPINTERFACES</Data>
+                <Data Column="Condition"  ><![CDATA[NOT TAPINTERFACES]]></Data>
                 <Data Column="Component_" >driver.attsgn.OemVista.inf</Data>
             </Row>
             <?if $(var.PRODUCT_PLATFORM) = "amd64" ?>
             <Row>
                 <Data Column="Interface"  >TAP.whql</Data>
                 <Data Column="DisplayName">$(var.PRODUCT_NAME)</Data>
-                <Data Column="Condition"  >NOT TAPINTERFACES</Data>
+                <Data Column="Condition"  ><![CDATA[NOT TAPINTERFACES]]></Data>
                 <Data Column="Component_" >driver.whql.OemVista.inf</Data>
             </Row>
             <?endif?>
@@ -1168,6 +1168,7 @@
                 Level="3"
                 ConfigurableDirectory="PRODUCTDIR"
                 AllowAdvertise="no">
+                <Condition Level="1"><![CDATA[NSIS.TAP.INCLUDE.TAP_WINDOWS.H]]></Condition>
                 <ComponentRef Id="include.tap_windows.h"/>
             </Feature>
         </Feature>
