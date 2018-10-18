@@ -64,7 +64,7 @@
         <Binary
             Id="driver.attsgn.signed_by.cer"
             SourceFile="!(bindpath.tapbin)attsgn\signed_by.cer"/>
-        <?if $(var.PRODUCT_PLATFORM) = "amd64" ?>
+        <?if $(var.PRODUCT_PLATFORM)="amd64" ?>
         <Binary
             Id="driver.whql.signed_by.cer"
             SourceFile="!(bindpath.tapbin)whql\signed_by.cer"/>
@@ -144,6 +144,30 @@
 
 
         <!--
+            1. Set executables folder with registry folder if detected.
+            2. Set executables folder to the previous executable folder if detected. Use openvpn.exe file to detect previous executable folder.
+        -->
+        <Property Id="BINDIRREG">
+            <RegistrySearch Id="reg.exe_path" Root="HKLM" Key="SOFTWARE\$(var.PRODUCT_NAME)" Name="exe_path" Type="file"/>
+        </Property>
+        <SetProperty
+            After="AppSearch"
+            Action="SetBinDirReg"
+            Id="BINDIR"
+            Value="[BINDIRREG]"
+            Sequence="first">BINDIRREG AND NOT Installed</SetProperty>
+        <Property Id="BINDIRPREV">
+            <ComponentSearch Id="bin.openvpn.exe" Guid="{4D920FC9-DF3C-4D34-ADE6-3EEEF8AE901A}"/>
+        </Property>
+        <SetProperty
+            After="SetBinDirReg"
+            Action="SetBinDirPrev"
+            Id="BINDIR"
+            Value="[BINDIRPREV]"
+            Sequence="first">BINDIRPREV AND NOT Installed</SetProperty>
+
+
+        <!--
             1. Set configuration folder with registry folder if detected.
             2. Set configuration folder to the previous installation folder if detected. Use README.txt file to detect previous configuration folder.
             3. Allow overriding configuration folder by specifying CONFIG=<folder> on the msiexec.exe command line.
@@ -172,30 +196,6 @@
             Id="CONFIGDIR"
             Value="[CONFIG]"
             Sequence="first">CONFIG AND NOT Installed</SetProperty>
-
-
-        <!--
-            1. Set executables folder with registry folder if detected.
-            2. Set executables folder to the previous executable folder if detected. Use openvpn.exe file to detect previous executable folder.
-        -->
-        <Property Id="BINDIRREG">
-            <RegistrySearch Id="reg.exe_path" Root="HKLM" Key="SOFTWARE\$(var.PRODUCT_NAME)" Name="exe_path" Type="file"/>
-        </Property>
-        <SetProperty
-            After="AppSearch"
-            Action="SetBinDirReg"
-            Id="BINDIR"
-            Value="[BINDIRREG]"
-            Sequence="first">BINDIRREG AND NOT Installed</SetProperty>
-        <Property Id="BINDIRPREV">
-            <ComponentSearch Id="bin.openvpn.exe" Guid="{4D920FC9-DF3C-4D34-ADE6-3EEEF8AE901A}"/>
-        </Property>
-        <SetProperty
-            After="SetBinDirReg"
-            Action="SetBinDirPrev"
-            Id="BINDIR"
-            Value="[BINDIRPREV]"
-            Sequence="first">BINDIRPREV AND NOT Installed</SetProperty>
 
 
         <!--
@@ -535,7 +535,7 @@
                                 <File Id="driver.attsgn.$(var.PRODUCT_TAP_WIN_COMPONENT_ID).sys" Name="$(var.PRODUCT_TAP_WIN_COMPONENT_ID).sys" Source="!(bindpath.tapbin)attsgn\$(var.PRODUCT_TAP_WIN_COMPONENT_ID).sys"/>
                             </Component>
                         </Directory>
-                        <?if $(var.PRODUCT_PLATFORM) = "amd64"?>
+                        <?if $(var.PRODUCT_PLATFORM)="amd64"?>
                         <Directory Id="DRIVERWHQLDIR" Name="whql">
                             <Component Id="driver.whql.OemVista.inf" Guid="{7ACDA8AD-A00D-4B28-A70E-7DA2BE8784BC}" Transitive="yes">
                                 <Condition><![CDATA[DriverCertification="whql"]]></Condition>
@@ -1022,7 +1022,7 @@
                 <Data Column="Condition"  ><![CDATA[NOT TAPINTERFACES]]></Data>
                 <Data Column="Component_" >driver.attsgn.OemVista.inf</Data>
             </Row>
-            <?if $(var.PRODUCT_PLATFORM) = "amd64" ?>
+            <?if $(var.PRODUCT_PLATFORM)="amd64" ?>
             <Row>
                 <Data Column="Interface"  >TAP.whql</Data>
                 <Data Column="DisplayName">$(var.PRODUCT_NAME)</Data>
@@ -1154,7 +1154,7 @@
             <ComponentRef Id="driver.attsgn.OemVista.inf"/>
             <ComponentRef Id="driver.attsgn.$(var.PRODUCT_TAP_WIN_COMPONENT_ID).cat"/>
             <ComponentRef Id="driver.attsgn.$(var.PRODUCT_TAP_WIN_COMPONENT_ID).sys"/>
-            <?if $(var.PRODUCT_PLATFORM) = "amd64" ?>
+            <?if $(var.PRODUCT_PLATFORM)="amd64" ?>
             <ComponentRef Id="driver.whql.OemVista.inf"/>
             <ComponentRef Id="driver.whql.$(var.PRODUCT_TAP_WIN_COMPONENT_ID).cat"/>
             <ComponentRef Id="driver.whql.$(var.PRODUCT_TAP_WIN_COMPONENT_ID).sys"/>
