@@ -64,7 +64,7 @@
         <Binary
             Id="driver.attsgn.signed_by.cer"
             SourceFile="!(bindpath.tapbin)attsgn\signed_by.cer"/>
-        <?if $(var.PRODUCT_PLATFORM)="amd64" ?>
+        <?if $(sys.BUILDARCH)="x64" ?>
         <Binary
             Id="driver.whql.signed_by.cer"
             SourceFile="!(bindpath.tapbin)whql\signed_by.cer"/>
@@ -535,7 +535,7 @@
                                 <File Id="driver.attsgn.$(var.PRODUCT_TAP_WIN_COMPONENT_ID).sys" Name="$(var.PRODUCT_TAP_WIN_COMPONENT_ID).sys" Source="!(bindpath.tapbin)attsgn\$(var.PRODUCT_TAP_WIN_COMPONENT_ID).sys"/>
                             </Component>
                         </Directory>
-                        <?if $(var.PRODUCT_PLATFORM)="amd64"?>
+                        <?if $(sys.BUILDARCH)="x64" ?>
                         <Directory Id="DRIVERWHQLDIR" Name="whql">
                             <Component Id="driver.whql.OemVista.inf" Guid="{7ACDA8AD-A00D-4B28-A70E-7DA2BE8784BC}" Transitive="yes">
                                 <Condition><![CDATA[DriverCertification="whql"]]></Condition>
@@ -1029,7 +1029,7 @@
                 <Data Column="Condition"  ><![CDATA[NOT TAPINTERFACES]]></Data>
                 <Data Column="Component_" >driver.attsgn.OemVista.inf</Data>
             </Row>
-            <?if $(var.PRODUCT_PLATFORM)="amd64" ?>
+            <?if $(sys.BUILDARCH)="x64" ?>
             <Row>
                 <Data Column="Interface"  >TAP.whql</Data>
                 <Data Column="DisplayName">$(var.PRODUCT_NAME)</Data>
@@ -1162,7 +1162,7 @@
             <ComponentRef Id="driver.attsgn.OemVista.inf"/>
             <ComponentRef Id="driver.attsgn.$(var.PRODUCT_TAP_WIN_COMPONENT_ID).cat"/>
             <ComponentRef Id="driver.attsgn.$(var.PRODUCT_TAP_WIN_COMPONENT_ID).sys"/>
-            <?if $(var.PRODUCT_PLATFORM)="amd64" ?>
+            <?if $(sys.BUILDARCH)="x64" ?>
             <ComponentRef Id="driver.whql.OemVista.inf"/>
             <ComponentRef Id="driver.whql.$(var.PRODUCT_TAP_WIN_COMPONENT_ID).cat"/>
             <ComponentRef Id="driver.whql.$(var.PRODUCT_TAP_WIN_COMPONENT_ID).sys"/>
