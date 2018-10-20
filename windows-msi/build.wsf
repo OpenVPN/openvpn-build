@@ -47,17 +47,26 @@ clean	Cleans intermediate and output files</example>
             // Folder with compiled OpenVPN ("-x86_64" or "-i686" is appended)
             var sourcePath = "image";
 
-            // Folder with compiled TAP-Windows6
-            var tapPath = "image-tap-windows6";
-
-            // Folder with Easy RSA
-            var easyRSAPath = "image-easy-rsa";
-
-            // Folder with openvpnserv2.exe
-            var openVPNServ2Path = "image-openvpnserv2";
-
             // Folder to store intermmediate files while building
-            var buildPath = "build.tmp";
+            var buildPath = BuildPath("tmp");
+
+            // TAP-Windows
+            var
+                tapWindowsVersion = "9.21.2",
+                tapWindowsUrl = "http://build.openvpn.net/downloads/releases/tap-windows-" + tapWindowsVersion + ".zip",
+                tapWindowsPath = BuildPath(buildPath, "tap-windows-" + tapWindowsVersion);
+
+            // openvpnserv2.exe
+            var
+                openVPNServ2Version = "1.3.0.0",
+                openVPNServ2Url = "http://build.openvpn.net/downloads/releases/openvpnserv2-" + openVPNServ2Version + ".exe",
+                openVPNServ2Path = BuildPath(buildPath, "openvpnserv2-" + openVPNServ2Version);
+
+            // Easy RSA
+            var
+                easyRSAVersion = "2.3.3_master",
+                easyRSAUrl = "http://build.openvpn.net/downloads/releases/easy-rsa-" + easyRSAVersion + ".tar.gz",
+                easyRSAPath = BuildPath(buildPath, "easy-rsa-" + easyRSAVersion, "easy-rsa");
 
             // Folder to store output files
             var outputPath = "image";
@@ -67,7 +76,7 @@ clean	Cleans intermediate and output files</example>
                 "x86": {
                     "buildPath": BuildPath(buildPath, "x86"),
                     "sourcePath": sourcePath + "-i686",
-                    "tapPath": BuildPath(tapPath, "i386"),
+                    "tapWindowsPath": BuildPath(tapWindowsPath, "i386"),
                     "programFilesPath": "ProgramFilesFolder",
                     "openSSLPlat": "",
                     "wixPlat": "x86",
@@ -77,15 +86,15 @@ clean	Cleans intermediate and output files</example>
                 "amd64": {
                     "buildPath": BuildPath(buildPath, "amd64"),
                     "sourcePath": sourcePath + "-x86_64",
-                    "tapPath": BuildPath(tapPath, "amd64"),
+                    "tapWindowsPath": BuildPath(tapWindowsPath, "amd64"),
                     "programFilesPath": "ProgramFiles64Folder",
                     "openSSLPlat": "-x64",
                     "wixPlat": "x64",
                     "wixLinkDepenencies": [
-                        BuildPath(tapPath, "amd64", "whql", "OemVista.inf"),
-                        BuildPath(tapPath, "amd64", "whql", "signed_by.cer"),
-                        BuildPath(tapPath, "amd64", "whql", "tap0901.cat"),
-                        BuildPath(tapPath, "amd64", "whql", "tap0901.sys")
+                        BuildPath(tapWindowsPath, "amd64", "whql", "OemVista.inf"),
+                        BuildPath(tapWindowsPath, "amd64", "whql", "signed_by.cer"),
+                        BuildPath(tapWindowsPath, "amd64", "whql", "tap0901.cat"),
+                        BuildPath(tapWindowsPath, "amd64", "whql", "tap0901.sys")
                     ]
                 }
             }
@@ -105,6 +114,89 @@ clean	Cleans intermediate and output files</example>
                 case "all": case "clean":
                 case "msi":
                     var env = WScript.CreateObject("WScript.Shell").Environment("Process");
+
+                    // Downloading and extracting TAP-Windows
+                    // TODO: Migrate signed_by.cer to tap-windows-<ver>.zip.
+                    // TODO: Update attestation-signed and WHQL-signed driver paths once available.
+                    b.rules.push(new DownloadBuildRule(BuildPath("sources", "tap-windows-" + tapWindowsVersion + ".zip"), tapWindowsUrl, []));
+                    b.rules.push(new UnzipBuildRule(
+                        [
+                            BuildPath(tapWindowsPath, "amd64", "OemVista.inf"),
+                            //BuildPath(tapWindowsPath, "amd64", "signed_by.cer"),
+                            BuildPath(tapWindowsPath, "amd64", "tap0901.cat"),
+                            BuildPath(tapWindowsPath, "amd64", "tap0901.sys"),
+                            BuildPath(tapWindowsPath, "i386", "OemVista.inf"),
+                            //BuildPath(tapWindowsPath, "i386", "signed_by.cer"),
+                            BuildPath(tapWindowsPath, "i386", "tap0901.cat"),
+                            BuildPath(tapWindowsPath, "i386", "tap0901.sys"),
+                            BuildPath(tapWindowsPath, "include", "tap-windows.h")
+                        ],
+                        buildPath, // "tap-windows-" + tapWindowsVersion folder is provided by .zip file.
+                        BuildPath(buildPath, "tap-windows-" + tapWindowsVersion + ".timestamp"),
+                        BuildPath("sources", "tap-windows-" + tapWindowsVersion + ".zip"),
+                        []));
+                    b.rules.push(new CopyFileBuildRule(
+                        [
+                            BuildPath(tapWindowsPath, "amd64", "signed_by.cer"),
+                            BuildPath(tapWindowsPath, "amd64", "attsgn", "signed_by.cer"),
+                            BuildPath(tapWindowsPath, "amd64", "whql", "signed_by.cer"),
+                            BuildPath(tapWindowsPath, "i386", "signed_by.cer"),
+                            BuildPath(tapWindowsPath, "i386", "attsgn", "signed_by.cer")
+                        ], BuildPath("cert", "signed_by.cer"), []));
+                    b.rules.push(new CopyFileBuildRule(
+                        [
+                            BuildPath(tapWindowsPath, "amd64", "attsgn", "OemVista.inf"),
+                            BuildPath(tapWindowsPath, "amd64", "whql"  , "OemVista.inf")
+                        ], BuildPath(tapWindowsPath, "amd64", "OemVista.inf"), []));
+                    b.rules.push(new CopyFileBuildRule(
+                        [
+                            BuildPath(tapWindowsPath, "amd64", "attsgn", "tap0901.cat"),
+                            BuildPath(tapWindowsPath, "amd64", "whql"  , "tap0901.cat")
+                        ], BuildPath(tapWindowsPath, "amd64", "tap0901.cat"), []));
+                    b.rules.push(new CopyFileBuildRule(
+                        [
+                            BuildPath(tapWindowsPath, "amd64", "attsgn", "tap0901.sys"),
+                            BuildPath(tapWindowsPath, "amd64", "whql"  , "tap0901.sys")
+                        ], BuildPath(tapWindowsPath, "amd64", "tap0901.sys"), []));
+                    b.rules.push(new CopyFileBuildRule(
+                        [
+                            BuildPath(tapWindowsPath, "i386", "attsgn", "OemVista.inf")
+                        ], BuildPath(tapWindowsPath, "i386", "OemVista.inf"), []));
+                    b.rules.push(new CopyFileBuildRule(
+                        [
+                            BuildPath(tapWindowsPath, "i386", "attsgn", "tap0901.cat")
+                        ], BuildPath(tapWindowsPath, "i386", "tap0901.cat"), []));
+                    b.rules.push(new CopyFileBuildRule(
+                        [
+                            BuildPath(tapWindowsPath, "i386", "attsgn", "tap0901.sys")
+                        ], BuildPath(tapWindowsPath, "i386", "tap0901.sys"), []));
+
+                    // Downloading openvpnserv2.exe
+                    b.rules.push(new DownloadBuildRule(BuildPath(openVPNServ2Path, "openvpnserv2.exe"), openVPNServ2Url, []));
+
+                    // Downloading and extracting Easy RSA
+                    b.rules.push(new DownloadBuildRule(BuildPath("sources", "easy-rsa-" + easyRSAVersion + ".tar.gz"), easyRSAUrl , []));
+                    b.rules.push(new UntgzBuildRule(
+                        [
+                            BuildPath(easyRSAPath, "2.0", "openssl-1.0.0.cnf"),
+                            BuildPath(easyRSAPath, "Windows", "build-ca.bat"),
+                            BuildPath(easyRSAPath, "Windows", "build-dh.bat"),
+                            BuildPath(easyRSAPath, "Windows", "build-key.bat"),
+                            BuildPath(easyRSAPath, "Windows", "build-key-pass.bat"),
+                            BuildPath(easyRSAPath, "Windows", "build-key-pkcs12.bat"),
+                            BuildPath(easyRSAPath, "Windows", "build-key-server.bat"),
+                            BuildPath(easyRSAPath, "Windows", "clean-all.bat"),
+                            BuildPath(easyRSAPath, "Windows", "index.txt.start"),
+                            BuildPath(easyRSAPath, "Windows", "init-config.bat"),
+                            BuildPath(easyRSAPath, "Windows", "README.txt"),
+                            BuildPath(easyRSAPath, "Windows", "revoke-full.bat"),
+                            BuildPath(easyRSAPath, "Windows", "serial.start"),
+                            BuildPath(easyRSAPath, "Windows", "vars.bat.sample")
+                        ],
+                        buildPath, // "easy-rsa-" + easyRSAVersion folder is provided by .tar.gz file.
+                        BuildPath(buildPath, "easy-rsa-" + easyRSAVersion + ".timestamp"),
+                        BuildPath("sources", "easy-rsa-" + easyRSAVersion + ".tar.gz"),
+                        []));
 
                     // Add platform-specific build rules.
                     for (i in platforms) {
@@ -144,12 +236,14 @@ clean	Cleans intermediate and output files</example>
                             "-spdb",
                             "-ext WixDifxAppExtension",
                             "-ext WixIIsExtension",
-                            "-b build=\""        + _CMD(buildPath       ) + "\"",
-                            "-b openvpn=\""      + _CMD(p.sourcePath    ) + "\"",
-                            "-b tap=\""          + _CMD(tapPath         ) + "\"",
-                            "-b tapbin=\""       + _CMD(p.tapPath       ) + "\"",
-                            "-b easyrsa=\""      + _CMD(easyRSAPath     ) + "\"",
-                            "-b openvpnserv2=\"" + _CMD(openVPNServ2Path) + "\""
+                            "-b build=\""         + _CMD(buildPath                            ) + "\"",
+                            "-b openvpn=\""       + _CMD(p.sourcePath                         ) + "\"",
+                            "-b tap=\""           + _CMD(tapWindowsPath                       ) + "\"",
+                            "-b tapbin=\""        + _CMD(p.tapWindowsPath                     ) + "\"",
+                            "-b tapbin.attsgn=\"" + _CMD(BuildPath(p.tapWindowsPath, "attsgn")) + "\"",
+                            "-b tapbin.whql=\""   + _CMD(BuildPath(p.tapWindowsPath, "whql"  )) + "\"",
+                            "-b easyrsa=\""       + _CMD(easyRSAPath                          ) + "\"",
+                            "-b openvpnserv2=\""  + _CMD(openVPNServ2Path                     ) + "\""
                         ];
 
                         // WiX linking
@@ -184,15 +278,15 @@ clean	Cleans intermediate and output files</example>
                                 BuildPath(p.sourcePath, "bin", "openvpn-gui.exe"),
                                 BuildPath(p.sourcePath, "bin", "openvpnserv.exe"),
                                 BuildPath(p.sourcePath, "bin", "tapctl.exe"),
-                                BuildPath(p.tapPath, "OemVista.inf"),
-                                BuildPath(p.tapPath, "signed_by.cer"),
-                                BuildPath(p.tapPath, "tap0901.cat"),
-                                BuildPath(p.tapPath, "tap0901.sys"),
-                                BuildPath(p.tapPath, "attsgn", "OemVista.inf"),
-                                BuildPath(p.tapPath, "attsgn", "signed_by.cer"),
-                                BuildPath(p.tapPath, "attsgn", "tap0901.cat"),
-                                BuildPath(p.tapPath, "attsgn", "tap0901.sys"),
-                                BuildPath(tapPath, "include", "tap-windows.h"),
+                                BuildPath(p.tapWindowsPath, "OemVista.inf"),
+                                BuildPath(p.tapWindowsPath, "signed_by.cer"),
+                                BuildPath(p.tapWindowsPath, "tap0901.cat"),
+                                BuildPath(p.tapWindowsPath, "tap0901.sys"),
+                                BuildPath(p.tapWindowsPath, "attsgn", "OemVista.inf"),
+                                BuildPath(p.tapWindowsPath, "attsgn", "signed_by.cer"),
+                                BuildPath(p.tapWindowsPath, "attsgn", "tap0901.cat"),
+                                BuildPath(p.tapWindowsPath, "attsgn", "tap0901.sys"),
+                                BuildPath(tapWindowsPath, "include", "tap-windows.h"),
                                 BuildPath(openVPNServ2Path, "openvpnserv2.exe"),
                                 BuildPath(buildPath, "README-config.txt"),
                                 BuildPath("..", "windows-nsis", "INSTALL-win32.txt"),

@@ -9,6 +9,7 @@ Requirements
 ------------
 
 1. `WiX Toolset`_ - tested with 3.11.1
+2. `unzip.exe`, `tar.exe` and `gunzip.exe` in path
 
 
 Usage

@@ -49,6 +49,10 @@ function Builder()
     this.sevenZipPath = BuildPath(this.fso.GetParentFolderName(this.fso.GetAbsolutePathName(WScript.ScriptFullName)), "lzma1805", "bin");
     this.sevenZipFlags = ["-mx", "-mf=BCJ2"];
 
+    this.unzipFlags = [];
+    this.tarFlags = [];
+    this.gunzipFlags = [];
+
     // Get the codepage Windows is using for stdin/stdout/stderr.
     switch (parseInt(this.wsh.RegRead("HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Nls\\CodePage\\OEMCP"), 10)) {
         case  437: this.cpOEMMime = "cp437"       ; break;
@@ -94,7 +98,7 @@ Builder.prototype.build = function (outName)
 
                         // Have we already build this rule in this session?
                         if (rule.timeBuilt != 0)
-                            return rule.timeBuilt;
+                            return builder.fso.GetFile(outName).DateLastModified;
 
                         // Build dependencies.
                         var ts = 0;
@@ -106,32 +110,30 @@ Builder.prototype.build = function (outName)
 
                         // Is building required?
                         if (!builder.force) {
-                            if (builder.fso.FileExists(outName)) {
-                                // The output file exists. Compare its timestamp.
-                                var tsOutput = builder.fso.GetFile(outName).DateLastModified;
-                                if (ts < tsOutput)
-                                    return tsOutput;
+                            var tsOutput = rule.buildTime(builder);
+                            if (ts <= tsOutput) {
+                                rule.timeBuilt = tsOutput;
+                                return builder.fso.GetFile(outName).DateLastModified;
                             }
                         }
 
-                        // Make sure the output folder exists.
-                        builder.makeDir(builder.fso.GetParentFolderName(outName))
+                        // Make sure all output folders exist.
+                        for (var k in rule.outNames)
+                            builder.makeDir(builder.fso.GetParentFolderName(rule.outNames[k]))
 
                         try {
                             // Build!
                             WScript.Echo("BUILD: " + outName);
                             rule.build(builder);
                         } catch (err) {
-                            // Remove all output names should anything go wrong in build.
+                            // Clean the rule output should anything go wrong in build.
                             // We don't want half finished zombie output files with fresh
                             // timestamp lying around.
-                            for (var i in rule.outNames)
-                                builder.removeFile(rule.outNames[i]);
-
+                            rule.clean(builder);
                             throw err;
                         }
 
-                        return rule.timeBuilt;
+                        return builder.fso.GetFile(outName).DateLastModified;
                     }
                 }
             }
@@ -336,9 +338,31 @@ function BuildRule(outNames, inNames)
  * 
  * @param builder  The builder object
  */
-BuildRule.prototype.build = function ()
+BuildRule.prototype.build = function (builder)
 {
     this.timeBuilt = (new Date()).getVarDate();
+}
+
+
+/**
+ * Returns the time the rule was built
+ * 
+ * @param builder  The builder object
+ * 
+ * @returns  Oldest timestamp of the output files if all exist; 0 otherwise
+ */
+BuildRule.prototype.buildTime = function (builder)
+{
+    var ts = (new Date()).getVarDate();
+    for (var i in this.outNames) {
+        if (builder.fso.FileExists(this.outNames[i])) {
+            var tsOutput = builder.fso.GetFile(this.outNames[i]).DateLastModified;
+            if (tsOutput < ts)
+                ts = tsOutput;
+        } else
+            return 0;
+    }
+    return ts;
 }
 
 
@@ -352,6 +376,57 @@ BuildRule.prototype.clean = function (builder)
     for (var i in this.outNames)
         builder.removeFile(this.outNames[i]);
 }
+
+
+/**
+ * Creates a file copy build rule
+ * 
+ * @param outNames    Output file names
+ * @param inName      Input file name
+ * @param depNames    Additional dependencies
+ *
+ * @returns  Build rule
+ */
+function CopyFileBuildRule(outNames, inName, depNames)
+{
+    BuildRule.call(this, outNames, [inName].concat(depNames));
+
+    return this;
+}
+
+
+/**
+ * Builds the rule
+ * 
+ * @param builder  The builder object
+ */
+CopyFileBuildRule.prototype.build = function (builder)
+{
+    for (var i in this.outNames) {
+        WScript.Echo("COPY: " + this.inNames[0] + " >> " + this.outNames[i]);
+        builder.copyFile(this.inNames[0], this.outNames[i]);
+    }
+
+    BuildRule.prototype.build.call(this, builder);
+}
+
+
+/**
+ * Returns the time the rule was built
+ * 
+ * @param builder  The builder object
+ * 
+ * @returns  Oldest timestamp of the output files if all exist; 0 otherwise
+ */
+CopyFileBuildRule.prototype.buildTime = BuildRule.prototype.buildTime;
+
+
+/**
+ * Removes all output files
+ * 
+ * @param builder  The builder object
+ */
+CopyFileBuildRule.prototype.clean = BuildRule.prototype.clean;
 
 
 /**
@@ -421,6 +496,16 @@ ConvertTextBuildRule.prototype.build = function (builder)
 
 
 /**
+ * Returns the time the rule was built
+ * 
+ * @param builder  The builder object
+ * 
+ * @returns  Oldest timestamp of the output files if all exist; 0 otherwise
+ */
+ConvertTextBuildRule.prototype.buildTime = BuildRule.prototype.buildTime;
+
+
+/**
  * Removes all output files
  * 
  * @param builder  The builder object
@@ -472,6 +557,16 @@ function PreprocessBuildRule(outName, outCharset, outLineSep, inName, inCharset,
  * @param builder  The builder object
  */
 PreprocessBuildRule.prototype.build = ConvertTextBuildRule.prototype.build;
+
+
+/**
+ * Returns the time the rule was built
+ * 
+ * @param builder  The builder object
+ * 
+ * @returns  Oldest timestamp of the output files if all exist; 0 otherwise
+ */
+PreprocessBuildRule.prototype.buildTime = BuildRule.prototype.buildTime;
 
 
 /**
@@ -548,6 +643,16 @@ WiXCompileBuildRule.prototype.build = function (builder)
 
 
 /**
+ * Returns the time the rule was built
+ * 
+ * @param builder  The builder object
+ * 
+ * @returns  Oldest timestamp of the output files if all exist; 0 otherwise
+ */
+WiXCompileBuildRule.prototype.buildTime = BuildRule.prototype.buildTime;
+
+
+/**
  * Removes all output files
  * 
  * @param builder  The builder object
@@ -592,6 +697,16 @@ WiXLinkBuildRule.prototype.build = function (builder)
 
     BuildRule.prototype.build.call(this, builder);
 }
+
+
+/**
+ * Returns the time the rule was built
+ * 
+ * @param builder  The builder object
+ * 
+ * @returns  Oldest timestamp of the output files if all exist; 0 otherwise
+ */
+WiXLinkBuildRule.prototype.buildTime = BuildRule.prototype.buildTime;
 
 
 /**
@@ -734,10 +849,277 @@ SevenZipSFXBuildRule.prototype.build = function (builder)
 
 
 /**
+ * Returns the time the rule was built
+ * 
+ * @param builder  The builder object
+ * 
+ * @returns  Oldest timestamp of the output files if all exist; 0 otherwise
+ */
+SevenZipSFXBuildRule.prototype.buildTime = BuildRule.prototype.buildTime;
+
+
+/**
  * Removes all output files
  * 
  * @param builder  The builder object
  */
 SevenZipSFXBuildRule.prototype.clean = BuildRule.prototype.clean;
+
+
+/**
+ * Creates a download build rule
+ * 
+ * @param outName   Output file name
+ * @param url       URL to retrieve data from
+ * @param depNames  Additional dependencies
+ *
+ * @returns  Build rule
+ */
+function DownloadBuildRule(outName, url, depNames)
+{
+    BuildRule.call(this, [outName], depNames);
+
+    this.url = url;
+
+    return this;
+}
+
+
+/**
+ * Builds the rule
+ * 
+ * @param builder  The builder object
+ */
+DownloadBuildRule.prototype.build = function (builder)
+{
+    WScript.Echo("GET: " + this.url + " >> " + this.outNames[0]);
+    var req = new ActiveXObject("MSXML2.XMLHTTP.6.0");
+    var rule = this;
+    req.open("GET", this.url, false);
+    req.onreadystatechange = function() {
+        if (req.readyState === 4) {
+            if (req.status == "200") {
+                var datOut = new ActiveXObject("ADODB.Stream");
+                datOut.Open();
+                try {
+                    datOut.Type = adTypeBinary;
+                    datOut.Write(req.responseBody);
+                    datOut.SaveToFile(rule.outNames[0], adSaveCreateOverWrite);
+                } finally {
+                    datOut.Close();
+                }
+            } else
+                throw new Error("GET " + url + " failed with status " + req.status + " " + req.statusText + ".");
+        }
+    }
+    req.send(null);
+
+    BuildRule.prototype.build.call(this, builder);
+}
+
+
+/**
+ * Returns the time the rule was built
+ * 
+ * @param builder  The builder object
+ * 
+ * @returns  Oldest timestamp of the output files if all exist; 0 otherwise
+ */
+DownloadBuildRule.prototype.buildTime = BuildRule.prototype.buildTime;
+
+
+/**
+ * Removes all output files
+ * 
+ * @param builder  The builder object
+ */
+DownloadBuildRule.prototype.clean = BuildRule.prototype.clean;
+
+
+/**
+ * Creates a generic archive extraction build rule
+ * 
+ * @param outNames  Array of output files. You may list only the important ones, however, the cleaning will take care of only those then.
+ * @param outDir    Output directory
+ * @param tsName    Timestamp file name. Serves as a dummy output file to mark the extraction date. This is the actual output file used to detect if the rule needs rebuilding.
+ * @param inName    Input archive file name
+ * @param depNames  Additional dependencies
+ *
+ * @returns  Build rule
+ */
+function ExtractBuildRule(outNames, outDir, tsName, inName, depNames)
+{
+    BuildRule.call(this, [tsName].concat(outNames), [inName].concat(depNames));
+
+    this.outDir = outDir;
+
+    return this;
+}
+
+
+/**
+ * Builds the rule
+ * 
+ * @param builder  The builder object
+ */
+ExtractBuildRule.prototype.build = function (builder)
+{
+    // Create the timestamp file.
+    var datOut = WScript.CreateObject("ADODB.Stream");
+    datOut.Open();
+    try {
+        datOut.Type = adTypeText;
+        datOut.Charset = "utf-8";
+        datOut.LineSeparator = adCRLF;
+        datOut.WriteText(this.inNames[0] + " extracted at " + (new Date()).toLocaleString(), adWriteLine);
+        datOut.SaveToFile(this.outNames[0], adSaveCreateOverWrite);
+    } finally {
+        datOut.Close();
+    }
+
+    BuildRule.prototype.build.call(this, builder);
+}
+
+
+/**
+ * Returns the time the rule was built
+ * 
+ * @param builder  The builder object
+ * 
+ * @returns  Oldest timestamp of the output files if all exist; 0 otherwise
+ */
+ExtractBuildRule.prototype.buildTime = function (builder)
+{
+    // Timestamp and all the output files must exist.
+    // However, it is the timestamp file that always provides the output time.
+    for (var i in this.outNames)
+        if (!builder.fso.FileExists(this.outNames[i])) return 0;
+    return builder.fso.GetFile(this.outNames[0]).DateLastModified;
+}
+
+
+/**
+ * Removes all output files
+ * 
+ * @param builder  The builder object
+ */
+ExtractBuildRule.prototype.clean = BuildRule.prototype.clean;
+
+
+/**
+ * Creates an unzip build rule
+ * 
+ * @param outNames  Array of output files. You may list only the important ones, however, the cleaning will take care of only those then.
+ * @param outDir    Output directory
+ * @param tsName    Timestamp file name. Serves as a dummy output file to mark the extraction date. This is the actual output file used to detect if the rule needs rebuilding.
+ * @param inName    Input .zip file name
+ * @param depNames  Additional dependencies
+ *
+ * @returns  Build rule
+ */
+function UnzipBuildRule(outNames, outDir, tsName, inName, depNames)
+{
+    ExtractBuildRule.call(this, outNames, outDir, tsName, inName, depNames);
+
+    return this;
+}
+
+
+/**
+ * Builds the rule
+ * 
+ * @param builder  The builder object
+ */
+UnzipBuildRule.prototype.build = function (builder)
+{
+    // Unzip file.
+    if (builder.exec(
+        "unzip.exe " +
+        builder.unzipFlags.join(" ") +
+        " -o" +
+        " -d \"" + _CMD(this.outDir) + "\"" + 
+        " \"" + _CMD(this.inNames[0]) + "\"") != 0)
+        throw new Error("Unzip returned non-zero.");
+
+    ExtractBuildRule.prototype.build.call(this, builder);
+}
+
+
+/**
+ * Returns the time the rule was built
+ * 
+ * @param builder  The builder object
+ * 
+ * @returns  Oldest timestamp of the output files if all exist; 0 otherwise
+ */
+UnzipBuildRule.prototype.buildTime = ExtractBuildRule.prototype.buildTime;
+
+
+/**
+ * Removes all output files
+ * 
+ * @param builder  The builder object
+ */
+UnzipBuildRule.prototype.clean = ExtractBuildRule.prototype.clean;
+
+
+/**
+ * Creates an ungzip|tar build rule
+ * 
+ * @param outNames  Array of output files. You may list only the important ones, however, the cleaning will take care of only those then.
+ * @param outDir    Output directory
+ * @param tsName    Timestamp file name. Serves as a dummy output file to mark the extraction date. This is the actual output file used to detect if the rule needs rebuilding.
+ * @param inName    Input .tar.gz file name
+ * @param depNames  Additional dependencies
+ *
+ * @returns  Build rule
+ */
+function UntgzBuildRule(outNames, outDir, tsName, inName, depNames)
+{
+    ExtractBuildRule.call(this, outNames, outDir, tsName, inName, depNames);
+
+    return this;
+}
+
+
+/**
+ * Builds the rule
+ * 
+ * @param builder  The builder object
+ */
+UntgzBuildRule.prototype.build = function (builder)
+{
+    // Untar file.
+    if (builder.exec(
+        "gunzip.exe " +
+        builder.gunzipFlags.join(" ") +
+        " -c" + 
+        " \"" + _CMD(this.inNames[0]) + "\"" +
+        " | tar.exe " +
+        builder.tarFlags.join(" ") +
+        " -xC \"" + _CMD(this.outDir) + "\"") != 0)
+        throw new Error("gunzip|tar returned non-zero.");
+
+    ExtractBuildRule.prototype.build.call(this, builder);
+}
+
+
+/**
+ * Returns the time the rule was built
+ * 
+ * @param builder  The builder object
+ * 
+ * @returns  Oldest timestamp of the output files if all exist; 0 otherwise
+ */
+UntgzBuildRule.prototype.buildTime = ExtractBuildRule.prototype.buildTime;
+
+
+/**
+ * Removes all output files
+ * 
+ * @param builder  The builder object
+ */
+UntgzBuildRule.prototype.clean = ExtractBuildRule.prototype.clean;
+
 
 /*@end @*/
