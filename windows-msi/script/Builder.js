@@ -65,8 +65,27 @@ function Builder()
 
     this.force = false;
     this.rules = [];
+    this.ruleIndex = {};
 
     return this;
+}
+
+
+/**
+ * Adds a rule to the builder
+ * 
+ * @param {any} rule
+ */
+Builder.prototype.pushRule = function (rule)
+{
+    this.rules.push(rule);
+    for (var i in rule.outNames) {
+        var outFileAbsolute = this.fso.GetAbsolutePathName(rule.outNames[i]).toLowerCase();
+        if (outFileAbsolute in this.ruleIndex)
+            throw new Error("Rule for building " + rule.outNames[i] + " is already in the ruleset.");
+
+        this.ruleIndex[outFileAbsolute] = rule;
+    }
 }
 
 
@@ -90,52 +109,48 @@ Builder.prototype.build = function (outName)
                 if (outFileAbsolute == stack[i])
                     throw new Error("Cyclic dependency:\n   " + stack.join("\n    "));
 
-            for (var i in builder.rules) {
-                var rule = builder.rules[i];
-                for (var j in rule.outNames) {
-                    if (outFileAbsolute == builder.fso.GetAbsolutePathName(rule.outNames[j]).toLowerCase()) {
-                        // We found the rule to build builder file.
+            if (outFileAbsolute in builder.ruleIndex) {
+                // We found the rule to build builder file.
+                var rule = builder.ruleIndex[outFileAbsolute];
 
-                        // Have we already build this rule in this session?
-                        if (rule.timeBuilt != 0)
-                            return builder.fso.GetFile(outName).DateLastModified;
+                // Have we already build this rule in this session?
+                if (rule.timeBuilt != 0)
+                    return builder.fso.GetFile(outName).DateLastModified;
 
-                        // Build dependencies.
-                        var ts = 0;
-                        for (var k in rule.inNames) {
-                            var tsInput = build(rule.inNames[k]);
-                            if (ts < tsInput)
-                                ts = tsInput;
-                        }
+                // Build dependencies.
+                var ts = 0;
+                for (var i in rule.inNames) {
+                    var tsInput = build(rule.inNames[i]);
+                    if (ts < tsInput)
+                        ts = tsInput;
+                }
 
-                        // Is building required?
-                        if (!builder.force) {
-                            var tsOutput = rule.buildTime(builder);
-                            if (ts <= tsOutput) {
-                                rule.timeBuilt = tsOutput;
-                                return builder.fso.GetFile(outName).DateLastModified;
-                            }
-                        }
-
-                        // Make sure all output folders exist.
-                        for (var k in rule.outNames)
-                            builder.makeDir(builder.fso.GetParentFolderName(rule.outNames[k]))
-
-                        try {
-                            // Build!
-                            WScript.Echo("BUILD: " + outName);
-                            rule.build(builder);
-                        } catch (err) {
-                            // Clean the rule output should anything go wrong in build.
-                            // We don't want half finished zombie output files with fresh
-                            // timestamp lying around.
-                            rule.clean(builder);
-                            throw err;
-                        }
-
+                // Is building required?
+                if (!builder.force) {
+                    var tsOutput = rule.buildTime(builder);
+                    if (ts <= tsOutput) {
+                        rule.timeBuilt = tsOutput;
                         return builder.fso.GetFile(outName).DateLastModified;
                     }
                 }
+
+                // Make sure all output folders exist.
+                for (var i in rule.outNames)
+                    builder.makeDir(builder.fso.GetParentFolderName(rule.outNames[i]))
+
+                try {
+                    // Build!
+                    WScript.Echo("BUILD: " + outName);
+                    rule.build(builder);
+                } catch (err) {
+                    // Clean the rule output should anything go wrong in build.
+                    // We don't want half finished zombie output files with fresh
+                    // timestamp lying around.
+                    rule.clean(builder);
+                    throw err;
+                }
+
+                return builder.fso.GetFile(outName).DateLastModified;
             }
 
             if (builder.fso.FileExists(outName)) {
