@@ -128,7 +128,7 @@ Builder.prototype.build = function (outName)
                 // Is building required?
                 if (!builder.force) {
                     var tsOutput = rule.buildTime(builder);
-                    if (ts <= tsOutput) {
+                    if (tsOutput != 0 && ts <= tsOutput) {
                         rule.timeBuilt = tsOutput;
                         return builder.fso.GetFile(outName).DateLastModified;
                     }
