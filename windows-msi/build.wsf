@@ -119,7 +119,7 @@ clean	Cleans intermediate and output files</example>
                     // TODO: Migrate signed_by.cer to tap-windows-<ver>.zip.
                     // TODO: Update attestation-signed and WHQL-signed driver paths once available.
                     b.pushRule(new DownloadBuildRule(BuildPath("sources", "tap-windows-" + tapWindowsVersion + ".zip"), tapWindowsUrl, []));
-                    b.pushRule(new UnzipBuildRule(
+                    b.pushRule(new ExtractBuildRule(
                         [
                             BuildPath(tapWindowsPath, "amd64", "OemVista.inf"),
                             //BuildPath(tapWindowsPath, "amd64", "signed_by.cer"),
@@ -176,7 +176,7 @@ clean	Cleans intermediate and output files</example>
 
                     // Downloading and extracting Easy RSA
                     b.pushRule(new DownloadBuildRule(BuildPath("sources", "easy-rsa-" + easyRSAVersion + ".tar.gz"), easyRSAUrl , []));
-                    b.pushRule(new UntgzBuildRule(
+                    b.pushRule(new ExtractBuildRule(
                         [
                             BuildPath(easyRSAPath, "2.0", "openssl-1.0.0.cnf"),
                             BuildPath(easyRSAPath, "Windows", "build-ca.bat"),

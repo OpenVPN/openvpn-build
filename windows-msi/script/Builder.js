@@ -52,6 +52,7 @@ function Builder()
     this.unzipFlags = [];
     this.tarFlags = [];
     this.gunzipFlags = [];
+    this.bunzip2Flags = [];
 
     // Get the codepage Windows is using for stdin/stdout/stderr.
     switch (parseInt(this.wsh.RegRead("HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Nls\\CodePage\\OEMCP"), 10)) {
@@ -982,6 +983,39 @@ function ExtractBuildRule(outNames, outDir, tsName, inName, depNames)
  */
 ExtractBuildRule.prototype.build = function (builder)
 {
+    if (this.inNames[0].slice(-4).toLowerCase() == ".zip") {
+        // Unzip file.
+        if (builder.exec(
+            "unzip.exe " +
+            builder.unzipFlags.join(" ") +
+            " -o" +
+            " -d \"" + _CMD(this.outDir) + "\"" + 
+            " \"" + _CMD(this.inNames[0]) + "\"") != 0)
+            throw new Error("Unzip returned non-zero.");
+    } else if (this.inNames[0].slice(-7).toLowerCase() == ".tar.gz" || this.inNames[0].slice(-4).toLowerCase() == ".tgz") {
+        // Gunzip then untar file.
+        if (builder.exec(
+            "gunzip.exe " +
+            builder.gunzipFlags.join(" ") +
+            " -c" + 
+            " \"" + _CMD(this.inNames[0]) + "\"" +
+            " | tar.exe " +
+            builder.tarFlags.join(" ") +
+            " -xC \"" + _CMD(this.outDir) + "\"") != 0)
+            throw new Error("gunzip|tar returned non-zero.");
+    } else if (this.inNames[0].slice(-8).toLowerCase() == ".tar.bz2" || this.inNames[0].slice(-5).toLowerCase()() == ".tbz2") {
+        // Bunzip2 then untar file.
+        if (builder.exec(
+            "bunzip2.exe " +
+            builder.bunzip2Flags.join(" ") +
+            " -c" + 
+            " \"" + _CMD(this.inNames[0]) + "\"" +
+            " | tar.exe " +
+            builder.tarFlags.join(" ") +
+            " -xC \"" + _CMD(this.outDir) + "\"") != 0)
+            throw new Error("bunzip2|tar returned non-zero.");
+    }
+
     // Create the timestamp file.
     var datOut = WScript.CreateObject("ADODB.Stream");
     datOut.Open();
@@ -1022,122 +1056,6 @@ ExtractBuildRule.prototype.buildTime = function (builder)
  * @param builder  The builder object
  */
 ExtractBuildRule.prototype.clean = BuildRule.prototype.clean;
-
-
-/**
- * Creates an unzip build rule
- * 
- * @param outNames  Array of output files. You may list only the important ones, however, the cleaning will take care of only those then.
- * @param outDir    Output directory
- * @param tsName    Timestamp file name. Serves as a dummy output file to mark the extraction date. This is the actual output file used to detect if the rule needs rebuilding.
- * @param inName    Input .zip file name
- * @param depNames  Additional dependencies
- *
- * @returns  Build rule
- */
-function UnzipBuildRule(outNames, outDir, tsName, inName, depNames)
-{
-    ExtractBuildRule.call(this, outNames, outDir, tsName, inName, depNames);
-
-    return this;
-}
-
-
-/**
- * Builds the rule
- * 
- * @param builder  The builder object
- */
-UnzipBuildRule.prototype.build = function (builder)
-{
-    // Unzip file.
-    if (builder.exec(
-        "unzip.exe " +
-        builder.unzipFlags.join(" ") +
-        " -o" +
-        " -d \"" + _CMD(this.outDir) + "\"" + 
-        " \"" + _CMD(this.inNames[0]) + "\"") != 0)
-        throw new Error("Unzip returned non-zero.");
-
-    ExtractBuildRule.prototype.build.call(this, builder);
-}
-
-
-/**
- * Returns the time the rule was built
- * 
- * @param builder  The builder object
- * 
- * @returns  Oldest timestamp of the output files if all exist; 0 otherwise
- */
-UnzipBuildRule.prototype.buildTime = ExtractBuildRule.prototype.buildTime;
-
-
-/**
- * Removes all output files
- * 
- * @param builder  The builder object
- */
-UnzipBuildRule.prototype.clean = ExtractBuildRule.prototype.clean;
-
-
-/**
- * Creates an ungzip|tar build rule
- * 
- * @param outNames  Array of output files. You may list only the important ones, however, the cleaning will take care of only those then.
- * @param outDir    Output directory
- * @param tsName    Timestamp file name. Serves as a dummy output file to mark the extraction date. This is the actual output file used to detect if the rule needs rebuilding.
- * @param inName    Input .tar.gz file name
- * @param depNames  Additional dependencies
- *
- * @returns  Build rule
- */
-function UntgzBuildRule(outNames, outDir, tsName, inName, depNames)
-{
-    ExtractBuildRule.call(this, outNames, outDir, tsName, inName, depNames);
-
-    return this;
-}
-
-
-/**
- * Builds the rule
- * 
- * @param builder  The builder object
- */
-UntgzBuildRule.prototype.build = function (builder)
-{
-    // Untar file.
-    if (builder.exec(
-        "gunzip.exe " +
-        builder.gunzipFlags.join(" ") +
-        " -c" + 
-        " \"" + _CMD(this.inNames[0]) + "\"" +
-        " | tar.exe " +
-        builder.tarFlags.join(" ") +
-        " -xC \"" + _CMD(this.outDir) + "\"") != 0)
-        throw new Error("gunzip|tar returned non-zero.");
-
-    ExtractBuildRule.prototype.build.call(this, builder);
-}
-
-
-/**
- * Returns the time the rule was built
- * 
- * @param builder  The builder object
- * 
- * @returns  Oldest timestamp of the output files if all exist; 0 otherwise
- */
-UntgzBuildRule.prototype.buildTime = ExtractBuildRule.prototype.buildTime;
-
-
-/**
- * Removes all output files
- * 
- * @param builder  The builder object
- */
-UntgzBuildRule.prototype.clean = ExtractBuildRule.prototype.clean;
 
 
 /*@end @*/
