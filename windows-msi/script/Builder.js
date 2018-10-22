@@ -924,7 +924,7 @@ DownloadBuildRule.prototype.build = function (builder)
                     datOut.Close();
                 }
             } else
-                throw new Error("GET " + url + " failed with status " + req.status + " " + req.statusText + ".");
+                throw new Error("GET " + rule.url + " failed with status " + req.status + " " + req.statusText + ".");
         }
     }
     req.send(null);
