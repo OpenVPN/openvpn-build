@@ -94,8 +94,8 @@ clean	Cleans intermediate and output files</example>
                     "wixLinkDepenencies": [
                         BuildPath(tapWindowsPath, "amd64", "whql", "OemVista.inf"),
                         BuildPath(tapWindowsPath, "amd64", "whql", "signed_by.cer"),
-                        BuildPath(tapWindowsPath, "amd64", "whql", "tap0901.cat"),
-                        BuildPath(tapWindowsPath, "amd64", "whql", "tap0901.sys")
+                        BuildPath(tapWindowsPath, "amd64", "whql", ver.define["PRODUCT_TAP_WIN_COMPONENT_ID"] + ".cat"),
+                        BuildPath(tapWindowsPath, "amd64", "whql", ver.define["PRODUCT_TAP_WIN_COMPONENT_ID"] + ".sys")
                     ]
                 }
             }
@@ -124,12 +124,12 @@ clean	Cleans intermediate and output files</example>
                         [
                             BuildPath(tapWindowsPath, "amd64", "OemVista.inf"),
                             //BuildPath(tapWindowsPath, "amd64", "signed_by.cer"),
-                            BuildPath(tapWindowsPath, "amd64", "tap0901.cat"),
-                            BuildPath(tapWindowsPath, "amd64", "tap0901.sys"),
+                            BuildPath(tapWindowsPath, "amd64", ver.define["PRODUCT_TAP_WIN_COMPONENT_ID"] + ".cat"),
+                            BuildPath(tapWindowsPath, "amd64", ver.define["PRODUCT_TAP_WIN_COMPONENT_ID"] + ".sys"),
                             BuildPath(tapWindowsPath, "i386", "OemVista.inf"),
                             //BuildPath(tapWindowsPath, "i386", "signed_by.cer"),
-                            BuildPath(tapWindowsPath, "i386", "tap0901.cat"),
-                            BuildPath(tapWindowsPath, "i386", "tap0901.sys"),
+                            BuildPath(tapWindowsPath, "i386", ver.define["PRODUCT_TAP_WIN_COMPONENT_ID"] + ".cat"),
+                            BuildPath(tapWindowsPath, "i386", ver.define["PRODUCT_TAP_WIN_COMPONENT_ID"] + ".sys"),
                             BuildPath(tapWindowsPath, "include", "tap-windows.h")
                         ],
                         buildPath, // "tap-windows-" + tapWindowsVersion folder is provided by .zip file.
@@ -151,26 +151,26 @@ clean	Cleans intermediate and output files</example>
                         ], BuildPath(tapWindowsPath, "amd64", "OemVista.inf"), []));
                     b.pushRule(new CopyFileBuildRule(
                         [
-                            BuildPath(tapWindowsPath, "amd64", "attsgn", "tap0901.cat"),
-                            BuildPath(tapWindowsPath, "amd64", "whql"  , "tap0901.cat")
-                        ], BuildPath(tapWindowsPath, "amd64", "tap0901.cat"), []));
+                            BuildPath(tapWindowsPath, "amd64", "attsgn", ver.define["PRODUCT_TAP_WIN_COMPONENT_ID"] + ".cat"),
+                            BuildPath(tapWindowsPath, "amd64", "whql"  , ver.define["PRODUCT_TAP_WIN_COMPONENT_ID"] + ".cat")
+                        ], BuildPath(tapWindowsPath, "amd64", ver.define["PRODUCT_TAP_WIN_COMPONENT_ID"] + ".cat"), []));
                     b.pushRule(new CopyFileBuildRule(
                         [
-                            BuildPath(tapWindowsPath, "amd64", "attsgn", "tap0901.sys"),
-                            BuildPath(tapWindowsPath, "amd64", "whql"  , "tap0901.sys")
-                        ], BuildPath(tapWindowsPath, "amd64", "tap0901.sys"), []));
+                            BuildPath(tapWindowsPath, "amd64", "attsgn", ver.define["PRODUCT_TAP_WIN_COMPONENT_ID"] + ".sys"),
+                            BuildPath(tapWindowsPath, "amd64", "whql"  , ver.define["PRODUCT_TAP_WIN_COMPONENT_ID"] + ".sys")
+                        ], BuildPath(tapWindowsPath, "amd64", ver.define["PRODUCT_TAP_WIN_COMPONENT_ID"] + ".sys"), []));
                     b.pushRule(new CopyFileBuildRule(
                         [
                             BuildPath(tapWindowsPath, "i386", "attsgn", "OemVista.inf")
                         ], BuildPath(tapWindowsPath, "i386", "OemVista.inf"), []));
                     b.pushRule(new CopyFileBuildRule(
                         [
-                            BuildPath(tapWindowsPath, "i386", "attsgn", "tap0901.cat")
-                        ], BuildPath(tapWindowsPath, "i386", "tap0901.cat"), []));
+                            BuildPath(tapWindowsPath, "i386", "attsgn", ver.define["PRODUCT_TAP_WIN_COMPONENT_ID"] + ".cat")
+                        ], BuildPath(tapWindowsPath, "i386", ver.define["PRODUCT_TAP_WIN_COMPONENT_ID"] + ".cat"), []));
                     b.pushRule(new CopyFileBuildRule(
                         [
-                            BuildPath(tapWindowsPath, "i386", "attsgn", "tap0901.sys")
-                        ], BuildPath(tapWindowsPath, "i386", "tap0901.sys"), []));
+                            BuildPath(tapWindowsPath, "i386", "attsgn", ver.define["PRODUCT_TAP_WIN_COMPONENT_ID"] + ".sys")
+                        ], BuildPath(tapWindowsPath, "i386", ver.define["PRODUCT_TAP_WIN_COMPONENT_ID"] + ".sys"), []));
 
                     // Downloading openvpnserv2.exe
                     b.pushRule(new DownloadBuildRule(BuildPath(openVPNServ2Path, "openvpnserv2.exe"), openVPNServ2Url, []));
@@ -307,12 +307,12 @@ clean	Cleans intermediate and output files</example>
                                 BuildPath(p.buildPath, "bin", "tapctl.exe"),
                                 BuildPath(p.tapWindowsPath, "OemVista.inf"),
                                 BuildPath(p.tapWindowsPath, "signed_by.cer"),
-                                BuildPath(p.tapWindowsPath, "tap0901.cat"),
-                                BuildPath(p.tapWindowsPath, "tap0901.sys"),
+                                BuildPath(p.tapWindowsPath, ver.define["PRODUCT_TAP_WIN_COMPONENT_ID"] + ".cat"),
+                                BuildPath(p.tapWindowsPath, ver.define["PRODUCT_TAP_WIN_COMPONENT_ID"] + ".sys"),
                                 BuildPath(p.tapWindowsPath, "attsgn", "OemVista.inf"),
                                 BuildPath(p.tapWindowsPath, "attsgn", "signed_by.cer"),
-                                BuildPath(p.tapWindowsPath, "attsgn", "tap0901.cat"),
-                                BuildPath(p.tapWindowsPath, "attsgn", "tap0901.sys"),
+                                BuildPath(p.tapWindowsPath, "attsgn", ver.define["PRODUCT_TAP_WIN_COMPONENT_ID"] + ".cat"),
+                                BuildPath(p.tapWindowsPath, "attsgn", ver.define["PRODUCT_TAP_WIN_COMPONENT_ID"] + ".sys"),
                                 BuildPath(tapWindowsPath, "include", "tap-windows.h"),
                                 BuildPath(openVPNServ2Path, "openvpnserv2.exe"),
                                 BuildPath(buildPath, "README-config.txt"),
