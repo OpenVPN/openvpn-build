@@ -450,21 +450,22 @@ CopyFileBuildRule.prototype.clean = BuildRule.prototype.clean;
  * @param outName     Output .txt file name
  * @param outCharset  Charset to use on output (e.g. "utf-8", "windows-1251" etc.)
  * @param outLineSep  Line separator on output (e.g. adCRLF, adLF)
- * @param inName      Input .txt.in file name
+ * @param inNames     Input .txt file names. Files are concatenated together.
  * @param inCharset   Charset to expect on input (e.g. "utf-8", "windows-1251" etc.)
  * @param inLineSep   Line separator on input (e.g. adCRLF, adLF)
  * @param depNames    Additional dependencies
  *
  * @returns  Build rule
  */
-function ConvertTextBuildRule(outName, outCharset, outLineSep, inName, inCharset, inLineSep, depNames)
+function ConvertTextBuildRule(outName, outCharset, outLineSep, inNames, inCharset, inLineSep, depNames)
 {
-    BuildRule.call(this, [outName], [inName].concat(depNames));
+    BuildRule.call(this, [outName], inNames.concat(depNames));
 
     this.outCharset = outCharset;
     this.outLineSep = outLineSep;
-    this.inCharset = inCharset;
-    this.inLineSep = inLineSep;
+    this.txtNames   = inNames;
+    this.inCharset  = inCharset;
+    this.inLineSep  = inLineSep;
 
     return this;
 }
@@ -477,33 +478,35 @@ function ConvertTextBuildRule(outName, outCharset, outLineSep, inName, inCharset
  */
 ConvertTextBuildRule.prototype.build = function (builder)
 {
-    WScript.Echo("CONVERT: " + this.inNames[0] + " >> " + this.outNames[0]);
-    var datIn = WScript.CreateObject("ADODB.Stream");
-    datIn.Open();
+    WScript.Echo("CONVERT: " + this.txtNames.join("+") + " >> " + this.outNames[0]);
+    var datOut = WScript.CreateObject("ADODB.Stream");
+    datOut.Open();
     try {
-        // Load input file.
-        datIn.Type = adTypeText;
-        datIn.Charset = this.inCharset;
-        datIn.LineSeparator = this.inLineSep;
-        datIn.LoadFromFile(this.inNames[0]);
+        datOut.Type = adTypeText;
+        datOut.Charset = this.outCharset;
+        datOut.LineSeparator = this.outLineSep;
 
-        var datOut = WScript.CreateObject("ADODB.Stream");
-        datOut.Open();
-        try {
-            datOut.Type = adTypeText;
-            datOut.Charset = this.outCharset;
-            datOut.LineSeparator = this.outLineSep;
+        for (var i in this.txtNames) {
+            var datIn = WScript.CreateObject("ADODB.Stream");
+            datIn.Open();
+            try {
+                // Load input file.
+                datIn.Type = adTypeText;
+                datIn.Charset = this.inCharset;
+                datIn.LineSeparator = this.inLineSep;
+                datIn.LoadFromFile(this.txtNames[i]);
 
-            while (!datIn.EOS)
-                datOut.WriteText(this.transform(builder, datIn.ReadText(adReadLine)), adWriteLine);
-
-            // Persist stream to file.
-            datOut.SaveToFile(this.outNames[0], adSaveCreateOverWrite);
-        } finally {
-            datOut.Close();
+                while (!datIn.EOS)
+                    datOut.WriteText(this.transform(builder, datIn.ReadText(adReadLine)), adWriteLine);
+            } finally {
+                datIn.Close();
+            }
         }
+
+        // Persist stream to file.
+        datOut.SaveToFile(this.outNames[0], adSaveCreateOverWrite);
     } finally {
-        datIn.Close();
+        datOut.Close();
     }
 
     BuildRule.prototype.build.call(this, builder);
@@ -548,7 +551,7 @@ ConvertTextBuildRule.prototype.transform = function (builder, str)
  * @param outName     Output .txt file name
  * @param outCharset  Charset to use on output (e.g. "utf-8", "windows-1251" etc.)
  * @param outLineSep  Line separator on output (e.g. adCRLF, adLF)
- * @param inName      Input .txt.in file name
+ * @param inNames     Input .txt.in file names. Files are concatenated together.
  * @param inCharset   Charset to expect on input (e.g. "utf-8", "windows-1251" etc.)
  * @param inLineSep   Line separator on input (e.g. adCRLF, adLF)
  * @param ver         M4 parser
@@ -556,9 +559,9 @@ ConvertTextBuildRule.prototype.transform = function (builder, str)
  *
  * @returns  Build rule
  */
-function PreprocessBuildRule(outName, outCharset, outLineSep, inName, inCharset, inLineSep, ver, depNames)
+function PreprocessBuildRule(outName, outCharset, outLineSep, inNames, inCharset, inLineSep, ver, depNames)
 {
-    ConvertTextBuildRule.call(this, outName, outCharset, outLineSep, inName, inCharset, inLineSep, depNames);
+    ConvertTextBuildRule.call(this, outName, outCharset, outLineSep, inNames, inCharset, inLineSep, depNames);
 
     this.ver = ver;
 

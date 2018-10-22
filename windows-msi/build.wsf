@@ -226,10 +226,10 @@ clean	Cleans intermediate and output files</example>
                         b.pushRule(new WiXCompileBuildRule(BuildPath(p.buildPath, "msi.wixobj"), "msi.wxs", ["version.m4"], wixCompilerFlags));
 
                         // Text file generation
-                        b.pushRule(new ConvertTextBuildRule(BuildPath(p.buildPath, "license.txt"), "utf-8", adCRLF, BuildPath(p.sourcePath, "share", "doc", "openvpn", "license.txt"          ), "utf-8", adLF, []));
-                        b.pushRule(new ConvertTextBuildRule(BuildPath(p.buildPath, "client.ovpn"), "utf-8", adCRLF, BuildPath(p.sourcePath, "share", "doc", "openvpn", "sample", "client.ovpn"), "utf-8", adLF, []));
-                        b.pushRule(new ConvertTextBuildRule(BuildPath(p.buildPath, "sample.ovpn"), "utf-8", adCRLF, BuildPath(p.sourcePath, "share", "doc", "openvpn", "sample", "sample.ovpn"), "utf-8", adLF, []));
-                        b.pushRule(new ConvertTextBuildRule(BuildPath(p.buildPath, "server.ovpn"), "utf-8", adCRLF, BuildPath(p.sourcePath, "share", "doc", "openvpn", "sample", "server.ovpn"), "utf-8", adLF, []));
+                        b.pushRule(new ConvertTextBuildRule(BuildPath(p.buildPath, "license.txt"), "utf-8", adCRLF, [BuildPath(p.sourcePath, "share", "doc", "openvpn", "license.txt"          )], "utf-8", adLF, []));
+                        b.pushRule(new ConvertTextBuildRule(BuildPath(p.buildPath, "client.ovpn"), "utf-8", adCRLF, [BuildPath(p.sourcePath, "share", "doc", "openvpn", "sample", "client.ovpn")], "utf-8", adLF, []));
+                        b.pushRule(new ConvertTextBuildRule(BuildPath(p.buildPath, "sample.ovpn"), "utf-8", adCRLF, [BuildPath(p.sourcePath, "share", "doc", "openvpn", "sample", "sample.ovpn")], "utf-8", adLF, []));
+                        b.pushRule(new ConvertTextBuildRule(BuildPath(p.buildPath, "server.ovpn"), "utf-8", adCRLF, [BuildPath(p.sourcePath, "share", "doc", "openvpn", "sample", "server.ovpn")], "utf-8", adLF, []));
 
                         // WiX linker flags
                         var wixLinkerFlags = [
@@ -318,8 +318,8 @@ clean	Cleans intermediate and output files</example>
                     }
 
                     // Readme files generation
-                    b.pushRule(new PreprocessBuildRule(BuildPath(buildPath, "README-config.txt"), "utf-8", adCRLF, BuildPath("doc", "config", "README.txt.in"), "utf-8", adCRLF, ver, ["version.m4"]));
-                    b.pushRule(new PreprocessBuildRule(BuildPath(buildPath, "README-log.txt"   ), "utf-8", adCRLF, BuildPath("doc", "log", "README.txt.in"   ), "utf-8", adCRLF, ver, ["version.m4"]));
+                    b.pushRule(new PreprocessBuildRule(BuildPath(buildPath, "README-config.txt"), "utf-8", adCRLF, [BuildPath("doc", "config", "README.txt.in")], "utf-8", adCRLF, ver, ["version.m4"]));
+                    b.pushRule(new PreprocessBuildRule(BuildPath(buildPath, "README-log.txt"   ), "utf-8", adCRLF, [BuildPath("doc", "log", "README.txt.in"   )], "utf-8", adCRLF, ver, ["version.m4"]));
                     break;
 
                 case "exe":
@@ -332,7 +332,7 @@ clean	Cleans intermediate and output files</example>
             switch (cmd) {
                 case "all": case "clean":
                 case "exe":
-                    b.pushRule(new PreprocessBuildRule(BuildPath(buildPath, "boot.wsf"), "utf-8", adCRLF, "boot.wsf.in", "utf-8", adCRLF, ver, ["version.m4"]));
+                    b.pushRule(new PreprocessBuildRule(BuildPath(buildPath, "boot.wsf"), "utf-8", adCRLF, ["boot.wsf.in"], "utf-8", adCRLF, ver, ["version.m4"]));
                     b.pushRule(new SevenZipSFXBuildRule(
                         BuildPath(outputPath, ver.define.PRODUCT_NAME + "-install-" + ver.define.PRODUCT_VERSION + ".exe"),
                         [BuildPath(buildPath, "boot.wsf")].concat(msiFiles),
