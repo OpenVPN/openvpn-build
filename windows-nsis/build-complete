@@ -7,18 +7,18 @@ die() {
 }
 
 main() {
-	rm -fr "${TMPDIR}"
+	rm -fr "${BUILD_TMPDIR}"
 
-	"${WGET}" ${WGET_OPTS} --directory-prefix=${TMPDIR} "${EASY_RSA_URL}" || die "get easy-rsa"
-	"${WGET}" ${WGET_OPTS} --directory-prefix=${TMPDIR} "${TAP_WINDOWS_INSTALLER_URL}" || die "get tap-windows"
-	"${WGET}" ${WGET_OPTS} --directory-prefix=${TMPDIR} "${OPENVPNSERV2_URL}" || die "get openvpnserv2"
+	"${WGET}" ${WGET_OPTS} --directory-prefix=${BUILD_TMPDIR} "${EASY_RSA_URL}" || die "get easy-rsa"
+	"${WGET}" ${WGET_OPTS} --directory-prefix=${BUILD_TMPDIR} "${TAP_WINDOWS_INSTALLER_URL}" || die "get tap-windows"
+	"${WGET}" ${WGET_OPTS} --directory-prefix=${BUILD_TMPDIR} "${OPENVPNSERV2_URL}" || die "get openvpnserv2"
 
 	for arch in i686 x86_64; do
 		echo "BUILDING ${arch}"
 
-		IMAGEROOT="$(pwd)/${TMPDIR}/image-${arch}" \
+		IMAGEROOT="$(pwd)/${BUILD_TMPDIR}/image-${arch}" \
 			SOURCESROOT="$(pwd)/sources" \
-			BUILDROOT="${TMPDIR}/build-${arch}" \
+			BUILDROOT="${BUILD_TMPDIR}/build-${arch}" \
 			CHOST=${arch}-w64-mingw32 \
 			../generic/build \
 				--special-build="${SPECIAL_BUILD}" \
@@ -26,20 +26,18 @@ main() {
 				${WIN_SAVE_DEPCACHE:+--save-depcache=win-$arch} \
 				|| die "build ${arch}"
 
-		# Loop here if building the depcache:
-		[ -n "${DO_ONLY_DEPS}" ] && continue
-
 	done
 
-		ROOT="${TMPDIR}/installer" \
+	if [ -z "${DO_ONLY_DEPS}" ]; then
+		ROOT="${BUILD_TMPDIR}/installer" \
 			./build \
 			--installer-version="${INSTALLER_VERSION}" \
 			--special-build="${SPECIAL_BUILD}" \
-			--openvpn-bin-tarball-i686=$(ls ${TMPDIR}/image-i686/openvpn-i686-*-bin.*) \
-			--openvpn-bin-tarball-x86_64=$(ls ${TMPDIR}/image-x86_64/openvpn-x86_64-*-bin.*) \
-			--easy-rsa-tarball=$(ls ${TMPDIR}/easy-rsa-*) \
-			--tap-windows=$(ls ${TMPDIR}/tap-windows-*) \
-			--openvpnserv2=$(ls ${TMPDIR}/openvpnserv2*) \
+			--openvpn-bin-tarball-i686=$(ls ${BUILD_TMPDIR}/image-i686/openvpn-i686-*-bin.*) \
+			--openvpn-bin-tarball-x86_64=$(ls ${BUILD_TMPDIR}/image-x86_64/openvpn-x86_64-*-bin.*) \
+			--easy-rsa-tarball=$(ls ${BUILD_TMPDIR}/easy-rsa-*) \
+			--tap-windows=$(ls ${BUILD_TMPDIR}/tap-windows-*) \
+			--openvpnserv2=$(ls ${BUILD_TMPDIR}/openvpnserv2*) \
 			--output-dir="${OUTPUT_DIR}" \
 			${DO_SIGN:+--sign} \
 			--sign-pkcs12="${SIGN_PKCS12}" \
@@ -47,8 +45,7 @@ main() {
 			--sign-timestamp="${SIGN_TIMESTAMP_URL}" \
 			|| die "pack installer"
 
-	echo
-	if [ -z "${DO_ONLY_DEPS}" ]; then
+		echo
 		echo "NOTICE: OpenVPN Installers are at '${OUTPUT_DIR}'"
 	else
 		echo "NOTICE: depcache prepared for future use"
@@ -59,7 +56,7 @@ main() {
 cd "$(dirname "$0")"
 . ./build-complete.vars
 
-TMPDIR="${TMPDIR:-tmp}"
+BUILD_TMPDIR="${BUILD_TMPDIR:-tmp}"
 OUTPUT_DIR="."
 SPECIAL_BUILD=""
 export CBUILD="${CBUILD:-$(gcc -dumpmachine)}"
