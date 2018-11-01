@@ -34,9 +34,13 @@ var ForWriting = 2;
 var adTypeBinary = 1;
 var adTypeText = 2;
 var adSaveCreateOverWrite = 2;
+var proxy = {type:2, host: ""};
 
 function _http_get(url) {
 	var http = new ActiveXObject("WinHttp.WinHttpRequest.5.1");
+	if(proxy.host && proxy.host.length>0) {
+            http.SetProxy(proxy.type, proxy.host);
+	}
 	http.Open("GET", url, false);
 	http.send();
 	return http;
