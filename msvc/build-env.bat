@@ -20,6 +20,7 @@ set P7ZIP_URL=https://datapacket.dl.sourceforge.net/project/sevenzip/7-Zip/9.20/
 if "%ProgramFiles(x86)%"=="" set ProgramFiles(x86)=%ProgramFiles%
 if "%VSCOMNTOOLS%"=="" set VSCOMNTOOLS=%ProgramFiles(x86)%\Microsoft Visual Studio\2017\Professional\Common7\Tools
 if not exist "%VSCOMNTOOLS%" set VSCOMNTOOLS=%ProgramFiles(x86)%\Microsoft Visual Studio\2017\Community\Common7\Tools
+if not exist "%VSCOMNTOOLS%" set VSCOMNTOOLS=%ProgramFiles(x86)%\Microsoft Visual Studio\2017\Enterprise\Common7\Tools
 if "%VSHOME%"=="" SET VSHOME=%VSCOMNTOOLS%\..\..
 if "%VCHOME%"=="" SET VCHOME=%VSHOME%\VC
 
