@@ -40,6 +40,8 @@ function _http_get(url) {
 	var http = new ActiveXObject("WinHttp.WinHttpRequest.5.1");
 	if(proxy.host && proxy.host.length>0) {
             http.SetProxy(proxy.type, proxy.host);
+	}else{
+	    http.SetProxy(1);// ovveride proxy setting	
 	}
 	http.Open("GET", url, false);
 	http.send();
