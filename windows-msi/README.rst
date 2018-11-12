@@ -74,19 +74,20 @@ The ``build.wsf`` tool does not support digital signing of MSI and EXE files
   appropriate MSI package unelevated. The UAC elevation is requested only
   later when MSI package actually starts the install process. Therefore, it is
   vital to digitally sign MSI packages. Digital signing of EXE installer is
-  optional.
+  optional, but recommended to decrease the chance Windows SmartScreen will
+  treat our EXE installer as malware on downloads.
 
-- When signing MSI packages, add a signature description (``/d`` flag with
+- When signing MSI packages, set a signature description (``/d`` flag with
   ``signtool.exe`` utility). The ``msiexec.exe`` saves the MSI package under
   some random name and launches an elevated process to install it. When the
   signature on the MSI package contains no description, Windows displays the
-  MSI filename instead on the UAC prompt. Now MSI having a random filename the
-  UAC prompt gets quite confusing. Therefore, we strongly encourage you to add
-  a description to the MSI signature accurately describing the package
+  MSI filename instead on the UAC prompt. Now MSI having a random filename,
+  the UAC prompt gets quite confusing. Therefore, we strongly encourage you to
+  set a description in the MSI signature accurately describing the package
   content.
 
 - MSI packages do not support multiple signatures. Sign them only once using
-  SHA-1 signature, since Windows Vista does not recognize SHA-256 signatures.
+  SHA-1 digest, since Windows Vista does not recognize SHA-256 signatures.
 
 
 .. _`WiX Toolset`: http://wixtoolset.org/
