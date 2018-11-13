@@ -9,29 +9,35 @@ Requirements
 ------------
 
 1. `WiX Toolset`_ - tested with 3.11.1
-2. `unzip.exe`, `tar.exe`, `gunzip.exe` and `bunzip2.exe` in path
+2. ``unzip.exe``, ``tar.exe``, ``gunzip.exe`` and ``bunzip2.exe`` in path
 
 
 Usage
 -----
 
-1. Cross compile OpenVPN using `openvpn-build/generic` build system on Linux.
+1. Cross compile OpenVPN using ``openvpn-build/generic`` build system on
+   Linux.
 
-2. Digitally sign the `image-win(32|64)/openvpn/bin/tapctl.exe` utility.
+2. Digitally sign binaries in ``openvpn-build/generic/image-win(32|64)/openvpn/
+   bin`` folder. The ``tapctl.exe`` requires elevation, therefore it should be
+   digitally signed at least.
+
    Follow the standard practice of Windows EXE/DLL signing (SHA-1 and SHA-256
    double signatures etc.).
 
-3. Compress the OpenVPN binary images `image-win(32|64)/openvpn` separately
-   and upload. Please mind that the binary image archive contains Unix
-   symlinks not supported on Windows. When recompressing, please use ZIP.
-
-4. Adjust ``version.md4``. It is important to increment ``PRODUCT_VERSION``
+3. Adjust ``version.md4``. It is important to increment ``PRODUCT_VERSION``
    *and* ``PRODUCT_VERSION_GUID`` on each release. MSI upgrading logic relies
    on this.
 
-5. Open Command Prompt and ``cd`` to ``windows-msi`` folder.
+4. Open Command Prompt on Windows and ``cd`` to ``openvpn-build\windows-msi``
+   folder.
 
-6. Run ``cscript build.wsf`` to build the packages. The ``build.wsf`` is a
+   To transfer the openvpn-build site to a Windows computer, you can copy it,
+   or share it using Samba on the Linux box. On a Windows computer mount the
+   Samba share as a drive (e.g. ``Z:``), since you cannot ``cd`` to a UNC path
+   of form ``\\computer\share\path``.
+
+5. Run ``cscript build.wsf`` to build the packages. The ``build.wsf`` is a
    simple Makefile type building tool developed to avoid Microsoft Visual
    Studio or GNU Make requirements. Refer to ``build.wsf`` for exact usage::
 
@@ -53,7 +59,7 @@ Usage
     exe     Builds EXE installer only
     clean   Cleans intermediate and output files
 
-7. The MSI packages and EXE installer will be put to ``image`` subfolder.
+6. The MSI packages and EXE installer will be put to ``image`` subfolder.
 
 
 Digital Signing
