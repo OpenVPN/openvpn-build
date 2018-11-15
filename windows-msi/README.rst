@@ -22,9 +22,6 @@ Usage
    bin`` folder. The ``tapctl.exe`` requires elevation, therefore it should be
    digitally signed at least.
 
-   Follow the standard practice of Windows EXE/DLL signing (SHA-1 and SHA-256
-   double signatures etc.).
-
 3. Adjust ``version.md4``. It is important to increment ``PRODUCT_VERSION``
    *and* ``PRODUCT_VERSION_GUID`` on each release. MSI upgrading logic relies
    on this.
@@ -91,9 +88,6 @@ The ``build.wsf`` tool does not support digital signing of MSI and EXE files
   the UAC prompt gets quite confusing. Therefore, we strongly encourage you to
   set a description in the MSI signature accurately describing the package
   content.
-
-- MSI packages do not support multiple signatures. Sign them only once using
-  SHA-1 digest, since Windows Vista does not recognize SHA-256 signatures.
 
 
 .. _`WiX Toolset`: http://wixtoolset.org/
