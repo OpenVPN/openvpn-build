@@ -1354,7 +1354,7 @@
                 Id="OpenVPN.Service"
                 Title="$(var.PRODUCT_NAME) Service"
                 Description="Service wrappers"
-                Level="3"
+                Level="2"
                 ConfigurableDirectory="PRODUCTDIR"
                 AllowAdvertise="no">
                 <Condition Level="1"><![CDATA[NSIS.OPENVPN.BIN.OPENVPNSERV2.EXE]]></Condition>
