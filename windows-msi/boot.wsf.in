@@ -22,7 +22,7 @@
 		<runtime>
 			<usage>Lauches architecture-specific @PRODUCT_NAME@ MSI package for install.
 
-@PRODUCT_NAME@-install-@PRODUCT_VERSION@.exe [Additional msiexec.exe parameters]
+@PRODUCT_NAME@-install-@PRODUCT_VERSION@-@PACKAGE_VERSION@.exe [Additional msiexec.exe parameters]
 
 
 Notes:
@@ -37,16 +37,16 @@ Notes:
 
 Examples:
 
-@PRODUCT_NAME@-install-@PRODUCT_VERSION@.exe ADDLOCAL=driver,util,sdk
+@PRODUCT_NAME@-install-@PRODUCT_VERSION@-@PACKAGE_VERSION@.exe ADDLOCAL=driver,util,sdk
    Install "driver", "util" and "sdk" features.
 
-@PRODUCT_NAME@-install-@PRODUCT_VERSION@.exe INSTALLDIR=&lt;folder&gt;
+@PRODUCT_NAME@-install-@PRODUCT_VERSION@-@PACKAGE_VERSION@.exe INSTALLDIR=&lt;folder&gt;
    Set default installation folder.
 
-@PRODUCT_NAME@-install-@PRODUCT_VERSION@.exe /qb
+@PRODUCT_NAME@-install-@PRODUCT_VERSION@-@PACKAGE_VERSION@.exe /qb
    Skip GUI and display progress indicator only.
 
-@PRODUCT_NAME@-install-@PRODUCT_VERSION@.exe /qn
+@PRODUCT_NAME@-install-@PRODUCT_VERSION@-@PACKAGE_VERSION@.exe /qn
    Display no GUI and no progress indicator. Must be invoked elevated
    as it will not prompt for elevation either.
 </usage>
@@ -102,7 +102,7 @@ Examples:
                 default:      plat = "x86"  ; break;
             }
             var
-                msi_name = "@PRODUCT_NAME@-@PRODUCT_VERSION@-" + plat + ".msi",
+                msi_name = "@PRODUCT_NAME@-@PRODUCT_VERSION@-@PACKAGE_VERSION@-" + plat + ".msi",
                 log_name = "@PRODUCT_NAME@-install.log",
                 cmd = wsh.Run("msiexec.exe /i \"" + msi_name + "\" /l* \"%TEMP%\\" + log_name + "\"" + extra_args, 1, true);
 

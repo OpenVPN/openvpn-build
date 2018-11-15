@@ -192,6 +192,7 @@ clean	Cleans intermediate and output files</example>
                             "-dPRODUCT_PUBLISHER=\""            + _CMD(ver.define["PRODUCT_PUBLISHER"           ]) + "\"",
                             "-dPRODUCT_NAME=\""                 + _CMD(ver.define["PRODUCT_NAME"                ]) + "\"",
                             "-dPRODUCT_VERSION=\""              + _CMD(ver.define["PRODUCT_VERSION"             ]) + "\"",
+                            "-dPACKAGE_VERSION=\""              + _CMD(ver.define["PACKAGE_VERSION"             ]) + "\"",
                             "-dPRODUCT_TAP_NAME=\""             + _CMD(ver.define["PRODUCT_TAP_NAME"            ]) + "\"",
                             "-dPRODUCT_TAP_WIN_COMPONENT_ID=\"" + _CMD(ver.define["PRODUCT_TAP_WIN_COMPONENT_ID"]) + "\"",
                             "-dPRODUCT_PLATFORM=\""             + plat                                             + "\"",
@@ -227,7 +228,7 @@ clean	Cleans intermediate and output files</example>
                         ];
 
                         // WiX linking
-                        var msiFile = BuildPath(outputPath, ver.define.PRODUCT_NAME + "-" + ver.define.PRODUCT_VERSION + "-" + plat + ".msi");
+                        var msiFile = BuildPath(outputPath, ver.define.PRODUCT_NAME + "-" + ver.define.PRODUCT_VERSION + "-" + ver.define.PACKAGE_VERSION + "-" + plat + ".msi");
                         msiFiles.push(msiFile);
                         b.pushRule(new WiXLinkBuildRule(
                             msiFile,
@@ -304,7 +305,7 @@ clean	Cleans intermediate and output files</example>
 
                 case "exe":
                     for (i in platforms)
-                        msiFiles.push(BuildPath(outputPath, ver.define.PRODUCT_NAME + "-" + ver.define.PRODUCT_VERSION + "-" + platforms[i] + ".msi"));
+                        msiFiles.push(BuildPath(outputPath, ver.define.PRODUCT_NAME + "-" + ver.define.PRODUCT_VERSION + "-" + ver.define.PACKAGE_VERSION + "-" + platforms[i] + ".msi"));
                     break;
             }
 
@@ -314,10 +315,10 @@ clean	Cleans intermediate and output files</example>
                 case "exe":
                     b.pushRule(new PreprocessBuildRule(BuildPath(buildPath, "boot.wsf"), "utf-8", adCRLF, ["boot.wsf.in"], "utf-8", adCRLF, ver, ["version.m4"]));
                     b.pushRule(new SevenZipSFXBuildRule(
-                        BuildPath(outputPath, ver.define.PRODUCT_NAME + "-install-" + ver.define.PRODUCT_VERSION + ".exe"),
+                        BuildPath(outputPath, ver.define.PRODUCT_NAME + "-install-" + ver.define.PRODUCT_VERSION + "-" + ver.define.PACKAGE_VERSION + ".exe"),
                         [BuildPath(buildPath, "boot.wsf")].concat(msiFiles),
                         ";!@Install@!UTF-8!\r\n" +
-                        "Title=\"" + ver.define.PRODUCT_NAME + " " + ver.define.PRODUCT_VERSION + "\"\r\n" +
+                        "Title=\"" + ver.define.PRODUCT_NAME + " " + ver.define.PRODUCT_VERSION + "-" + ver.define.PACKAGE_VERSION + "\"\r\n" +
                         "ExecuteFile=\"wscript.exe\"\r\n" +
                         "ExecuteParameters=\"boot.wsf\"\r\n" +
                         ";!@InstallEnd@!\r\n",
@@ -329,18 +330,18 @@ clean	Cleans intermediate and output files</example>
             switch (cmd)
             {
                 case "all":
-                    b.build(BuildPath(outputPath, ver.define.PRODUCT_NAME + "-" + ver.define.PRODUCT_VERSION + "-x86.msi"    ));
-                    b.build(BuildPath(outputPath, ver.define.PRODUCT_NAME + "-" + ver.define.PRODUCT_VERSION + "-amd64.msi"  ));
-                    b.build(BuildPath(outputPath, ver.define.PRODUCT_NAME + "-install-" + ver.define.PRODUCT_VERSION + ".exe"));
+                    b.build(BuildPath(outputPath, ver.define.PRODUCT_NAME + "-" + ver.define.PRODUCT_VERSION + "-" + ver.define.PACKAGE_VERSION + "-x86.msi"    ));
+                    b.build(BuildPath(outputPath, ver.define.PRODUCT_NAME + "-" + ver.define.PRODUCT_VERSION + "-" + ver.define.PACKAGE_VERSION + "-amd64.msi"  ));
+                    b.build(BuildPath(outputPath, ver.define.PRODUCT_NAME + "-install-" + ver.define.PRODUCT_VERSION + "-" + ver.define.PACKAGE_VERSION + ".exe"));
                     break;
 
                 case "msi":
-                    b.build(BuildPath(outputPath, ver.define.PRODUCT_NAME + "-" + ver.define.PRODUCT_VERSION + "-x86.msi"  ));
-                    b.build(BuildPath(outputPath, ver.define.PRODUCT_NAME + "-" + ver.define.PRODUCT_VERSION + "-amd64.msi"));
+                    b.build(BuildPath(outputPath, ver.define.PRODUCT_NAME + "-" + ver.define.PRODUCT_VERSION + "-" + ver.define.PACKAGE_VERSION + "-x86.msi"  ));
+                    b.build(BuildPath(outputPath, ver.define.PRODUCT_NAME + "-" + ver.define.PRODUCT_VERSION + "-" + ver.define.PACKAGE_VERSION + "-amd64.msi"));
                     break;
 
                 case "exe":
-                    b.build(BuildPath(outputPath, ver.define.PRODUCT_NAME + "-install-" + ver.define.PRODUCT_VERSION + ".exe"));
+                    b.build(BuildPath(outputPath, ver.define.PRODUCT_NAME + "-install-" + ver.define.PRODUCT_VERSION + "-" + ver.define.PACKAGE_VERSION + ".exe"));
                     break;
 
                 case "clean":
