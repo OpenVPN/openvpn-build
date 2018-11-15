@@ -514,7 +514,7 @@
             1. Initialize disable save password setting with default value.
             2. Set disable save password setting with registry value if detected.
         -->
-        <Property Id="DISABLESAVEPWD" Value="0"/>
+        <Property Id="DISABLESAVEPWD" Value="#0"/>
         <Property Id="DISABLESAVEPWDREG">
             <RegistrySearch Id="reg.disable_save_passwords" Root="HKLM" Key="SOFTWARE\$(var.PRODUCT_NAME)" Name="disable_save_passwords" Type="raw"/>
         </Property>
@@ -1048,7 +1048,7 @@
                     Root="HKLM"
                     Key="Software\$(var.PRODUCT_NAME)"
                     Name="disable_save_passwords"
-                    Type="integer"
+                    Type="string"
                     Value="[DISABLESAVEPWD]"/>
             </Component>
             <Component Id="reg.exe_path" Guid="{36718C27-DA91-428D-AF1F-71E9325B6AFB}">
