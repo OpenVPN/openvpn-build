@@ -720,7 +720,7 @@
 
                     <Directory Id="DOCDIR" Name="doc">
                         <Component Id="doc.INSTALL_win32.txt" Guid="{2437051B-8A0A-4391-BA43-C2DE4BCCBDD5}">
-                            <File Name="INSTALL-win32.txt" Source="..\windows-nsis\INSTALL-win32.txt"/>
+                            <File Name="INSTALL-win32.txt" Source="!(bindpath.build)INSTALL-win32.txt"/>
                         </Component>
                         <Component Id="doc.openvpn.8.html" Guid="{81E681BB-B296-44FC-B547-595459E7CE1B}">
                             <File Name="openvpn.8.html" Source="!(bindpath.openvpn)share\doc\openvpn\openvpn.8.html"/>
