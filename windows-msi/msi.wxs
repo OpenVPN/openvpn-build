@@ -22,11 +22,11 @@
     xmlns:diffx="http://schemas.microsoft.com/wix/DifxAppExtension"
     xmlns:iis="http://schemas.microsoft.com/wix/IIsExtension">
     <Product
-        Id="$(var.PRODUCT_VERSION_GUID)"
-        UpgradeCode="$(var.PRODUCT_UPGRADE_GUID)"
+        Id="$(var.PRODUCT_CODE)"
+        UpgradeCode="$(var.UPGRADE_CODE)"
         Version="$(var.PRODUCT_VERSION)"
         Language="1033"
-        Name="$(var.PRODUCT_NAME) $(var.PRODUCT_VERSION)-$(var.PACKAGE_VERSION)-$(var.PRODUCT_PLATFORM)"
+        Name="$(var.PRODUCT_NAME) $(var.PACKAGE_VERSION) $(var.PRODUCT_PLATFORM)"
         Manufacturer="$(var.PRODUCT_PUBLISHER)">
 
         <Package
@@ -74,7 +74,7 @@
         <Property Id="ARPURLINFOABOUT" Value="https://openvpn.net/index.php/open-source/"/>
         <Property Id="ARPURLUPDATEINFO" Value="https://openvpn.net/index.php/open-source/downloads.html"/>
         <Property Id="SimpleProductName" Value="$(var.PRODUCT_NAME)"/>
-        <Property Id="DisplayVersion" Value="$(var.PRODUCT_VERSION)-$(var.PACKAGE_VERSION)"/>
+        <Property Id="DisplayVersion" Value="$(var.PACKAGE_VERSION)"/>
         <Property Id="MSICHECKCRCS" Value="1"/>
         <Property Id="PROMPTROLLBACKCOST" Value="P"/>
         <Property Id="EDITOR" Value="notepad.exe"/>
