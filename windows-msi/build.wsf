@@ -98,7 +98,10 @@ clean	Cleans intermediate and output files</example>
                     // Downloading and extracting TAP-Windows
                     // TODO: Migrate signed_by.cer to tap-windows-<ver>.zip.
                     // TODO: Update attestation-signed and WHQL-signed driver paths once available.
-                    b.pushRule(new DownloadBuildRule(BuildPath(sourcePath, "tap-windows-" + ver.define.PRODUCT_TAP_WIN_VERSION + ".zip"), ver.define.PRODUCT_TAP_WIN_URL, ["version.m4"]));
+                    b.pushRule(new DownloadBuildRule(
+                        BuildPath(sourcePath, "tap-windows-" + ver.define.PRODUCT_TAP_WIN_VERSION + ".zip"),
+                        ver.define.PRODUCT_TAP_WIN_URL,
+                        ["version.m4"]));
                     b.pushRule(new ExtractBuildRule(
                         [
                             BuildPath(tapWindowsPath, "amd64", "OemVista.inf"),
@@ -152,10 +155,16 @@ clean	Cleans intermediate and output files</example>
                         ], BuildPath(tapWindowsPath, "i386", ver.define.PRODUCT_TAP_WIN_COMPONENT_ID + ".sys"), []));
 
                     // Downloading openvpnserv2.exe
-                    b.pushRule(new DownloadBuildRule(BuildPath(buildPath, "openvpnserv2.exe"), ver.define.OPENVPNSERV2_URL, ["version.m4"]));
+                    b.pushRule(new DownloadBuildRule(
+                        BuildPath(buildPath, "openvpnserv2.exe"),
+                        ver.define.OPENVPNSERV2_URL,
+                        ["version.m4"]));
 
                     // Downloading and extracting Easy RSA
-                    b.pushRule(new DownloadBuildRule(BuildPath(sourcePath, "easy-rsa-" + ver.define.EASYRSA_VERSION + ".tar.gz"), ver.define.EASYRSA_URL, ["version.m4"]));
+                    b.pushRule(new DownloadBuildRule(
+                        BuildPath(sourcePath, "easy-rsa-" + ver.define.EASYRSA_VERSION + ".tar.gz"),
+                        ver.define.EASYRSA_URL,
+                        ["version.m4"]));
                     b.pushRule(new ExtractBuildRule(
                         [
                             BuildPath(easyRSAPath, "2.0", "openssl-1.0.0.cnf"),
@@ -203,14 +212,37 @@ clean	Cleans intermediate and output files</example>
                             "-dOPENSSL_PLAT=\""                 + _CMD(p.openSSLPlat                             ) + "\""];
 
                         // WiX compiling
-                        b.pushRule(new WiXCompileBuildRule(BuildPath(p.buildPath, "gui.wixobj"), "gui.wxs", ["version.m4"], wixCompilerFlags));
-                        b.pushRule(new WiXCompileBuildRule(BuildPath(p.buildPath, "msi.wixobj"), "msi.wxs", ["version.m4"], wixCompilerFlags));
+                        b.pushRule(new WiXCompileBuildRule(
+                            BuildPath(p.buildPath, "gui.wixobj"),
+                            "gui.wxs",
+                            ["version.m4"],
+                            wixCompilerFlags));
+                        b.pushRule(new WiXCompileBuildRule(
+                            BuildPath(p.buildPath, "msi.wixobj"),
+                            "msi.wxs",
+                            ["version.m4"],
+                            wixCompilerFlags));
 
                         // Text file generation
-                        b.pushRule(new ConvertTextBuildRule(BuildPath(p.buildPath, "license.txt"), "utf-8", adCRLF, [BuildPath(p.openVPNPath, "share", "doc", "openvpn", "COPYING"), BuildPath(p.openVPNPath, "share", "doc", "openvpn", "COPYRIGHT.GPL")], "utf-8", adLF, []));
-                        b.pushRule(new ConvertTextBuildRule(BuildPath(p.buildPath, "client.ovpn"), "utf-8", adCRLF, [BuildPath(p.openVPNPath, "share", "doc", "openvpn", "sample", "client.ovpn")], "utf-8", adLF, []));
-                        b.pushRule(new ConvertTextBuildRule(BuildPath(p.buildPath, "sample.ovpn"), "utf-8", adCRLF, [BuildPath(p.openVPNPath, "share", "doc", "openvpn", "sample", "sample.ovpn")], "utf-8", adLF, []));
-                        b.pushRule(new ConvertTextBuildRule(BuildPath(p.buildPath, "server.ovpn"), "utf-8", adCRLF, [BuildPath(p.openVPNPath, "share", "doc", "openvpn", "sample", "server.ovpn")], "utf-8", adLF, []));
+                        b.pushRule(new ConvertTextBuildRule(
+                            BuildPath(p.buildPath, "license.txt"), "utf-8", adCRLF,
+                            [
+                                BuildPath(p.openVPNPath, "share", "doc", "openvpn", "COPYING"),
+                                BuildPath(p.openVPNPath, "share", "doc", "openvpn", "COPYRIGHT.GPL")
+                            ], "utf-8", adLF,
+                            []));
+                        b.pushRule(new ConvertTextBuildRule(
+                            BuildPath(p.buildPath, "client.ovpn"), "utf-8", adCRLF,
+                            [BuildPath(p.openVPNPath, "share", "doc", "openvpn", "sample", "client.ovpn")], "utf-8", adLF,
+                            []));
+                        b.pushRule(new ConvertTextBuildRule(
+                            BuildPath(p.buildPath, "sample.ovpn"), "utf-8", adCRLF,
+                            [BuildPath(p.openVPNPath, "share", "doc", "openvpn", "sample", "sample.ovpn")], "utf-8", adLF,
+                            []));
+                        b.pushRule(new ConvertTextBuildRule(
+                            BuildPath(p.buildPath, "server.ovpn"), "utf-8", adCRLF,
+                            [BuildPath(p.openVPNPath, "share", "doc", "openvpn", "sample", "server.ovpn")], "utf-8", adLF,
+                            []));
 
                         // WiX linker flags
                         var wixLinkerFlags = [
@@ -299,8 +331,16 @@ clean	Cleans intermediate and output files</example>
                     }
 
                     // Readme files generation
-                    b.pushRule(new PreprocessBuildRule(BuildPath(buildPath, "README-config.txt"), "utf-8", adCRLF, [BuildPath("doc", "config", "README.txt.in")], "utf-8", adCRLF, ver, ["version.m4"]));
-                    b.pushRule(new PreprocessBuildRule(BuildPath(buildPath, "README-log.txt"   ), "utf-8", adCRLF, [BuildPath("doc", "log", "README.txt.in"   )], "utf-8", adCRLF, ver, ["version.m4"]));
+                    b.pushRule(new PreprocessBuildRule(
+                        BuildPath(buildPath, "README-config.txt"), "utf-8", adCRLF,
+                        [BuildPath("doc", "config", "README.txt.in")], "utf-8", adCRLF,
+                        ver,
+                        ["version.m4"]));
+                    b.pushRule(new PreprocessBuildRule(
+                        BuildPath(buildPath, "README-log.txt"), "utf-8", adCRLF,
+                        [BuildPath("doc", "log", "README.txt.in")], "utf-8", adCRLF,
+                        ver,
+                        ["version.m4"]));
                     break;
 
                 case "exe":
@@ -313,7 +353,11 @@ clean	Cleans intermediate and output files</example>
             switch (cmd) {
                 case "all": case "clean":
                 case "exe":
-                    b.pushRule(new PreprocessBuildRule(BuildPath(buildPath, "boot.wsf"), "utf-8", adCRLF, ["boot.wsf.in"], "utf-8", adCRLF, ver, ["version.m4"]));
+                    b.pushRule(new PreprocessBuildRule(
+                        BuildPath(buildPath, "boot.wsf"), "utf-8", adCRLF,
+                        ["boot.wsf.in"], "utf-8", adCRLF,
+                        ver,
+                        ["version.m4"]));
                     b.pushRule(new SevenZipSFXBuildRule(
                         BuildPath(outputPath, ver.define.PRODUCT_NAME + "-install-" + ver.define.PACKAGE_VERSION + ".exe"),
                         [BuildPath(buildPath, "boot.wsf")].concat(msiFiles),
