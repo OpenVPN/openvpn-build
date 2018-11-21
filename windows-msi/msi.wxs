@@ -1204,6 +1204,7 @@
         </InstallExecuteSequence>
 
         <Property Id="TAPINTERFACES" Secure="yes"/>
+        <Property Id="ACTIVETAPINTERFACES" Secure="yes"/>
 
         <UI>
             <ProgressText
