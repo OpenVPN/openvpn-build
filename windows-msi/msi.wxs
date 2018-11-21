@@ -570,6 +570,7 @@
                         <!-- Clean-up NSIS installation. -->
                         <RemoveFile Id="nsis.openvpn.shortcut.uninstall" Directory="ProductShortcutFolder" Name="Uninstall $(var.PRODUCT_NAME).lnk" On="install"/>
                         <RemoveFile Id="nsis.openvpn.bin.libcrypto_1_1.dll" Property="NSIS.OPENVPN.BIN" Name="libcrypto-1_1$(var.OPENSSL_PLAT).dll" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.bin.libeay32.dll" Property="NSIS.OPENVPN.BIN" Name="libeay32.dll" On="install"/>
                         <RemoveFile Id="nsis.openvpn.bin.liblzo2_2.dll" Property="NSIS.OPENVPN.BIN" Name="liblzo2-2.dll" On="install"/>
                         <RemoveFile Id="nsis.openvpn.bin.libpkcs11_helper_1.dll" Property="NSIS.OPENVPN.BIN" Name="libpkcs11-helper-1.dll" On="install"/>
                         <RemoveFile Id="nsis.openvpn.bin.libssl_1_1.dll" Property="NSIS.OPENVPN.BIN" Name="libssl-1_1$(var.OPENSSL_PLAT).dll" On="install"/>
@@ -578,6 +579,7 @@
                         <RemoveFile Id="nsis.openvpn.bin.openvpn_gui.exe" Property="NSIS.OPENVPN.BIN" Name="openvpn-gui.exe" On="install"/>
                         <RemoveFile Id="nsis.openvpn.bin.openvpnserv.exe" Property="NSIS.OPENVPN.BIN" Name="openvpnserv.exe" On="install"/>
                         <RemoveFile Id="nsis.openvpn.bin.openvpnserv2.exe" Property="NSIS.OPENVPN.BIN" Name="openvpnserv2.exe" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.bin.ssleay32.dll" Property="NSIS.OPENVPN.BIN" Name="ssleay32.dll" On="install"/>
                         <RemoveFolder Id="nsis.openvpn.bin" Property="NSIS.OPENVPN.BIN" On="install"/>
                         <RemoveFile Id="nsis.openvpn.config.README.txt" Property="NSIS.OPENVPN.CONFIG" Name="README.txt" On="install"/>
                         <RemoveFolder Id="nsis.openvpn.config" Property="NSIS.OPENVPN.CONFIG" On="install"/>
