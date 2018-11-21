@@ -659,8 +659,8 @@
                             <ServiceControl
                                 Id="OpenVPNServiceInteractive"
                                 Name="OpenVPNServiceInteractive"
+                                Stop="uninstall"
                                 Start="install"
-                                Stop="both"
                                 Remove="uninstall"/>
                             <ServiceInstall
                                 Id="OpenVPNServiceInteractive"
@@ -676,7 +676,7 @@
                             <ServiceControl
                                 Id="OpenVPNServiceLegacy"
                                 Name="OpenVPNServiceLegacy"
-                                Stop="both"
+                                Stop="uninstall"
                                 Remove="uninstall"/>
                             <ServiceInstall
                                 Id="OpenVPNServiceLegacy"
@@ -694,7 +694,7 @@
                             <ServiceControl
                                 Id="OpenVPNService"
                                 Name="OpenVPNService"
-                                Stop="both"
+                                Stop="uninstall"
                                 Remove="uninstall"/>
                             <ServiceInstall
                                 Id="OpenVPNService"
