@@ -365,12 +365,13 @@ clean	Cleans intermediate and output files</example>
                         ["version.m4"]));
                     b.pushRule(new SevenZipSFXBuildRule(
                         BuildPath(outputPath, ver.define.PRODUCT_NAME + "-install-" + ver.define.PACKAGE_VERSION + ".exe"),
-                        [BuildPath(buildPath, "boot.wsf")].concat(msiFiles),
+                        BuildPath("lzma1805", "bin", "7zSD-openvpn.sfx"),
                         ";!@Install@!UTF-8!\r\n" +
                         "Title=\"" + ver.define.PRODUCT_NAME + " " + ver.define.PACKAGE_VERSION + "\"\r\n" +
                         "ExecuteFile=\"wscript.exe\"\r\n" +
                         "ExecuteParameters=\"boot.wsf\"\r\n" +
                         ";!@InstallEnd@!\r\n",
+                        [BuildPath(buildPath, "boot.wsf")].concat(msiFiles),
                         ["version.m4"]));
                     break;
             }

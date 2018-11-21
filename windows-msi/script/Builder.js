@@ -740,16 +740,18 @@ WiXLinkBuildRule.prototype.clean = BuildRule.prototype.clean;
  * Creates a 7-Zip SFX build rule
  * 
  * @param outName   Output .exe file name
- * @param inNames   Input file names
+ * @param sfx       7-Zip SFX module
  * @param cfg       7-Zip SFX installer config
+ * @param inNames   Input file names
  * @param depNames  Additional dependencies
  *
  * @returns  Build rule
  */
-function SevenZipSFXBuildRule(outName, inNames, cfg, depNames)
+function SevenZipSFXBuildRule(outName, sfx, cfg, inNames, depNames)
 {
-    BuildRule.call(this, [outName], inNames.concat(depNames));
+    BuildRule.call(this, [outName], inNames.concat([sfx]).concat(depNames));
 
+    this.sfx = sfx;
     this.cfg = cfg;
     this.payloadNames = inNames;
 
@@ -819,7 +821,7 @@ SevenZipSFXBuildRule.prototype.build = function (builder)
                     datIn.Open();
                     try {
                         datIn.Type = adTypeBinary;
-                        datIn.LoadFromFile(BuildPath(builder.sevenZipPath, "7zSD-openvpn.sfx"));
+                        datIn.LoadFromFile(this.sfx);
                         datIn.CopyTo(datOut);
                     } finally {
                         datIn.Close();
