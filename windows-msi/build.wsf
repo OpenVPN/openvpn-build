@@ -280,6 +280,7 @@ clean	Cleans intermediate and output files</example>
                                 BuildPath("artwork", "tapctl_create.ico"),
                                 BuildPath("artwork", "url.ico"),
                                 BuildPath("artwork", "warning.ico"),
+                                BuildPath("doc", "LicenseAgreement.rtf"),
                                 BuildPath("script", "ActiveSetupCA.js"),
                                 BuildPath(p.buildPath, "license.txt"),
                                 BuildPath(p.openVPNPath, "bin", "libcrypto-1_1" + p.openSSLPlat + ".dll"),
