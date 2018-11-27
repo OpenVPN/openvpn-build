@@ -654,14 +654,14 @@
                             <File Id="bin.openvpn.exe" Name="openvpn.exe" Source="!(bindpath.openvpn)bin\openvpn.exe"/>
                         </Component>
                         <Component Id="bin.openvpn_gui.exe" Guid="{5A893CD4-EA7E-4887-89D0-15BBE904FE11}">
-                            <File Name="openvpn-gui.exe" Source="!(bindpath.openvpn)bin\openvpn-gui.exe"/>
+                            <File Id="bin.openvpn_gui.exe" Name="openvpn-gui.exe" Source="!(bindpath.openvpn)bin\openvpn-gui.exe"/>
                         </Component>
                         <Component Id="bin.openvpnserv.exe" Guid="{43A4F408-9399-4BD7-9978-0ECE4A582929}">
                             <File Name="openvpnserv.exe" Source="!(bindpath.openvpn)bin\openvpnserv.exe"/>
                             <ServiceControl
                                 Id="OpenVPNServiceInteractive"
                                 Name="OpenVPNServiceInteractive"
-                                Stop="uninstall"
+                                Stop="both"
                                 Start="install"
                                 Remove="uninstall"/>
                             <ServiceInstall
@@ -678,7 +678,7 @@
                             <ServiceControl
                                 Id="OpenVPNServiceLegacy"
                                 Name="OpenVPNServiceLegacy"
-                                Stop="uninstall"
+                                Stop="both"
                                 Remove="uninstall"/>
                             <ServiceInstall
                                 Id="OpenVPNServiceLegacy"
@@ -696,7 +696,7 @@
                             <ServiceControl
                                 Id="OpenVPNService"
                                 Name="OpenVPNService"
-                                Stop="uninstall"
+                                Stop="both"
                                 Remove="uninstall"/>
                             <ServiceInstall
                                 Id="OpenVPNService"
@@ -1284,6 +1284,32 @@
             </Row>
             <?endif?>
         </CustomTable>
+
+
+        <!--
+            Close OpenVPN-GUI before install
+        -->
+        <CustomAction Id="CloseOpenVPNGUI" BinaryKey="libopenvpnmsica.dll" DllEntry="CloseOpenVPNGUI"/>
+        <InstallUISequence>
+            <Custom Action="CloseOpenVPNGUI" After="ProgressPage"/>
+        </InstallUISequence>
+        <UI>
+            <ProgressText Action="CloseOpenVPNGUI">Closing OpenVPN-GUI</ProgressText>
+        </UI>
+
+
+        <!--
+            Launch OpenVPN-GUI after install
+        -->
+        <CustomAction Id="StartOpenVPNGUI" BinaryKey="libopenvpnmsica.dll" DllEntry="StartOpenVPNGUI" Impersonate="yes"/>
+        <UI>
+            <ProgressText Action="StartOpenVPNGUI">Launching OpenVPN-GUI</ProgressText>
+            <!-- Note that the OpenVPN-GUI is launched only when the OpenVPN.GUI.OnLogon feature is being installed. -->
+            <Publish
+                Dialog="ExitPage"
+                Control="Close"
+                Event="DoAction" Value="StartOpenVPNGUI"><![CDATA[$reg.openvpngui.startup=3 AND NOT Installed]]></Publish>
+        </UI>
 
 
         <!--

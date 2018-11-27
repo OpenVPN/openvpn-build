@@ -139,7 +139,7 @@
                 <Control Id="ActiveInterfacesLabel" Type="Text" X="44" Y="234" Width="341" Height="15" Hidden="yes" NoPrefix="yes" Transparent="yes" Text="[DlgStrongFont]Active OpenVPN connection(s) detected.">
                     <Condition Action="show"><![CDATA[ACTIVETAPINTERFACES]]></Condition>
                 </Control>
-                <Control Id="ActiveInterfacesText" Type="Text" X="44" Y="249" Width="341" Height="36" Hidden="yes" NoPrefix="yes" Transparent="yes" Text="Although, this update will try to preserve active VPN connections, disconnecting and closing OpenVPN GUI before proceeding is recommended.">
+                <Control Id="ActiveInterfacesText" Type="Text" X="44" Y="249" Width="341" Height="36" Hidden="yes" NoPrefix="yes" Transparent="yes" Text="This setup will terminate your OpenVPN connection. If you are performing this update remotely, you will get disconnected.">
                     <Condition Action="show"><![CDATA[ACTIVETAPINTERFACES]]></Condition>
                 </Control>
                 <Control Id="BannerBitmap" Type="Bitmap" X="0" Y="0" Width="400" Height="45" Text="header.bmp" TabSkip="no" Cancel="yes" Disabled="yes">
