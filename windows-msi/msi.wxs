@@ -20,7 +20,8 @@
 <Wix
     xmlns="http://schemas.microsoft.com/wix/2006/wi"
     xmlns:diffx="http://schemas.microsoft.com/wix/DifxAppExtension"
-    xmlns:iis="http://schemas.microsoft.com/wix/IIsExtension">
+    xmlns:iis="http://schemas.microsoft.com/wix/IIsExtension"
+    xmlns:netfx="http://schemas.microsoft.com/wix/NetFxExtension">
     <Product
         Id="$(var.PRODUCT_CODE)"
         UpgradeCode="$(var.UPGRADE_CODE)"
@@ -78,6 +79,7 @@
         <Property Id="MSICHECKCRCS" Value="1"/>
         <Property Id="PROMPTROLLBACKCOST" Value="P"/>
         <Property Id="EDITOR" Value="notepad.exe"/>
+        <PropertyRef Id="NETFRAMEWORK40FULL"/>
 
 
         <!--
@@ -1386,7 +1388,8 @@
                 Level="2"
                 ConfigurableDirectory="PRODUCTDIR"
                 AllowAdvertise="no">
-                <Condition Level="1"><![CDATA[NSIS.OPENVPN.BIN.OPENVPNSERV2.EXE]]></Condition>
+                <Condition Level="1"><![CDATA[NETFRAMEWORK40FULL AND NSIS.OPENVPN.BIN.OPENVPNSERV2.EXE]]></Condition>
+                <Condition Level="0"><![CDATA[NOT NETFRAMEWORK40FULL AND NOT Installed]]></Condition>
                 <ComponentRef Id="bin.openvpnserv2.exe"/>
             </Feature>
 
