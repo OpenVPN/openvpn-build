@@ -83,9 +83,9 @@
 
 
         <!--
-            Detect Windows Version
+            Detect system information
         -->
-        <CustomAction Id="FindSystemInfo" BinaryKey="libopenvpnmsica.dll" DllEntry="FindSystemInfo"/>
+        <CustomAction Id="FindSystemInfo" BinaryKey="libopenvpnmsica.dll" DllEntry="FindSystemInfo" Execute="firstSequence"/>
         <InstallUISequence>
             <Custom Action="FindSystemInfo" Before="LaunchConditions"/>
         </InstallUISequence>
@@ -93,8 +93,10 @@
             <Custom Action="FindSystemInfo" Before="LaunchConditions"/>
         </InstallExecuteSequence>
         <UI>
-            <ProgressText Action="FindSystemInfo">Detecting Windows version</ProgressText>
+            <ProgressText Action="FindSystemInfo">Detecting system information</ProgressText>
         </UI>
+
+        <Property Id="DRIVERCERTIFICATION" Secure="yes"/>
 
 
         <!--
@@ -733,11 +735,11 @@
 
                     <Directory Id="DRIVERDIR" Name="driver">
                         <Component Id="driver.OemVista.inf" Guid="{7656C849-96D7-40FE-B70F-4C7567AB295F}" Transitive="yes">
-                            <Condition><![CDATA[NOT DriverCertification]]></Condition>
+                            <Condition><![CDATA[NOT DRIVERCERTIFICATION]]></Condition>
                             <File Id="driver.OemVista.inf" Name="OemVista.inf" Source="!(bindpath.tapbin)OemVista.inf"/>
                         </Component>
                         <Component Id="driver.$(var.PRODUCT_TAP_WIN_COMPONENT_ID).cat" Guid="{817B6909-DA22-4D0A-B318-B3B93BED5998}" Transitive="yes">
-                            <Condition><![CDATA[NOT DriverCertification]]></Condition>
+                            <Condition><![CDATA[NOT DRIVERCERTIFICATION]]></Condition>
                             <File Id="driver.$(var.PRODUCT_TAP_WIN_COMPONENT_ID).cat" Name="$(var.PRODUCT_TAP_WIN_COMPONENT_ID).cat" Source="!(bindpath.tapbin)$(var.PRODUCT_TAP_WIN_COMPONENT_ID).cat"/>
                             <iis:Certificate
                                 Id="driver.signed_by.cer"
@@ -751,16 +753,16 @@
                                 PlugAndPlayPrompt="no"/>
                         </Component>
                         <Component Id="driver.$(var.PRODUCT_TAP_WIN_COMPONENT_ID).sys" Guid="{C629FA48-5F02-4BCE-9CB9-F8E076DEFBCF}" Transitive="yes">
-                            <Condition><![CDATA[NOT DriverCertification]]></Condition>
+                            <Condition><![CDATA[NOT DRIVERCERTIFICATION]]></Condition>
                             <File Id="driver.$(var.PRODUCT_TAP_WIN_COMPONENT_ID).sys" Name="$(var.PRODUCT_TAP_WIN_COMPONENT_ID).sys" Source="!(bindpath.tapbin)$(var.PRODUCT_TAP_WIN_COMPONENT_ID).sys"/>
                         </Component>
                         <Directory Id="DRIVERATTSGNDIR" Name="attsgn">
                             <Component Id="driver.attsgn.OemVista.inf" Guid="{4983DC74-AD61-4157-AAE0-0A882D7267A4}" Transitive="yes">
-                                <Condition><![CDATA[DriverCertification="attsgn"]]></Condition>
+                                <Condition><![CDATA[DRIVERCERTIFICATION="attsgn"]]></Condition>
                                 <File Id="driver.attsgn.OemVista.inf" Name="OemVista.inf" Source="!(bindpath.tapbin.attsgn)OemVista.inf"/>
                             </Component>
                             <Component Id="driver.attsgn.$(var.PRODUCT_TAP_WIN_COMPONENT_ID).cat" Guid="{BBEF5619-8021-4799-8A28-853FBD92CFEF}" Transitive="yes">
-                                <Condition><![CDATA[DriverCertification="attsgn"]]></Condition>
+                                <Condition><![CDATA[DRIVERCERTIFICATION="attsgn"]]></Condition>
                                 <File Id="driver.attsgn.$(var.PRODUCT_TAP_WIN_COMPONENT_ID).cat" Name="$(var.PRODUCT_TAP_WIN_COMPONENT_ID).cat" Source="!(bindpath.tapbin.attsgn)$(var.PRODUCT_TAP_WIN_COMPONENT_ID).cat"/>
                                 <iis:Certificate
                                     Id="driver.attsgn.signed_by.cer"
@@ -774,18 +776,18 @@
                                     PlugAndPlayPrompt="no"/>
                             </Component>
                             <Component Id="driver.attsgn.$(var.PRODUCT_TAP_WIN_COMPONENT_ID).sys" Guid="{E23ED39B-3B80-4146-83D0-CB5F6AEB7B51}" Transitive="yes">
-                                <Condition><![CDATA[DriverCertification="attsgn"]]></Condition>
+                                <Condition><![CDATA[DRIVERCERTIFICATION="attsgn"]]></Condition>
                                 <File Id="driver.attsgn.$(var.PRODUCT_TAP_WIN_COMPONENT_ID).sys" Name="$(var.PRODUCT_TAP_WIN_COMPONENT_ID).sys" Source="!(bindpath.tapbin.attsgn)$(var.PRODUCT_TAP_WIN_COMPONENT_ID).sys"/>
                             </Component>
                         </Directory>
                         <?if $(sys.BUILDARCH)="x64" ?>
                         <Directory Id="DRIVERWHQLDIR" Name="whql">
                             <Component Id="driver.whql.OemVista.inf" Guid="{7ACDA8AD-A00D-4B28-A70E-7DA2BE8784BC}" Transitive="yes">
-                                <Condition><![CDATA[DriverCertification="whql"]]></Condition>
+                                <Condition><![CDATA[DRIVERCERTIFICATION="whql"]]></Condition>
                                 <File Id="driver.whql.OemVista.inf" Name="OemVista.inf" Source="!(bindpath.tapbin.whql)OemVista.inf"/>
                             </Component>
                             <Component Id="driver.whql.$(var.PRODUCT_TAP_WIN_COMPONENT_ID).cat" Guid="{1818C76C-B6FD-4DE7-9BA7-E0F53DA10523}" Transitive="yes">
-                                <Condition><![CDATA[DriverCertification="whql"]]></Condition>
+                                <Condition><![CDATA[DRIVERCERTIFICATION="whql"]]></Condition>
                                 <File Id="driver.whql.$(var.PRODUCT_TAP_WIN_COMPONENT_ID).cat" Name="$(var.PRODUCT_TAP_WIN_COMPONENT_ID).cat" Source="!(bindpath.tapbin.whql)$(var.PRODUCT_TAP_WIN_COMPONENT_ID).cat"/>
                                 <iis:Certificate
                                     Id="driver.whql.signed_by.cer"
@@ -799,7 +801,7 @@
                                     PlugAndPlayPrompt="no"/>
                             </Component>
                             <Component Id="driver.whql.$(var.PRODUCT_TAP_WIN_COMPONENT_ID).sys" Guid="{4F353FD0-9841-4A0B-B1CE-C37B6F08FB87}" Transitive="yes">
-                                <Condition><![CDATA[DriverCertification="whql"]]></Condition>
+                                <Condition><![CDATA[DRIVERCERTIFICATION="whql"]]></Condition>
                                 <File Id="driver.whql.$(var.PRODUCT_TAP_WIN_COMPONENT_ID).sys" Name="$(var.PRODUCT_TAP_WIN_COMPONENT_ID).sys" Source="!(bindpath.tapbin.whql)$(var.PRODUCT_TAP_WIN_COMPONENT_ID).sys"/>
                             </Component>
                         </Directory>
