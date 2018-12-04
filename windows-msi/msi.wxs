@@ -679,21 +679,6 @@
                                 <ServiceDependency Id="$(var.PRODUCT_TAP_WIN_COMPONENT_ID)"/>
                                 <ServiceDependency Id="Dhcp"/>
                             </ServiceInstall>
-                            <ServiceControl
-                                Id="OpenVPNServiceLegacy"
-                                Name="OpenVPNServiceLegacy"
-                                Stop="both"
-                                Remove="uninstall"/>
-                            <ServiceInstall
-                                Id="OpenVPNServiceLegacy"
-                                Name="OpenVPNServiceLegacy"
-                                DisplayName="OpenVPN Legacy Service"
-                                Type="shareProcess"
-                                Start="demand"
-                                ErrorControl="normal">
-                                <ServiceDependency Id="$(var.PRODUCT_TAP_WIN_COMPONENT_ID)"/>
-                                <ServiceDependency Id="Dhcp"/>
-                            </ServiceInstall>
                         </Component>
                         <Component Id="bin.openvpnserv2.exe" Guid="{8867EEBF-B928-49D7-A1F5-D33E2BCAAD70}">
                             <File Name="openvpnserv2.exe" Source="!(bindpath.openvpnserv2)openvpnserv2.exe"/>
