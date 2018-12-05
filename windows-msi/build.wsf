@@ -337,17 +337,17 @@ clean	Cleans intermediate and output files</example>
                     // Readme files generation
                     b.pushRule(new PreprocessBuildRule(
                         BuildPath(buildPath, "INSTALL-win32.txt"), "utf-8", adCRLF,
-                        [BuildPath("doc", "doc", "INSTALL-win32.txt.in")], "utf-8", adCRLF,
+                        [BuildPath("doc", "doc", "INSTALL-win32.txt.in")], "utf-8", adLF,
                         ver,
                         ["version.m4"]));
                     b.pushRule(new PreprocessBuildRule(
                         BuildPath(buildPath, "README-config.txt"), "utf-8", adCRLF,
-                        [BuildPath("doc", "config", "README.txt.in")], "utf-8", adCRLF,
+                        [BuildPath("doc", "config", "README.txt.in")], "utf-8", adLF,
                         ver,
                         ["version.m4"]));
                     b.pushRule(new PreprocessBuildRule(
                         BuildPath(buildPath, "README-log.txt"), "utf-8", adCRLF,
-                        [BuildPath("doc", "log", "README.txt.in")], "utf-8", adCRLF,
+                        [BuildPath("doc", "log", "README.txt.in")], "utf-8", adLF,
                         ver,
                         ["version.m4"]));
                     break;
@@ -364,7 +364,7 @@ clean	Cleans intermediate and output files</example>
                 case "exe":
                     b.pushRule(new PreprocessBuildRule(
                         BuildPath(buildPath, "boot.wsf"), "utf-8", adCRLF,
-                        ["boot.wsf.in"], "utf-8", adCRLF,
+                        ["boot.wsf.in"], "utf-8", adLF,
                         ver,
                         ["version.m4"]));
                     b.pushRule(new SevenZipSFXBuildRule(
