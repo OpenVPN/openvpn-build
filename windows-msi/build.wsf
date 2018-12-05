@@ -306,6 +306,8 @@ clean	Cleans intermediate and output files</example>
                                 BuildPath(tapWindowsPath, "include", "tap-windows.h"),
                                 BuildPath(buildPath, "openvpnserv2.exe"),
                                 BuildPath(buildPath, "README-config.txt"),
+                                BuildPath(buildPath, "Where are my config files.txt"),
+                                BuildPath(buildPath, "README-config-auto.txt"),
                                 BuildPath(buildPath, "INSTALL-win32.txt"),
                                 BuildPath(p.openVPNPath, "share", "doc", "openvpn", "openvpn.8.html"),
                                 BuildPath("bookmarks", "howto.url"),
@@ -343,6 +345,16 @@ clean	Cleans intermediate and output files</example>
                     b.pushRule(new PreprocessBuildRule(
                         BuildPath(buildPath, "README-config.txt"), "utf-8", adCRLF,
                         [BuildPath("doc", "config", "README.txt.in")], "utf-8", adLF,
+                        ver,
+                        ["version.m4"]));
+                    b.pushRule(new PreprocessBuildRule(
+                        BuildPath(buildPath, "Where are my config files.txt"), "utf-8", adCRLF,
+                        [BuildPath("doc", "config", "Where are my config files.txt.in")], "utf-8", adLF,
+                        ver,
+                        ["version.m4"]));
+                    b.pushRule(new PreprocessBuildRule(
+                        BuildPath(buildPath, "README-config-auto.txt"), "utf-8", adCRLF,
+                        [BuildPath("doc", "config-auto", "README.txt.in")], "utf-8", adLF,
                         ver,
                         ["version.m4"]));
                     b.pushRule(new PreprocessBuildRule(

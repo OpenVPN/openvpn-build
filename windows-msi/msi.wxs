@@ -319,7 +319,7 @@
             Value="[CONFIGDIRREG]"
             Sequence="first">CONFIGDIRREG AND NOT Installed</SetProperty>
         <Property Id="CONFIGDIRPREV">
-            <ComponentSearch Id="cfg.README.txt" Guid="{9C3B43AF-1399-4E6A-92CA-D7BA3B6BCC3C}"/>
+            <ComponentSearch Id="config.README.txt" Guid="{9C3B43AF-1399-4E6A-92CA-D7BA3B6BCC3C}"/>
         </Property>
         <SetProperty
             After="SetConfigDirReg"
@@ -333,6 +333,37 @@
             Id="CONFIGDIR"
             Value="[CONFIG]"
             Sequence="first">CONFIG AND NOT Installed</SetProperty>
+
+
+        <!--
+            1. Set auto-start configuration folder with registry folder if detected.
+            2. Set auto-start configuration folder to the previous installation folder if detected. Use README.txt file to detect previous configuration folder.
+            3. Allow overriding auto-start configuration folder by specifying CONFIGAUTO=<folder> on the msiexec.exe command line.
+        -->
+        <Property Id="CONFIGAUTODIRREG">
+            <RegistrySearch Id="reg.autostart_config_dir" Root="HKLM" Key="SOFTWARE\$(var.PRODUCT_NAME)" Name="autostart_config_dir" Type="directory"/>
+        </Property>
+        <SetProperty
+            After="AppSearch"
+            Action="SetAutostartConfigDirReg"
+            Id="CONFIGAUTODIR"
+            Value="[CONFIGAUTODIRREG]"
+            Sequence="first">CONFIGAUTODIRREG AND NOT Installed</SetProperty>
+        <Property Id="CONFIGAUTODIRPREV">
+            <ComponentSearch Id="config_auto.README.txt" Guid="{6986BED5-CFB0-4D9F-AB49-1CF2C868395D}"/>
+        </Property>
+        <SetProperty
+            After="SetAutostartConfigDirReg"
+            Action="SetAutostartConfigDirPrev"
+            Id="CONFIGAUTODIR"
+            Value="[CONFIGAUTODIRPREV]"
+            Sequence="first">CONFIGAUTODIRPREV AND NOT Installed</SetProperty>
+        <SetProperty
+            After="SetAutostartConfigDirPrev"
+            Action="SetAutostartConfigDirParam"
+            Id="CONFIGAUTODIR"
+            Value="[CONFIGAUTO]"
+            Sequence="first">CONFIGAUTO AND NOT Installed</SetProperty>
 
 
         <!--
@@ -686,13 +717,14 @@
                                 Id="OpenVPNService"
                                 Name="OpenVPNService"
                                 Stop="both"
+                                Start="install"
                                 Remove="uninstall"/>
                             <ServiceInstall
                                 Id="OpenVPNService"
                                 Name="OpenVPNService"
                                 DisplayName="OpenVPNService"
                                 Type="ownProcess"
-                                Start="demand"
+                                Start="auto"
                                 ErrorControl="normal">
                                 <ServiceDependency Id="$(var.PRODUCT_TAP_WIN_COMPONENT_ID)"/>
                                 <ServiceDependency Id="Dhcp"/>
@@ -704,8 +736,25 @@
                     </Directory>
 
                     <Directory Id="CONFIGDIR" Name="config">
-                        <Component Id="cfg.README.txt" Guid="{9C3B43AF-1399-4E6A-92CA-D7BA3B6BCC3C}">
-                            <File Id="cfg.README.txt" Name="README.txt" Source="!(bindpath.build)README-config.txt"/>
+                        <Component Id="config.README.txt" Guid="{9C3B43AF-1399-4E6A-92CA-D7BA3B6BCC3C}">
+                            <File Id="config.README.txt" Name="README.txt" Source="!(bindpath.build)README-config.txt"/>
+                        </Component>
+                        <!-- Move auto-start config files from configuration folder to auto-start configuration folder on update from non-auto-start aware installations. -->
+                        <Component Id="config.Where_are_my_config_files.txt" Guid="{2DFEDF05-F41E-4EB0-A90A-DC76A261E444}">
+                            <Condition><![CDATA[OPENVPNSERVICE AND CONFIGDIRREG AND NOT CONFIGAUTODIRREG]]></Condition>
+                            <File Name="Where are my config files.txt" Source="!(bindpath.build)Where are my config files.txt"/>
+                            <CopyFile
+                                Id="config_auto"
+                                SourceProperty="CONFIGDIRREG"
+                                SourceName="*"
+                                DestinationProperty="CONFIGAUTODIR"
+                                Delete="yes"/>
+                        </Component>
+                    </Directory>
+
+                    <Directory Id="CONFIGAUTODIR" Name="config-auto">
+                        <Component Id="config_auto.README.txt" Guid="{6986BED5-CFB0-4D9F-AB49-1CF2C868395D}">
+                            <File Name="README.txt" Source="!(bindpath.build)README-config-auto.txt"/>
                         </Component>
                     </Directory>
 
@@ -925,14 +974,14 @@
                     </Directory>
 
                     <Directory Id="ShortcutsShortcutFolder" Name="Shortcuts">
-                        <Component Id="shortcut.cfg" Guid="{54EDFEF4-E2FB-4310-BC46-74D3CAEB8C03}">
+                        <Component Id="shortcut.config" Guid="{54EDFEF4-E2FB-4310-BC46-74D3CAEB8C03}">
                             <Shortcut
-                                Id="shortcut.cfg"
+                                Id="shortcut.config"
                                 Name="$(var.PRODUCT_NAME) Configuration File Directory"
                                 Target="[CONFIGDIR]"
                                 WorkingDirectory="CONFIGDIR"/>
-                            <RemoveFolder Id="shortcut.cfg" On="uninstall"/>
-                            <RegistryValue Root="HKCU" Key="Software\$(var.PRODUCT_NAME)\Shortcuts" Name="cfg" Type="integer" Value="1"/>
+                            <RemoveFolder Id="shortcut.config" On="uninstall"/>
+                            <RegistryValue Root="HKCU" Key="Software\$(var.PRODUCT_NAME)\Shortcuts" Name="config" Type="integer" Value="1"/>
                         </Component>
                         <Component Id="shortcut.log" Guid="{FD94C038-D421-40D8-8690-B102625AA784}">
                             <Shortcut
@@ -1025,6 +1074,14 @@
                     Name="config_dir"
                     Type="string"
                     Value="[CONFIGDIR]"/>
+            </Component>
+            <Component Id="reg.autostart_config_dir" Guid="{5D2C1C1D-F576-41C9-9A1A-8857DC9F1E63}">
+                <RegistryValue
+                    Root="HKLM"
+                    Key="Software\$(var.PRODUCT_NAME)"
+                    Name="autostart_config_dir"
+                    Type="string"
+                    Value="[CONFIGAUTODIR]"/>
             </Component>
             <Component Id="reg.config_ext" Guid="{A5CD806D-8E76-4A2F-86E9-B7FDE718088A}">
                 <RegistryValue
@@ -1320,7 +1377,7 @@
             <ComponentRef Id="bin.libssl_1_1.dll"/>
             <ComponentRef Id="bin.openvpn.exe"/>
             <ComponentRef Id="bin.openvpnserv.exe"/>
-            <ComponentRef Id="cfg.README.txt"/>
+            <ComponentRef Id="config.README.txt"/>
             <ComponentRef Id="log.README.txt"/>
             <ComponentRef Id="res.ovpn.ico"/>
             <ComponentRef Id="shortcut.bin.openvpn.exe.genkey"/>
@@ -1340,7 +1397,7 @@
             <ComponentRef Id="reg.conf.open.command"/>
             <ComponentRef Id="reg.conf.run"/>
             <ComponentRef Id="reg.conf.run.command"/>
-            <ComponentRef Id="shortcut.cfg"/>
+            <ComponentRef Id="shortcut.config"/>
             <ComponentRef Id="shortcut.log"/>
             <ComponentRef Id="shortcut.samplecfg"/>
 
@@ -1378,6 +1435,9 @@
                 <Condition Level="1"><![CDATA[NETFRAMEWORK40FULL AND NSIS.OPENVPN.BIN.OPENVPNSERV2.EXE]]></Condition>
                 <Condition Level="0"><![CDATA[NOT NETFRAMEWORK40FULL AND NOT Installed]]></Condition>
                 <ComponentRef Id="bin.openvpnserv2.exe"/>
+                <ComponentRef Id="config.Where_are_my_config_files.txt"/>
+                <ComponentRef Id="config_auto.README.txt"/>
+                <ComponentRef Id="reg.autostart_config_dir"/>
             </Feature>
 
             <Feature
