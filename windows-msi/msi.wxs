@@ -1544,10 +1544,10 @@
                 Id="OpenVPN.Service"
                 Title="$(var.PRODUCT_NAME) Service"
                 Description="Service wrappers"
-                Level="2"
+                Level="3"
                 ConfigurableDirectory="PRODUCTDIR"
                 AllowAdvertise="no">
-                <Condition Level="1"><![CDATA[NETFRAMEWORK40FULL AND NSIS.OPENVPN.BIN.OPENVPNSERV2.EXE]]></Condition>
+                <Condition Level="1"><![CDATA[NETFRAMEWORK40FULL AND OPENVPNSERVICE AND CONFIGDIRREG AND NOT CONFIGAUTODIRREG]]></Condition>
                 <Condition Level="0"><![CDATA[NOT NETFRAMEWORK40FULL AND NOT Installed]]></Condition>
                 <ComponentRef Id="bin.openvpnserv2.exe"/>
                 <ComponentRef Id="config.Where_are_my_config_files.txt"/>
