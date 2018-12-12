@@ -227,6 +227,78 @@
             </RegistrySearch>
         </Property>
 
+        <!-- OpenVPN prior to v2.4.x allowed 32-bit installations on 64-bit Windows. Detect those binaries too. -->
+        <?if $(sys.BUILDARCH)="x64" ?>
+        <Property Id="NSIS.OPENVPN.X86">
+            <RegistrySearch Id="nsis.reg.path.x86" Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(var.PRODUCT_NAME)" Name="UninstallString" Type="file" Win64="no"/>
+        </Property>
+        <Property Id="NSIS.OPENVPN.X86.BIN">
+            <RegistrySearch Id="nsis.openvpn.x86.reg.path.bin" Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(var.PRODUCT_NAME)" Name="UninstallString" Type="file" Win64="no">
+                <DirectorySearch Id="nsis.openvpn.x86.reg.path.bin.dir" Path="bin" Depth="0" AssignToProperty="yes"/>
+            </RegistrySearch>
+        </Property>
+        <Property Id="NSIS.OPENVPN.X86.BIN.OPENSSL.EXE">
+            <RegistrySearch Id="nsis.openvpn.x86.reg.path.bin.openssl.exe" Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(var.PRODUCT_NAME)" Name="UninstallString" Type="file" Win64="no">
+                <DirectorySearch Id="nsis.openvpn.x86.reg.path.bin.dir.openssl.exe" Path="bin" Depth="0" AssignToProperty="yes">
+                    <FileSearch Id="nsis.openvpn.x86.reg.path.bin.file.openssl.exe" Name="openssl.exe"/>
+                </DirectorySearch>
+            </RegistrySearch>
+        </Property>
+        <Property Id="NSIS.OPENVPN.X86.BIN.OPENVPN_GUI.EXE">
+            <RegistrySearch Id="nsis.openvpn.x86.reg.path.bin.openvpn_gui.exe" Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(var.PRODUCT_NAME)" Name="UninstallString" Type="file" Win64="no">
+                <DirectorySearch Id="nsis.openvpn.x86.reg.path.bin.dir.openvpn_gui.exe" Path="bin" Depth="0" AssignToProperty="yes">
+                    <FileSearch Id="nsis.openvpn.x86.reg.path.bin.file.openvpn_gui.exe" Name="openvpn-gui.exe"/>
+                </DirectorySearch>
+            </RegistrySearch>
+        </Property>
+        <Property Id="NSIS.OPENVPN.X86.CONFIG">
+            <RegistrySearch Id="nsis.openvpn.x86.reg.path.config" Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(var.PRODUCT_NAME)" Name="UninstallString" Type="file" Win64="no">
+                <DirectorySearch Id="nsis.openvpn.x86.reg.path.config.dir" Path="config" Depth="0" AssignToProperty="yes"/>
+            </RegistrySearch>
+        </Property>
+        <Property Id="NSIS.OPENVPN.X86.DOC">
+            <RegistrySearch Id="nsis.openvpn.x86.reg.path.doc" Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(var.PRODUCT_NAME)" Name="UninstallString" Type="file" Win64="no">
+                <DirectorySearch Id="nsis.openvpn.x86.reg.path.doc.dir" Path="doc" Depth="0" AssignToProperty="yes"/>
+            </RegistrySearch>
+        </Property>
+        <Property Id="NSIS.OPENVPN.X86.DOC.INSTALL_WIN32.TXT">
+            <RegistrySearch Id="nsis.openvpn.x86.reg.path.doc.INSTALL_win32.txt" Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(var.PRODUCT_NAME)" Name="UninstallString" Type="file" Win64="no">
+                <DirectorySearch Id="nsis.openvpn.x86.reg.path.doc.dir.INSTALL_win32.txt" Path="doc" Depth="0" AssignToProperty="yes">
+                    <FileSearch Id="nsis.openvpn.x86.reg.path.doc.file.INSTALL_win32.txt" Name="INSTALL-win32.txt"/>
+                </DirectorySearch>
+            </RegistrySearch>
+        </Property>
+        <Property Id="NSIS.OPENVPN.X86.EASYRSA">
+            <RegistrySearch Id="nsis.openvpn.x86.reg.path.easyrsa" Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(var.PRODUCT_NAME)" Name="UninstallString" Type="file" Win64="no">
+                <DirectorySearch Id="nsis.openvpn.x86.reg.path.easyrsa.dir" Path="easy-rsa" Depth="0" AssignToProperty="yes"/>
+            </RegistrySearch>
+        </Property>
+        <Property Id="NSIS.OPENVPN.X86.EASYRSA.README.TXT">
+            <RegistrySearch Id="nsis.openvpn.x86.reg.path.easyrsa.README.txt" Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(var.PRODUCT_NAME)" Name="UninstallString" Type="file" Win64="no">
+                <DirectorySearch Id="nsis.openvpn.x86.reg.path.easyrsa.dir.README.txt" Path="easy-rsa" Depth="0" AssignToProperty="yes">
+                    <FileSearch Id="nsis.openvpn.x86.reg.path.easyrsa.file.README.txt" Name="README.txt"/>
+                </DirectorySearch>
+            </RegistrySearch>
+        </Property>
+        <Property Id="NSIS.OPENVPN.X86.LOG">
+            <RegistrySearch Id="nsis.openvpn.x86.reg.path.log" Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(var.PRODUCT_NAME)" Name="UninstallString" Type="file" Win64="no">
+                <DirectorySearch Id="nsis.openvpn.x86.reg.path.log.dir" Path="log" Depth="0" AssignToProperty="yes"/>
+            </RegistrySearch>
+        </Property>
+        <Property Id="NSIS.OPENVPN.X86.SAMPLECFG">
+            <RegistrySearch Id="nsis.openvpn.x86.reg.path.samplecfg" Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(var.PRODUCT_NAME)" Name="UninstallString" Type="file" Win64="no">
+                <DirectorySearch Id="nsis.openvpn.x86.reg.path.samplecfg.dir" Path="sample-config" Depth="0" AssignToProperty="yes"/>
+            </RegistrySearch>
+        </Property>
+        <Property Id="NSIS.OPENVPN.X86.SAMPLECFG.SAMPLE.OVPN">
+            <RegistrySearch Id="nsis.openvpn.x86.reg.path.samplecfg.sample.$(var.CONFIG_EXTENSION)" Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(var.PRODUCT_NAME)" Name="UninstallString" Type="file" Win64="no">
+                <DirectorySearch Id="nsis.openvpn.x86.reg.path.samplecfg.dir.sample.$(var.CONFIG_EXTENSION)" Path="sample-config" Depth="0" AssignToProperty="yes">
+                    <FileSearch Id="nsis.openvpn.x86.reg.path.samplecfg.file.sample.$(var.CONFIG_EXTENSION)" Name="sample.$(var.CONFIG_EXTENSION)"/>
+                </DirectorySearch>
+            </RegistrySearch>
+        </Property>
+        <?endif?>
+
 
         <!--
             1. Initialize install folder with NSIS install folder if detected.
@@ -647,6 +719,49 @@
                         <RemoveFile Id="nsis.openvpn.Uninstall.exe" Property="NSIS.OPENVPN" Name="Uninstall.exe" On="install"/>
                         <RemoveFolder Id="nsis.openvpn" Property="NSIS.OPENVPN" On="install"/>
                         <RemoveRegistryKey Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(var.PRODUCT_NAME)" Action="removeOnInstall"/>
+
+                        <?if $(sys.BUILDARCH)="x64" ?>
+                        <RemoveFile Id="nsis.openvpn.x86.bin.libeay32.dll" Property="NSIS.OPENVPN.X86.BIN" Name="libeay32.dll" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.x86.bin.liblzo2_2.dll" Property="NSIS.OPENVPN.X86.BIN" Name="liblzo2-2.dll" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.x86.bin.libpkcs11_helper_1.dll" Property="NSIS.OPENVPN.X86.BIN" Name="libpkcs11-helper-1.dll" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.x86.bin.openssl.exe" Property="NSIS.OPENVPN.X86.BIN" Name="openssl.exe" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.x86.bin.openvpn.exe" Property="NSIS.OPENVPN.X86.BIN" Name="openvpn.exe" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.x86.bin.openvpn_gui.exe" Property="NSIS.OPENVPN.X86.BIN" Name="openvpn-gui.exe" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.x86.bin.openvpnserv.exe" Property="NSIS.OPENVPN.X86.BIN" Name="openvpnserv.exe" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.x86.bin.ssleay32.dll" Property="NSIS.OPENVPN.X86.BIN" Name="ssleay32.dll" On="install"/>
+                        <RemoveFolder Id="nsis.openvpn.x86.bin" Property="NSIS.OPENVPN.X86.BIN" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.x86.config.README.txt" Property="NSIS.OPENVPN.X86.CONFIG" Name="README.txt" On="install"/>
+                        <RemoveFolder Id="nsis.openvpn.x86.config" Property="NSIS.OPENVPN.X86.CONFIG" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.x86.doc.INSTALL_win32.txt" Property="NSIS.OPENVPN.X86.DOC" Name="INSTALL-win32.txt" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.x86.doc.license.txt" Property="NSIS.OPENVPN.X86.DOC" Name="license.txt" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.x86.doc.openvpn.8.html" Property="NSIS.OPENVPN.X86.DOC" Name="openvpn.8.html" On="install"/>
+                        <RemoveFolder Id="nsis.openvpn.x86.doc" Property="NSIS.OPENVPN.X86.DOC" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.x86.easyrsa.build_ca.bat" Property="NSIS.OPENVPN.X86.EASYRSA" Name="build-ca.bat" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.x86.easyrsa.build_dh.bat" Property="NSIS.OPENVPN.X86.EASYRSA" Name="build-dh.bat" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.x86.easyrsa.build_key.bat" Property="NSIS.OPENVPN.X86.EASYRSA" Name="build-key.bat" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.x86.easyrsa.build_key_pass.bat" Property="NSIS.OPENVPN.X86.EASYRSA" Name="build-key-pass.bat" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.x86.easyrsa.build_key_pkcs12.bat" Property="NSIS.OPENVPN.X86.EASYRSA" Name="build-key-pkcs12.bat" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.x86.easyrsa.build_key_server.bat" Property="NSIS.OPENVPN.X86.EASYRSA" Name="build-key-server.bat" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.x86.easyrsa.clean_all.bat" Property="NSIS.OPENVPN.X86.EASYRSA" Name="clean-all.bat" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.x86.easyrsa.index.txt.start" Property="NSIS.OPENVPN.X86.EASYRSA" Name="index.txt.start" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.x86.easyrsa.init_config.bat" Property="NSIS.OPENVPN.X86.EASYRSA" Name="init-config.bat" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.x86.easyrsa.openssl_1.0.0.cnf" Property="NSIS.OPENVPN.X86.EASYRSA" Name="openssl-1.0.0.cnf" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.x86.easyrsa.README.txt" Property="NSIS.OPENVPN.X86.EASYRSA" Name="README.txt" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.x86.easyrsa.revoke_full.bat" Property="NSIS.OPENVPN.X86.EASYRSA" Name="revoke-full.bat" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.x86.easyrsa.serial.start" Property="NSIS.OPENVPN.X86.EASYRSA" Name="serial.start" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.x86.easyrsa.vars.bat.sample" Property="NSIS.OPENVPN.X86.EASYRSA" Name="vars.bat.sample" On="install"/>
+                        <RemoveFolder Id="nsis.openvpn.x86.easyrsa" Property="NSIS.OPENVPN.X86.EASYRSA" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.x86.log.README.txt" Property="NSIS.OPENVPN.X86.LOG" Name="README.txt" On="install"/>
+                        <RemoveFolder Id="nsis.openvpn.x86.log" Property="NSIS.OPENVPN.X86.LOG" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.x86.samplecfg.client.$(var.CONFIG_EXTENSION)" Property="NSIS.OPENVPN.X86.SAMPLECFG" Name="client.$(var.CONFIG_EXTENSION)" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.x86.samplecfg.sample.$(var.CONFIG_EXTENSION)" Property="NSIS.OPENVPN.X86.SAMPLECFG" Name="sample.$(var.CONFIG_EXTENSION)" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.x86.samplecfg.server.$(var.CONFIG_EXTENSION)" Property="NSIS.OPENVPN.X86.SAMPLECFG" Name="server.$(var.CONFIG_EXTENSION)" On="install"/>
+                        <RemoveFolder Id="nsis.openvpn.x86.samplecfg" Property="NSIS.OPENVPN.X86.SAMPLECFG" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.x86.icon.ico" Property="NSIS.OPENVPN.X86" Name="icon.ico" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.x86.Uninstall.exe" Property="NSIS.OPENVPN.X86" Name="Uninstall.exe" On="install"/>
+                        <RemoveFolder Id="nsis.openvpn.x86" Property="NSIS.OPENVPN.X86" On="install"/>
+                        <RemoveRegistryKey Root="HKLM" Key="SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\$(var.PRODUCT_NAME)" Action="removeOnInstall"/>
+                        <?endif?>
 
                         <RemoveFile Id="nsis.tap.shortcut.utilities.addtap.bat" Directory="TAPUtilitiesShortcutFolder" Name="Add a new TAP virtual ethernet adapter.lnk" On="install"/>
                         <RemoveFile Id="nsis.tap.shortcut.utilities.deltapall.bat" Directory="TAPUtilitiesShortcutFolder" Name="Delete ALL TAP virtual ethernet adapters.lnk" On="install"/>
@@ -1409,7 +1524,7 @@
                 ConfigurableDirectory="PRODUCTDIR"
                 AllowAdvertise="no"
                 Display="expand">
-                <Condition Level="1"><![CDATA[NSIS.OPENVPN.BIN.OPENVPN_GUI.EXE]]></Condition>
+                <Condition Level="1"><![CDATA[NSIS.OPENVPN.BIN.OPENVPN_GUI.EXE OR NSIS.OPENVPN.X86.BIN.OPENVPN_GUI.EXE]]></Condition>
                 <ComponentRef Id="bin.openvpn_gui.exe"/>
                 <ComponentRef Id="shortcut.openvpn_gui.exe"/>
                 <ComponentRef Id="shortcut.openvpn_gui.exe.desktop"/>
@@ -1447,7 +1562,7 @@
                 Level="2"
                 ConfigurableDirectory="DOCDIR"
                 AllowAdvertise="no">
-                <Condition Level="1"><![CDATA[NSIS.OPENVPN.DOC.INSTALL_WIN32.TXT]]></Condition>
+                <Condition Level="1"><![CDATA[NSIS.OPENVPN.DOC.INSTALL_WIN32.TXT OR NSIS.OPENVPN.X86.DOC.INSTALL_WIN32.TXT]]></Condition>
                 <ComponentRef Id="doc.INSTALL_win32.txt"/>
                 <ComponentRef Id="doc.openvpn.8.html"/>
                 <ComponentRef Id="shortcut.doc.INSTALL_win32.txt"/>
@@ -1465,7 +1580,7 @@
                 Level="2"
                 ConfigurableDirectory="SAMPLECFGDIR"
                 AllowAdvertise="no">
-                <Condition Level="1"><![CDATA[NSIS.OPENVPN.SAMPLECFG.SAMPLE.OVPN]]></Condition>
+                <Condition Level="1"><![CDATA[NSIS.OPENVPN.SAMPLECFG.SAMPLE.OVPN OR NSIS.OPENVPN.X86.SAMPLECFG.SAMPLE.OVPN]]></Condition>
                 <ComponentRef Id="samplecfg.client.$(var.CONFIG_EXTENSION)"/>
                 <ComponentRef Id="samplecfg.sample.$(var.CONFIG_EXTENSION)"/>
                 <ComponentRef Id="samplecfg.server.$(var.CONFIG_EXTENSION)"/>
@@ -1526,7 +1641,7 @@
             ConfigurableDirectory="PRODUCTDIR"
             AllowAdvertise="no"
             Display="expand">
-            <Condition Level="1"><![CDATA[NSIS.OPENVPN.BIN.OPENSSL.EXE]]></Condition>
+            <Condition Level="1"><![CDATA[NSIS.OPENVPN.BIN.OPENSSL.EXE OR NSIS.OPENVPN.X86.BIN.OPENSSL.EXE]]></Condition>
             <ComponentRef Id="license.txt"/>
             <ComponentRef Id="bin.openssl.exe"/>
             <ComponentRef Id="bin.libcrypto_1_1.dll"/>
@@ -1539,7 +1654,7 @@
                 Level="3"
                 ConfigurableDirectory="EASYRSADIR"
                 AllowAdvertise="no">
-                <Condition Level="1"><![CDATA[NSIS.OPENVPN.EASYRSA.README.TXT]]></Condition>
+                <Condition Level="1"><![CDATA[NSIS.OPENVPN.EASYRSA.README.TXT OR NSIS.OPENVPN.X86.EASYRSA.README.TXT]]></Condition>
                 <ComponentRef Id="easyrsa.build_ca.bat"/>
                 <ComponentRef Id="easyrsa.build_dh.bat"/>
                 <ComponentRef Id="easyrsa.build_key.bat"/>
