@@ -8,7 +8,8 @@ define([PRODUCT_TAP_WIN_URL],          [http://build.openvpn.net/downloads/relea
 define([PRODUCT_TAP_WIN_COMPONENT_ID], [tap0901])
 
 dnl OpenVPNServ2.exe binary
-define([OPENVPNSERV2_URL], [http://build.openvpn.net/downloads/releases/openvpnserv2-1.4.0.0.exe])
+dnl TODO: replace-before-flight: http://build.openvpn.net/downloads/releases/openvpnserv2-1.4.0.0.exe
+define([OPENVPNSERV2_URL], [https://github-production-release-asset-2e65be.s3.amazonaws.com/162488784/000a3900-03d8-11e9-8c93-8b13894a9abe?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIWNJYAX4CSVEH53A%2F20181219%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20181219T205420Z&X-Amz-Expires=300&X-Amz-Signature=763433da1daf2a72d287dec78d86c74a0047e3e56be5189a652d2009ce032469&X-Amz-SignedHeaders=host&actor_id=6889694&response-content-disposition=attachment%3B%20filename%3DOpenVpnServ2.exe&response-content-type=application%2Foctet-stream])
 
 dnl Easy RSA binaries (URL to .tar.gz file containing "easy-rsa-[EASYRSA_VERSION]" folder with Easy RSA)
 define([EASYRSA_VERSION], [2.3.3_master])
@@ -25,15 +26,15 @@ define([PRODUCT_PUBLISHER], [OpenVPN Technologies, Inc.])
 define([PRODUCT_TAP_NAME],  [TAP-Windows])
 
 dnl The package version as displayed by UI and used in filenames (no spaces, please).
-define([PACKAGE_VERSION], [2.4.6-I602])
+define([PACKAGE_VERSION], [2.4.6m3-I603])
 
 dnl The MSI product version in the form of n[.n[.n]] (numbers only).
 dnl The third field is 100*product release + package version.
 dnl The fourth field is ignored by MSI.
-define([PRODUCT_VERSION], [2.4.602])
+define([PRODUCT_VERSION], [2.4.603])
 
 dnl The MSI product code MUST change on each product release, and remain the same for package releases.
-define([PRODUCT_CODE], [{6E62460D-5CEB-4EBE-913A-905E0E87DA1C}])
+define([PRODUCT_CODE], [{45521BD6-AC59-4050-A7A9-4B4EDDD3DC3D}])
 
 dnl The MSI upgrade codes MUST persist for all versions of the same product line.
 dnl Please use own upgrade codes when deploying a non-official OpenVPN release.
