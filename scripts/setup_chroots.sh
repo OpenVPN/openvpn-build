@@ -21,7 +21,7 @@ function setup_sbuild_schroot {
     FILE=$CHROOTDIR/$SUITE-$ARCH.tar.gz
 
     # Only setup the chroot if it does not exist
-    test -f "$FILE" || $SBUILD_CREATECHROOT --arch=$ARCH $SBUILD_CREATECHROOT_EXTRA_PARAMS --make-sbuild-tarball=$FILE $SUITE `mktemp -d` $MIRROR
+    test -f "$FILE" || $SBUILD_CREATECHROOT --arch=$ARCH $EXTRA_PARAMS $SBUILD_CREATECHROOT_EXTRA_PARAMS --make-sbuild-tarball=$FILE $SUITE `mktemp -d` $MIRROR
 }
 
 # Cycle through all the variants
