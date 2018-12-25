@@ -1,0 +1,4 @@
+# ChangeLog and Changes.rst are not the same.
+# ChangeLog contains the source changes and Changes.rst describes 
+# the program development.
+duplicate-changelog-files
