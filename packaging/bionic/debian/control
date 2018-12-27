@@ -1,9 +1,9 @@
 Source: openvpn
 Section: net
 Priority: optional
-Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Maintainer: Samuli Seppänen <samuli@openvpn.net>
 XSBC-Original-Maintainer: Bernhard Schmidt <berni@debian.org>
-Uploaders: Jörg Frings-Fürst <debian@jff-webhosting.net>
+Uploaders: Samuli Seppänen <samuli@openvpn.net>
 Build-Depends:
  debhelper (>= 10),
  dpkg-dev (>= 1.16.1),
@@ -19,8 +19,8 @@ Build-Depends:
  systemd [linux-any]
 Standards-Version: 4.1.2
 Homepage: https://openvpn.net/
-Vcs-Git: https://anonscm.debian.org/git/collab-maint/openvpn.git
-Vcs-Browser: https://anonscm.debian.org/git/collab-maint/openvpn.git
+Vcs-Git: https://github.com/OpenVPN/openvpn.git
+Vcs-Browser: https://github.com/OpenVPN/openvpn
 
 Package: openvpn
 Architecture: any
