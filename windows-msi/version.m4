@@ -9,7 +9,7 @@ define([PRODUCT_TAP_WIN_COMPONENT_ID], [tap0901])
 
 dnl OpenVPNServ2.exe binary
 dnl TODO: replace-before-flight: http://build.openvpn.net/downloads/releases/openvpnserv2-1.4.0.0.exe
-define([OPENVPNSERV2_URL], [https://github-production-release-asset-2e65be.s3.amazonaws.com/162488784/000a3900-03d8-11e9-8c93-8b13894a9abe?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIWNJYAX4CSVEH53A%2F20181219%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20181219T205420Z&X-Amz-Expires=300&X-Amz-Signature=763433da1daf2a72d287dec78d86c74a0047e3e56be5189a652d2009ce032469&X-Amz-SignedHeaders=host&actor_id=6889694&response-content-disposition=attachment%3B%20filename%3DOpenVpnServ2.exe&response-content-type=application%2Foctet-stream])
+define([OPENVPNSERV2_URL], [https://github.com/rozmansi/openvpnserv2/releases/download/v1.4.0.0/OpenVpnServ2.exe])
 
 dnl Easy RSA binaries (URL to .tar.gz file containing "easy-rsa-[EASYRSA_VERSION]" folder with Easy RSA)
 define([EASYRSA_VERSION], [2.3.3_master])

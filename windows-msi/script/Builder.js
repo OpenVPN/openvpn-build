@@ -914,26 +914,21 @@ function DownloadBuildRule(outName, url, depNames)
 DownloadBuildRule.prototype.build = function (builder)
 {
     WScript.Echo("GET: " + this.url + " >> " + this.outNames[0]);
-    var req = new ActiveXObject("MSXML2.XMLHTTP.6.0");
-    var rule = this;
-    req.open("GET", this.url, false);
-    req.onreadystatechange = function() {
-        if (req.readyState === 4) {
-            if (req.status == "200") {
-                var datOut = new ActiveXObject("ADODB.Stream");
-                datOut.Open();
-                try {
-                    datOut.Type = adTypeBinary;
-                    datOut.Write(req.responseBody);
-                    datOut.SaveToFile(rule.outNames[0], adSaveCreateOverWrite);
-                } finally {
-                    datOut.Close();
-                }
-            } else
-                throw new Error("GET " + rule.url + " failed with status " + req.status + " " + req.statusText + ".");
+    var req = new ActiveXObject("WinHttp.WinHttpRequest.5.1");
+    req.Open("GET", this.url, false);
+    req.Send();
+    if (req.Status == "200") {
+        var datOut = new ActiveXObject("ADODB.Stream");
+        datOut.Open();
+        try {
+            datOut.Type = adTypeBinary;
+            datOut.Write(req.ResponseBody);
+            datOut.SaveToFile(this.outNames[0], adSaveCreateOverWrite);
+        } finally {
+            datOut.Close();
         }
-    }
-    req.send(null);
+    } else
+        throw new Error("GET " + this.url + " failed with status " + req.Status + " " + req.StatusText + ".");
 
     BuildRule.prototype.build.call(this, builder);
 }

@@ -32,6 +32,7 @@ clean	Cleans intermediate and output files</example>
 		</runtime>
 		<reference object="ADODB.Stream"/>
 		<reference object="Scripting.FileSystemObject"/>
+		<reference object="WinHttp.WinHttpRequest.5.1"/>
 		<reference object="WScript.Shell"/>
 		<script language="JScript" src="script/Builder.js"/>
 		<script language="JScript" src="script/M4Parser.js"/>
