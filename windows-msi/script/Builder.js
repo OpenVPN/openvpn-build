@@ -51,8 +51,8 @@ function Builder()
 
     this.unzipFlags = [];
     this.tarFlags = [];
-    this.gunzipFlags = [];
-    this.bunzip2Flags = [];
+    this.gunzipFlags = ["-d"];
+    this.bunzip2Flags = ["-d"];
 
     // Get the codepage Windows is using for stdin/stdout/stderr.
     switch (parseInt(this.wsh.RegRead("HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Nls\\CodePage\\OEMCP"), 10)) {
@@ -992,7 +992,7 @@ ExtractBuildRule.prototype.build = function (builder)
     } else if (this.inNames[0].slice(-7).toLowerCase() == ".tar.gz" || this.inNames[0].slice(-4).toLowerCase() == ".tgz") {
         // Gunzip then untar file.
         if (builder.exec(
-            "gunzip.exe " +
+            "gzip.exe " +
             builder.gunzipFlags.join(" ") +
             " -c" + 
             " \"" + _CMD(this.inNames[0]) + "\"" +
@@ -1003,7 +1003,7 @@ ExtractBuildRule.prototype.build = function (builder)
     } else if (this.inNames[0].slice(-8).toLowerCase() == ".tar.bz2" || this.inNames[0].slice(-5).toLowerCase()() == ".tbz2") {
         // Bunzip2 then untar file.
         if (builder.exec(
-            "bunzip2.exe " +
+            "bzip2.exe " +
             builder.bunzip2Flags.join(" ") +
             " -c" + 
             " \"" + _CMD(this.inNames[0]) + "\"" +
