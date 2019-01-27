@@ -201,8 +201,9 @@ build_dep() {
 			|| die "Configure openssl"
 		[ -n "${BUILD_FOR_WINDOWS}" ] && perl util/mkdef.pl crypto ssl NT update
 		[ -z "${OPENSSL_SKIP_DEPEND}" ] && ${MAKE} depend
+		${MAKE}
 		${MAKE} install \
-			$(contains "${OPENSSL_VERSION}" "1.1.0" "DESTDIR" "INSTALL_PREFIX")="${INSTALL_ROOT}" \
+			$(contains "${OPENSSL_VERSION}" "1.0.2" "INSTALL_PREFIX" "DESTDIR")="${INSTALL_ROOT}" \
 			INSTALLTOP="/" MANDIR="/tmp" > build.log 2>&1 \
 			|| (cat build.log && die "make openssl")
 		rm -fr "${INSTALL_ROOT}/tmp"
