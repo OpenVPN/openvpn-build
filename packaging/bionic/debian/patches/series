@@ -1,0 +1,6 @@
+move_log_dir.patch
+auth-pam_libpam_so_filename.patch
+debian_nogroup_for_sample_files.patch
+openvpn-pkcs11warn.patch
+kfreebsd_support.patch
+match-manpage-and-command-help.patch

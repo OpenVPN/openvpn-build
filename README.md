@@ -141,42 +141,9 @@ Installing build dependencies to the schroots
 ---------------------------------------------
 
 Finally you need ensure that OpenVPN can be built inside the schroot. This can 
-be done from the schroot shell. First login to the schroot, e.g.
+be done with
 
-    $ sbuild-shell trusty-amd64
-
-On Ubuntu Xenial (16.04) you will need to add "universe" component to 
-sources.list or apt will choke on missing dh-systemd package:
-
-    # echo "deb http://fi.archive.ubuntu.com/ubuntu xenial main universe" > /etc/apt/sources.list
-    # echo "deb-src http://fi.archive.ubuntu.com/ubuntu xenial main universe" >> /etc/apt/sources.list
-    # apt-get install libsystemd-daemon-dev
-
-On Debian Jessie (8.x) you need 
-
-    # apt-get install libsystemd-daemon-dev
-
-On Debian Stretch (9.x) you need
-
-    # apt-get install gnupg1
-    # ln -s /usr/bin/gpg1 /usr/bin/gpg
-
-For details on the "ln" command look here:
-
-    * https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=827315
-
-On older platforms these additional tricks are not necessary. Next install 
-OpenVPN's build dependencies:
-
-    # apt-get build-dep openvpn
-    --- snip ---
-
-Finally exit the schroot with
-
-    # exit
-
-It is a good idea to try to build OpenVPN manually inside the schroot first and 
-once that works move to the next step.
+    $ scripts/install-build-deps.sh
 
 Building
 ========

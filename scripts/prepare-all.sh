@@ -58,7 +58,7 @@ cat $VARIANTS_FILE|grep -v "^#"|while read LINE; do
         sed -E s/'^(openvpn \([[:digit:]]\.[[:digit:]])_([[:alnum:]]+)-debian([[:digit:]])'/"\1-\2-$OSRELEASE\3"/g|\
         sed -E s/'^(openvpn \([[:digit:]]\.[[:digit:]]\.[[:digit:]]+)-debian([[:digit:]])'/"\1-$OSRELEASE\2"/g > debian/changelog
 
-        dpkg-buildpackage -S -uc -us
+        dpkg-buildpackage -d -S -uc -us
     fi
 
     cd $OLD_DIR
