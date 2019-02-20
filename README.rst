@@ -35,3 +35,20 @@ Directories
 
     Please refer to the README files in the subdirectories
     for further information.
+
+Patches
+**************************************************
+
+    The "generic/patches" directory contains patches applied
+    to openvpn or its dependencies ("products") before
+    starting the build. The product name is determined from
+    the first part of the patch filename before a dash ("-").
+
+    Currently patches are blindly applied regardless of the
+    production version. This is mostly a problem with OpenSSL
+    where differences between releases may be large enough to
+    cause patching failures. In those cases the offending
+    patch can be safely disabled. In particular, OpenSSL
+    1.1.0j requires a Makefile patch that will fail on
+    OpenSSL 1.1.1. That patch will be removed once upstream
+    has fixed the problem.
