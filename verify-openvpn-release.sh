@@ -47,7 +47,7 @@ echo "Verifying signatures"
 echo
 for DIR in `find . -mindepth 1 -type d`; do
     for SIGNATURE in `ls $DIR/*.asc`; do
-        gpg $GPG_VERIFY_OPTS -v --verify $SIGNATURE > /dev/null 2>&1
+        $GPG $GPG_OPTS -v --verify $SIGNATURE > /dev/null 2>&1
 
         # This is consider a failure even by GnuPG
         if [ $? -eq 0 ]; then
@@ -58,7 +58,7 @@ for DIR in `find . -mindepth 1 -type d`; do
 
         # Separate check for expired private key: even though gpg returns 0 this 
         # is not ok for us
-        gpg -v --verify $SIGNATURE 2>&1 | grep -i expire
+        $GPG $GPG_OPTS -v --verify $SIGNATURE 2>&1 | grep -i expire
 
     done
 done

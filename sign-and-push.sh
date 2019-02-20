@@ -34,7 +34,7 @@ if [ "$GPG_KEY_ID" = "" ]; then
     echo "ERROR: please define ID of the GPG key you wish to use!"
     exit 1
 else
-    gpg --list-keys $GPG_KEY_ID > /dev/null
+    $GPG $GPG_OPTS --list-keys $GPG_KEY_ID > /dev/null
     if [ $? -ne 0 ]; then
         echo "ERROR: GPG key $1 not found!"
         exit 1
@@ -63,10 +63,10 @@ ls|grep -E "${MATCH}"|while read FILE; do
     SIGFILE="${FILE}.asc"
     if ! [ -r $SIGFILE ]; then
         echo "Missing signature for ${FILE}"
-        gpg -a --default-key $GPG_KEY_ID --output $SIGFILE --detach-sig $FILE
+        $GPG $GPG_OPTS -a --default-key $GPG_KEY_ID --output $SIGFILE --detach-sig $FILE
     fi
 
-    gpg $GPG_VERIFY_OPTS -v --verify ${SIGFILE} 2>&1 |grep -iE '(bad|expired)'
+    $GPG $GPG_OPTS -v --verify ${SIGFILE} 2>&1 |grep -iE '(bad|expired)'
     if [ $? -ne 0 ]; then
         echo "Good signature: ${SIGFILE}"
         echo "Copying files to ${SECONDARY_WEBSERVER}"

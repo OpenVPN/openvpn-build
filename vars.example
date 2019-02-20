@@ -1,7 +1,13 @@
+# Basic settings
 BASEDIR="`pwd`/release"
 SOURCES="$BASEDIR/sources"
 OPENVPN_REPO="${OPENVPN_REPO:-https://github.com/OpenVPN/openvpn.git}"
 OPENVPN_GUI_REPO="${OPENVPN_GUI_REPO:-https://github.com/OpenVPN/openvpn-gui.git}"
+
+# Scripts and executables
+#
+# Fedora 29 does not have "gpg", only "gpg2". Your mileage may vary.
+GPG="gpg2"
 OVPN_MAN2HTML="`pwd`/ovpn-man2html.awk"
 SIGN_AND_PUSH="`pwd`/sign-and-push.sh"
 
@@ -18,12 +24,12 @@ GPG_KEY_ID="F132B1CBAF131CAE"
 # process is a close as possible to the way we have documented it.
 # This also helps catch various problems with expired subkeys and public
 # keys.
-GPG_VERIFY_OPTS="--no-default-keyring --keyring ~/.gnupg.clean/pubring.kbx"
+GPG_OPTS="--no-default-keyring --keyring ~/.gnupg.clean/pubring.kbx"
 
 GIT_AUTHOR="Samuli Seppänen <samuli@openvpn.net>"
 
-OPENVPN_PREVIOUS_VERSION="${OPENVPN_PREVIOUS_VERSION:-2.4.5}"
-OPENVPN_CURRENT_VERSION="${OPENVPN_CURRENT_VERSION:-2.4.6}"
+OPENVPN_PREVIOUS_VERSION="${OPENVPN_PREVIOUS_VERSION:-2.4.6}"
+OPENVPN_CURRENT_VERSION="${OPENVPN_CURRENT_VERSION:-2.4.7}"
 OPENVPN_CURRENT_TAG="v$OPENVPN_CURRENT_VERSION"
 OPENVPN_PREVIOUS_TAG="v$OPENVPN_PREVIOUS_VERSION"
 
