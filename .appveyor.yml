@@ -3,6 +3,10 @@ version: "openvpn-build-{build}"
 image:
 - Visual Studio 2017
 
+skip_commits:
+  files:
+    - .travis.yml
+
 environment:
   CBUILD: x86_64-pc-linux-gnu
   matrix:
