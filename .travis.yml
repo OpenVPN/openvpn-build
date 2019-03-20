@@ -1,5 +1,5 @@
 sudo: required
-dist: trusty
+dist: xenial
 
 os: linux
 language: cpp
@@ -7,7 +7,7 @@ compiler: gcc
 
 addons:
   apt:
-    packages: [ man2html, dos2unix, nsis ]
+    packages: [ man2html, dos2unix, nsis, gcc-mingw-w64 ]
 
 env:
   global:
@@ -41,11 +41,6 @@ matrix:
       env: SCRIPT=windows-nsis/build-complete
   exclude:
     - compiler: gcc
-
-install:
-    - sudo apt-add-repository "deb http://archive.ubuntu.com/ubuntu xenial main universe"
-    - sudo apt-get update
-    - sudo apt-get -y install dpkg gcc-mingw-w64
 
 before_script:
     - unset CC; unset CXX
