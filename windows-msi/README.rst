@@ -9,7 +9,13 @@ Requirements
 ------------
 
 1. `WiX Toolset`_ - tested with 3.11.1
-2. ``unzip.exe``, ``tar.exe``, ``gzip.exe`` and ``bzip2.exe`` in path
+2. ``unzip.exe`` - tested with UnZip 6.00 of 20 April 2009, by Info-ZIP
+3. GNU ``tar.exe`` - tested with 1.30
+4. ``gzip.exe`` - tested with 1.9
+5. ``bzip2.exe`` - tested with 1.0.6, 6-Sept-2010
+
+Note: ``unzip.exe``, ``tar.exe``, ``gzip.exe``, and ``bzip2.exe`` must be in
+``%PATH%``.
 
 
 Usage

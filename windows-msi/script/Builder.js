@@ -998,7 +998,7 @@ ExtractBuildRule.prototype.build = function (builder)
             " \"" + _CMD(this.inNames[0]) + "\"" +
             " | tar.exe " +
             builder.tarFlags.join(" ") +
-            " -xC \"" + _CMD(this.outDir) + "\"") != 0)
+            " -xf - -C \"" + _CMD(this.outDir) + "\"") != 0)
             throw new Error("gunzip|tar returned non-zero.");
     } else if (this.inNames[0].slice(-8).toLowerCase() == ".tar.bz2" || this.inNames[0].slice(-5).toLowerCase()() == ".tbz2") {
         // Bunzip2 then untar file.
@@ -1009,7 +1009,7 @@ ExtractBuildRule.prototype.build = function (builder)
             " \"" + _CMD(this.inNames[0]) + "\"" +
             " | tar.exe " +
             builder.tarFlags.join(" ") +
-            " -xC \"" + _CMD(this.outDir) + "\"") != 0)
+            " -xf - -C \"" + _CMD(this.outDir) + "\"") != 0)
             throw new Error("bunzip2|tar returned non-zero.");
     }
 
