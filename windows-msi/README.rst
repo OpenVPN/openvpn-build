@@ -22,6 +22,9 @@ Usage
    bin`` folder. The ``tapctl.exe`` requires elevation, therefore it should be
    digitally signed at least.
 
+   If the code signing is performed on Windows, see ``sign-openvpn.bat`` as a
+   suggestion.
+
 3. Adjust ``version.md4``. It is important to increment ``PRODUCT_VERSION``
    *and* ``PRODUCT_VERSION_GUID`` on each release. MSI upgrading logic relies
    on this.
@@ -55,6 +58,14 @@ Usage
     msi     Builds MSI packages only
     exe     Builds EXE installer only
     clean   Cleans intermediate and output files
+
+   If the code signing is performed on Windows, the following command order is
+   suggested::
+
+    cscript build.wsf msi
+    sign-msi
+    cscript build.wsf exe
+    sign-exe
 
 6. The MSI packages and EXE installer will be put to ``image`` subfolder.
 
