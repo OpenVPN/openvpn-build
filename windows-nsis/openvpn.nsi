@@ -343,8 +343,48 @@ Section /o "${PACKAGE_NAME} Service" SecService
 	; Copy openvpnserv2.exe for automatic service
 	File /oname=openvpnserv2.exe "${OPENVPNSERV2_EXECUTABLE}"
 
+	; configuration directory required for the automatic service -- create if doesn't exist.
+	CreateDirectory $INSTDIR\config-auto
+
+	; If service start type is not manual or disabled or service was running,
+	; and autostart_config_dir RegValue did not exist, we are upgrading to
+	; the new service version and require configs to be in config-auto directory.
+	; In that case copy files from config to config-auto.
+
+	; Start type: 0 = boot start, 1 = system start 3 = automatic, 4 = manual 5 = disabled.
+	; It seems SimpleSC does not distinguish between Automatic and Automatic (delayed start)
+	${If} $service_starttype < 3
+	${OrIf} $service_was_running == 4
+		Push $R0
+		ReadRegStr $R0 HKLM "SOFTWARE\${PACKAGE_NAME}" "autostart_config_dir"
+		${If} $R0 == ""
+		        DetailPrint "Copying files in config to config-auto"
+			CopyFiles /SILENT $INSTDIR\config\* $INSTDIR\config-auto
+		${EndIf}
+		Pop $R0
+	${EndIf}
+
+	; Update the README file for autostart configs
+	FileOpen $R0 "$INSTDIR\config-auto\README.txt" w
+	FileWrite $R0 "This directory or its subdirectories should contain ${PACKAGE_NAME}$\r$\n"
+	FileWrite $R0 "configuration files each having an extension of .${OPENVPN_CONFIG_EXT}$\r$\n"
+	FileWrite $R0 "that should be automatically started at boot up.$\r$\n"
+	FileWrite $R0 "$\r$\n"
+	FileWrite $R0 "When ${PACKAGE_NAME}Service is started, a separate ${PACKAGE_NAME}$\r$\n"
+	FileWrite $R0 "process will be instantiated for each configuration file.$\r$\n"
+	FileWrite $R0 "$\r$\n"
+	FileWrite $R0 "${PACKAGE_NAME} GUI does not scan this directory.$\r$\n"
+	FileClose $R0
+
+	; Registry string required for the automatic service. Registry string common to all services
+	; and the GUI are added in CoreSetup
+
+	!insertmacro WriteRegStringIfUndef HKLM "SOFTWARE\${PACKAGE_NAME}" "autostart_config_dir" "$INSTDIR\config-auto"
+
 	DetailPrint "Installing OpenVPN Service..."
-	SimpleSC::InstallService "OpenVPNService" "OpenVPNService" "16" "3" '"$INSTDIR\bin\openvpnserv2.exe"' "tap0901/dhcp" "" ""
+	SimpleSC::InstallService "OpenVPNService" "OpenVPNService" "16" "2" '"$INSTDIR\bin\openvpnserv2.exe"' "tap0901/dhcp" "" ""
+
+	; start type and runnig state will be updated in RestoreServiceState
 SectionEnd
 
 Function CoreSetup
@@ -364,9 +404,6 @@ Function CoreSetup
 	FileOpen $R0 "$INSTDIR\config\README.txt" w
 	FileWrite $R0 "This directory or its subdirectories should contain ${PACKAGE_NAME}$\r$\n"
 	FileWrite $R0 "configuration files each having an extension of .${OPENVPN_CONFIG_EXT}$\r$\n"
-	FileWrite $R0 "$\r$\n"
-	FileWrite $R0 "When ${PACKAGE_NAME} is started as a service, a separate ${PACKAGE_NAME}$\r$\n"
-	FileWrite $R0 "process will be instantiated for each configuration file.$\r$\n"
 	FileWrite $R0 "$\r$\n"
 	FileWrite $R0 "When ${PACKAGE_NAME} GUI is started configs in this directory are added$\r$\n"
 	FileWrite $R0 "to the list of available connections$\r$\n"
@@ -783,6 +820,8 @@ Section "Uninstall"
 	Delete "$INSTDIR\bin\libcrypto-1_1-x64.dll"
 	Delete "$INSTDIR\bin\libssl-1_1.dll"
 	Delete "$INSTDIR\bin\libssl-1_1-x64.dll"
+
+	Delete "$INSTDIR\config-auto\README.txt"
 
 	Delete "$INSTDIR\config\README.txt"
 	Delete "$INSTDIR\config\sample.${OPENVPN_CONFIG_EXT}.txt"
