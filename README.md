@@ -23,8 +23,8 @@ Before you run these scripts:
 
 Once these are in order copy vars.example to vars and add your GPG key ID.
 
-Usage
-=====
+Making a full release
+=====================
 
 First run
 
@@ -63,3 +63,18 @@ you can automatically download the files and verify their GPG signatures:
 
 This is particularly useful with CloudFlare which has a habit of caching
 obsolete files.
+
+Making a Windows installer release
+==================================
+
+These scripts can be used to make (part of a) Windows installer release. Create
+a release sources directory (e.g. release-2.4.7-I607/sources) manually, put the
+installer files in there and run sign-and-push.sh:
+
+    $ ./sign-and-push.sh release-2.4.7-I607
+
+Once the files are present in S3 verify the release:
+
+    $ ./verify-openvpn-release.sh release-2.4.7-I607
+
+You will need to update and tag openvpn-gui etc. manually for now.
