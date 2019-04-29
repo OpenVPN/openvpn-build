@@ -8,8 +8,7 @@ define([PRODUCT_TAP_WIN_URL],          [http://build.openvpn.net/downloads/relea
 define([PRODUCT_TAP_WIN_COMPONENT_ID], [tap0901])
 
 dnl OpenVPNServ2.exe binary
-dnl TODO: replace-before-flight: http://build.openvpn.net/downloads/releases/openvpnserv2-1.4.0.0.exe
-define([OPENVPNSERV2_URL], [https://github.com/rozmansi/openvpnserv2/releases/download/v1.4.0.0/OpenVpnServ2.exe])
+define([OPENVPNSERV2_URL], [http://build.openvpn.net/downloads/releases/openvpnserv2-1.4.0.0.exe])
 
 dnl Easy RSA binaries (URL to .tar.gz file containing "easy-rsa-[EASYRSA_VERSION]" folder with Easy RSA)
 define([EASYRSA_VERSION], [2.3.3_master])
