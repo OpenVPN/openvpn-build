@@ -97,7 +97,7 @@ function PublishActiveSetup()
                 // We should have set the StubPath to execute cleanup. Unfortunately, when
                 // the StubPath gets executed, the MSI package is gone already. So, a
                 // `msiexec /x [ProductCode] /qn` is not possible any more.
-                wsh.RegDelete(regPath + "StubPath");
+                try { wsh.RegDelete(regPath + "StubPath"); } catch (err) {}
                 break;
         }
     }
