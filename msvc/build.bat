@@ -25,8 +25,6 @@ rem    set MODE=OPENVPN&& build.bat
 rem To build only dependencies, run
 rem    set MODE=DEPS&& build.bat
 
-setlocal ENABLEDELAYEDEXPANSION
-
 cd /d %0\..
 SET ROOT=%CD%
 
@@ -171,5 +169,5 @@ echo FAILED!
 set rc=1
 :end
 cd %ROOT%
-endlocal
+
 exit /b %rc%
