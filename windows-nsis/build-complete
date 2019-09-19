@@ -20,6 +20,7 @@ main() {
 			SOURCESROOT="$(pwd)/sources" \
 			BUILDROOT="${BUILD_TMPDIR}/build-${arch}" \
 			CHOST=${arch}-w64-mingw32 \
+			OPT_OPENVPN_CFLAGS="-O2 -flto" \
 			../generic/build \
 				--special-build="${SPECIAL_BUILD}" \
 				${WIN_USE_DEPCACHE:+--use-depcache=win-$arch} \
