@@ -252,10 +252,10 @@ build_dep() {
 }
 
 build_openvpn() {
-
 	echo "Build openvpn"
 	cd "${BUILDROOT}/openvpn-${OPENVPN_VERSION}" || die "cd openvpn"
 	autoreconf -ivf # this allows to specify github url as OPENVPN_URL
+	CFLAGS="${CFLAGS} ${OPT_OPENVPN_CFLAGS}"
 	./configure ${CONFIGOPTS} ${EXTRA_OPENVPN_CONFIG} \
 		$(empty_ifelse "${DO_STATIC}" --enable-pkcs11 --disable-plugins) \
 		--enable-lzo \
@@ -267,7 +267,6 @@ build_openvpn() {
 }
 
 build_openvpn_gui() {
-
 	echo "Build openvpn-gui"
 	cd "${BUILDROOT}/openvpn-gui"* || die "cd openvpn gui"
 	./configure ${CONFIGOPTS} ${EXTRA_OPENVPN_GUI_CONFIG} \
