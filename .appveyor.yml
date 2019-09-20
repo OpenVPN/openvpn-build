@@ -14,10 +14,14 @@ environment:
       ARCH: x86
       CYGWIN: C:\Cygwin
       CHOST: i686-w64-mingw32
+      RANLIB: gcc-ranlib
+      AR: gcc-ar
     - BUILDSYSTEM: cygwin
       ARCH: x86_64
       CYGWIN: C:\Cygwin64
       CHOST: x86_64-w64-mingw32
+      RANLIB: gcc-ranlib
+      AR: gcc-ar
     - BUILDSYSTEM: VS2017
 
 for:
