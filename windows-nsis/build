@@ -97,6 +97,8 @@ main() {
 		-DOPENVPN_ROOT_X86_64="$(dospath "${OPENVPN_ROOT_X86_64}")" \
 		-DTAP_WINDOWS_INSTALLER="$(dospath "${TAP_WINDOWS_INSTALLER}")" \
 		${TAP_WINDOWS_INSTALLER:+-DUSE_TAP_WINDOWS} \
+		-DWINTUN_INSTALLER_X86_64="$(dospath "${WINTUN_INSTALLER_X86_64}")" \
+		-DWINTUN_INSTALLER_I686="$(dospath "${WINTUN_INSTALLER_I686}")" \
 		-DOPENVPNSERV2_EXECUTABLE="$(dospath "${OPENVPNSERV2_EXECUTABLE}")" \
 		-DEASYRSA_ROOT="$(dospath "${EASYRSA_ROOT}")" \
 		${EASYRSA_TARBALL:+-DUSE_EASYRSA} \
@@ -131,6 +133,12 @@ while [ -n "$1" ]; do
 			;;
 		--tap-windows=*)
 			TAP_WINDOWS_INSTALLER="${v}"
+			;;
+		--wintun-installer-x86-64=*)
+			WINTUN_INSTALLER_X86_64="${v}"
+			;;
+		--wintun-installer-i686=*)
+			WINTUN_INSTALLER_I686="${v}"
 			;;
 		--openvpnserv2=*)
 			OPENVPNSERV2_EXECUTABLE="${v}"
