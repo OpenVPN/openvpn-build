@@ -5,8 +5,10 @@ About
     This subdirectory contains scripts for building OpenVPN
     and all it's dependencies using Microsoft Visual C.
 
-    You need to install Visual Studio 2017 (Community or Professional)
-    and ActiveState Perl.
+    You need to install:
+      - Visual Studio 2017 (Build Tools for VS will also work)
+      - Perl (Strawberry or ActiveState, required for building OpenSSL)
+      - NASM (required for building OpenSSL)
 
 Usage
 

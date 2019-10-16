@@ -1,8 +1,8 @@
 @echo off
 
-if "%OPENSSL_VERSION%"=="" set OPENSSL_VERSION=1.0.2p
-if "%LZO_VERSION%"=="" set LZO_VERSION=2.06
-if "%PKCS11_VERSION%"=="" set PKCS11_VERSION=1.11
+if "%OPENSSL_VERSION%"=="" set OPENSSL_VERSION=1.1.1d
+if "%LZO_VERSION%"=="" set LZO_VERSION=2.10
+if "%PKCS11_VERSION%"=="" set PKCS11_VERSION=1.22
 if "%TAP_VERSION%"=="" set TAP_VERSION=master
 if "%GITHUB_USER%"=="" set GITHUB_USER=OpenVPN
 if "%OPENVPN_VERSION%"=="" set OPENVPN_VERSION=master
@@ -11,7 +11,7 @@ if "%OPENVPN_SOURCE%"=="" set OPENVPN_SOURCE=tarball
 
 set OPENSSL_URL=http://www.openssl.org/source/openssl-%OPENSSL_VERSION%.tar.gz
 set LZO_URL=http://www.oberhumer.com/opensource/lzo/download/lzo-%LZO_VERSION%.tar.gz
-set PKCS11_URL=https://netix.dl.sourceforge.net/project/opensc/pkcs11-helper/pkcs11-helper-%PKCS11_VERSION%.tar.bz2
+set PKCS11_URL=https://github.com/OpenSC/pkcs11-helper/releases/download/pkcs11-helper-%PKCS11_VERSION%/pkcs11-helper-%PKCS11_VERSION%.tar.bz2
 set TAP_URL=https://github.com/OpenVPN/tap-windows6/archive/%TAP_VERSION%.zip
 set OPENVPN_URL=https://github.com/%GITHUB_USER%/openvpn/archive/%OPENVPN_VERSION%.tar.gz
 set OPENVPN_GIT=https://github.com/OpenVPN/openvpn.git
