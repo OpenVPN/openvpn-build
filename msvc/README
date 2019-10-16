@@ -10,27 +10,20 @@ About
 
 Usage
 
-    Just run build.bat - this downloads and build dependencies and openvpn.
+    Clone openvpn-build repo:
 
-    You can override build options either with build-dev-local.bat or by setting
-    enviromental variables in console. For example if you want to build from
-    another GitHub fork or branch:
+      > git clone git@github.com:OpenVPN/openvpn-build.git
 
-      c:\Temp\openvpn-build\msvc>set GITHUB_USER=lstipakov&& set OPENVPN_VERSION=vs2017&& build.bat
+    Clone openvpn repo:
 
-    After command-line build you can use Visual Studio IDE - just open
+      > git clone git@github.com:OpenVPN/openvpn.git
 
-      openvpn-build\msvc\build.tmp\openvpn-<branch>\openvpn.sln
+    Build OpenVPN with dependencies:
 
-    Note that by default build.bat builds dependencies for x64 architecture, so don't
-    forget to set "Solution Platforms" to "x64".
+      > openvpn-build\msvc\build.bat
 
-    When running openvpn from IDE, you either need to copy dependencies (libeay32.dll etc) from
+    Development environment is ready. Open solution file in Visual Studio (select "x64" in "Solution Platforms") :
 
-      openvpn-build\msvc\image\bin
+      openvpn\openvpn.sln
 
-    to
-
-      openvpn-build\msvc\build.tmp\openvpn-vs2017\x64-Output\Debug
-
-    or change "Working Directory" to openvpn-build\msvc\image\bin.
+    and start coding!
