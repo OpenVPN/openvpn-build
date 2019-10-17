@@ -23,6 +23,7 @@ if not exist "%VSCOMNTOOLS%" set VSCOMNTOOLS=%ProgramFiles(x86)%\Microsoft Visua
 if not exist "%VSCOMNTOOLS%" set VSCOMNTOOLS=%ProgramFiles(x86)%\Microsoft Visual Studio\2017\Enterprise\Common7\Tools
 if "%VSHOME%"=="" SET VSHOME=%VSCOMNTOOLS%\..\..
 if "%VCHOME%"=="" SET VCHOME=%VSHOME%\VC
+if not exist "%VSCOMNTOOLS%" SET VCHOME=%ProgramFiles(x86)%\Microsoft Visual Studio\2017\BuildTools\VC
 
 if "%P7Z%"=="" SET P7Z=tools\7za.exe
 if "%GIT%"=="" SET GIT=c:\Program Files\Git\bin\git.exe
