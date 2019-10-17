@@ -29,6 +29,7 @@ setlocal ENABLEDELAYEDEXPANSION
 
 cd /d %0\..
 SET ROOT=%CD%
+SET OPENVPN_BUILD_OPENVPN=openvpn-build-openvpn
 
 call build-env.bat
 if exist build-env-local.bat call build-env-local.bat
@@ -152,9 +153,12 @@ if "%MODE%" == "DEPS" goto end
 
 echo Build OpenVPN
 
+rmdir /q /s ..\..\%OPENVPN_BUILD_OPENVPN% > nul 2>&1
+mkdir ..\..\%OPENVPN_BUILD_OPENVPN% > nul 2>&1
 cd build.tmp\openvpn*
 if exist "%ROOT%\config\config-msvc-local.h" copy "%ROOT%\config\config-msvc-local.h" .
-set OPENVPN_DEPROOT=%TARGET%
+xcopy * ..\..\..\..\%OPENVPN_BUILD_OPENVPN% /E
+cd ..\..\..\..\%OPENVPN_BUILD_OPENVPN%
 call msvc-build.bat
 if errorlevel 1 goto error
 copy "x64-Output\%RELEASE%"\*.exe "%TARGET%\bin"
