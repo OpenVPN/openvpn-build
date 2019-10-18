@@ -46,13 +46,24 @@ if exist "%VCHOME%\vcvarsall.bat" (
 	goto error
 )
 
-perl -e "exit 0" > nul 2>&1
+if "%MODE%" == "OPENVPN" goto build_openvpn
+
+nasm.exe -h > nul 2>&1
 if not errorlevel 1 goto cont1
-echo perl is required
-goto error
+echo nasm.exe not found in PATH
+if not exist "%NASM_DIR%" (
+	echo "Could't find %NASM_DIR%/nasm.exe, please install NASM (https://www.nasm.us)"
+	goto error
+)
+echo Adding %NASM_DIR% to PATH	
+set PATH=%NASM_DIR%;%PATH%
 :cont1
 
-if "%MODE%" == "OPENVPN" goto build_openvpn
+perl -e "exit 0" > nul 2>&1
+if not errorlevel 1 goto cont2
+echo perl is required
+goto error
+:cont2
 
 echo Cleanup
 

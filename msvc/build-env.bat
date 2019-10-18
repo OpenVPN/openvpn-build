@@ -27,6 +27,7 @@ if not exist "%VSCOMNTOOLS%" SET VCHOME=%ProgramFiles(x86)%\Microsoft Visual Stu
 
 if "%P7Z%"=="" SET P7Z=tools\7za.exe
 if "%GIT%"=="" SET GIT=c:\Program Files\Git\bin\git.exe
+if "%NASM_DIR%"=="" SET NASM_DIR=c:\Program Files\NASM
 
 if "%TARGET%"=="" SET TARGET=%ROOT%\image
 if "%RELEASE%"=="" SET RELEASE=Release
