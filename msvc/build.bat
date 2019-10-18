@@ -162,9 +162,9 @@ mkdir ..\..\%OPENVPN_BUILD_OPENVPN% > nul 2>&1
 cd build.tmp\openvpn*
 xcopy * ..\..\..\..\%OPENVPN_BUILD_OPENVPN% /E
 cd ..\..\..\..\%OPENVPN_BUILD_OPENVPN%
-msbuild openvpn.sln /p:Platform=x64
+msbuild openvpn.sln /p:Platform=x64 /p:Configuration=%RELEASE%
 if errorlevel 1 goto error
-copy x64-Output\Debug\*.exe "%TARGET%\bin"
+copy x64-Output\%RELEASE%\*.exe "%TARGET%\bin"
 if errorlevel 1 goto error
 copy include\openvpn-*.h "%TARGET%\include"
 if errorlevel 1 goto error
