@@ -1,6 +1,7 @@
 @echo off
 rem OpenVPN Project MSVC Compile Build
 rem Copyright (C) 2008-2012 Alon Bar-Lev <alon.barlev@gmail.com>
+rem Copyright (C) 2019 Lev Stipakov <lstipakov@gmail.com>
 rem
 rem This program is free software: you can redistribute it and/or modify
 rem it under the terms of the GNU General Public License as published by
@@ -45,13 +46,24 @@ if exist "%VCHOME%\vcvarsall.bat" (
 	goto error
 )
 
-perl -e "exit 0" > nul 2>&1
+if "%MODE%" == "OPENVPN" goto build_openvpn
+
+nasm.exe -h > nul 2>&1
 if not errorlevel 1 goto cont1
-echo perl is required
-goto error
+echo nasm.exe not found in PATH
+if not exist "%NASM_DIR%" (
+	echo "Could't find %NASM_DIR%/nasm.exe, please install NASM (https://www.nasm.us)"
+	goto error
+)
+echo Adding %NASM_DIR% to PATH	
+set PATH=%NASM_DIR%;%PATH%
 :cont1
 
-if "%MODE%" == "OPENVPN" goto build_openvpn
+perl -e "exit 0" > nul 2>&1
+if not errorlevel 1 goto cont2
+echo perl is required
+goto error
+:cont2
 
 echo Cleanup
 
@@ -93,22 +105,25 @@ echo Extract
 
 for %%f in (sources\*.gz sources\*.bz2) do "%P7Z%" x -odownload.tmp "%%f"
 if errorlevel 1 goto error
-for %%f in (download.tmp\*) do "%P7Z%" x -obuild.tmp "%%f"
+for %%f in (download.tmp\*) do "%P7Z%" x -obuild.tmp "%%f" -aou
 if errorlevel 1 goto error
-for %%f in (sources\*.zip) do "%P7Z%" x -obuild.tmp "%%f"
+for %%f in (sources\*.zip) do "%P7Z%" x -obuild.tmp "%%f" -aou
 if errorlevel 1 goto error
 
 echo Build OpenSSL
 
 cd build.tmp\openssl*
-perl Configure VC-WIN64A --prefix="%TARGET%"
+perl Configure VC-WIN64A --prefix="%TARGET%" --openssldir="%TARGET%"\ssl
 if errorlevel 1 goto error
-call ms\do_win64a.bat
+nmake install
 if errorlevel 1 goto error
-nmake -f ms\ntdll.mak
-if errorlevel 1 goto error
-nmake -f ms\ntdll.mak install
-if errorlevel 1 goto error
+
+if not exist "%TARGET%\libeay32.lib" (
+	rem workaround for pkcs11-helper VS build has pre-1.1.0 hardcoded library names
+	copy %TARGET%\lib\libcrypto.lib %TARGET%\lib\libeay32.lib
+	copy %TARGET%\lib\libssl.lib %TARGET%\lib\ssleay32.lib
+)
+
 cd %ROOT%
 
 echo Build LZO
@@ -156,12 +171,11 @@ echo Build OpenVPN
 rmdir /q /s ..\..\%OPENVPN_BUILD_OPENVPN% > nul 2>&1
 mkdir ..\..\%OPENVPN_BUILD_OPENVPN% > nul 2>&1
 cd build.tmp\openvpn*
-if exist "%ROOT%\config\config-msvc-local.h" copy "%ROOT%\config\config-msvc-local.h" .
 xcopy * ..\..\..\..\%OPENVPN_BUILD_OPENVPN% /E
 cd ..\..\..\..\%OPENVPN_BUILD_OPENVPN%
-call msvc-build.bat
+msbuild openvpn.sln /p:Platform=x64 /p:Configuration=%RELEASE%
 if errorlevel 1 goto error
-copy "x64-Output\%RELEASE%"\*.exe "%TARGET%\bin"
+copy x64-Output\%RELEASE%\*.exe "%TARGET%\bin"
 if errorlevel 1 goto error
 copy include\openvpn-*.h "%TARGET%\include"
 if errorlevel 1 goto error
@@ -175,5 +189,5 @@ echo FAILED!
 set rc=1
 :end
 cd %ROOT%
-endlocal
+endlocal && set rc=%rc%
 exit /b %rc%
