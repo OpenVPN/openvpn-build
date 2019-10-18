@@ -178,5 +178,5 @@ echo FAILED!
 set rc=1
 :end
 cd %ROOT%
-endlocal
+endlocal && set rc=%rc%
 exit /b %rc%
