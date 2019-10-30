@@ -10,7 +10,7 @@ These scripts automate a large subset of the OpenVPN 2.x release process:
 The last script is particularly important when Content Delivery systems (e.g.
 CloudFlare) are in the middle and may be serving obsolete files.
 
-Configuration
+Prerequisites
 =============
 
 Before you run these scripts:
@@ -21,12 +21,24 @@ Before you run these scripts:
 * Ensure that you have GPG key for signing
 * Ensure that you have a clean GPG keyring available for verifying signatures
 
-Once these are in order copy vars.example to vars and add your GPG key ID.
+Configuration
+=============
+
+Once prerequisites are set up copy vars.example to vars and add your GPG key ID.
 
 Making a full release
 =====================
 
-First run
+Typically you need / want to edit build parameters in var:
+
+    OPENVPN_PREVIOUS_VERSION="${OPENVPN_PREVIOUS_VERSION:-2.4.7}"
+    OPENVPN_CURRENT_VERSION="${OPENVPN_CURRENT_VERSION:-2.4.8}"
+    OPENVPN_GUI_CURRENT_MIN_VERSION="14"
+    INSTALLER_VERSION="I601"
+
+OpenVPN GUI min version refers to the minor version for _this_ release.
+
+Once build parameters are correct do
 
     $ ./make-openvpn-release.sh
 
@@ -78,3 +90,22 @@ Once the files are present in S3 verify the release:
     $ ./verify-openvpn-release.sh release-2.4.7-I607
 
 You will need to update and tag openvpn-gui etc. manually for now.
+
+What do these scripts do and don't do?
+======================================
+
+make-openvpn-release.sh produces:
+
+* openvpn release tarball
+* openvpn changelog for debian packages
+* openvpn changelog for Trac
+* openvpn man-page for Trac
+* openvpn-gui tarball
+* increments openvpn-gui version
+* adds openvpn-gui git tags
+
+make-openvpn-release.sh does not:
+
+* push any of the produced files anywhere
+* push any changes it makes to Git
+* GPG sign any of the files

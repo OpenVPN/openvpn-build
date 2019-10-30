@@ -1,24 +1,6 @@
 #!/bin/sh
 #
 # make-openvpn-release.sh
-#
-# This script produces
-#
-# - openvpn release tarball
-# - openvpn changelog for debian packages
-# - openvpn changelog for Trac
-# - openvpn man-page for Trac
-# - openvpn-gui tarball
-#
-# It also
-# - increments openvpn-gui version
-# - adds openvpn-gui git tags
-#
-# It does not
-#
-# - push any of the produced files anywhere
-# - push any changes it makes to Git
-# - GPG sign any of the files
 
 . ./vars
 
