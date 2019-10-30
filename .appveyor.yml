@@ -1,8 +1,5 @@
 version: "openvpn-build-{build}"
 
-image:
-- Visual Studio 2017
-
 skip_commits:
   files:
     - .travis.yml
@@ -10,19 +7,22 @@ skip_commits:
 environment:
   CBUILD: x86_64-pc-linux-gnu
   matrix:
-    - BUILDSYSTEM: cygwin
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+      BUILDSYSTEM: cygwin
       ARCH: x86
       CYGWIN: C:\Cygwin
       CHOST: i686-w64-mingw32
       RANLIB: gcc-ranlib
       AR: gcc-ar
-    - BUILDSYSTEM: cygwin
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+      BUILDSYSTEM: cygwin
       ARCH: x86_64
       CYGWIN: C:\Cygwin64
       CHOST: x86_64-w64-mingw32
       RANLIB: gcc-ranlib
       AR: gcc-ar
-    - BUILDSYSTEM: VS2017
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
+      BUILDSYSTEM: VS2019
 
 for:
   -
@@ -39,7 +39,7 @@ for:
   -
     matrix:
       only:
-        - BUILDSYSTEM: VS2017
+        - BUILDSYSTEM: VS2019
     init:
       - choco install -y --allow-empty-checksums nasm
     build_script:
