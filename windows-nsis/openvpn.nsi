@@ -600,7 +600,7 @@ ${IfNot} ${AtLeastWinVista}
 
 ${EndIf}
 
-	${If} ${RunningX64}
+	${If} ${IsWow64}
 		SetRegView 64
 		; Change the installation directory to C:\Program Files, but only if the
 		; user has not provided a custom install location.
@@ -729,7 +729,7 @@ Function un.onInit
 	ClearErrors
 	!insertmacro MULTIUSER_UNINIT
 	SetShellVarContext all
-	${If} ${RunningX64}
+	${If} ${IsWow64}
 		SetRegView 64
 	${EndIf}
 FunctionEnd
