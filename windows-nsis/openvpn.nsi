@@ -344,7 +344,7 @@ Section /o "${PACKAGE_NAME} Service" SecService
 	File /oname=openvpnserv2.exe "${OPENVPNSERV2_EXECUTABLE}"
 
 	DetailPrint "Installing OpenVPN Service..."
-	SimpleSC::InstallService "OpenVPNService" "OpenVPNService" "16" "3" '"$INSTDIR\bin\openvpnserv2.exe"' "tap0901/dhcp" "" ""
+	SimpleSC::InstallService "OpenVPNService" "OpenVPNService" "16" "3" '"$INSTDIR\bin\openvpnserv2.exe"' "dhcp" "" ""
 SectionEnd
 
 Function CoreSetup
@@ -408,14 +408,14 @@ Function CoreSetup
 		SimpleSC::SetServiceBinaryPath "OpenVPNServiceInteractive" '"$INSTDIR\bin\openvpnserv.exe"'
 	${Else}
 		DetailPrint "Installing OpenVPN Interactive Service..."
-		SimpleSC::InstallService "OpenVPNServiceInteractive" "OpenVPN Interactive Service" "32" "2" '"$INSTDIR\bin\openvpnserv.exe"' "tap0901/dhcp" "" ""
+		SimpleSC::InstallService "OpenVPNServiceInteractive" "OpenVPN Interactive Service" "32" "2" '"$INSTDIR\bin\openvpnserv.exe"' "dhcp" "" ""
 	${EndIf}
 
 	${If} $legacy_service_existed == 0
 		SimpleSC::SetServiceBinaryPath "OpenVPNServiceLegacy" '"$INSTDIR\bin\openvpnserv.exe"'
 	${Else}
 		DetailPrint "Installing OpenVPN Legacy Service..."
-		SimpleSC::InstallService "OpenVPNServiceLegacy" "OpenVPN Legacy Service" "32" "3" '"$INSTDIR\bin\openvpnserv.exe"' "tap0901/dhcp" "" ""
+		SimpleSC::InstallService "OpenVPNServiceLegacy" "OpenVPN Legacy Service" "32" "3" '"$INSTDIR\bin\openvpnserv.exe"' "dhcp" "" ""
 	${EndIf}
 
 FunctionEnd
