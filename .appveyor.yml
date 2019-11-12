@@ -41,9 +41,9 @@ for:
       only:
         - BUILDSYSTEM: VS2019
     init:
-      - choco install -y --allow-empty-checksums nasm
+      - choco install -y --allow-empty-checksums nasm strawberryperl
     build_script:
-      - set PATH=C:\Program Files\NASM;%PATH%
+      - set PATH=C:\Program Files\NASM;C:\Strawberry\Perl\bin;%PATH%
       - msvc/build.bat
     artifacts:
       - path: msvc/image/bin
