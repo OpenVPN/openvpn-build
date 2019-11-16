@@ -9,6 +9,8 @@ jobs:
     
     steps:
     - uses: actions/checkout@v1
+    - name: source build vars
+      run: source ~/work/openvpn-build/openvpn-build/openvpn-build/generic/build-custom.vars && echo ${OPENVPN_VERSION} && echo ${OPENVPN_URL}
     - name: get openvpn build env setup script
       run: wget https://raw.githubusercontent.com/OpenVPN/openvpn-vagrant/master/setup-generic-buildsystem.sh && chmod +x ./setup-generic-buildsystem.sh
     - name: run env setup script
@@ -16,7 +18,7 @@ jobs:
     - name: make file permissions super permissive
       run: sudo chmod -R 777 openvpn-build/
     - name: build without patches first
-      run: cd openvpn-build/generic && source ~/work/openvpn-build/openvpn-build/openvpn-build/generic/build.vars && echo ${OPENVPN_VERSION} && echo ${OPENVPN_URL} && IMAGEROOT=`pwd`/image-win32 CHOST=i686-w64-mingw32 CBUILD=x86_64-pc-linux-gnu ./build
+      run: cd openvpn-build/generic && source ~/work/openvpn-build/openvpn-build/openvpn-build/generic/build-custom.vars && echo ${OPENVPN_VERSION} && echo ${OPENVPN_URL} && IMAGEROOT=`pwd`/image-win32 CHOST=i686-w64-mingw32 CBUILD=x86_64-pc-linux-gnu ./build
     - name: remove version compiled without patches
       run: sudo rm -rf image-*
     - name: download tunnelblick patches
