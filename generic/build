@@ -26,6 +26,8 @@
 # Cross compile for uClibc:
 # CHOST=i586-pc-linux-uclibc CBUILD=i686-pc-linux-gnu ./build
 #
+source build.vars
+echo ${OPENVPN_VERSION}
 
 set -e
 
