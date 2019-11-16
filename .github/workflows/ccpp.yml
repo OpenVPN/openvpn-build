@@ -13,10 +13,12 @@ jobs:
       run: wget https://raw.githubusercontent.com/OpenVPN/openvpn-vagrant/master/setup-generic-buildsystem.sh && chmod +x ./setup-generic-buildsystem.sh
     - name: run env setup script
       run: sudo ./setup-generic-buildsystem.sh -f
+    - name: make file permissions super permissive
+      run: sudo chmod -R 777 openvpn_build/
     - name: build without patches first
       run: cd openvpn-build/generic && IMAGEROOT=`pwd`/image-win32 CHOST=i686-w64-mingw32 CBUILD=x86_64-pc-linux-gnu ./build
     - name: remove version compiled without patches
-      run: rm -rf image-*
+      run: sudo rm -rf image-*
     - name: download tunnelblick patches
       run: cd ~/openvpn-build/generic/patches && wget https://raw.githubusercontent.com/Tunnelblick/Tunnelblick/master/third_party/sources/openvpn/openvpn-2.4.8/patches/02-tunnelblick-openvpn_xorpatch-a.diff && wget https://raw.githubusercontent.com/Tunnelblick/Tunnelblick/master/third_party/sources/openvpn/openvpn-2.4.8/patches/02-tunnelblick-openvpn_xorpatch-b.diff && wget https://raw.githubusercontent.com/Tunnelblick/Tunnelblick/master/third_party/sources/openvpn/openvpn-2.4.8/patches/02-tunnelblick-openvpn_xorpatch-c.diff && wget https://raw.githubusercontent.com/Tunnelblick/Tunnelblick/master/third_party/sources/openvpn/openvpn-2.4.8/patches/02-tunnelblick-openvpn_xorpatch-d.diff && wget https://raw.githubusercontent.com/Tunnelblick/Tunnelblick/master/third_party/sources/openvpn/openvpn-2.4.8/patches/02-tunnelblick-openvpn_xorpatch-e.diff
     - name: extract openvpn sources
