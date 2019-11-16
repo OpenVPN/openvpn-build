@@ -12,7 +12,7 @@ jobs:
     - name: get openvpn build env setup script
       run: wget https://raw.githubusercontent.com/OpenVPN/openvpn-vagrant/master/setup-generic-buildsystem.sh && chmod +x ./setup-generic-buildsystem.sh
     - name: run env setup script
-      run: sudo ./setup-generic-buildsystem.sh
+      run: sudo ./setup-generic-buildsystem.sh -f
     - name: build without patches first
       run: cd openvpn-build/generic && IMAGEROOT=`pwd`/image-win32 CHOST=i686-w64-mingw32 CBUILD=x86_64-pc-linux-gnu ./build
     - name: remove version compiled without patches
