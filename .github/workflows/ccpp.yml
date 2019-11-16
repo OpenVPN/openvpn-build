@@ -10,7 +10,7 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: source build vars
-      run: source ~/work/openvpn-build/openvpn-build/generic/build-custom.vars && echo ${OPENVPN_VERSION} && echo ${OPENVPN_URL}
+      run: source ~/work/openvpn-build/openvpn-build/generic/build.vars && echo ${OPENVPN_VERSION} && echo ${OPENVPN_URL}
     - name: get openvpn build env setup script
       run: cd ~/work/openvpn-build/ && wget https://raw.githubusercontent.com/OpenVPN/openvpn-vagrant/master/setup-generic-buildsystem.sh && chmod +x ./setup-generic-buildsystem.sh && ls
     - name: run env setup script
