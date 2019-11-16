@@ -1,4 +1,4 @@
-OpenVPN project buildsystems
+OpenVPN project buildsystem
 #####################################################
 .. image:: https://travis-ci.org/OpenVPN/openvpn-build.svg?branch=master
   :target: https://travis-ci.org/OpenVPN/openvpn-build
