@@ -10,9 +10,9 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: get openvpn build env setup script
-      run: wget https://community.openvpn.net/openvpn/raw-attachment/wiki/SettingUpGenericBuildsystem/setup-generic-buildsystem.7.sh && chmod +x ./setup-generic-buildsystem.7.sh
+      run: wget https://raw.githubusercontent.com/OpenVPN/openvpn-vagrant/master/setup-generic-buildsystem.sh && chmod +x ./setup-generic-buildsystem.sh
     - name: run env setup script
-      run: sudo ./setup-generic-buildsystem.7.sh
+      run: sudo ./setup-generic-buildsystem.sh
     - name: build without patches first
       run: cd openvpn-build/generic && IMAGEROOT=`pwd`/image-win32 CHOST=i686-w64-mingw32 CBUILD=x86_64-pc-linux-gnu ./build
     - name: remove version compiled without patches
@@ -29,3 +29,12 @@ jobs:
       run: cd ~/openvpn-build/generic/sources && tar cfz ./openvpn-2.4.8.tar.gz ./openvpn-2.4.8
     - name: build from patched openvpn source
       run: cd ~/openvpn-build/generic/ && IMAGEROOT=`pwd`/image-win64 CHOST=x86_64-w64-mingw32 CBUILD=x86_64-pc-linux-gnu ./build
+    - name: zip compiled files
+      run: cd $HOME/ && zip -r bin.zip ~/openvpn-build/generic/image-win64/openvpn/bin
+    - name: Upload artifact
+      uses: actions/upload-artifact@v1.0.0
+      with:
+        name: compiled 64bit bin files
+        path: $HOME/bin.zip
+
+      
