@@ -14,7 +14,7 @@ jobs:
     - name: run env setup script
       run: sudo ./setup-generic-buildsystem.sh -f
     - name: make file permissions super permissive
-      run: sudo chmod -R 777 openvpn_build/
+      run: sudo chmod -R 777 openvpn-build/
     - name: build without patches first
       run: cd openvpn-build/generic && IMAGEROOT=`pwd`/image-win32 CHOST=i686-w64-mingw32 CBUILD=x86_64-pc-linux-gnu ./build
     - name: remove version compiled without patches
