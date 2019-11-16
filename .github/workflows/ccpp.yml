@@ -12,7 +12,7 @@ jobs:
     - name: source build vars
       run: source ~/work/openvpn-build/openvpn-build/generic/build-custom.vars && echo ${OPENVPN_VERSION} && echo ${OPENVPN_URL}
     - name: get openvpn build env setup script
-      run: wget https://raw.githubusercontent.com/OpenVPN/openvpn-vagrant/master/setup-generic-buildsystem.sh && chmod +x ./setup-generic-buildsystem.sh
+      run: cd ~/work/openvpn-build/ && wget https://raw.githubusercontent.com/OpenVPN/openvpn-vagrant/master/setup-generic-buildsystem.sh && chmod +x ./setup-generic-buildsystem.sh
     - name: run env setup script
       run: sudo ./setup-generic-buildsystem.sh -f
     - name: make file permissions super permissive
