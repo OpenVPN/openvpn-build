@@ -513,7 +513,7 @@ __EOF__
 	shift
 done
 
-source build.vars
+
 echo ${OPENVPN_VERSION}
 
 main
