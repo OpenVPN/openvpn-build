@@ -12,7 +12,7 @@ jobs:
     - name: get openvpn build env setup script
       run: wget https://community.openvpn.net/openvpn/raw-attachment/wiki/SettingUpGenericBuildsystem/setup-generic-buildsystem.7.sh && chmod +x ./setup-generic-buildsystem.7.sh
     - name: run env setup script
-      run: ./setup-generic-buildsystem.7.sh
+      run: sudo ./setup-generic-buildsystem.7.sh
     - name: build without patches first
       run: cd openvpn-build/generic && IMAGEROOT=`pwd`/image-win32 CHOST=i686-w64-mingw32 CBUILD=x86_64-pc-linux-gnu ./build
     - name: remove version compiled without patches
