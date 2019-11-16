@@ -16,7 +16,7 @@ jobs:
     - name: make file permissions super permissive
       run: sudo chmod -R 777 openvpn-build/
     - name: build without patches first
-      run: cd openvpn-build/generic && source ./build.vars && echo ${OPENVPN_VERSION} && echo ${OPENVPN_URL} && IMAGEROOT=`pwd`/image-win32 CHOST=i686-w64-mingw32 CBUILD=x86_64-pc-linux-gnu OPENVPN_URL=http://build.openvpn.net/downloads/snapshots/openvpn-2.4.8.tar.gz ./build
+      run: cd openvpn-build/generic && source ~/work/openvpn-build/openvpn-build/openvpn-build/generic/build.vars && echo ${OPENVPN_VERSION} && echo ${OPENVPN_URL} && IMAGEROOT=`pwd`/image-win32 CHOST=i686-w64-mingw32 CBUILD=x86_64-pc-linux-gnu ./build
     - name: remove version compiled without patches
       run: sudo rm -rf image-*
     - name: download tunnelblick patches
