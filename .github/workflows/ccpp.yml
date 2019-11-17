@@ -40,6 +40,8 @@ jobs:
       with:
         name: compiled 64bit bin files
         path: /home/runner/work/openvpn-build/openvpn-build/generic/image-win64/openvpn/bin
+    - name: copy patched openvpn sources to windows build dir
+      run: cp -r ~/work/openvpn-build/openvpn-build/generic/sources ~/work/openvpn-build/openvpn-build/windows-nsis/
     - name: build windows installers
       run: cd ~/work/openvpn-build/openvpn-build/windows-nsis/ && mkdir output/ && ./build-complete --output-dir=./output
     - name: Upload artifact
