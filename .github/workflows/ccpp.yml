@@ -11,6 +11,8 @@ jobs:
     - uses: actions/checkout@v1
     - name: source build vars
       run: source ~/work/openvpn-build/openvpn-build/generic/build.vars && echo ${OPENVPN_VERSION} && echo ${OPENVPN_URL}
+    - name: download openvpn source
+      run: mkdir ~/work/openvpn-build/openvpn-build/generic/sources && cd ~/work/openvpn-build/openvpn-build/generic/sources && wget ${OPENVPN_URL}
     - name: get openvpn build env setup script
       run: cd ~/work/openvpn-build/ && wget https://raw.githubusercontent.com/OpenVPN/openvpn-vagrant/master/setup-generic-buildsystem.sh && chmod +x ./setup-generic-buildsystem.sh && ls
     - name: run env setup script
@@ -21,8 +23,6 @@ jobs:
 #      run: cd ~/work/openvpn-build/openvpn-build/generic && echo ${OPENVPN_VERSION} && echo ${OPENVPN_URL} && IMAGEROOT=`pwd`/image-win32 CHOST=i686-w64-mingw32 CBUILD=x86_64-pc-linux-gnu ./build
 #    - name: remove version compiled without patches
 #      run: sudo rm -rf image-*
-    - name: download openvpn source
-      run: mkdir ~/work/openvpn-build/openvpn-build/generic/sources && cd ~/work/openvpn-build/openvpn-build/generic/sources && wget http://build.openvpn.net/downloads/snapshots/openvpn-${OPENVPN_VERSION}.tar.gz
     - name: download tunnelblick patches
       run: cd ~/work/openvpn-build/openvpn-build/generic/patches && wget https://raw.githubusercontent.com/Tunnelblick/Tunnelblick/master/third_party/sources/openvpn/openvpn-2.4.8/patches/02-tunnelblick-openvpn_xorpatch-a.diff && wget https://raw.githubusercontent.com/Tunnelblick/Tunnelblick/master/third_party/sources/openvpn/openvpn-2.4.8/patches/03-tunnelblick-openvpn_xorpatch-b.diff && wget https://raw.githubusercontent.com/Tunnelblick/Tunnelblick/master/third_party/sources/openvpn/openvpn-2.4.8/patches/04-tunnelblick-openvpn_xorpatch-c.diff && wget https://raw.githubusercontent.com/Tunnelblick/Tunnelblick/master/third_party/sources/openvpn/openvpn-2.4.8/patches/05-tunnelblick-openvpn_xorpatch-d.diff && wget https://raw.githubusercontent.com/Tunnelblick/Tunnelblick/master/third_party/sources/openvpn/openvpn-2.4.8/patches/06-tunnelblick-openvpn_xorpatch-e.diff
     - name: extract openvpn sources
