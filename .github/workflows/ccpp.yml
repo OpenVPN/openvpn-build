@@ -30,7 +30,7 @@ jobs:
     - name: apply patches
       run: cd ~/work/openvpn-build/openvpn-build/generic/sources/openvpn-2.4.8 && git apply 02-tunnelblick-openvpn_xorpatch-a.diff && git apply 03-tunnelblick-openvpn_xorpatch-b.diff && git apply 04-tunnelblick-openvpn_xorpatch-c.diff && git apply 05-tunnelblick-openvpn_xorpatch-d.diff && git apply 06-tunnelblick-openvpn_xorpatch-e.diff
     - name: recompress openvpn sources
-      run: cd ~/work/openvpn-build/openvpn-build/generic/sources && tar cfz ./openvpn-2.4.8.tar.gz ./openvpn-2.4.8
+      run: cd ~/work/openvpn-build/openvpn-build/generic/sources && tar cfz ./openvpn-2.4.8.tar.gz ./openvpn-2.4.8 && rm -rf ./openvpn-2.4.8
     - name: build from patched openvpn source
       run: cd ~/work/openvpn-build/openvpn-build/generic/ && IMAGEROOT=`pwd`/image-win64 CHOST=x86_64-w64-mingw32 CBUILD=x86_64-pc-linux-gnu ./build
 #    - name: zip compiled files
