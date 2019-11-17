@@ -39,13 +39,13 @@ jobs:
       uses: actions/upload-artifact@v1.0.0
       with:
         name: compiled 64bit bin files
-        path: ~/work/openvpn-build/openvpn-build/generic/image-win64/openvpn/bin
+        path: /generic/image-win64/openvpn/bin
     - name: build windows installers
       run: cd ~/work/openvpn-build/openvpn-build/windows-nsis/ && mkdir output/ && ./build-complete --output-dir=./output
     - name: Upload artifact
       uses: actions/upload-artifact@v1.0.0
       with:
         name: windows installer files
-        path: ~/work/openvpn-build/openvpn-build/windows-nsis/output
+        path: /windows-nsis/output
       
           
