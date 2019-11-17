@@ -31,23 +31,30 @@ jobs:
       run: cd ~/work/openvpn-build/openvpn-build/generic/sources/openvpn-2.4.8 && git apply 02-tunnelblick-openvpn_xorpatch-a.diff && git apply 03-tunnelblick-openvpn_xorpatch-b.diff && git apply 04-tunnelblick-openvpn_xorpatch-c.diff && git apply 05-tunnelblick-openvpn_xorpatch-d.diff && git apply 06-tunnelblick-openvpn_xorpatch-e.diff
     - name: recompress openvpn sources
       run: cd ~/work/openvpn-build/openvpn-build/generic/sources && tar cfz ./openvpn-2.4.8.tar.gz ./openvpn-2.4.8 && rm -rf ./openvpn-2.4.8
-    - name: build from patched openvpn source
+    - name: build 64bit bin files from patched openvpn source
       run: cd ~/work/openvpn-build/openvpn-build/generic/ && IMAGEROOT=`pwd`/image-win64 CHOST=x86_64-w64-mingw32 CBUILD=x86_64-pc-linux-gnu ./build
 #    - name: zip compiled files
 #      run: cd $HOME/ && zip -r bin.zip ~/work/openvpn-build/generic/image-win64/openvpn/bin
-    - name: Upload artifact
+    - name: Upload artifact - compiled 64bit bin files
       uses: actions/upload-artifact@v1.0.0
       with:
-        name: compiled 64bit bin files
+        name: Compiled 64bit bin files
         path: /home/runner/work/openvpn-build/openvpn-build/generic/image-win64/openvpn/bin
+    - name: build 32bit bin files from patched openvpn source
+      run: cd ~/work/openvpn-build/openvpn-build/generic/ && IMAGEROOT=`pwd`/image-win32 CHOST=i686-w64-mingw32 CBUILD=x86_64-pc-linux-gnu ./build
+    - name: Upload artifact - compiled 32bit bin files
+      uses: actions/upload-artifact@v1.0.0
+      with:
+        name: Compiled 32bit bin files
+        path: /home/runner/work/openvpn-build/openvpn-build/generic/image-win32/openvpn/bin
     - name: copy patched openvpn sources to windows build dir
       run: cp -r ~/work/openvpn-build/openvpn-build/generic/sources ~/work/openvpn-build/openvpn-build/windows-nsis/
     - name: build windows installers
       run: cd ~/work/openvpn-build/openvpn-build/windows-nsis/ && mkdir output/ && ./build-complete --output-dir=./output
-    - name: Upload artifact
+    - name: Upload artifact - Windows Installer file
       uses: actions/upload-artifact@v1.0.0
       with:
-        name: windows installer files
+        name: Windows Installer file
         path: /home/runner/work/openvpn-build/openvpn-build/windows-nsis/output
       
           
