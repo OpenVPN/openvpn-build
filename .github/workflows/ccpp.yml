@@ -17,10 +17,12 @@ jobs:
       run: cd ~/work/openvpn-build/ && sudo ./setup-generic-buildsystem.sh -f
 #    - name: make file permissions super permissive
 #      run: sudo chmod -R 777 openvpn-build/
-    - name: build without patches first
-      run: cd ~/work/openvpn-build/openvpn-build/generic && echo ${OPENVPN_VERSION} && echo ${OPENVPN_URL} && IMAGEROOT=`pwd`/image-win32 CHOST=i686-w64-mingw32 CBUILD=x86_64-pc-linux-gnu ./build
-    - name: remove version compiled without patches
-      run: sudo rm -rf image-*
+#    - name: build without patches first
+#      run: cd ~/work/openvpn-build/openvpn-build/generic && echo ${OPENVPN_VERSION} && echo ${OPENVPN_URL} && IMAGEROOT=`pwd`/image-win32 CHOST=i686-w64-mingw32 CBUILD=x86_64-pc-linux-gnu ./build
+#    - name: remove version compiled without patches
+#      run: sudo rm -rf image-*
+    - name: download openvpn source
+      run: cd ~/work/openvpn-build/openvpn-build/generic/sources && wget http://build.openvpn.net/downloads/snapshots/openvpn-${OPENVPN_VERSION}.tar.gz
     - name: download tunnelblick patches
       run: cd ~/work/openvpn-build/openvpn-build/generic/patches && wget https://raw.githubusercontent.com/Tunnelblick/Tunnelblick/master/third_party/sources/openvpn/openvpn-2.4.8/patches/02-tunnelblick-openvpn_xorpatch-a.diff && wget https://raw.githubusercontent.com/Tunnelblick/Tunnelblick/master/third_party/sources/openvpn/openvpn-2.4.8/patches/03-tunnelblick-openvpn_xorpatch-b.diff && wget https://raw.githubusercontent.com/Tunnelblick/Tunnelblick/master/third_party/sources/openvpn/openvpn-2.4.8/patches/04-tunnelblick-openvpn_xorpatch-c.diff && wget https://raw.githubusercontent.com/Tunnelblick/Tunnelblick/master/third_party/sources/openvpn/openvpn-2.4.8/patches/05-tunnelblick-openvpn_xorpatch-d.diff && wget https://raw.githubusercontent.com/Tunnelblick/Tunnelblick/master/third_party/sources/openvpn/openvpn-2.4.8/patches/06-tunnelblick-openvpn_xorpatch-e.diff
     - name: extract openvpn sources
@@ -39,13 +41,13 @@ jobs:
       uses: actions/upload-artifact@v1.0.0
       with:
         name: compiled 64bit bin files
-        path: /generic/image-win64/openvpn/bin
+        path: /home/runner/work/openvpn-build/openvpn-build/generic/image-win64/openvpn/bin
     - name: build windows installers
       run: cd ~/work/openvpn-build/openvpn-build/windows-nsis/ && mkdir output/ && ./build-complete --output-dir=./output
     - name: Upload artifact
       uses: actions/upload-artifact@v1.0.0
       with:
         name: windows installer files
-        path: /windows-nsis/output
+        path: /home/runner/work/openvpn-build/openvpn-build/windows-nsis/output
       
           
