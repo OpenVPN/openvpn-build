@@ -6,55 +6,53 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
-    
+
     steps:
     - uses: actions/checkout@v1
     - name: source build vars and download openvpn source
-      run: source ~/work/openvpn-build/openvpn-build/generic/build.vars && echo ${OPENVPN_VERSION} && echo ${OPENVPN_URL} && mkdir ~/work/openvpn-build/openvpn-build/generic/sources && cd ~/work/openvpn-build/openvpn-build/generic/sources && wget ${OPENVPN_URL}
+      run: source ~/work/openvpn-windows-xor/openvpn-windows-xor/generic/build.vars && echo ${OPENVPN_VERSION} && echo ${OPENVPN_URL} && mkdir ~/work/openvpn-windows-xor/openvpn-windows-xor/generic/sources && cd ~/work/openvpn-windows-xor/openvpn-windows-xor/generic/sources && wget ${OPENVPN_URL}
     - name: get openvpn build env setup script
-      run: cd ~/work/openvpn-build/ && wget https://raw.githubusercontent.com/OpenVPN/openvpn-vagrant/master/setup-generic-buildsystem.sh && chmod +x ./setup-generic-buildsystem.sh && ls
+      run: cd ~/work/openvpn-windows-xor/ && wget https://raw.githubusercontent.com/OpenVPN/openvpn-vagrant/master/setup-generic-buildsystem.sh && chmod +x ./setup-generic-buildsystem.sh && ls
     - name: run env setup script
-      run: cd ~/work/openvpn-build/ && sudo ./setup-generic-buildsystem.sh -f
+      run: cd ~/work/openvpn-windows-xor/ && sudo ./setup-generic-buildsystem.sh -f
 #    - name: make file permissions super permissive
-#      run: sudo chmod -R 777 openvpn-build/
+#      run: sudo chmod -R 777 openvpn-windows-xor/
 #    - name: build without patches first
-#      run: cd ~/work/openvpn-build/openvpn-build/generic && echo ${OPENVPN_VERSION} && echo ${OPENVPN_URL} && IMAGEROOT=`pwd`/image-win32 CHOST=i686-w64-mingw32 CBUILD=x86_64-pc-linux-gnu ./build
+#      run: cd ~/work/openvpn-windows-xor/openvpn-windows-xor/generic && echo ${OPENVPN_VERSION} && echo ${OPENVPN_URL} && IMAGEROOT=`pwd`/image-win32 CHOST=i686-w64-mingw32 CBUILD=x86_64-pc-linux-gnu ./build
 #    - name: remove version compiled without patches
 #      run: sudo rm -rf image-*
     - name: download tunnelblick patches
-      run: cd ~/work/openvpn-build/openvpn-build/generic/patches && wget https://raw.githubusercontent.com/Tunnelblick/Tunnelblick/master/third_party/sources/openvpn/openvpn-2.4.8/patches/02-tunnelblick-openvpn_xorpatch-a.diff && wget https://raw.githubusercontent.com/Tunnelblick/Tunnelblick/master/third_party/sources/openvpn/openvpn-2.4.8/patches/03-tunnelblick-openvpn_xorpatch-b.diff && wget https://raw.githubusercontent.com/Tunnelblick/Tunnelblick/master/third_party/sources/openvpn/openvpn-2.4.8/patches/04-tunnelblick-openvpn_xorpatch-c.diff && wget https://raw.githubusercontent.com/Tunnelblick/Tunnelblick/master/third_party/sources/openvpn/openvpn-2.4.8/patches/05-tunnelblick-openvpn_xorpatch-d.diff && wget https://raw.githubusercontent.com/Tunnelblick/Tunnelblick/master/third_party/sources/openvpn/openvpn-2.4.8/patches/06-tunnelblick-openvpn_xorpatch-e.diff
+      run: cd ~/work/openvpn-windows-xor/openvpn-windows-xor/generic/patches && wget https://raw.githubusercontent.com/Tunnelblick/Tunnelblick/master/third_party/sources/openvpn/openvpn-2.4.8/patches/02-tunnelblick-openvpn_xorpatch-a.diff && wget https://raw.githubusercontent.com/Tunnelblick/Tunnelblick/master/third_party/sources/openvpn/openvpn-2.4.8/patches/03-tunnelblick-openvpn_xorpatch-b.diff && wget https://raw.githubusercontent.com/Tunnelblick/Tunnelblick/master/third_party/sources/openvpn/openvpn-2.4.8/patches/04-tunnelblick-openvpn_xorpatch-c.diff && wget https://raw.githubusercontent.com/Tunnelblick/Tunnelblick/master/third_party/sources/openvpn/openvpn-2.4.8/patches/05-tunnelblick-openvpn_xorpatch-d.diff && wget https://raw.githubusercontent.com/Tunnelblick/Tunnelblick/master/third_party/sources/openvpn/openvpn-2.4.8/patches/06-tunnelblick-openvpn_xorpatch-e.diff
     - name: extract openvpn sources
-      run: cd ~/work/openvpn-build/openvpn-build/generic/sources && tar xfz ./openvpn-2.4.8.tar.gz 
+      run: cd ~/work/openvpn-windows-xor/openvpn-windows-xor/generic/sources && tar xfz ./openvpn-2.4.8.tar.gz
     - name: copy patches
-      run: cp ~/work/openvpn-build/openvpn-build/generic/patches/02-tunnelblick-openvpn_xorpatch-a.diff ~/work/openvpn-build/openvpn-build/generic/sources/openvpn-2.4.8 && cp ~/work/openvpn-build/openvpn-build/generic/patches/03-tunnelblick-openvpn_xorpatch-b.diff ~/work/openvpn-build/openvpn-build/generic/sources/openvpn-2.4.8 && cp ~/work/openvpn-build/openvpn-build/generic/patches/04-tunnelblick-openvpn_xorpatch-c.diff ~/work/openvpn-build/openvpn-build/generic/sources/openvpn-2.4.8 && cp ~/work/openvpn-build/openvpn-build/generic/patches/05-tunnelblick-openvpn_xorpatch-d.diff ~/work/openvpn-build/openvpn-build/generic/sources/openvpn-2.4.8 && cp ~/work/openvpn-build/openvpn-build/generic/patches/06-tunnelblick-openvpn_xorpatch-e.diff ~/work/openvpn-build/openvpn-build/generic/sources/openvpn-2.4.8
+      run: cp ~/work/openvpn-windows-xor/openvpn-windows-xor/generic/patches/02-tunnelblick-openvpn_xorpatch-a.diff ~/work/openvpn-windows-xor/openvpn-windows-xor/generic/sources/openvpn-2.4.8 && cp ~/work/openvpn-windows-xor/openvpn-windows-xor/generic/patches/03-tunnelblick-openvpn_xorpatch-b.diff ~/work/openvpn-windows-xor/openvpn-windows-xor/generic/sources/openvpn-2.4.8 && cp ~/work/openvpn-windows-xor/openvpn-windows-xor/generic/patches/04-tunnelblick-openvpn_xorpatch-c.diff ~/work/openvpn-windows-xor/openvpn-windows-xor/generic/sources/openvpn-2.4.8 && cp ~/work/openvpn-windows-xor/openvpn-windows-xor/generic/patches/05-tunnelblick-openvpn_xorpatch-d.diff ~/work/openvpn-windows-xor/openvpn-windows-xor/generic/sources/openvpn-2.4.8 && cp ~/work/openvpn-windows-xor/openvpn-windows-xor/generic/patches/06-tunnelblick-openvpn_xorpatch-e.diff ~/work/openvpn-windows-xor/openvpn-windows-xor/generic/sources/openvpn-2.4.8
     - name: apply patches
-      run: cd ~/work/openvpn-build/openvpn-build/generic/sources/openvpn-2.4.8 && git apply 02-tunnelblick-openvpn_xorpatch-a.diff && git apply 03-tunnelblick-openvpn_xorpatch-b.diff && git apply 04-tunnelblick-openvpn_xorpatch-c.diff && git apply 05-tunnelblick-openvpn_xorpatch-d.diff && git apply 06-tunnelblick-openvpn_xorpatch-e.diff
+      run: cd ~/work/openvpn-windows-xor/openvpn-windows-xor/generic/sources/openvpn-2.4.8 && git apply 02-tunnelblick-openvpn_xorpatch-a.diff && git apply 03-tunnelblick-openvpn_xorpatch-b.diff && git apply 04-tunnelblick-openvpn_xorpatch-c.diff && git apply 05-tunnelblick-openvpn_xorpatch-d.diff && git apply 06-tunnelblick-openvpn_xorpatch-e.diff
     - name: recompress openvpn sources
-      run: cd ~/work/openvpn-build/openvpn-build/generic/sources && tar cfz ./openvpn-2.4.8.tar.gz ./openvpn-2.4.8 && rm -rf ./openvpn-2.4.8
+      run: cd ~/work/openvpn-windows-xor/openvpn-windows-xor/generic/sources && tar cfz ./openvpn-2.4.8.tar.gz ./openvpn-2.4.8 && rm -rf ./openvpn-2.4.8
     - name: build 64bit bin files from patched openvpn source
-      run: cd ~/work/openvpn-build/openvpn-build/generic/ && IMAGEROOT=`pwd`/image-win64 CHOST=x86_64-w64-mingw32 CBUILD=x86_64-pc-linux-gnu ./build
+      run: cd ~/work/openvpn-windows-xor/openvpn-windows-xor/generic/ && IMAGEROOT=`pwd`/image-win64 CHOST=x86_64-w64-mingw32 CBUILD=x86_64-pc-linux-gnu ./build
 #    - name: zip compiled files
-#      run: cd $HOME/ && zip -r bin.zip ~/work/openvpn-build/generic/image-win64/openvpn/bin
+#      run: cd $HOME/ && zip -r bin.zip ~/work/openvpn-windows-xor/generic/image-win64/openvpn/bin
     - name: Upload artifact - compiled 64bit bin files
       uses: actions/upload-artifact@v1.0.0
       with:
         name: Compiled 64bit bin files
-        path: /home/runner/work/openvpn-build/openvpn-build/generic/image-win64/openvpn/bin
+        path: /home/runner/work/openvpn-windows-xor/openvpn-windows-xor/generic/image-win64/openvpn/bin
     - name: build 32bit bin files from patched openvpn source
-      run: cd ~/work/openvpn-build/openvpn-build/generic/ && IMAGEROOT=`pwd`/image-win32 CHOST=i686-w64-mingw32 CBUILD=x86_64-pc-linux-gnu ./build
+      run: cd ~/work/openvpn-windows-xor/openvpn-windows-xor/generic/ && IMAGEROOT=`pwd`/image-win32 CHOST=i686-w64-mingw32 CBUILD=x86_64-pc-linux-gnu ./build
     - name: Upload artifact - compiled 32bit bin files
       uses: actions/upload-artifact@v1.0.0
       with:
         name: Compiled 32bit bin files
-        path: /home/runner/work/openvpn-build/openvpn-build/generic/image-win32/openvpn/bin
+        path: /home/runner/work/openvpn-windows-xor/openvpn-windows-xor/generic/image-win32/openvpn/bin
     - name: copy patched openvpn sources to windows build dir
-      run: cp -r ~/work/openvpn-build/openvpn-build/generic/sources ~/work/openvpn-build/openvpn-build/windows-nsis/
+      run: cp -r ~/work/openvpn-windows-xor/openvpn-windows-xor/generic/sources ~/work/openvpn-windows-xor/openvpn-windows-xor/windows-nsis/
     - name: build windows installers
-      run: cd ~/work/openvpn-build/openvpn-build/windows-nsis/ && mkdir output/ && ./build-complete --output-dir=./output
+      run: cd ~/work/openvpn-windows-xor/openvpn-windows-xor/windows-nsis/ && mkdir output/ && ./build-complete --output-dir=./output
     - name: Upload artifact - Windows Installer file
       uses: actions/upload-artifact@v1.0.0
       with:
         name: Windows Installer file
-        path: /home/runner/work/openvpn-build/openvpn-build/windows-nsis/output
-      
-          
+        path: /home/runner/work/openvpn-windows-xor/openvpn-windows-xor/windows-nsis/output
