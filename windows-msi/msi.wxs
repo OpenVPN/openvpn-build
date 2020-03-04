@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  openvpn-build — OpenVPN packaging
+  openvpn-build â€” OpenVPN packaging
 
   Copyright (C) 2018-2020 Simon Rozman <simon@rozman.si>
 
@@ -59,7 +59,7 @@
         <Property Id="SimpleProductName" Value="$(var.PRODUCT_NAME)"/>
         <Property Id="DisplayVersion" Value="$(var.PACKAGE_VERSION)"/>
         <Property Id="MSICHECKCRCS" Value="1"/>
-        <Property Id="PROMPTROLLBACKCOST" Value="P"/>
+        <Property Id="DISABLEROLLBACK" Value="yes"/>
         <Property Id="EDITOR" Value="notepad.exe"/>
         <PropertyRef Id="NETFRAMEWORK40FULL"/>
 
@@ -986,16 +986,27 @@
                             <RemoveFolder Id="shortcut.bin.openvpn.exe.genkey" On="uninstall"/>
                             <RegistryValue Root="HKCU" Key="Software\$(var.PRODUCT_NAME)\Shortcuts" Name="bin.openvpn.exe.genkey" Type="integer" Value="1"/>
                         </Component>
-                        <Component Id="shortcut.bin.tapctl.exe.create" Guid="{F31F1774-326F-419F-B74E-29819E161321}">
+                        <Component Id="shortcut.bin.tapctl.exe.create.TAPWindows6" Guid="{F31F1774-326F-419F-B74E-29819E161321}">
                             <Shortcut
-                                Id="shortcut.bin.tapctl.exe.create"
-                                Name="Add a new TAP virtual ethernet adapter"
+                                Id="shortcut.bin.tapctl.exe.create.TAPWindows6"
+                                Name="Add a new TAP-Windows6 virtual ethernet adapter"
                                 Target="[BINDIR]tapctl.exe"
-                                Arguments="create"
+                                Arguments="create --hwid root\$(var.PRODUCT_TAP_WIN_COMPONENT_ID)"
                                 WorkingDirectory="BINDIR"
                                 Icon="tapctl_create.ico"/>
-                            <RemoveFolder Id="shortcut.bin.tapctl.exe.create" On="uninstall"/>
-                            <RegistryValue Root="HKCU" Key="Software\$(var.PRODUCT_NAME)\Shortcuts" Name="bin.tapctl.exe.create" Type="integer" Value="1"/>
+                            <RemoveFolder Id="shortcut.bin.tapctl.exe.create.TAPWindows6" On="uninstall"/>
+                            <RegistryValue Root="HKCU" Key="Software\$(var.PRODUCT_NAME)\Shortcuts" Name="bin.tapctl.exe.create.TAPWindows6" Type="integer" Value="1"/>
+                        </Component>
+                        <Component Id="shortcut.bin.tapctl.exe.create.Wintun" Guid="{D257A1B3-A06E-4CE2-AA93-C36F6487126A}">
+                            <Shortcut
+                                Id="shortcut.bin.tapctl.exe.create.Wintun"
+                                Name="Add a new Wintun virtual ethernet adapter"
+                                Target="[BINDIR]tapctl.exe"
+                                Arguments="create --hwid wintun"
+                                WorkingDirectory="BINDIR"
+                                Icon="tapctl_create.ico"/>
+                            <RemoveFolder Id="shortcut.bin.tapctl.exe.create.Wintun" On="uninstall"/>
+                            <RegistryValue Root="HKCU" Key="Software\$(var.PRODUCT_NAME)\Shortcuts" Name="bin.tapctl.exe.create.Wintun" Type="integer" Value="1"/>
                         </Component>
                     </Directory>
                 </Directory>
@@ -1187,8 +1198,25 @@
 
 
         <!--
+            TUN/TAP Driver Installation
+        -->
+        <DirectoryRef Id="PRODUCTDIR">
+            <Merge Id="TAPWindows6MergeModule" Language="0" DiskId="1" SourceFile="!(bindpath.build)$(var.PRODUCT_PLATFORM)\tap-windows6.msm"/>
+            <Merge Id="WintunMergeModule"      Language="0" DiskId="1" SourceFile="!(bindpath.build)$(var.PRODUCT_PLATFORM)\wintun.msm"/>
+        </DirectoryRef>
+
+        <UI>
+            <ProgressText Action="$(var.PRODUCT_TAP_WIN_COMPONENT_ID)_Evaluate">Evaluating TAP-Windows6 driver</ProgressText>
+            <ProgressText Action="$(var.PRODUCT_TAP_WIN_COMPONENT_ID)_Process">Processing TAP-Windows6 driver</ProgressText>
+            <ProgressText Action="EvaluateWintun">Evaluating Wintun driver</ProgressText>
+            <ProgressText Action="ProcessWintun">Processing Wintun driver</ProgressText>
+        </UI>
+
+
+        <!--
             TAP interfaces
         -->
+        <!-- TODO: Finish!
         <CustomAction Id="FindTAPInterfaces"              BinaryKey="libopenvpnmsica.dll" DllEntry="FindTAPInterfaces"     Execute="firstSequence"/>
         <CustomAction Id="EvaluateTAPInterfaces"          BinaryKey="libopenvpnmsica.dll" DllEntry="EvaluateTAPInterfaces"/>
         <CustomAction Id="UninstallTAPInterfaces"         BinaryKey="libopenvpnmsica.dll" DllEntry="ProcessDeferredAction" Execute="deferred" Impersonate="no"/>
@@ -1273,15 +1301,14 @@
                 KeyTable="Component"
                 KeyColumn="1"/>
 
-            <!-- TODO: Finish when TAP-Windows6 and Wintun MSMs are included
             <Row>
                 <Data Column="Interface"  >TAP</Data>
                 <Data Column="DisplayName">$(var.PRODUCT_NAME)</Data>
                 <Data Column="Condition"  ><![CDATA[NOT TAPINTERFACES]]></Data>
                 <Data Column="Component_" ></Data>
             </Row>
-            -->
         </CustomTable>
+        -->
 
 
         <!--
@@ -1329,6 +1356,7 @@
             <ComponentRef Id="bin.libssl_1_1.dll"/>
             <ComponentRef Id="bin.openvpn.exe"/>
             <ComponentRef Id="bin.openvpnserv.exe"/>
+            <ComponentRef Id="bin.tapctl.exe"/>
             <ComponentRef Id="config.README.txt"/>
             <ComponentRef Id="log.README.txt"/>
             <ComponentRef Id="res.ovpn.ico"/>
@@ -1392,18 +1420,6 @@
             </Feature>
 
             <Feature
-                Id="OpenVPN.Util"
-                Title="Utilities"
-                Description="Command-line utilities to manage TUN/TAP interfaces"
-                Level="2"
-                ConfigurableDirectory="PRODUCTDIR"
-                AllowAdvertise="no">
-                <Condition Level="1"><![CDATA[NSIS.TAP.BIN.ADDTAP.BAT]]></Condition>
-                <ComponentRef Id="bin.tapctl.exe"/>
-                <ComponentRef Id="shortcut.bin.tapctl.exe.create"/>
-            </Feature>
-
-            <Feature
                 Id="OpenVPN.Documentation"
                 Title="Documentation"
                 Description="$(var.PRODUCT_NAME) documentation"
@@ -1435,19 +1451,37 @@
             </Feature>
         </Feature>
 
-        <!-- TODO: Finish when TAP-Windows6 and Wintun MSMs are included
         <Feature
-            Id="TAP"
-            Title="TUN/TAP Driver"
-            Description="TAP virtual Ethernet adapter driver"
+            Id="Drivers"
+            Title="Drivers"
+            Description="TUN/TAP drivers"
             Level="1"
             ConfigurableDirectory="PRODUCTDIR"
             AllowAdvertise="no"
-            Display="expand"
-            Absent="disallow">
-            <ComponentRef Id="license.txt"/>
+            Display="expand">
+
+            <Feature
+                Id="Drivers.TAPWindows6"
+                Title="TAP-Windows6"
+                Description="TAP-Windows driver (NDIS 6)"
+                Level="1"
+                ConfigurableDirectory="PRODUCTDIR"
+                AllowAdvertise="no">
+                <ComponentRef Id="shortcut.bin.tapctl.exe.create.TAPWindows6"/>
+                <MergeRef Id="TAPWindows6MergeModule"/>
+            </Feature>
+
+            <Feature
+                Id="Drivers.Wintun"
+                Title="Wintun"
+                Description="Layer 3 TUN Driver for Windows"
+                Level="1"
+                ConfigurableDirectory="PRODUCTDIR"
+                AllowAdvertise="no">
+                <ComponentRef Id="shortcut.bin.tapctl.exe.create.Wintun"/>
+                <MergeRef Id="WintunMergeModule"/>
+            </Feature>
         </Feature>
-        -->
 
         <Feature
             Id="OpenSSL"

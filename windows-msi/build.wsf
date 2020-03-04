@@ -127,6 +127,18 @@ clean	Cleans intermediate and output files</example>
                             plat = platforms[i],
                             p = platformInfo[plat];
 
+                        // Downloading TAP-Windows6
+                        b.pushRule(new DownloadBuildRule(
+                            BuildPath(p.buildPath, "tap-windows6.msm"),
+                            ver.define["PRODUCT_TAP_WIN_URL_" + plat],
+                            ["version.m4"]));
+
+                        // Downloading Wintun
+                        b.pushRule(new DownloadBuildRule(
+                            BuildPath(p.buildPath, "wintun.msm"),
+                            ver.define["PRODUCT_WINTUN_URL_" + plat],
+                            ["version.m4"]));
+
                         // WiX compiler flags
                         var wixCompilerFlags = [
                             "-ext WixNetFxExtension",
@@ -210,6 +222,8 @@ clean	Cleans intermediate and output files</example>
                                 BuildPath("doc", "LicenseAgreement.rtf"),
                                 BuildPath("script", "ActiveSetupCA.js"),
                                 BuildPath(p.buildPath, "license.txt"),
+                                BuildPath(p.buildPath, "tap-windows6.msm"),
+                                BuildPath(p.buildPath, "wintun.msm"),
                                 BuildPath(p.openVPNPath, "bin", "libcrypto-1_1" + p.openSSLPlat + ".dll"),
                                 BuildPath(p.openVPNPath, "bin", "liblzo2-2.dll"),
                                 BuildPath(p.openVPNPath, "bin", "libopenvpnmsica.dll"),

@@ -3,8 +3,14 @@ dnl Downloadables
 dnl ============================================================
 
 dnl TAP-Windows binaries
+define([PRODUCT_TAP_WIN_URL_x86],      [https://dat.amebis.si/s/X7p247HD7j9mLJm/download?path=%2F&files=tap-windows-9.24.2-I601-i386.msm])
+define([PRODUCT_TAP_WIN_URL_amd64],    [https://dat.amebis.si/s/X7p247HD7j9mLJm/download?path=%2F&files=tap-windows-9.24.2-I601-amd64.msm])
 define([PRODUCT_TAP_WIN_COMPONENT_ID], [tap0901])
 define([PRODUCT_TAP_WIN_NAME],         [TAP-Windows])
+
+dnl Wintun binaries
+define([PRODUCT_WINTUN_URL_x86],       [https://www.wintun.net/builds/wintun-x86-0.8.1.msm])
+define([PRODUCT_WINTUN_URL_amd64],     [https://www.wintun.net/builds/wintun-amd64-0.8.1.msm])
 
 dnl OpenVPNServ2.exe binary
 define([OPENVPNSERV2_URL], [http://build.openvpn.net/downloads/releases/openvpnserv2-1.4.0.0.exe])
