@@ -47,7 +47,6 @@ clean	Cleans intermediate and output files</example>
                 rootPath       = ".."
                 buildPath      = "tmp",
                 sourcePath     = "sources",
-                tapWindowsPath = BuildPath(buildPath, "tap-windows-" + ver.define.PRODUCT_TAP_WIN_VERSION),
                 easyRSAPath    = BuildPath(buildPath, "easy-rsa-" + ver.define.EASYRSA_VERSION, "easy-rsa"),
                 outputPath     = "image";
 
@@ -57,7 +56,6 @@ clean	Cleans intermediate and output files</example>
                 "x86": {
                     "buildPath": BuildPath(buildPath, "x86"),
                     "openVPNPath": BuildPath(rootPath, "generic", "image-win32", "openvpn"),
-                    "tapWindowsPath": BuildPath(tapWindowsPath, "i386"),
                     "programFilesPath": "ProgramFilesFolder",
                     "openSSLPlat": "",
                     "wixPlat": "x86",
@@ -67,15 +65,10 @@ clean	Cleans intermediate and output files</example>
                 "amd64": {
                     "buildPath": BuildPath(buildPath, "amd64"),
                     "openVPNPath": BuildPath(rootPath, "generic", "image-win64", "openvpn"),
-                    "tapWindowsPath": BuildPath(tapWindowsPath, "amd64"),
                     "programFilesPath": "ProgramFiles64Folder",
                     "openSSLPlat": "-x64",
                     "wixPlat": "x64",
-                    "wixLinkDepenencies": [
-                        BuildPath(tapWindowsPath, "amd64", "whql", "OemVista.inf"),
-                        BuildPath(tapWindowsPath, "amd64", "whql", ver.define.PRODUCT_TAP_WIN_COMPONENT_ID + ".cat"),
-                        BuildPath(tapWindowsPath, "amd64", "whql", ver.define.PRODUCT_TAP_WIN_COMPONENT_ID + ".sys")
-                    ]
+                    "wixLinkDepenencies": []
                 }
             }
 
@@ -94,54 +87,6 @@ clean	Cleans intermediate and output files</example>
                 case "all": case "clean":
                 case "msi":
                     var env = WScript.CreateObject("WScript.Shell").Environment("Process");
-
-                    // Downloading and extracting TAP-Windows
-                    // TODO: Update attestation-signed and WHQL-signed driver paths once available.
-                    b.pushRule(new DownloadBuildRule(
-                        BuildPath(sourcePath, "tap-windows-" + ver.define.PRODUCT_TAP_WIN_VERSION + ".zip"),
-                        ver.define.PRODUCT_TAP_WIN_URL,
-                        ["version.m4"]));
-                    b.pushRule(new ExtractBuildRule(
-                        [
-                            BuildPath(tapWindowsPath, "amd64", "OemVista.inf"),
-                            BuildPath(tapWindowsPath, "amd64", ver.define.PRODUCT_TAP_WIN_COMPONENT_ID + ".cat"),
-                            BuildPath(tapWindowsPath, "amd64", ver.define.PRODUCT_TAP_WIN_COMPONENT_ID + ".sys"),
-                            BuildPath(tapWindowsPath, "i386", "OemVista.inf"),
-                            BuildPath(tapWindowsPath, "i386", ver.define.PRODUCT_TAP_WIN_COMPONENT_ID + ".cat"),
-                            BuildPath(tapWindowsPath, "i386", ver.define.PRODUCT_TAP_WIN_COMPONENT_ID + ".sys"),
-                            BuildPath(tapWindowsPath, "include", "tap-windows.h")
-                        ],
-                        buildPath, // "tap-windows-" + ver.define.PRODUCT_TAP_WIN_VERSION folder is provided by .zip file.
-                        BuildPath(buildPath, "tap-windows-" + ver.define.PRODUCT_TAP_WIN_VERSION + ".timestamp"),
-                        BuildPath(sourcePath, "tap-windows-" + ver.define.PRODUCT_TAP_WIN_VERSION + ".zip"),
-                        []));
-                    b.pushRule(new CopyFileBuildRule(
-                        [
-                            BuildPath(tapWindowsPath, "amd64", "attsgn", "OemVista.inf"),
-                            BuildPath(tapWindowsPath, "amd64", "whql"  , "OemVista.inf")
-                        ], BuildPath(tapWindowsPath, "amd64", "OemVista.inf"), []));
-                    b.pushRule(new CopyFileBuildRule(
-                        [
-                            BuildPath(tapWindowsPath, "amd64", "attsgn", ver.define.PRODUCT_TAP_WIN_COMPONENT_ID + ".cat"),
-                            BuildPath(tapWindowsPath, "amd64", "whql"  , ver.define.PRODUCT_TAP_WIN_COMPONENT_ID + ".cat")
-                        ], BuildPath(tapWindowsPath, "amd64", ver.define.PRODUCT_TAP_WIN_COMPONENT_ID + ".cat"), []));
-                    b.pushRule(new CopyFileBuildRule(
-                        [
-                            BuildPath(tapWindowsPath, "amd64", "attsgn", ver.define.PRODUCT_TAP_WIN_COMPONENT_ID + ".sys"),
-                            BuildPath(tapWindowsPath, "amd64", "whql"  , ver.define.PRODUCT_TAP_WIN_COMPONENT_ID + ".sys")
-                        ], BuildPath(tapWindowsPath, "amd64", ver.define.PRODUCT_TAP_WIN_COMPONENT_ID + ".sys"), []));
-                    b.pushRule(new CopyFileBuildRule(
-                        [
-                            BuildPath(tapWindowsPath, "i386", "attsgn", "OemVista.inf")
-                        ], BuildPath(tapWindowsPath, "i386", "OemVista.inf"), []));
-                    b.pushRule(new CopyFileBuildRule(
-                        [
-                            BuildPath(tapWindowsPath, "i386", "attsgn", ver.define.PRODUCT_TAP_WIN_COMPONENT_ID + ".cat")
-                        ], BuildPath(tapWindowsPath, "i386", ver.define.PRODUCT_TAP_WIN_COMPONENT_ID + ".cat"), []));
-                    b.pushRule(new CopyFileBuildRule(
-                        [
-                            BuildPath(tapWindowsPath, "i386", "attsgn", ver.define.PRODUCT_TAP_WIN_COMPONENT_ID + ".sys")
-                        ], BuildPath(tapWindowsPath, "i386", ver.define.PRODUCT_TAP_WIN_COMPONENT_ID + ".sys"), []));
 
                     // Downloading openvpnserv2.exe
                     b.pushRule(new DownloadBuildRule(
@@ -184,14 +129,13 @@ clean	Cleans intermediate and output files</example>
 
                         // WiX compiler flags
                         var wixCompilerFlags = [
-                            "-ext WixDifxAppExtension",
                             "-ext WixNetFxExtension",
                             "-arch \"" + _CMD(p.wixPlat) + "\"",
                             "-dPRODUCT_PUBLISHER=\""            + _CMD(ver.define["PRODUCT_PUBLISHER"           ]) + "\"",
                             "-dPRODUCT_NAME=\""                 + _CMD(ver.define["PRODUCT_NAME"                ]) + "\"",
                             "-dPRODUCT_VERSION=\""              + _CMD(ver.define["PRODUCT_VERSION"             ]) + "\"",
                             "-dPACKAGE_VERSION=\""              + _CMD(ver.define["PACKAGE_VERSION"             ]) + "\"",
-                            "-dPRODUCT_TAP_NAME=\""             + _CMD(ver.define["PRODUCT_TAP_NAME"            ]) + "\"",
+                            "-dPRODUCT_TAP_WIN_NAME=\""         + _CMD(ver.define["PRODUCT_TAP_WIN_NAME"        ]) + "\"",
                             "-dPRODUCT_TAP_WIN_COMPONENT_ID=\"" + _CMD(ver.define["PRODUCT_TAP_WIN_COMPONENT_ID"]) + "\"",
                             "-dPRODUCT_PLATFORM=\""             + plat                                             + "\"",
                             "-dPRODUCT_CODE=\""                 + _CMD(ver.define["PRODUCT_CODE"                ]) + "\"",
@@ -236,16 +180,11 @@ clean	Cleans intermediate and output files</example>
                         // WiX linker flags
                         var wixLinkerFlags = [
                             "-spdb",
-                            "-ext WixDifxAppExtension",
                             "-ext WixNetFxExtension",
-                            "-b build=\""         + _CMD(buildPath                            ) + "\"",
-                            "-b openvpn=\""       + _CMD(p.openVPNPath                        ) + "\"",
-                            "-b tap=\""           + _CMD(tapWindowsPath                       ) + "\"",
-                            "-b tapbin=\""        + _CMD(p.tapWindowsPath                     ) + "\"",
-                            "-b tapbin.attsgn=\"" + _CMD(BuildPath(p.tapWindowsPath, "attsgn")) + "\"",
-                            "-b tapbin.whql=\""   + _CMD(BuildPath(p.tapWindowsPath, "whql"  )) + "\"",
-                            "-b easyrsa=\""       + _CMD(easyRSAPath                          ) + "\"",
-                            "-b openvpnserv2=\""  + _CMD(buildPath                            ) + "\""
+                            "-b build=\""         + _CMD(buildPath    ) + "\"",
+                            "-b openvpn=\""       + _CMD(p.openVPNPath) + "\"",
+                            "-b easyrsa=\""       + _CMD(easyRSAPath  ) + "\"",
+                            "-b openvpnserv2=\""  + _CMD(buildPath    ) + "\""
                         ];
 
                         // WiX linking
@@ -255,8 +194,7 @@ clean	Cleans intermediate and output files</example>
                             msiFile,
                             [
                                 BuildPath(p.buildPath, "gui.wixobj"),
-                                BuildPath(p.buildPath, "msi.wixobj"),
-                                BuildPath(env("WIX"), "bin", "difxapp_" + p.wixPlat + ".wixlib")
+                                BuildPath(p.buildPath, "msi.wixobj")
                             ],
                             [
                                 BuildPath("artwork", "info.ico"),
@@ -282,13 +220,6 @@ clean	Cleans intermediate and output files</example>
                                 BuildPath(p.openVPNPath, "bin", "openvpn-gui.exe"),
                                 BuildPath(p.openVPNPath, "bin", "openvpnserv.exe"),
                                 BuildPath(p.openVPNPath, "bin", "tapctl.exe"),
-                                BuildPath(p.tapWindowsPath, "OemVista.inf"),
-                                BuildPath(p.tapWindowsPath, ver.define.PRODUCT_TAP_WIN_COMPONENT_ID + ".cat"),
-                                BuildPath(p.tapWindowsPath, ver.define.PRODUCT_TAP_WIN_COMPONENT_ID + ".sys"),
-                                BuildPath(p.tapWindowsPath, "attsgn", "OemVista.inf"),
-                                BuildPath(p.tapWindowsPath, "attsgn", ver.define.PRODUCT_TAP_WIN_COMPONENT_ID + ".cat"),
-                                BuildPath(p.tapWindowsPath, "attsgn", ver.define.PRODUCT_TAP_WIN_COMPONENT_ID + ".sys"),
-                                BuildPath(tapWindowsPath, "include", "tap-windows.h"),
                                 BuildPath(buildPath, "openvpnserv2.exe"),
                                 BuildPath(buildPath, "README-config.txt"),
                                 BuildPath(buildPath, "Where are my config files.txt"),

@@ -19,7 +19,6 @@
 -->
 <Wix
     xmlns="http://schemas.microsoft.com/wix/2006/wi"
-    xmlns:diffx="http://schemas.microsoft.com/wix/DifxAppExtension"
     xmlns:netfx="http://schemas.microsoft.com/wix/NetFxExtension">
     <Product
         Id="$(var.PRODUCT_CODE)"
@@ -78,8 +77,6 @@
         <UI>
             <ProgressText Action="FindSystemInfo">Detecting system information</ProgressText>
         </UI>
-
-        <Property Id="DRIVERCERTIFICATION" Secure="yes"/>
 
 
         <!--
@@ -178,32 +175,32 @@
             </RegistrySearch>
         </Property>
         <Property Id="NSIS.TAP">
-            <RegistrySearch Id="nsis.tap.reg.path" Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(var.PRODUCT_TAP_NAME)" Name="UninstallString" Type="file"/>
+            <RegistrySearch Id="nsis.tap.reg.path" Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(var.PRODUCT_TAP_WIN_NAME)" Name="UninstallString" Type="file"/>
         </Property>
         <Property Id="NSIS.TAP.BIN">
-            <RegistrySearch Id="nsis.tap.reg.path.bin" Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(var.PRODUCT_TAP_NAME)" Name="UninstallString" Type="file">
+            <RegistrySearch Id="nsis.tap.reg.path.bin" Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(var.PRODUCT_TAP_WIN_NAME)" Name="UninstallString" Type="file">
                 <DirectorySearch Id="nsis.tap.reg.path.bin.dir" Path="bin" Depth="0" AssignToProperty="yes"/>
             </RegistrySearch>
         </Property>
         <Property Id="NSIS.TAP.BIN.ADDTAP.BAT">
-            <RegistrySearch Id="nsis.tap.reg.path.bin.addtap.bat" Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(var.PRODUCT_TAP_NAME)" Name="UninstallString" Type="file">
+            <RegistrySearch Id="nsis.tap.reg.path.bin.addtap.bat" Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(var.PRODUCT_TAP_WIN_NAME)" Name="UninstallString" Type="file">
                 <DirectorySearch Id="nsis.tap.reg.path.bin.dir.addtap.bat" Path="bin" Depth="0" AssignToProperty="yes">
                     <FileSearch Id="nsis.tap.reg.path.bin.file.addtap.bat" Name="addtap.bat"/>
                 </DirectorySearch>
             </RegistrySearch>
         </Property>
         <Property Id="NSIS.TAP.DRIVER">
-            <RegistrySearch Id="nsis.tap.reg.path.driver" Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(var.PRODUCT_TAP_NAME)" Name="UninstallString" Type="file">
+            <RegistrySearch Id="nsis.tap.reg.path.driver" Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(var.PRODUCT_TAP_WIN_NAME)" Name="UninstallString" Type="file">
                 <DirectorySearch Id="nsis.tap.reg.path.driver.dir" Path="driver" Depth="0" AssignToProperty="yes"/>
             </RegistrySearch>
         </Property>
         <Property Id="NSIS.TAP.INCLUDE">
-            <RegistrySearch Id="nsis.tap.reg.path.include" Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(var.PRODUCT_TAP_NAME)" Name="UninstallString" Type="file">
+            <RegistrySearch Id="nsis.tap.reg.path.include" Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(var.PRODUCT_TAP_WIN_NAME)" Name="UninstallString" Type="file">
                 <DirectorySearch Id="nsis.tap.reg.path.include.dir" Path="include" Depth="0" AssignToProperty="yes"/>
             </RegistrySearch>
         </Property>
         <Property Id="NSIS.TAP.INCLUDE.TAP_WINDOWS.H">
-            <RegistrySearch Id="nsis.tap.reg.path.include.tap_windows.h" Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(var.PRODUCT_TAP_NAME)" Name="UninstallString" Type="file">
+            <RegistrySearch Id="nsis.tap.reg.path.include.tap_windows.h" Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(var.PRODUCT_TAP_WIN_NAME)" Name="UninstallString" Type="file">
                 <DirectorySearch Id="nsis.tap.reg.path.include.dir.tap_windows.h" Path="include" Depth="0" AssignToProperty="yes">
                     <FileSearch Id="nsis.tap.reg.path.include.file.tap_windows.h" Name="tap-windows.h"/>
                 </DirectorySearch>
@@ -450,18 +447,6 @@
 
 
         <!--
-            1. Initialize driver folder from NSIS driver folder if detected.
-               Note: We are migrating TAP-Windows folders into OpenVPN, ignore old path.
-        -->
-        <!--<SetProperty
-            After="AppSearch"
-            Action="SetDriverDirNSIS"
-            Id="DRIVERDIR"
-            Value="[NSIS.TAP.DRIVER]"
-            Sequence="first">NSIS.TAP.DRIVER AND NOT Installed</SetProperty>-->
-
-
-        <!--
             1. Initialize Easy RSA folder from NSIS Easy RSA folder if detected.
             2. Set Easy RSA folder to the previous Easy RSA folder if detected. Use README.txt file to detect previous Easy RSA folder.
             3. Allow overriding Easy RSA folder by specifying EASYRSA=<folder> on the msiexec.exe command line.
@@ -487,35 +472,6 @@
             Id="EASYRSADIR"
             Value="[EASYRSA]"
             Sequence="first">EASYRSA AND NOT Installed</SetProperty>
-
-
-        <!--
-            1. Initialize SDK folder with NSIS SDK folder if detected.
-               Note: We are migrating TAP-Windows folders into OpenVPN, ignore old path.
-            2. Set SDK folder to the previous SDK folder if detected. Use tap_windows.h file to detect previous SDK folder.
-            3. Allow overriding SDK folder by specifying INCLUDE=<folder> on the msiexec.exe command line.
-        -->
-        <!--<SetProperty
-            After="AppSearch"
-            Action="SetIncludeDirNSIS"
-            Id="INCLUDEDIR"
-            Value="[NSIS.TAP.INCLUDE]"
-            Sequence="first">NSIS.TAP.INCLUDE AND NOT Installed</SetProperty>-->
-        <Property Id="INCLUDEDIRPREV">
-            <ComponentSearch Id="include.tap_windows.h" Guid="{55A1A7C4-202A-47A5-9066-1C96ADD232AC}"/>
-        </Property>
-        <SetProperty
-            After="AppSearch"
-            Action="SetIncludeDirPrev"
-            Id="INCLUDEDIR"
-            Value="[INCLUDEDIRPREV]"
-            Sequence="first">INCLUDEDIRPREV AND NOT Installed</SetProperty>
-        <SetProperty
-            After="SetIncludeDirPrev"
-            Action="SetIncludeDirParam"
-            Id="INCLUDEDIR"
-            Value="[INCLUDE]"
-            Sequence="first">INCLUDE AND NOT Installed</SetProperty>
 
 
         <!--
@@ -764,7 +720,7 @@
                         <RemoveFile Id="nsis.tap.license.txt" Property="NSIS.TAP" Name="license.txt" On="install"/>
                         <RemoveFile Id="nsis.tap.Uninstall.exe" Property="NSIS.TAP" Name="Uninstall.exe" On="install"/>
                         <RemoveFolder Id="nsis.tap" Property="NSIS.TAP" On="install"/>
-                        <RemoveRegistryKey Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(var.PRODUCT_TAP_NAME)" Action="removeOnInstall"/>
+                        <RemoveRegistryKey Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(var.PRODUCT_TAP_WIN_NAME)" Action="removeOnInstall"/>
                     </Component>
 
                     <Directory Id="BINDIR" Name="bin">
@@ -863,60 +819,6 @@
                         </Component>
                     </Directory>
 
-                    <Directory Id="DRIVERDIR" Name="driver">
-                        <Component Id="driver.OemVista.inf" Guid="{7656C849-96D7-40FE-B70F-4C7567AB295F}" Transitive="yes">
-                            <Condition><![CDATA[NOT DRIVERCERTIFICATION]]></Condition>
-                            <File Id="driver.OemVista.inf" Name="OemVista.inf" Source="!(bindpath.tapbin)OemVista.inf"/>
-                        </Component>
-                        <Component Id="driver.$(var.PRODUCT_TAP_WIN_COMPONENT_ID).cat" Guid="{817B6909-DA22-4D0A-B318-B3B93BED5998}" Transitive="yes">
-                            <Condition><![CDATA[NOT DRIVERCERTIFICATION]]></Condition>
-                            <File Id="driver.$(var.PRODUCT_TAP_WIN_COMPONENT_ID).cat" Name="$(var.PRODUCT_TAP_WIN_COMPONENT_ID).cat" Source="!(bindpath.tapbin)$(var.PRODUCT_TAP_WIN_COMPONENT_ID).cat"/>
-                            <diffx:Driver
-                                AddRemovePrograms="no"
-                                PlugAndPlayPrompt="no"/>
-                        </Component>
-                        <Component Id="driver.$(var.PRODUCT_TAP_WIN_COMPONENT_ID).sys" Guid="{C629FA48-5F02-4BCE-9CB9-F8E076DEFBCF}" Transitive="yes">
-                            <Condition><![CDATA[NOT DRIVERCERTIFICATION]]></Condition>
-                            <File Id="driver.$(var.PRODUCT_TAP_WIN_COMPONENT_ID).sys" Name="$(var.PRODUCT_TAP_WIN_COMPONENT_ID).sys" Source="!(bindpath.tapbin)$(var.PRODUCT_TAP_WIN_COMPONENT_ID).sys"/>
-                        </Component>
-                        <Directory Id="DRIVERATTSGNDIR" Name="attsgn">
-                            <Component Id="driver.attsgn.OemVista.inf" Guid="{4983DC74-AD61-4157-AAE0-0A882D7267A4}" Transitive="yes">
-                                <Condition><![CDATA[DRIVERCERTIFICATION="attsgn"]]></Condition>
-                                <File Id="driver.attsgn.OemVista.inf" Name="OemVista.inf" Source="!(bindpath.tapbin.attsgn)OemVista.inf"/>
-                            </Component>
-                            <Component Id="driver.attsgn.$(var.PRODUCT_TAP_WIN_COMPONENT_ID).cat" Guid="{BBEF5619-8021-4799-8A28-853FBD92CFEF}" Transitive="yes">
-                                <Condition><![CDATA[DRIVERCERTIFICATION="attsgn"]]></Condition>
-                                <File Id="driver.attsgn.$(var.PRODUCT_TAP_WIN_COMPONENT_ID).cat" Name="$(var.PRODUCT_TAP_WIN_COMPONENT_ID).cat" Source="!(bindpath.tapbin.attsgn)$(var.PRODUCT_TAP_WIN_COMPONENT_ID).cat"/>
-                                <diffx:Driver
-                                    AddRemovePrograms="no"
-                                    PlugAndPlayPrompt="no"/>
-                            </Component>
-                            <Component Id="driver.attsgn.$(var.PRODUCT_TAP_WIN_COMPONENT_ID).sys" Guid="{E23ED39B-3B80-4146-83D0-CB5F6AEB7B51}" Transitive="yes">
-                                <Condition><![CDATA[DRIVERCERTIFICATION="attsgn"]]></Condition>
-                                <File Id="driver.attsgn.$(var.PRODUCT_TAP_WIN_COMPONENT_ID).sys" Name="$(var.PRODUCT_TAP_WIN_COMPONENT_ID).sys" Source="!(bindpath.tapbin.attsgn)$(var.PRODUCT_TAP_WIN_COMPONENT_ID).sys"/>
-                            </Component>
-                        </Directory>
-                        <?if $(sys.BUILDARCH)="x64" ?>
-                        <Directory Id="DRIVERWHQLDIR" Name="whql">
-                            <Component Id="driver.whql.OemVista.inf" Guid="{7ACDA8AD-A00D-4B28-A70E-7DA2BE8784BC}" Transitive="yes">
-                                <Condition><![CDATA[DRIVERCERTIFICATION="whql"]]></Condition>
-                                <File Id="driver.whql.OemVista.inf" Name="OemVista.inf" Source="!(bindpath.tapbin.whql)OemVista.inf"/>
-                            </Component>
-                            <Component Id="driver.whql.$(var.PRODUCT_TAP_WIN_COMPONENT_ID).cat" Guid="{1818C76C-B6FD-4DE7-9BA7-E0F53DA10523}" Transitive="yes">
-                                <Condition><![CDATA[DRIVERCERTIFICATION="whql"]]></Condition>
-                                <File Id="driver.whql.$(var.PRODUCT_TAP_WIN_COMPONENT_ID).cat" Name="$(var.PRODUCT_TAP_WIN_COMPONENT_ID).cat" Source="!(bindpath.tapbin.whql)$(var.PRODUCT_TAP_WIN_COMPONENT_ID).cat"/>
-                                <diffx:Driver
-                                    AddRemovePrograms="no"
-                                    PlugAndPlayPrompt="no"/>
-                            </Component>
-                            <Component Id="driver.whql.$(var.PRODUCT_TAP_WIN_COMPONENT_ID).sys" Guid="{4F353FD0-9841-4A0B-B1CE-C37B6F08FB87}" Transitive="yes">
-                                <Condition><![CDATA[DRIVERCERTIFICATION="whql"]]></Condition>
-                                <File Id="driver.whql.$(var.PRODUCT_TAP_WIN_COMPONENT_ID).sys" Name="$(var.PRODUCT_TAP_WIN_COMPONENT_ID).sys" Source="!(bindpath.tapbin.whql)$(var.PRODUCT_TAP_WIN_COMPONENT_ID).sys"/>
-                            </Component>
-                        </Directory>
-                        <?endif?>
-                    </Directory>
-
                     <Directory Id="EASYRSADIR" Name="easy-rsa">
                         <Component Id="easyrsa.build_ca.bat" Guid="{C1F541D5-2D17-47EF-B3D7-9A05C0C7C9F4}">
                             <File Name="build-ca.bat" Source="!(bindpath.easyrsa)Windows\build-ca.bat"/>
@@ -959,12 +861,6 @@
                         </Component>
                         <Component Id="easyrsa.vars.bat.sample" Guid="{24A177A9-238C-46BC-A2A5-7884F39406D0}">
                             <File Name="vars.bat.sample" Source="!(bindpath.easyrsa)Windows\vars.bat.sample"/>
-                        </Component>
-                    </Directory>
-
-                    <Directory Id="INCLUDEDIR" Name="include">
-                        <Component Id="include.tap_windows.h" Guid="{55A1A7C4-202A-47A5-9066-1C96ADD232AC}">
-                            <File Name="tap-windows.h" Source="!(bindpath.tap)include\tap-windows.h"/>
                         </Component>
                     </Directory>
 
@@ -1104,7 +1000,7 @@
                     </Directory>
                 </Directory>
 
-                <Directory Id="TAPShortcutFolder" Name="$(var.PRODUCT_TAP_NAME)">
+                <Directory Id="TAPShortcutFolder" Name="$(var.PRODUCT_TAP_WIN_NAME)">
                     <Directory Id="TAPUtilitiesShortcutFolder" Name="Utilities"/>
                 </Directory>
             </Directory>
@@ -1132,13 +1028,6 @@
                 <RegistryValue
                     Root="HKLM"
                     Key="Software\$(var.PRODUCT_NAME)"
-                    Type="string"
-                    Value="[PRODUCTDIR]"/>
-            </Component>
-            <Component Id="reg.tap.path" Guid="{47E068D8-30B1-4C2A-A3F8-F96F0E7DC509}">
-                <RegistryValue
-                    Root="HKLM"
-                    Key="Software\$(var.PRODUCT_TAP_NAME)"
                     Type="string"
                     Value="[PRODUCTDIR]"/>
             </Component>
@@ -1384,26 +1273,14 @@
                 KeyTable="Component"
                 KeyColumn="1"/>
 
+            <!-- TODO: Finish when TAP-Windows6 and Wintun MSMs are included
             <Row>
                 <Data Column="Interface"  >TAP</Data>
                 <Data Column="DisplayName">$(var.PRODUCT_NAME)</Data>
                 <Data Column="Condition"  ><![CDATA[NOT TAPINTERFACES]]></Data>
-                <Data Column="Component_" >driver.OemVista.inf</Data>
+                <Data Column="Component_" ></Data>
             </Row>
-            <Row>
-                <Data Column="Interface"  >TAP.attsgn</Data>
-                <Data Column="DisplayName">$(var.PRODUCT_NAME)</Data>
-                <Data Column="Condition"  ><![CDATA[NOT TAPINTERFACES]]></Data>
-                <Data Column="Component_" >driver.attsgn.OemVista.inf</Data>
-            </Row>
-            <?if $(sys.BUILDARCH)="x64" ?>
-            <Row>
-                <Data Column="Interface"  >TAP.whql</Data>
-                <Data Column="DisplayName">$(var.PRODUCT_NAME)</Data>
-                <Data Column="Condition"  ><![CDATA[NOT TAPINTERFACES]]></Data>
-                <Data Column="Component_" >driver.whql.OemVista.inf</Data>
-            </Row>
-            <?endif?>
+            -->
         </CustomTable>
 
 
@@ -1457,7 +1334,6 @@
             <ComponentRef Id="res.ovpn.ico"/>
             <ComponentRef Id="shortcut.bin.openvpn.exe.genkey"/>
             <ComponentRef Id="reg.path"/>
-            <ComponentRef Id="reg.tap.path"/>
             <ComponentRef Id="reg.config_dir"/>
             <ComponentRef Id="reg.config_ext"/>
             <ComponentRef Id="reg.exe_path"/>
@@ -1516,6 +1392,18 @@
             </Feature>
 
             <Feature
+                Id="OpenVPN.Util"
+                Title="Utilities"
+                Description="Command-line utilities to manage TUN/TAP interfaces"
+                Level="2"
+                ConfigurableDirectory="PRODUCTDIR"
+                AllowAdvertise="no">
+                <Condition Level="1"><![CDATA[NSIS.TAP.BIN.ADDTAP.BAT]]></Condition>
+                <ComponentRef Id="bin.tapctl.exe"/>
+                <ComponentRef Id="shortcut.bin.tapctl.exe.create"/>
+            </Feature>
+
+            <Feature
                 Id="OpenVPN.Documentation"
                 Title="Documentation"
                 Description="$(var.PRODUCT_NAME) documentation"
@@ -1547,6 +1435,7 @@
             </Feature>
         </Feature>
 
+        <!-- TODO: Finish when TAP-Windows6 and Wintun MSMs are included
         <Feature
             Id="TAP"
             Title="TUN/TAP Driver"
@@ -1557,41 +1446,8 @@
             Display="expand"
             Absent="disallow">
             <ComponentRef Id="license.txt"/>
-            <ComponentRef Id="driver.OemVista.inf"/>
-            <ComponentRef Id="driver.$(var.PRODUCT_TAP_WIN_COMPONENT_ID).cat"/>
-            <ComponentRef Id="driver.$(var.PRODUCT_TAP_WIN_COMPONENT_ID).sys"/>
-            <ComponentRef Id="driver.attsgn.OemVista.inf"/>
-            <ComponentRef Id="driver.attsgn.$(var.PRODUCT_TAP_WIN_COMPONENT_ID).cat"/>
-            <ComponentRef Id="driver.attsgn.$(var.PRODUCT_TAP_WIN_COMPONENT_ID).sys"/>
-            <?if $(sys.BUILDARCH)="x64" ?>
-            <ComponentRef Id="driver.whql.OemVista.inf"/>
-            <ComponentRef Id="driver.whql.$(var.PRODUCT_TAP_WIN_COMPONENT_ID).cat"/>
-            <ComponentRef Id="driver.whql.$(var.PRODUCT_TAP_WIN_COMPONENT_ID).sys"/>
-            <?endif?>
-
-            <Feature
-                Id="TAP.Util"
-                Title="Utilities"
-                Description="Command-line utilities to manage TAP interfaces"
-                Level="2"
-                ConfigurableDirectory="PRODUCTDIR"
-                AllowAdvertise="no">
-                <Condition Level="1"><![CDATA[NSIS.TAP.BIN.ADDTAP.BAT]]></Condition>
-                <ComponentRef Id="bin.tapctl.exe"/>
-                <ComponentRef Id="shortcut.bin.tapctl.exe.create"/>
-            </Feature>
-
-            <Feature
-                Id="TAP.SDK"
-                Title="SDK"
-                Description="C/C++ header files to access TAP interfaces programmatically"
-                Level="3"
-                ConfigurableDirectory="INCLUDEDIR"
-                AllowAdvertise="no">
-                <Condition Level="1"><![CDATA[NSIS.TAP.INCLUDE.TAP_WINDOWS.H]]></Condition>
-                <ComponentRef Id="include.tap_windows.h"/>
-            </Feature>
         </Feature>
+        -->
 
         <Feature
             Id="OpenSSL"

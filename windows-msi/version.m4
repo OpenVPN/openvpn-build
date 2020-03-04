@@ -2,10 +2,9 @@ dnl ============================================================
 dnl Downloadables
 dnl ============================================================
 
-dnl TAP-Windows binaries (URL to .zip file containing "tap-windows-[PRODUCT_TAP_WIN_VERSION]" folder with driver)
-define([PRODUCT_TAP_WIN_VERSION],      [9.24.2])
-define([PRODUCT_TAP_WIN_URL],          [http://build.openvpn.net/downloads/releases/tap-windows-9.24.2.zip])
+dnl TAP-Windows binaries
 define([PRODUCT_TAP_WIN_COMPONENT_ID], [tap0901])
+define([PRODUCT_TAP_WIN_NAME],         [TAP-Windows])
 
 dnl OpenVPNServ2.exe binary
 define([OPENVPNSERV2_URL], [http://build.openvpn.net/downloads/releases/openvpnserv2-1.4.0.0.exe])
@@ -22,7 +21,6 @@ dnl ============================================================
 dnl Define the product name and publisher.
 define([PRODUCT_NAME],      [OpenVPN])
 define([PRODUCT_PUBLISHER], [OpenVPN Technologies, Inc.])
-define([PRODUCT_TAP_NAME],  [TAP-Windows])
 
 dnl The package version as displayed by UI and used in filenames (no spaces, please).
 define([PACKAGE_VERSION], [2.5-20200304])

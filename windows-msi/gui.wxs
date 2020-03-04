@@ -451,11 +451,6 @@
             <ProgressText Action="RollbackCleanup" Template="File: [1]">Removing backup files</ProgressText>
             <ProgressText Action="UnmoveFiles" Template="File: [1], Directory: [9]">Removing moved files</ProgressText>
             <ProgressText Action="UnpublishProduct">Unpublishing product information</ProgressText>
-
-            <!-- WiX-Specific -->
-            <ProgressText Action="MsiProcessDrivers">Evaluating drivers</ProgressText>
-            <ProgressText Action="MsiInstallDrivers">Installing drivers</ProgressText>
-            <ProgressText Action="MsiUninstallDrivers">Removing drivers</ProgressText>
         </UI>
 
         <Property Id="Progress1" Value="Installing"/>
