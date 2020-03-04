@@ -3,8 +3,8 @@ dnl Downloadables
 dnl ============================================================
 
 dnl TAP-Windows binaries (URL to .zip file containing "tap-windows-[PRODUCT_TAP_WIN_VERSION]" folder with driver)
-define([PRODUCT_TAP_WIN_VERSION],      [9.21.2])
-define([PRODUCT_TAP_WIN_URL],          [http://build.openvpn.net/downloads/releases/tap-windows-9.21.2.zip])
+define([PRODUCT_TAP_WIN_VERSION],      [9.24.2])
+define([PRODUCT_TAP_WIN_URL],          [http://build.openvpn.net/downloads/releases/tap-windows-9.24.2.zip])
 define([PRODUCT_TAP_WIN_COMPONENT_ID], [tap0901])
 
 dnl OpenVPNServ2.exe binary
