@@ -822,7 +822,6 @@
                                 Type="shareProcess"
                                 Start="auto"
                                 ErrorControl="normal">
-                                <ServiceDependency Id="$(var.PRODUCT_TAP_WIN_COMPONENT_ID)"/>
                                 <ServiceDependency Id="Dhcp"/>
                             </ServiceInstall>
                         </Component>
@@ -841,7 +840,6 @@
                                 Type="ownProcess"
                                 Start="auto"
                                 ErrorControl="normal">
-                                <ServiceDependency Id="$(var.PRODUCT_TAP_WIN_COMPONENT_ID)"/>
                                 <ServiceDependency Id="Dhcp"/>
                             </ServiceInstall>
                         </Component>
