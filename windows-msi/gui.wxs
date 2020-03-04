@@ -456,12 +456,6 @@
             <ProgressText Action="MsiProcessDrivers">Evaluating drivers</ProgressText>
             <ProgressText Action="MsiInstallDrivers">Installing drivers</ProgressText>
             <ProgressText Action="MsiUninstallDrivers">Removing drivers</ProgressText>
-            <ProgressText Action="InstallCertificates">Evaluating certificates to install</ProgressText>
-            <ProgressText Action="UninstallCertificates">Evaluating certificates to remove</ProgressText>
-            <ProgressText Action="AddMachineCertificate">Installing computer certificates</ProgressText>
-            <ProgressText Action="DeleteMachineCertificate">Removing computer certificates</ProgressText>
-            <ProgressText Action="AddUserCertificate">Installing user certificates</ProgressText>
-            <ProgressText Action="DeleteUserCertificate">Removing user certificates</ProgressText>
         </UI>
 
         <Property Id="Progress1" Value="Installing"/>

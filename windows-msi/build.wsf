@@ -73,7 +73,6 @@ clean	Cleans intermediate and output files</example>
                     "wixPlat": "x64",
                     "wixLinkDepenencies": [
                         BuildPath(tapWindowsPath, "amd64", "whql", "OemVista.inf"),
-                        BuildPath(tapWindowsPath, "amd64", "whql", "signed_by.cer"),
                         BuildPath(tapWindowsPath, "amd64", "whql", ver.define.PRODUCT_TAP_WIN_COMPONENT_ID + ".cat"),
                         BuildPath(tapWindowsPath, "amd64", "whql", ver.define.PRODUCT_TAP_WIN_COMPONENT_ID + ".sys")
                     ]
@@ -97,7 +96,6 @@ clean	Cleans intermediate and output files</example>
                     var env = WScript.CreateObject("WScript.Shell").Environment("Process");
 
                     // Downloading and extracting TAP-Windows
-                    // TODO: Migrate signed_by.cer to tap-windows-<ver>.zip.
                     // TODO: Update attestation-signed and WHQL-signed driver paths once available.
                     b.pushRule(new DownloadBuildRule(
                         BuildPath(sourcePath, "tap-windows-" + ver.define.PRODUCT_TAP_WIN_VERSION + ".zip"),
@@ -106,11 +104,9 @@ clean	Cleans intermediate and output files</example>
                     b.pushRule(new ExtractBuildRule(
                         [
                             BuildPath(tapWindowsPath, "amd64", "OemVista.inf"),
-                            //BuildPath(tapWindowsPath, "amd64", "signed_by.cer"),
                             BuildPath(tapWindowsPath, "amd64", ver.define.PRODUCT_TAP_WIN_COMPONENT_ID + ".cat"),
                             BuildPath(tapWindowsPath, "amd64", ver.define.PRODUCT_TAP_WIN_COMPONENT_ID + ".sys"),
                             BuildPath(tapWindowsPath, "i386", "OemVista.inf"),
-                            //BuildPath(tapWindowsPath, "i386", "signed_by.cer"),
                             BuildPath(tapWindowsPath, "i386", ver.define.PRODUCT_TAP_WIN_COMPONENT_ID + ".cat"),
                             BuildPath(tapWindowsPath, "i386", ver.define.PRODUCT_TAP_WIN_COMPONENT_ID + ".sys"),
                             BuildPath(tapWindowsPath, "include", "tap-windows.h")
@@ -119,14 +115,6 @@ clean	Cleans intermediate and output files</example>
                         BuildPath(buildPath, "tap-windows-" + ver.define.PRODUCT_TAP_WIN_VERSION + ".timestamp"),
                         BuildPath(sourcePath, "tap-windows-" + ver.define.PRODUCT_TAP_WIN_VERSION + ".zip"),
                         []));
-                    b.pushRule(new CopyFileBuildRule(
-                        [
-                            BuildPath(tapWindowsPath, "amd64", "signed_by.cer"),
-                            BuildPath(tapWindowsPath, "amd64", "attsgn", "signed_by.cer"),
-                            BuildPath(tapWindowsPath, "amd64", "whql", "signed_by.cer"),
-                            BuildPath(tapWindowsPath, "i386", "signed_by.cer"),
-                            BuildPath(tapWindowsPath, "i386", "attsgn", "signed_by.cer")
-                        ], BuildPath("cert", "signed_by.cer"), []));
                     b.pushRule(new CopyFileBuildRule(
                         [
                             BuildPath(tapWindowsPath, "amd64", "attsgn", "OemVista.inf"),
@@ -197,7 +185,6 @@ clean	Cleans intermediate and output files</example>
                         // WiX compiler flags
                         var wixCompilerFlags = [
                             "-ext WixDifxAppExtension",
-                            "-ext WixIIsExtension",
                             "-ext WixNetFxExtension",
                             "-arch \"" + _CMD(p.wixPlat) + "\"",
                             "-dPRODUCT_PUBLISHER=\""            + _CMD(ver.define["PRODUCT_PUBLISHER"           ]) + "\"",
@@ -250,7 +237,6 @@ clean	Cleans intermediate and output files</example>
                         var wixLinkerFlags = [
                             "-spdb",
                             "-ext WixDifxAppExtension",
-                            "-ext WixIIsExtension",
                             "-ext WixNetFxExtension",
                             "-b build=\""         + _CMD(buildPath                            ) + "\"",
                             "-b openvpn=\""       + _CMD(p.openVPNPath                        ) + "\"",
@@ -297,11 +283,9 @@ clean	Cleans intermediate and output files</example>
                                 BuildPath(p.openVPNPath, "bin", "openvpnserv.exe"),
                                 BuildPath(p.openVPNPath, "bin", "tapctl.exe"),
                                 BuildPath(p.tapWindowsPath, "OemVista.inf"),
-                                BuildPath(p.tapWindowsPath, "signed_by.cer"),
                                 BuildPath(p.tapWindowsPath, ver.define.PRODUCT_TAP_WIN_COMPONENT_ID + ".cat"),
                                 BuildPath(p.tapWindowsPath, ver.define.PRODUCT_TAP_WIN_COMPONENT_ID + ".sys"),
                                 BuildPath(p.tapWindowsPath, "attsgn", "OemVista.inf"),
-                                BuildPath(p.tapWindowsPath, "attsgn", "signed_by.cer"),
                                 BuildPath(p.tapWindowsPath, "attsgn", ver.define.PRODUCT_TAP_WIN_COMPONENT_ID + ".cat"),
                                 BuildPath(p.tapWindowsPath, "attsgn", ver.define.PRODUCT_TAP_WIN_COMPONENT_ID + ".sys"),
                                 BuildPath(tapWindowsPath, "include", "tap-windows.h"),
