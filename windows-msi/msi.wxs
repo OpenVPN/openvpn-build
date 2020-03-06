@@ -1254,7 +1254,7 @@
                 Template="[1]: [2] [3]">Deleting TUN/TAP adapters</ProgressText>
             <ProgressText
                 Action="InstallTUNTAPAdapters"
-                Template="[1]: [2] [3]">Creating TUN/TAP adapters</ProgressText>
+                Template="[1]: [2] [3] [4]">Creating TUN/TAP adapters</ProgressText>
 
             <Error Id="2550">OpenVPNMSICA: [2]</Error>
             <Error Id="2551">OpenVPNMSICA: [2]  Error [3]: [4]</Error>
@@ -1281,6 +1281,15 @@
                 Localizable="yes"/>
 
             <Column
+                Id="HardwareId"
+                Description="Device hardware ID."
+                Category="Text"
+                Type="string"
+                Width="100"
+                Nullable="no"
+                Localizable="no"/>
+
+            <Column
                 Id="Condition"
                 Description="A conditional that can control whether a TUN/TAP adapter is installed. If the condition is null or evaluates to true, then the adapter is installed when its component is installed. Note: When its component is uninstalled, the TUN/TAP adapter is unconditionally uninstalled."
                 Category="Condition"
@@ -1303,8 +1312,17 @@
             <Row>
                 <Data Column="Adapter"    >TAPWindows6</Data>
                 <Data Column="DisplayName">TAPWin~6|$(var.PRODUCT_NAME) TAP-Windows6</Data>
+                <Data Column="HardwareId" >root\$(var.PRODUCT_TAP_WIN_COMPONENT_ID)</Data>
                 <Data Column="Condition"  ><![CDATA[NOT TUNTAPADAPTERS]]></Data>
                 <Data Column="Component_" >regD8053A2D8D674155AF2620A90720BE55.8D9A59BA_33C1_4CA0_96AF_E7F728DEC8D7</Data>
+            </Row>
+
+            <Row>
+                <Data Column="Adapter"    >Wintun</Data>
+                <Data Column="DisplayName">Wintun|$(var.PRODUCT_NAME) Wintun</Data>
+                <Data Column="HardwareId" >Wintun</Data>
+                <Data Column="Condition"  ><![CDATA[NOT TUNTAPADAPTERS]]></Data>
+                <Data Column="Component_" >reg11F81A5FFB49D87B59FD3777E57FF853.C28309D9_1954_4F2D_A7D1_228850092460</Data>
             </Row>
         </CustomTable>
 
