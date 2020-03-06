@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  openvpn-build â€” OpenVPN packaging
+  openvpn-build Ã¢â‚¬â€� OpenVPN packaging
 
   Copyright (C) 2018-2020 Simon Rozman <simon@rozman.si>
 
@@ -174,35 +174,35 @@
                 </DirectorySearch>
             </RegistrySearch>
         </Property>
-        <Property Id="NSIS.TAP">
-            <RegistrySearch Id="nsis.tap.reg.path" Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(var.PRODUCT_TAP_WIN_NAME)" Name="UninstallString" Type="file"/>
+        <Property Id="NSIS.TAPWIN">
+            <RegistrySearch Id="nsis.tapwin.reg.path" Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(var.PRODUCT_TAP_WIN_NAME)" Name="UninstallString" Type="file"/>
         </Property>
-        <Property Id="NSIS.TAP.BIN">
-            <RegistrySearch Id="nsis.tap.reg.path.bin" Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(var.PRODUCT_TAP_WIN_NAME)" Name="UninstallString" Type="file">
-                <DirectorySearch Id="nsis.tap.reg.path.bin.dir" Path="bin" Depth="0" AssignToProperty="yes"/>
+        <Property Id="NSIS.TAPWIN.BIN">
+            <RegistrySearch Id="nsis.tapwin.reg.path.bin" Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(var.PRODUCT_TAP_WIN_NAME)" Name="UninstallString" Type="file">
+                <DirectorySearch Id="nsis.tapwin.reg.path.bin.dir" Path="bin" Depth="0" AssignToProperty="yes"/>
             </RegistrySearch>
         </Property>
-        <Property Id="NSIS.TAP.BIN.ADDTAP.BAT">
-            <RegistrySearch Id="nsis.tap.reg.path.bin.addtap.bat" Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(var.PRODUCT_TAP_WIN_NAME)" Name="UninstallString" Type="file">
-                <DirectorySearch Id="nsis.tap.reg.path.bin.dir.addtap.bat" Path="bin" Depth="0" AssignToProperty="yes">
-                    <FileSearch Id="nsis.tap.reg.path.bin.file.addtap.bat" Name="addtap.bat"/>
+        <Property Id="NSIS.TAPWIN.BIN.ADDTAP.BAT">
+            <RegistrySearch Id="nsis.tapwin.reg.path.bin.addtap.bat" Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(var.PRODUCT_TAP_WIN_NAME)" Name="UninstallString" Type="file">
+                <DirectorySearch Id="nsis.tapwin.reg.path.bin.dir.addtap.bat" Path="bin" Depth="0" AssignToProperty="yes">
+                    <FileSearch Id="nsis.tapwin.reg.path.bin.file.addtap.bat" Name="addtap.bat"/>
                 </DirectorySearch>
             </RegistrySearch>
         </Property>
-        <Property Id="NSIS.TAP.DRIVER">
-            <RegistrySearch Id="nsis.tap.reg.path.driver" Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(var.PRODUCT_TAP_WIN_NAME)" Name="UninstallString" Type="file">
-                <DirectorySearch Id="nsis.tap.reg.path.driver.dir" Path="driver" Depth="0" AssignToProperty="yes"/>
+        <Property Id="NSIS.TAPWIN.DRIVER">
+            <RegistrySearch Id="nsis.tapwin.reg.path.driver" Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(var.PRODUCT_TAP_WIN_NAME)" Name="UninstallString" Type="file">
+                <DirectorySearch Id="nsis.tapwin.reg.path.driver.dir" Path="driver" Depth="0" AssignToProperty="yes"/>
             </RegistrySearch>
         </Property>
-        <Property Id="NSIS.TAP.INCLUDE">
-            <RegistrySearch Id="nsis.tap.reg.path.include" Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(var.PRODUCT_TAP_WIN_NAME)" Name="UninstallString" Type="file">
-                <DirectorySearch Id="nsis.tap.reg.path.include.dir" Path="include" Depth="0" AssignToProperty="yes"/>
+        <Property Id="NSIS.TAPWIN.INCLUDE">
+            <RegistrySearch Id="nsis.tapwin.reg.path.include" Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(var.PRODUCT_TAP_WIN_NAME)" Name="UninstallString" Type="file">
+                <DirectorySearch Id="nsis.tapwin.reg.path.include.dir" Path="include" Depth="0" AssignToProperty="yes"/>
             </RegistrySearch>
         </Property>
-        <Property Id="NSIS.TAP.INCLUDE.TAP_WINDOWS.H">
-            <RegistrySearch Id="nsis.tap.reg.path.include.tap_windows.h" Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(var.PRODUCT_TAP_WIN_NAME)" Name="UninstallString" Type="file">
-                <DirectorySearch Id="nsis.tap.reg.path.include.dir.tap_windows.h" Path="include" Depth="0" AssignToProperty="yes">
-                    <FileSearch Id="nsis.tap.reg.path.include.file.tap_windows.h" Name="tap-windows.h"/>
+        <Property Id="NSIS.TAPWIN.INCLUDE.TAP_WINDOWS.H">
+            <RegistrySearch Id="nsis.tapwin.reg.path.include.tap_windows.h" Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(var.PRODUCT_TAP_WIN_NAME)" Name="UninstallString" Type="file">
+                <DirectorySearch Id="nsis.tapwin.reg.path.include.dir.tap_windows.h" Path="include" Depth="0" AssignToProperty="yes">
+                    <FileSearch Id="nsis.tapwin.reg.path.include.file.tap_windows.h" Name="tap-windows.h"/>
                 </DirectorySearch>
             </RegistrySearch>
         </Property>
@@ -702,24 +702,24 @@
                         <RemoveRegistryKey Root="HKLM" Key="SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\$(var.PRODUCT_NAME)" Action="removeOnInstall"/>
                         <?endif?>
 
-                        <RemoveFile Id="nsis.tap.shortcut.utilities.addtap.bat" Directory="TAPUtilitiesShortcutFolder" Name="Add a new TAP virtual ethernet adapter.lnk" On="install"/>
-                        <RemoveFile Id="nsis.tap.shortcut.utilities.deltapall.bat" Directory="TAPUtilitiesShortcutFolder" Name="Delete ALL TAP virtual ethernet adapters.lnk" On="install"/>
-                        <RemoveFolder Id="nsis.tap.shortcut.utilities" Property="TAPUtilitiesShortcutFolder" On="install"/>
-                        <RemoveFolder Id="nsis.tap.shortcut" Property="TAPShortcutFolder" On="install"/>
-                        <RemoveFile Id="nsis.tap.bin.addtap.bat" Property="NSIS.TAP.BIN" Name="addtap.bat" On="install"/>
-                        <RemoveFile Id="nsis.tap.bin.deltapall.bat" Property="NSIS.TAP.BIN" Name="deltapall.bat" On="install"/>
-                        <RemoveFile Id="nsis.tap.bin.tapinstall.exe" Property="NSIS.TAP.BIN" Name="tapinstall.exe" On="install"/>
-                        <RemoveFolder Id="nsis.tap.bin" Property="NSIS.TAP.BIN" On="install"/>
-                        <RemoveFile Id="nsis.tap.driver.OemVista.inf" Property="NSIS.TAP.DRIVER" Name="OemVista.inf" On="install"/>
-                        <RemoveFile Id="nsis.tap.driver.$(var.PRODUCT_TAP_WIN_COMPONENT_ID).cat" Property="NSIS.TAP.DRIVER" Name="$(var.PRODUCT_TAP_WIN_COMPONENT_ID).cat" On="install"/>
-                        <RemoveFile Id="nsis.tap.driver.$(var.PRODUCT_TAP_WIN_COMPONENT_ID).sys" Property="NSIS.TAP.DRIVER" Name="$(var.PRODUCT_TAP_WIN_COMPONENT_ID).sys" On="install"/>
-                        <RemoveFolder Id="nsis.tap.driver" Property="NSIS.TAP.DRIVER" On="install"/>
-                        <RemoveFile Id="nsis.tap.include.tap_windows.h" Property="NSIS.TAP.INCLUDE" Name="tap-windows.h" On="install"/>
-                        <RemoveFolder Id="nsis.tap.include" Property="NSIS.TAP.INCLUDE" On="install"/>
-                        <RemoveFile Id="nsis.tap.icon.ico" Property="NSIS.TAP" Name="icon.ico" On="install"/>
-                        <RemoveFile Id="nsis.tap.license.txt" Property="NSIS.TAP" Name="license.txt" On="install"/>
-                        <RemoveFile Id="nsis.tap.Uninstall.exe" Property="NSIS.TAP" Name="Uninstall.exe" On="install"/>
-                        <RemoveFolder Id="nsis.tap" Property="NSIS.TAP" On="install"/>
+                        <RemoveFile Id="nsis.tapwin.shortcut.utilities.addtap.bat" Directory="TAPWindows6UtilitiesShortcutFolder" Name="Add a new TAP virtual ethernet adapter.lnk" On="install"/>
+                        <RemoveFile Id="nsis.tapwin.shortcut.utilities.deltapall.bat" Directory="TAPWindows6UtilitiesShortcutFolder" Name="Delete ALL TAP virtual ethernet adapters.lnk" On="install"/>
+                        <RemoveFolder Id="nsis.tapwin.shortcut.utilities" Property="TAPWindows6UtilitiesShortcutFolder" On="install"/>
+                        <RemoveFolder Id="nsis.tapwin.shortcut" Property="TAPWindows6ShortcutFolder" On="install"/>
+                        <RemoveFile Id="nsis.tapwin.bin.addtap.bat" Property="NSIS.TAPWIN.BIN" Name="addtap.bat" On="install"/>
+                        <RemoveFile Id="nsis.tapwin.bin.deltapall.bat" Property="NSIS.TAPWIN.BIN" Name="deltapall.bat" On="install"/>
+                        <RemoveFile Id="nsis.tapwin.bin.tapinstall.exe" Property="NSIS.TAPWIN.BIN" Name="tapinstall.exe" On="install"/>
+                        <RemoveFolder Id="nsis.tapwin.bin" Property="NSIS.TAPWIN.BIN" On="install"/>
+                        <RemoveFile Id="nsis.tapwin.driver.OemVista.inf" Property="NSIS.TAPWIN.DRIVER" Name="OemVista.inf" On="install"/>
+                        <RemoveFile Id="nsis.tapwin.driver.$(var.PRODUCT_TAP_WIN_COMPONENT_ID).cat" Property="NSIS.TAPWIN.DRIVER" Name="$(var.PRODUCT_TAP_WIN_COMPONENT_ID).cat" On="install"/>
+                        <RemoveFile Id="nsis.tapwin.driver.$(var.PRODUCT_TAP_WIN_COMPONENT_ID).sys" Property="NSIS.TAPWIN.DRIVER" Name="$(var.PRODUCT_TAP_WIN_COMPONENT_ID).sys" On="install"/>
+                        <RemoveFolder Id="nsis.tapwin.driver" Property="NSIS.TAPWIN.DRIVER" On="install"/>
+                        <RemoveFile Id="nsis.tapwin.include.tap_windows.h" Property="NSIS.TAPWIN.INCLUDE" Name="tap-windows.h" On="install"/>
+                        <RemoveFolder Id="nsis.tapwin.include" Property="NSIS.TAPWIN.INCLUDE" On="install"/>
+                        <RemoveFile Id="nsis.tapwin.icon.ico" Property="NSIS.TAPWIN" Name="icon.ico" On="install"/>
+                        <RemoveFile Id="nsis.tapwin.license.txt" Property="NSIS.TAPWIN" Name="license.txt" On="install"/>
+                        <RemoveFile Id="nsis.tapwin.Uninstall.exe" Property="NSIS.TAPWIN" Name="Uninstall.exe" On="install"/>
+                        <RemoveFolder Id="nsis.tapwin" Property="NSIS.TAPWIN" On="install"/>
                         <RemoveRegistryKey Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(var.PRODUCT_TAP_WIN_NAME)" Action="removeOnInstall"/>
                     </Component>
 
@@ -1011,8 +1011,8 @@
                     </Directory>
                 </Directory>
 
-                <Directory Id="TAPShortcutFolder" Name="$(var.PRODUCT_TAP_WIN_NAME)">
-                    <Directory Id="TAPUtilitiesShortcutFolder" Name="Utilities"/>
+                <Directory Id="TAPWindows6ShortcutFolder" Name="$(var.PRODUCT_TAP_WIN_NAME)">
+                    <Directory Id="TAPWindows6UtilitiesShortcutFolder" Name="Utilities"/>
                 </Directory>
             </Directory>
 
@@ -1214,57 +1214,56 @@
 
 
         <!--
-            TAP interfaces
+            TUN/TAP adapters
         -->
-        <!-- TODO: Finish!
-        <CustomAction Id="FindTAPInterfaces"              BinaryKey="libopenvpnmsica.dll" DllEntry="FindTAPInterfaces"     Execute="firstSequence"/>
-        <CustomAction Id="EvaluateTAPInterfaces"          BinaryKey="libopenvpnmsica.dll" DllEntry="EvaluateTAPInterfaces"/>
-        <CustomAction Id="UninstallTAPInterfaces"         BinaryKey="libopenvpnmsica.dll" DllEntry="ProcessDeferredAction" Execute="deferred" Impersonate="no"/>
-        <CustomAction Id="UninstallTAPInterfacesCommit"   BinaryKey="libopenvpnmsica.dll" DllEntry="ProcessDeferredAction" Execute="commit"   Impersonate="no"/>
-        <CustomAction Id="UninstallTAPInterfacesRollback" BinaryKey="libopenvpnmsica.dll" DllEntry="ProcessDeferredAction" Execute="rollback" Impersonate="no"/>
-        <CustomAction Id="InstallTAPInterfaces"           BinaryKey="libopenvpnmsica.dll" DllEntry="ProcessDeferredAction" Execute="deferred" Impersonate="no"/>
-        <CustomAction Id="InstallTAPInterfacesCommit"     BinaryKey="libopenvpnmsica.dll" DllEntry="ProcessDeferredAction" Execute="commit"   Impersonate="no"/>
-        <CustomAction Id="InstallTAPInterfacesRollback"   BinaryKey="libopenvpnmsica.dll" DllEntry="ProcessDeferredAction" Execute="rollback" Impersonate="no"/>
+        <CustomAction Id="FindTUNTAPAdapters"              BinaryKey="libopenvpnmsica.dll" DllEntry="FindTUNTAPAdapters"    Execute="firstSequence"/>
+        <CustomAction Id="EvaluateTUNTAPAdapters"          BinaryKey="libopenvpnmsica.dll" DllEntry="EvaluateTUNTAPAdapters"/>
+        <CustomAction Id="UninstallTUNTAPAdapters"         BinaryKey="libopenvpnmsica.dll" DllEntry="ProcessDeferredAction" Execute="deferred" Impersonate="no"/>
+        <CustomAction Id="UninstallTUNTAPAdaptersCommit"   BinaryKey="libopenvpnmsica.dll" DllEntry="ProcessDeferredAction" Execute="commit"   Impersonate="no"/>
+        <CustomAction Id="UninstallTUNTAPAdaptersRollback" BinaryKey="libopenvpnmsica.dll" DllEntry="ProcessDeferredAction" Execute="rollback" Impersonate="no"/>
+        <CustomAction Id="InstallTUNTAPAdapters"           BinaryKey="libopenvpnmsica.dll" DllEntry="ProcessDeferredAction" Execute="deferred" Impersonate="no"/>
+        <CustomAction Id="InstallTUNTAPAdaptersCommit"     BinaryKey="libopenvpnmsica.dll" DllEntry="ProcessDeferredAction" Execute="commit"   Impersonate="no"/>
+        <CustomAction Id="InstallTUNTAPAdaptersRollback"   BinaryKey="libopenvpnmsica.dll" DllEntry="ProcessDeferredAction" Execute="rollback" Impersonate="no"/>
 
         <InstallUISequence>
-            <Custom Action="FindTAPInterfaces" After="FindRelatedProducts"/>
+            <Custom Action="FindTUNTAPAdapters" After="FindRelatedProducts"/>
         </InstallUISequence>
 
         <InstallExecuteSequence>
-            <Custom Action="FindTAPInterfaces"               After="FindRelatedProducts"/>
-            <Custom Action="EvaluateTAPInterfaces"           After="ProcessComponents"/>
-            <Custom Action="UninstallTAPInterfaces"          After="DeleteServices"/>
-            <Custom Action="UninstallTAPInterfacesCommit"    After="UninstallTAPInterfaces"/>
-            <Custom Action="UninstallTAPInterfacesRollback" Before="UninstallTAPInterfaces"/>
-            <Custom Action="InstallTAPInterfaces"           Before="InstallServices"/>
-            <Custom Action="InstallTAPInterfacesCommit"      After="InstallTAPInterfaces"/>
-            <Custom Action="InstallTAPInterfacesRollback"   Before="InstallTAPInterfaces"/>
+            <Custom Action="FindTUNTAPAdapters"               After="FindRelatedProducts"/>
+            <Custom Action="EvaluateTUNTAPAdapters"           After="ProcessComponents"/>
+            <Custom Action="UninstallTUNTAPAdapters"          After="DeleteServices"/>
+            <Custom Action="UninstallTUNTAPAdaptersCommit"    After="UninstallTUNTAPAdapters"/>
+            <Custom Action="UninstallTUNTAPAdaptersRollback" Before="UninstallTUNTAPAdapters"/>
+            <Custom Action="InstallTUNTAPAdapters"           Before="InstallServices"/>
+            <Custom Action="InstallTUNTAPAdaptersCommit"      After="InstallTUNTAPAdapters"/>
+            <Custom Action="InstallTUNTAPAdaptersRollback"   Before="InstallTUNTAPAdapters"/>
         </InstallExecuteSequence>
 
-        <Property Id="TAPINTERFACES" Secure="yes"/>
-        <Property Id="ACTIVETAPINTERFACES" Secure="yes"/>
+        <Property Id="TUNTAPADAPTERS" Secure="yes"/>
+        <Property Id="ACTIVETUNTAPADAPTERS" Secure="yes"/>
 
         <UI>
             <ProgressText
-                Action="FindTAPInterfaces"
-                Template="Found interface: [1]">Searching for TAP interfaces</ProgressText>
+                Action="FindTUNTAPAdapters"
+                Template="Found adapter: [1]">Searching for TUN/TAP adapters</ProgressText>
             <ProgressText
-                Action="EvaluateTAPInterfaces">Evaluating TAP interfaces</ProgressText>
+                Action="EvaluateTUNTAPAdapters">Evaluating TUN/TAP adapters</ProgressText>
             <ProgressText
-                Action="UninstallTAPInterfaces"
-                Template="[1]: [2] [3]">Deleting TAP interfaces</ProgressText>
+                Action="UninstallTUNTAPAdapters"
+                Template="[1]: [2] [3]">Deleting TUN/TAP adapters</ProgressText>
             <ProgressText
-                Action="InstallTAPInterfaces"
-                Template="[1]: [2] [3]">Creating TAP interfaces</ProgressText>
+                Action="InstallTUNTAPAdapters"
+                Template="[1]: [2] [3]">Creating TUN/TAP adapters</ProgressText>
 
-            <Error Id="2550">TAPCA: [2]</Error>
-            <Error Id="2551">TAPCA: [2]  Error [3]: [4]</Error>
+            <Error Id="2550">OpenVPNMSICA: [2]</Error>
+            <Error Id="2551">OpenVPNMSICA: [2]  Error [3]: [4]</Error>
         </UI>
 
-        <CustomTable Id="TAPInterface">
+        <CustomTable Id="TUNTAPAdapter">
             <Column
-                Id="Interface"
-                Description="Primary key used to identify a particular interface record."
+                Id="Adapter"
+                Description="Primary key used to identify a particular adapter record."
                 Category="Identifier"
                 Type="string"
                 Width="72"
@@ -1274,7 +1273,7 @@
 
             <Column
                 Id="DisplayName"
-                Description="Interface display name, may be localized."
+                Description="Adapter display name, may be localized."
                 Category="Filename"
                 Type="string"
                 Width="255"
@@ -1283,7 +1282,7 @@
 
             <Column
                 Id="Condition"
-                Description="A conditional that can control whether a TAP interface is installed. If the condition is null or evaluates to true, then the interface is installed when its component is installed. Note: When its component is uninstalled, the TAP interface is unconditionally uninstalled."
+                Description="A conditional that can control whether a TUN/TAP adapter is installed. If the condition is null or evaluates to true, then the adapter is installed when its component is installed. Note: When its component is uninstalled, the TUN/TAP adapter is unconditionally uninstalled."
                 Category="Condition"
                 Type="string"
                 Width="255"
@@ -1292,7 +1291,7 @@
 
             <Column
                 Id="Component_"
-                Description="Foreign key into the Component table denoting the component whose selection gates the the interface creation/deletion."
+                Description="Foreign key into the Component table denoting the component whose selection gates the the adapter creation/deletion."
                 Category="Identifier"
                 Type="string"
                 Width="72"
@@ -1302,13 +1301,12 @@
                 KeyColumn="1"/>
 
             <Row>
-                <Data Column="Interface"  >TAP</Data>
-                <Data Column="DisplayName">$(var.PRODUCT_NAME)</Data>
-                <Data Column="Condition"  ><![CDATA[NOT TAPINTERFACES]]></Data>
-                <Data Column="Component_" ></Data>
+                <Data Column="Adapter"    >TAPWindows6</Data>
+                <Data Column="DisplayName">TAPWin~6|$(var.PRODUCT_NAME) TAP-Windows6</Data>
+                <Data Column="Condition"  ><![CDATA[NOT TUNTAPADAPTERS]]></Data>
+                <Data Column="Component_" >regD8053A2D8D674155AF2620A90720BE55.8D9A59BA_33C1_4CA0_96AF_E7F728DEC8D7</Data>
             </Row>
         </CustomTable>
-        -->
 
 
         <!--
