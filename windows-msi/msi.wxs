@@ -989,7 +989,7 @@
                         <Component Id="shortcut.bin.tapctl.exe.create.TAPWindows6" Guid="{F31F1774-326F-419F-B74E-29819E161321}">
                             <Shortcut
                                 Id="shortcut.bin.tapctl.exe.create.TAPWindows6"
-                                Name="Add a new TAP-Windows6 virtual ethernet adapter"
+                                Name="Add a new TAP-Windows6 virtual network adapter"
                                 Target="[BINDIR]tapctl.exe"
                                 Arguments="create --hwid root\$(var.PRODUCT_TAP_WIN_COMPONENT_ID)"
                                 WorkingDirectory="BINDIR"
@@ -1000,7 +1000,7 @@
                         <Component Id="shortcut.bin.tapctl.exe.create.Wintun" Guid="{D257A1B3-A06E-4CE2-AA93-C36F6487126A}">
                             <Shortcut
                                 Id="shortcut.bin.tapctl.exe.create.Wintun"
-                                Name="Add a new Wintun virtual ethernet adapter"
+                                Name="Add a new Wintun virtual network adapter"
                                 Target="[BINDIR]tapctl.exe"
                                 Arguments="create --hwid wintun"
                                 WorkingDirectory="BINDIR"
