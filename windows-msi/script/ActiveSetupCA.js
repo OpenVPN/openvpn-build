@@ -51,6 +51,8 @@ function EvaluateActiveSetup()
             ["uninstall", productCode] :
             ["install", productCode, Session.Property("ProductName"), version]
         ).join("\t");
+
+    return 1/*msiDoActionStatusSuccess*/;
 }
 
 
@@ -101,4 +103,6 @@ function PublishActiveSetup()
                 break;
         }
     }
+
+    return 1/*msiDoActionStatusSuccess*/;
 }
