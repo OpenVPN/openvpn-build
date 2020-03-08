@@ -69,14 +69,19 @@
         -->
         <CustomAction Id="FindSystemInfo" BinaryKey="libopenvpnmsica.dll" DllEntry="FindSystemInfo" Execute="firstSequence"/>
         <InstallUISequence>
-            <Custom Action="FindSystemInfo" Before="LaunchConditions"/>
+            <Custom Action="FindSystemInfo" After="FindRelatedProducts"/>
         </InstallUISequence>
         <InstallExecuteSequence>
-            <Custom Action="FindSystemInfo" Before="LaunchConditions"/>
+            <Custom Action="FindSystemInfo" After="FindRelatedProducts"/>
         </InstallExecuteSequence>
         <UI>
             <ProgressText Action="FindSystemInfo">Detecting system information</ProgressText>
         </UI>
+
+        <Property Id="TAPWINDOWS6ADAPTERS" Secure="yes"/>
+        <Property Id="ACTIVETAPWINDOWS6ADAPTERS" Secure="yes"/>
+        <Property Id="WINTUNADAPTERS" Secure="yes"/>
+        <Property Id="ACTIVEWINTUNADAPTERS" Secure="yes"/>
 
 
         <!--
@@ -1216,7 +1221,6 @@
         <!--
             TUN/TAP adapters
         -->
-        <CustomAction Id="FindTUNTAPAdapters"              BinaryKey="libopenvpnmsica.dll" DllEntry="FindTUNTAPAdapters"    Execute="firstSequence"/>
         <CustomAction Id="EvaluateTUNTAPAdapters"          BinaryKey="libopenvpnmsica.dll" DllEntry="EvaluateTUNTAPAdapters"/>
         <CustomAction Id="UninstallTUNTAPAdapters"         BinaryKey="libopenvpnmsica.dll" DllEntry="ProcessDeferredAction" Execute="deferred" Impersonate="no"/>
         <CustomAction Id="UninstallTUNTAPAdaptersCommit"   BinaryKey="libopenvpnmsica.dll" DllEntry="ProcessDeferredAction" Execute="commit"   Impersonate="no"/>
@@ -1225,12 +1229,7 @@
         <CustomAction Id="InstallTUNTAPAdaptersCommit"     BinaryKey="libopenvpnmsica.dll" DllEntry="ProcessDeferredAction" Execute="commit"   Impersonate="no"/>
         <CustomAction Id="InstallTUNTAPAdaptersRollback"   BinaryKey="libopenvpnmsica.dll" DllEntry="ProcessDeferredAction" Execute="rollback" Impersonate="no"/>
 
-        <InstallUISequence>
-            <Custom Action="FindTUNTAPAdapters" After="FindRelatedProducts"/>
-        </InstallUISequence>
-
         <InstallExecuteSequence>
-            <Custom Action="FindTUNTAPAdapters"               After="FindRelatedProducts"/>
             <Custom Action="EvaluateTUNTAPAdapters"           After="ProcessComponents"/>
             <Custom Action="UninstallTUNTAPAdapters"          After="DeleteServices"/>
             <Custom Action="UninstallTUNTAPAdaptersCommit"    After="UninstallTUNTAPAdapters"/>
@@ -1240,13 +1239,7 @@
             <Custom Action="InstallTUNTAPAdaptersRollback"   Before="InstallTUNTAPAdapters"/>
         </InstallExecuteSequence>
 
-        <Property Id="TUNTAPADAPTERS" Secure="yes"/>
-        <Property Id="ACTIVETUNTAPADAPTERS" Secure="yes"/>
-
         <UI>
-            <ProgressText
-                Action="FindTUNTAPAdapters"
-                Template="Found adapter: [1]">Searching for TUN/TAP adapters</ProgressText>
             <ProgressText
                 Action="EvaluateTUNTAPAdapters">Evaluating TUN/TAP adapters</ProgressText>
             <ProgressText
@@ -1313,7 +1306,7 @@
                 <Data Column="Adapter"    >TAPWindows6</Data>
                 <Data Column="DisplayName">TAPWin~6|$(var.PRODUCT_NAME) TAP-Windows6</Data>
                 <Data Column="HardwareId" >root\$(var.PRODUCT_TAP_WIN_COMPONENT_ID)</Data>
-                <Data Column="Condition"  ><![CDATA[NOT TUNTAPADAPTERS]]></Data>
+                <Data Column="Condition"  ><![CDATA[NOT TAPWINDOWS6ADAPTERS]]></Data>
                 <Data Column="Component_" >regD8053A2D8D674155AF2620A90720BE55.8D9A59BA_33C1_4CA0_96AF_E7F728DEC8D7</Data>
             </Row>
 
@@ -1321,7 +1314,7 @@
                 <Data Column="Adapter"    >Wintun</Data>
                 <Data Column="DisplayName">Wintun|$(var.PRODUCT_NAME) Wintun</Data>
                 <Data Column="HardwareId" >Wintun</Data>
-                <Data Column="Condition"  ><![CDATA[NOT TUNTAPADAPTERS]]></Data>
+                <Data Column="Condition"  ><![CDATA[NOT WINTUNADAPTERS]]></Data>
                 <Data Column="Component_" >reg11F81A5FFB49D87B59FD3777E57FF853.C28309D9_1954_4F2D_A7D1_228850092460</Data>
             </Row>
         </CustomTable>
