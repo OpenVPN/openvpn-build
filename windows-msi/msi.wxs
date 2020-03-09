@@ -236,11 +236,6 @@
                 </DirectorySearch>
             </RegistrySearch>
         </Property>
-        <Property Id="NSIS.OPENVPN.X86.CONFIG">
-            <RegistrySearch Id="nsis.openvpn.x86.reg.path.config" Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(var.PRODUCT_NAME)" Name="UninstallString" Type="file" Win64="no">
-                <DirectorySearch Id="nsis.openvpn.x86.reg.path.config.dir" Path="config" Depth="0" AssignToProperty="yes"/>
-            </RegistrySearch>
-        </Property>
         <Property Id="NSIS.OPENVPN.X86.DOC">
             <RegistrySearch Id="nsis.openvpn.x86.reg.path.doc" Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(var.PRODUCT_NAME)" Name="UninstallString" Type="file" Win64="no">
                 <DirectorySearch Id="nsis.openvpn.x86.reg.path.doc.dir" Path="doc" Depth="0" AssignToProperty="yes"/>
@@ -632,8 +627,6 @@
                         <RemoveFile Id="nsis.openvpn.bin.openvpnserv2.exe" Property="NSIS.OPENVPN.BIN" Name="openvpnserv2.exe" On="install"/>
                         <RemoveFile Id="nsis.openvpn.bin.ssleay32.dll" Property="NSIS.OPENVPN.BIN" Name="ssleay32.dll" On="install"/>
                         <RemoveFolder Id="nsis.openvpn.bin" Property="NSIS.OPENVPN.BIN" On="install"/>
-                        <RemoveFile Id="nsis.openvpn.config.README.txt" Property="NSIS.OPENVPN.CONFIG" Name="README.txt" On="install"/>
-                        <RemoveFolder Id="nsis.openvpn.config" Property="NSIS.OPENVPN.CONFIG" On="install"/>
                         <RemoveFile Id="nsis.openvpn.doc.INSTALL_win32.txt" Property="NSIS.OPENVPN.DOC" Name="INSTALL-win32.txt" On="install"/>
                         <RemoveFile Id="nsis.openvpn.doc.license.txt" Property="NSIS.OPENVPN.DOC" Name="license.txt" On="install"/>
                         <RemoveFile Id="nsis.openvpn.doc.openvpn.8.html" Property="NSIS.OPENVPN.DOC" Name="openvpn.8.html" On="install"/>
@@ -674,8 +667,6 @@
                         <RemoveFile Id="nsis.openvpn.x86.bin.openvpnserv.exe" Property="NSIS.OPENVPN.X86.BIN" Name="openvpnserv.exe" On="install"/>
                         <RemoveFile Id="nsis.openvpn.x86.bin.ssleay32.dll" Property="NSIS.OPENVPN.X86.BIN" Name="ssleay32.dll" On="install"/>
                         <RemoveFolder Id="nsis.openvpn.x86.bin" Property="NSIS.OPENVPN.X86.BIN" On="install"/>
-                        <RemoveFile Id="nsis.openvpn.x86.config.README.txt" Property="NSIS.OPENVPN.X86.CONFIG" Name="README.txt" On="install"/>
-                        <RemoveFolder Id="nsis.openvpn.x86.config" Property="NSIS.OPENVPN.X86.CONFIG" On="install"/>
                         <RemoveFile Id="nsis.openvpn.x86.doc.INSTALL_win32.txt" Property="NSIS.OPENVPN.X86.DOC" Name="INSTALL-win32.txt" On="install"/>
                         <RemoveFile Id="nsis.openvpn.x86.doc.license.txt" Property="NSIS.OPENVPN.X86.DOC" Name="license.txt" On="install"/>
                         <RemoveFile Id="nsis.openvpn.x86.doc.openvpn.8.html" Property="NSIS.OPENVPN.X86.DOC" Name="openvpn.8.html" On="install"/>
