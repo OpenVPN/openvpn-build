@@ -9,6 +9,8 @@
 ; OpenVPN install script for Windows, using NSIS
 
 SetCompressor /SOLID lzma
+CRCCheck on
+ManifestDPIAware true
 
 !define PRODUCT_PUBLISHER "OpenVPN Technologies, Inc."
 
