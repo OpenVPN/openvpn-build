@@ -7,7 +7,7 @@ compiler: gcc
 
 addons:
   apt:
-    packages: [ man2html, dos2unix, nsis, gcc-mingw-w64 ]
+    packages: [ man2html, dos2unix, gcc-mingw-w64, python3, scons, zlib1g-dev, wget, unzip, gcc, g++, git ]
 
 env:
   global:
