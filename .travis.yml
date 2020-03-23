@@ -13,7 +13,7 @@ env:
   global:
     - CBUILD=x86_64-pc-linux-gnu
     - SCRIPT=generic/build
-    - NISIS_VERSION=3.05  
+    - NSIS_VERSION=3.05 
 
 before_install:
     - wget https://downloads.sourceforge.net/project/nsis/NSIS%203/$NSIS_VERSION/nsis-$NSIS_VERSION.zip
