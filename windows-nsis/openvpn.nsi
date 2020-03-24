@@ -65,6 +65,18 @@ ShowUninstDetails show
 ;Remember install folder
 InstallDirRegKey HKLM "SOFTWARE\${PACKAGE_NAME}" ""
 
+;======================================================
+; Version Information
+
+VIProductVersion "1.0.0.0"
+VIAddVersionKey "ProductName" "OpenVPN-Installer"
+VIAddVersionKey "Comments" ""
+VIAddVersionKey "CompanyName" "OpenVPN Technologies, Inc."
+VIAddVersionKey "LegalTrademarks" "OpenVPN Technologies, Inc."
+VIAddVersionKey "LegalCopyright" "OpenVPN Technologies, Inc."
+VIAddVersionKey "FileDescription" "OpenVPN-Installer"
+VIAddVersionKey "FileVersion" "1.0.0"
+
 ;--------------------------------
 ;Modern UI Configuration
 
