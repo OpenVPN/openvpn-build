@@ -1,6 +1,6 @@
 @echo off
 
-if "%OPENSSL_VERSION%"=="" set OPENSSL_VERSION=1.1.1d
+if "%OPENSSL_VERSION%"=="" set OPENSSL_VERSION=1.1.1f
 if "%LZO_VERSION%"=="" set LZO_VERSION=2.10
 if "%PKCS11_VERSION%"=="" set PKCS11_VERSION=1.22
 if "%TAP_VERSION%"=="" set TAP_VERSION=master
