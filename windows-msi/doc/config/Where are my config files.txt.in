@@ -1,0 +1,6 @@
+﻿The @PRODUCT_NAME@Service has switched to a separate configuration
+directory.
+
+The update process detected that you were using @PRODUCT_NAME@Service
+to start your connections, and moved all your config files from config
+to the config-auto directory.

@@ -1,0 +1,5 @@
+﻿This directory will contain the log files for @PRODUCT_NAME@
+sessions which are being run as a service.
+
+Logs for connections started by the GUI are kept in
+%USERPROFILE%\OpenVPN\log.

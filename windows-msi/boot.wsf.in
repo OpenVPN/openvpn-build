@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  openvpn-build — OpenVPN packaging
+
+  Copyright (C) 2018-2020 Simon Rozman <simon@rozman.si>
+
+  This program is free software; you can redistribute it and/or modify
+  it under the terms of the GNU General Public License version 2
+  as published by the Free Software Foundation.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License along
+  with this program; if not, write to the Free Software Foundation, Inc.,
+  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+-->
+<package>
+	<job>
+		<runtime>
+			<usage>Lauches architecture-specific @PRODUCT_NAME@ MSI package for install.
+
+@PRODUCT_NAME@-install-@PACKAGE_VERSION@.exe [Additional msiexec.exe parameters]
+
+
+Notes:
+
+- This script launches msiexec.exe /i on selected MSI package.
+- Logging /l* to %TEMP%\@PRODUCT_NAME@-install.log file is arranged.
+- All command line parameters passed to this script are forwarded to
+  msiexec.exe call:
+  - See msiexec.exe /? for reference.
+  - Do not pass /i or /l as those are already used by this script.
+
+
+Examples:
+
+@PRODUCT_NAME@-install-@PACKAGE_VERSION@.exe ADDLOCAL=driver,util,sdk
+   Install "driver", "util" and "sdk" features.
+
+@PRODUCT_NAME@-install-@PACKAGE_VERSION@.exe INSTALLDIR=&lt;folder&gt;
+   Set default installation folder.
+
+@PRODUCT_NAME@-install-@PACKAGE_VERSION@.exe /qb
+   Skip GUI and display progress indicator only.
+
+@PRODUCT_NAME@-install-@PACKAGE_VERSION@.exe /qn
+   Display no GUI and no progress indicator. Must be invoked elevated
+   as it will not prompt for elevation either.
+</usage>
+		</runtime>
+		<reference object="WScript.Shell"/>
+		<script language="JScript"><![CDATA[
+            var
+                wsh = WScript.CreateObject("WScript.Shell"),
+                env = wsh.Environment("Process");
+
+            // Get Windows architecture.
+            var
+                arch_proc = env("PROCESSOR_ARCHITECTURE"),
+                arch_win  = env("PROCESSOR_ARCHITEW6432");
+
+            // If PROCESSOR_ARCHITEW6432 is defined, this is a Windows-on-Windows
+            // guest of some kind. arch_win is the host's architecture and arch_proc
+            // is the current process' architecture.
+
+            // If PROCESSOR_ARCHITEW6432 is not defined, then PROCESSOR_ARCHITECTURE
+            // is both the process and OS architecture.
+            if (arch_win == "")
+                arch_win = arch_proc;
+
+            // If PROCESSOR_ARCHITECTURE is not defined, then either we're running on
+            // Windows 9x or something is messing with the environment. Make the
+            // Windows 9x assumption.
+            if (arch_proc == "")
+                arch_proc = arch_win = "x86";
+
+            // Evaluate arguments passed to WSH script.
+            var extra_args = "";
+            var args = WScript.Arguments;
+            var
+                re_property = new RegExp("^([a-zA-Z_][a-zA-Z0-9_.]*)=(.*)"),
+                re_space = new RegExp("\\s", "g"),
+                quote = function(str) { return str.match(re_space) ? "\"" + str + "\"" : str };
+            for (var i = 0, n = args.Count(); i < n; i++)
+            {
+                var a = args.Item(i), m;
+                if ((m = a.match(re_property)) != null)
+                    extra_args += " " + m[1] + "=" + quote(m[2]);
+                else
+                    extra_args += " " + quote(a);
+            }
+
+            // Launch appropriate MSI package.
+            var plat;
+            switch (arch_win.toLowerCase())
+            {
+                case "amd64": plat = "amd64"; break;
+                case "arm64": plat = "arm64"; break;
+                default:      plat = "x86"  ; break;
+            }
+            var
+                msi_name = "@PRODUCT_NAME@-@PACKAGE_VERSION@-" + plat + ".msi",
+                log_name = "@PRODUCT_NAME@-install.log",
+                cmd = wsh.Run("msiexec.exe /i \"" + msi_name + "\" /l* \"%TEMP%\\" + log_name + "\"" + extra_args, 1, true);
+
+            WScript.Quit(cmd);
+		]]></script>
+	</job>
+</package>
