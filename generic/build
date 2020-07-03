@@ -26,6 +26,9 @@
 # Cross compile for uClibc:
 # CHOST=i586-pc-linux-uclibc CBUILD=i686-pc-linux-gnu ./build
 #
+OSSLSIGNCODE="${OSSLSIGNCODE:-osslsigncode}"
+SIGN_DIGEST=${SIGN_DIGEST:-sha256}
+SIGN_TIMESTAMP_URL="${SIGN_TIMESTAMP_URL:-http://timestamp.verisign.com/scripts/timstamp.dll}"
 
 set -e
 
@@ -296,13 +299,36 @@ clean_empty_dirs() {
 	find "${IMAGEROOT}" -type d | sort -r | xargs rmdir 2> /dev/null || true
 }
 
+codesign() {
+	local f="$1"
+	if [ -n "${DO_SIGN}" ]; then
+		echo "Signing '${f}'"
+		"${OSSLSIGNCODE}" \
+			sign \
+			-h "${SIGN_DIGEST}" \
+			-pkcs12 "${SIGN_PKCS12}" \
+			-pass "${SIGN_PKCS12_PASS}" \
+			-t "${SIGN_TIMESTAMP_URL}" \
+			-in "${f}" \
+			-out "${f}.tmp" \
+			|| die "Cannot sign '${f}'"
+		rm "${f}"
+		mv "${f}.tmp" "${f}" || die "Cannot move into '${f}'"
+	fi
+}
+
 pack() {
 	echo "Packing images"
 	local X="${CHOST:-$(gcc -dumpmachine)}"
 	(cd "${IMAGEROOT}" && find src ) | bzip2 > "${IMAGEROOT}/openvpn-${X}-${BUILD_VERSION}-srclist.bz2" || die "srclist"
 	tar -cjf "${IMAGEROOT}/openvpn-${X}-${BUILD_VERSION}-src.tar.bz2" -C "${IMAGEROOT}" src || die "src"
+	find "${OPENVPN_ROOT}" -name '*.dll' -or -name '*.exe' | while read f; do
+		echo "Signing ${f}"
+		codesign "${f}"
+	done || die "cannot sign"
 	tar -cjf "${IMAGEROOT}/openvpn-${X}-${BUILD_VERSION}-bin.tar.bz2" -C "${OPENVPN_ROOT}" . || die "openvpn"
 }
+
 
 aix_common() {
 	export CC=cc
@@ -485,6 +511,21 @@ while [ -n "$1" ]; do
 			DEPCACHE_SUFFIX="${v}"
 			SAVE_DEP_CACHE="defined"
 			;;
+		--sign)
+			DO_SIGN=1
+			;;
+		--sign-digest=*)
+			SIGN_DIGEST="${v}"
+			;;
+		--sign-pkcs12=*)
+			SIGN_PKCS12="${v}"
+			;;
+		--sign-pkcs12-pass=*)
+			SIGN_PKCS12_PASS="${v}"
+			;;
+		--sign-timestamp=*)
+			SIGN_TIMESTAMP_URL="${v}"
+			;;
 		--help|*)
 			cat <<__EOF__
 Usage: $0
@@ -505,12 +546,22 @@ Usage: $0
 	--use-depcache=SUFFIX
 	--save-depcache=SUFFIX
 		Use or save a depcache tarball dir with the named suffix.
+	--sign				do sign
+	--sign-digest=digest		specify signing digest (default: sha256)
+	--sign-pkcs12=pkcs12-file	signing PKCS#12 file
+	--sign-pkcs12-pass=password	PKCS#12 file password
+	--sign-timestamp=url            URL to be used for timestamp
 __EOF__
 			exit 1
 			;;
 	esac
 	shift
 done
+
+if [ -n "${DO_SIGN}" ]; then
+	[ -n "${SIGN_PKCS12}" ] || die "please specify PKCS#12 file"
+	[ -f "${SIGN_PKCS12}" ] || die "cannot find PKCS#12 file '${SIGN_PKCS12}'"
+fi
 
 main
 
