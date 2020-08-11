@@ -65,6 +65,18 @@ ShowUninstDetails show
 ;Remember install folder
 InstallDirRegKey HKLM "SOFTWARE\${PACKAGE_NAME}" ""
 
+;======================================================
+; Version Information
+
+VIProductVersion "1.0.0.0"
+VIAddVersionKey "ProductName" "OpenVPN-Installer"
+VIAddVersionKey "Comments" ""
+VIAddVersionKey "CompanyName" "OpenVPN Inc."
+VIAddVersionKey "LegalTrademarks" "OpenVPN Inc."
+VIAddVersionKey "LegalCopyright" "OpenVPN Inc."
+VIAddVersionKey "FileDescription" "OpenVPN-Installer"
+VIAddVersionKey "FileVersion" "1.0.0"
+
 ;--------------------------------
 ;Modern UI Configuration
 
@@ -108,6 +120,8 @@ LangString DESC_SecOpenVPNUserSpace ${LANG_ENGLISH} "Install ${PACKAGE_NAME} use
 LangString DESC_SecOpenVPNGUI ${LANG_ENGLISH} "Install ${PACKAGE_NAME} GUI by Mathias Sundman"
 
 LangString DESC_SecTAP ${LANG_ENGLISH} "Install/upgrade the TAP virtual device driver."
+
+LangString DESC_SecWINTUN ${LANG_ENGLISH} "Install/upgrade the Wintun TUN driver."
 
 LangString DESC_SecOpenVPNEasyRSA ${LANG_ENGLISH} "Install EasyRSA 2 scripts for X509 certificate management."
 
@@ -180,6 +194,22 @@ ReserveFile "install-whirl.bmp"
 	${EndIf}
 	Pop $R0
 !macroend
+
+; See http://nsis.sourceforge.net/Check_if_a_file_exists_at_compile_time for documentation
+!macro !DefineIfExists _VAR_NAME _FILE_NAME
+	!tempfile _TEMPFILE
+	!ifdef NSIS_WIN32_MAKENSIS
+		; Windows - cmd.exe
+		!system 'if exist "${_FILE_NAME}" echo !define ${_VAR_NAME} > "${_TEMPFILE}"'
+	!else
+		; Posix - sh
+		!system 'if [ -e "${_FILE_NAME}" ]; then echo "!define ${_VAR_NAME}" > "${_TEMPFILE}"; fi'
+	!endif
+	!include '${_TEMPFILE}'
+	!delfile '${_TEMPFILE}'
+	!undef _TEMPFILE
+!macroend
+!define !DefineIfExists "!insertmacro !DefineIfExists"
 
 Function CacheServiceState
 	; We will set the defaults for a service only if it did not exist before:
@@ -304,6 +334,10 @@ Section /o "-launchondummy" SecLaunchGUIOnLogon0
 	; this is here as we don't want to move that section to the top
 SectionEnd
 
+; tapctl exists starting from 2.5, so make sure script won't explode
+; when building installer for earlier versions
+${!DefineIfExists} TAPCTL_EXISTS "${OPENVPN_ROOT_X86_64}\bin\tapctl.exe"
+
 ; We do not make this hidden as its informative to have displayed, but make it readonly (always selected)
 Section "${PACKAGE_NAME} User-Space Components" SecOpenVPNUserSpace
 
@@ -316,6 +350,15 @@ Section "${PACKAGE_NAME} User-Space Components" SecOpenVPNUserSpace
 	${Else}
 		File "${OPENVPN_ROOT_I686}\bin\openvpn.exe"
 	${EndIf}
+
+!ifdef TAPCTL_EXISTS
+	SetOutPath "$INSTDIR\bin"
+	${If} ${RunningX64}
+		File "${OPENVPN_ROOT_X86_64}\bin\tapctl.exe"
+	${Else}
+		File "${OPENVPN_ROOT_I686}\bin\tapctl.exe"
+	${EndIf}
+!endif
 
 	SetOutPath "$INSTDIR\doc"
 	File "INSTALL-win32.txt"
@@ -435,6 +478,35 @@ Section /o "TAP Virtual Ethernet Adapter" SecTAP
 
 	WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\${PACKAGE_NAME}" "tap" "installed"
 SectionEnd
+
+!ifdef TAPCTL_EXISTS
+Section "Wintun TUN driver (experimental)" SecWINTUN
+
+	SetOverwrite on
+
+	SetOutPath "$INSTDIR\bin"
+	${If} ${RunningX64}
+		File /oname=wintun.msi "${WINTUN_INSTALLER_X86_64}"
+	${Else}
+		File /oname=wintun.msi "${WINTUN_INSTALLER_I686}"
+	${EndIf}
+
+	DetailPrint "Installing Wintun..."
+	ExecWait '"msiexec" /i "$INSTDIR\bin\wintun.msi" /passive'
+	Pop $R0 # return value/error/timeout
+
+	ReadRegStr $R0 HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\${PACKAGE_NAME}" "wintun"
+	${If} $R0 != "installed"
+		DetailPrint "Creating Wintun adapter..."
+		nsExec::ExecToLog /OEM '$INSTDIR\bin\tapctl.exe create --hwid wintun'
+		Pop $R0 # return value/error/timeout
+	${Else}
+		DetailPrint "Wintun adapter already exists, skip creation"
+	${EndIf}
+
+	WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\${PACKAGE_NAME}" "wintun" "installed"
+SectionEnd
+!endif
 
 Section /o "${PACKAGE_NAME} GUI" SecOpenVPNGUI
 
@@ -711,6 +783,7 @@ SectionEnd
 	!insertmacro MUI_DESCRIPTION_TEXT ${SecService} $(DESC_SecService)
 	!insertmacro MUI_DESCRIPTION_TEXT ${SecOpenVPNGUI} $(DESC_SecOpenVPNGUI)
 	!insertmacro MUI_DESCRIPTION_TEXT ${SecTAP} $(DESC_SecTAP)
+	!insertmacro MUI_DESCRIPTION_TEXT ${SecWINTUN} $(DESC_SecWINTUN)
 	!insertmacro MUI_DESCRIPTION_TEXT ${SecOpenVPNEasyRSA} $(DESC_SecOpenVPNEasyRSA)
 	!insertmacro MUI_DESCRIPTION_TEXT ${SecOpenSSLUtilities} $(DESC_SecOpenSSLUtilities)
 	!insertmacro MUI_DESCRIPTION_TEXT ${SecOpenSSLDLLs} $(DESC_SecOpenSSLDLLs)
@@ -769,12 +842,20 @@ Section "Uninstall"
 		${EndIf}
 	${EndIf}
 
+	ReadRegStr $R0 HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\${PACKAGE_NAME}" "wintun"
+	${If} $R0 == "installed"
+		DetailPrint "Uninstalling Wintun..."
+		ExecWait '"msiexec" /x "$INSTDIR\bin\wintun.msi" /passive'
+		Pop $R0 # return value/error/timeout
+	${EndIf}
+
 	Delete "$INSTDIR\bin\openvpn-gui.exe"
 	Delete "$DESKTOP\${PACKAGE_NAME} GUI.lnk"
 
 	Delete "$INSTDIR\bin\openvpn.exe"
 	Delete "$INSTDIR\bin\openvpnserv.exe"
 	Delete "$INSTDIR\bin\openvpnserv2.exe"
+	Delete "$INSTDIR\bin\tapctl.exe"
 	Delete "$INSTDIR\bin\libeay32.dll"
 	Delete "$INSTDIR\bin\ssleay32.dll"
 	Delete "$INSTDIR\bin\liblzo2-2.dll"
@@ -783,6 +864,8 @@ Section "Uninstall"
 	Delete "$INSTDIR\bin\libcrypto-1_1-x64.dll"
 	Delete "$INSTDIR\bin\libssl-1_1.dll"
 	Delete "$INSTDIR\bin\libssl-1_1-x64.dll"
+
+	Delete "$INSTDIR\bin\wintun.msi"
 
 	Delete "$INSTDIR\config\README.txt"
 	Delete "$INSTDIR\config\sample.${OPENVPN_CONFIG_EXT}.txt"

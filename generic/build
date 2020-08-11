@@ -403,7 +403,6 @@ if [ -n "${BUILD_FOR_WINDOWS}" ]; then
 			-lgdi32 \
 		"
 	fi
-	export PKG_CONFIG="true"
 fi
 
 while [ -n "$1" ]; do

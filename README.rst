@@ -28,7 +28,10 @@ Directories
     OpenVPN using mingw_w64 (e.g. Linux -> Windows).
 
     The "msvc" subdir is used to compile OpenVPN on Windows
-    for Windows using Microsoft Visual Studio 2017.
+    for Windows using Microsoft Visual Studio 2019.
+
+    The "windows-msi" subdir contains scripts to
+    package OpenVPN for Windows.
 
     The "windows-nsis" subdir contains scripts to
     cross-compile and package OpenVPN for Windows.

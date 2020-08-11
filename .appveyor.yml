@@ -1,8 +1,5 @@
 version: "openvpn-build-{build}"
 
-image:
-- Visual Studio 2017
-
 skip_commits:
   files:
     - .travis.yml
@@ -10,19 +7,22 @@ skip_commits:
 environment:
   CBUILD: x86_64-pc-linux-gnu
   matrix:
-    - BUILDSYSTEM: cygwin
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+      BUILDSYSTEM: cygwin
       ARCH: x86
       CYGWIN: C:\Cygwin
       CHOST: i686-w64-mingw32
       RANLIB: gcc-ranlib
       AR: gcc-ar
-    - BUILDSYSTEM: cygwin
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+      BUILDSYSTEM: cygwin
       ARCH: x86_64
       CYGWIN: C:\Cygwin64
       CHOST: x86_64-w64-mingw32
       RANLIB: gcc-ranlib
       AR: gcc-ar
-    - BUILDSYSTEM: VS2017
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
+      BUILDSYSTEM: VS2019
 
 for:
   -
@@ -30,7 +30,7 @@ for:
       only:
         - BUILDSYSTEM: cygwin
     build_script:
-      - "%CYGWIN%\\setup-%ARCH%.exe -g -q -P mingw64-i686-openssl,mingw64-x86_64-openssl,cygwin-devel,unzip,dos2unix,patch"
+      - "%CYGWIN%\\setup-%ARCH%.exe -g -q -P mingw64-i686-openssl,mingw64-x86_64-openssl,cygwin-devel,unzip,dos2unix,patch,liblz4-devel"
       - "%CYGWIN%\\bin\\bash -lc 'cp `which true` /usr/bin/man2html'"
       - "%CYGWIN%\\bin\\bash -lc 'cd /cygdrive/c/projects/%APPVEYOR_PROJECT_SLUG% ; generic/build'"
     artifacts:
@@ -39,11 +39,11 @@ for:
   -
     matrix:
       only:
-        - BUILDSYSTEM: VS2017
+        - BUILDSYSTEM: VS2019
     init:
-      - choco install -y --allow-empty-checksums nasm
+      - choco install -y --allow-empty-checksums nasm strawberryperl
     build_script:
-      - set PATH=C:\Program Files\NASM;%PATH%
+      - set PATH=C:\Program Files\NASM;C:\Strawberry\Perl\bin;%PATH%
       - msvc/build.bat
     artifacts:
       - path: msvc/image/bin
