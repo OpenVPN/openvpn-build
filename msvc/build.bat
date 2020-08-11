@@ -18,7 +18,7 @@ rem along with this program.  If not, see <http://www.gnu.org/licenses/>.
 rem
 
 rem Required software:
-rem - Visual Studio 2017
+rem - Visual Studio 2019
 rem - perl
 rem
 rem To build only openvpn, run

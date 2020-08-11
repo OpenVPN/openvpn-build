@@ -6,7 +6,7 @@ About
     and all it's dependencies using Microsoft Visual C.
 
     You need to install:
-      - Visual Studio 2017 (Build Tools for VS will also work)
+      - Visual Studio 2019 (Build Tools for VS will also work)
       - Perl (Strawberry or ActiveState, required for building OpenSSL)
       - NASM (required for building OpenSSL)
 
@@ -26,6 +26,6 @@ Usage
 
     Development environment is ready. Open solution file in Visual Studio (select "x64" in "Solution Platforms") :
 
-      openvpn\openvpn.sln
+      > openvpn\openvpn.sln
 
     and start coding!
