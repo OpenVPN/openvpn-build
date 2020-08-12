@@ -12,7 +12,7 @@ install_build_deps() {
     # Install extra dependencies on systemd distros
     schroot -c $SUITE-$ARCH-sbuild -d /tmp -- file /sbin/init|grep -E "/systemd$"
     if [ $? -eq 0 ]; then
-        sbuild-apt $SUITE-$ARCH apt-get install $SYSTEMD_BUILD_DEPS
+        sbuild-apt $SUITE-$ARCH apt-get install $SYSTEMD_BUILD_DEPS $DOCUTILS_BUILD_DEPS
     fi
 }
 
