@@ -16,6 +16,7 @@ if ! [ -r "${CHANGELOG}" ]; then
     exit 1
 fi
 
+test -d $BUILD_BASEDIR || mkdir -p $BUILD_BASEDIR
 cd $BUILD_BASEDIR
 
 # Prepare all builds given in variants.conf
