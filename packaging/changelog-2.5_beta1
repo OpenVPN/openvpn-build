@@ -1,0 +1,24 @@
+openvpn (2.5_beta1-debian0) stable; urgency=medium
+
+  * Preparing release v2.4.9 (ChangeLog, version.m4, Changes.rst) (Gert Doering, 9b0dafca)
+  * Fix illegal client float (CVE-2020-11810) (Lev Stipakov, f7b318f8)
+  * Fix broken async push with NCP is used (Lev Stipakov, 9bb285e3)
+  * Allow unicode search string in --cryptoapicert option (Selva Nair, 5f8a9df1)
+  * Skip expired certificates in Windows certificate store (Selva Nair, 4658b3b6)
+  * Fix possible access of uninitialized pipe handles (Selva Nair, df5ea7f1)
+  * Fix possibly uninitialized return value in GetOpenvpnSettings() (Selva Nair, 1d9e0be2)
+  * Fix OpenSSL 1.1.1 not using auto elliptic curve selection (Arne Schwabe, 5ee76a8f)
+  * OpenSSL: Fix --crl-verify not loading multiple CRLs in one file (Maxim Plotnikov, ed925c0a)
+  * When auth-user-pass file has no password query the management interface (if available). (Selva Nair, 2fe84732)
+  * Move querying username/password from management interface to a function (Selva Nair, 908eae5c)
+  * Fix OpenSSL error stack handling of tls_ctx_add_extra_certs (Arne Schwabe, 15bc476f)
+  * Fetch OpenSSL versions via source/old links (Arne Schwabe, 22df79bb)
+  * mbedTLS: Make sure TLS session survives move (Tom van Leeuwen, 0efbd8e9)
+  * docs: Add reference to X509_LOOKUP_hash_dir(3) (WGH, 33395693)
+  * Fix OpenSSL private key passphrase notices (Santtu Lakkala, 7d19b2bb)
+  * Fix building with --enable-async-push in FreeBSD (Lev Stipakov, 8484f37a)
+  * Swap the order of checks for validating interactive service user (Selva Nair, 69bbfbdf)
+  * socks: use the right function when printing struct openvpn_sockaddr (Antonio Quartulli, 0ba4f916)
+  * Fix broken fragmentation logic when using NCP (Lev Stipakov, 3bd91cd0)
+
+ -- Samuli Seppänen <samuli@openvpn.net>  Tue, 12 Aug 2020 14:55:00 +0000
