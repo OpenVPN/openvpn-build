@@ -13,19 +13,6 @@ env:
   global:
     - CBUILD=x86_64-pc-linux-gnu
     - SCRIPT=generic/build
-    - NSIS_VERSION=3.05 
-
-before_install:
-    - wget https://downloads.sourceforge.net/project/nsis/NSIS%203/$NSIS_VERSION/nsis-$NSIS_VERSION.zip
-    - unzip nsis-$NSIS_VERSION.zip
-    - cp -R nsis-$NSIS_VERSION/Stubs /usr/
-    - cp -R nsis-$NSIS_VERSION/Plugins /usr/
-    - cp -R nsis-$NSIS_VERSION/Contrib /usr/
-    - cp -R nsis-$NSIS_VERSION/Include /usr/
-    - wget https://downloads.sourceforge.net/project/nsis/NSIS%203/$NSIS_VERSION/nsis-$NSIS_VERSION-src.tar.bz2
-    - tar xvjf nsis-$NSIS_VERSION-src.tar.bz2
-    - cd nsis-$NSIS_VERSION-src
-    - scons SKIPSTUBS=all SKIPUTILS=all SKIPMISC=all NSIS_CONFIG_CONST_DATA_PATH=no PREFIX=/usr/bin/ install-compiler
 
 
 matrix:
