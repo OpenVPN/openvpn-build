@@ -721,7 +721,7 @@
 
                     <Directory Id="BINDIR" Name="bin">
                         <Component Id="bin.libcrypto_1_1.dll" Guid="{811694A9-DC99-4CFA-BD72-4877F8E32C7C}">
-                            <File Name="libcrypto-1_1$(var.OPENSSL_PLAT).dll" Source="!(bindpath.openvpn)bin\libcrypto-1_1$(var.OPENSSL_PLAT).dll Checksum="yes""/>
+                            <File Name="libcrypto-1_1$(var.OPENSSL_PLAT).dll" Source="!(bindpath.openvpn)bin\libcrypto-1_1$(var.OPENSSL_PLAT).dll Checksum="yes"/>
                         </Component>
                         <Component Id="bin.liblzo2_2.dll" Guid="{A1A057F0-235B-4F55-9A3A-CDA2112648F8}">
                             <File Name="liblzo2-2.dll" Source="!(bindpath.openvpn)bin\liblzo2-2.dll" Checksum="yes"/>
