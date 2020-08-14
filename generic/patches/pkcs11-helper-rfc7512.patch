@@ -1,3 +1,33 @@
+commit 90590b02085edc3830bdfe0942a46c4e7bf3f1ab (HEAD -> master)
+Author: David Woodhouse <David.Woodhouse@intel.com>
+Date:   Thu Apr 30 14:58:24 2015 +0100
+
+    Serialize to RFC7512-compliant PKCS#11 URIs
+    
+    Signed-off-by: David Woodhouse <David.Woodhouse@intel.com>
+
+commit 4d5280da8df591aab701dff4493d13a835a9b29c
+Author: David Woodhouse <David.Woodhouse@intel.com>
+Date:   Wed Dec 10 14:00:21 2014 +0000
+
+    Accept RFC7512-compliant PKCS#11 URIs as serialized token/certificate IDs
+    
+    The old format is still accepted for compatibility.
+    
+    Signed-off-by: David Woodhouse <David.Woodhouse@intel.com>
+
+commit 14e09211c3d50eb06825090c9765e4382cf52f19
+Author: David Woodhouse <David.Woodhouse@intel.com>
+Date:   Sun Dec 14 19:42:18 2014 +0000
+
+    Stop _pkcs11h_util_hexToBinary() checking for trailing NUL
+    
+    We are going to want to use this for parsing %XX hex escapes in RFC7512
+    PKCS#11 URIs, where we cannot expect a trailing NUL. Since there's only
+    one existing caller at the moment, it's simple just to let the caller
+    have responsibility for that check.
+    
+    Signed-off-by: David Woodhouse <David.Woodhouse@intel.com>
 diff --git a/lib/pkcs11h-serialization.c b/lib/pkcs11h-serialization.c
 index ad275f8..1d077e4 100644
 --- a/lib/pkcs11h-serialization.c
@@ -37,7 +67,7 @@ index ad275f8..1d077e4 100644
 +	int len = 0, i;
 +
 +	for (i = 0; i < attrlen; i++) {
-+		if (strchr(P11_URL_VERBATIM, attr[i])) {
++		if ((attr[i] != '\x0') && strchr(P11_URL_VERBATIM, attr[i])) {
 +			if (uri) {
 +				*(uri++) = attr[i];
 +			}
@@ -208,7 +238,7 @@ index ad275f8..1d077e4 100644
 +		uri++;
 +		toklen--;
 +		urilen--;
-+		tokstr[1] = 0;
++		tokstr[0] = 0;
  	}
  
 -	if (sz != NULL) {
