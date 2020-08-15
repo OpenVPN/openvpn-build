@@ -721,28 +721,28 @@
 
                     <Directory Id="BINDIR" Name="bin">
                         <Component Id="bin.libcrypto_1_1.dll" Guid="{811694A9-DC99-4CFA-BD72-4877F8E32C7C}">
-                            <File Name="libcrypto-1_1$(var.OPENSSL_PLAT).dll" Source="!(bindpath.openvpn)bin\libcrypto-1_1$(var.OPENSSL_PLAT).dll"/>
+                            <File Name="libcrypto-1_1$(var.OPENSSL_PLAT).dll" Source="!(bindpath.openvpn)bin\libcrypto-1_1$(var.OPENSSL_PLAT).dll Checksum="yes"/>
                         </Component>
                         <Component Id="bin.liblzo2_2.dll" Guid="{A1A057F0-235B-4F55-9A3A-CDA2112648F8}">
-                            <File Name="liblzo2-2.dll" Source="!(bindpath.openvpn)bin\liblzo2-2.dll"/>
+                            <File Name="liblzo2-2.dll" Source="!(bindpath.openvpn)bin\liblzo2-2.dll" Checksum="yes"/>
                         </Component>
                         <Component Id="bin.libpkcs11_helper_1.dll" Guid="{62BB5466-934A-41FE-989B-9D0B6BD5151F}">
-                            <File Name="libpkcs11-helper-1.dll" Source="!(bindpath.openvpn)bin\libpkcs11-helper-1.dll"/>
+                            <File Name="libpkcs11-helper-1.dll" Source="!(bindpath.openvpn)bin\libpkcs11-helper-1.dll" Checksum="yes"/>
                         </Component>
                         <Component Id="bin.libssl_1_1.dll" Guid="{34B9FB21-7621-4C6A-8CA0-2C907F6ADDCE}">
-                            <File Name="libssl-1_1$(var.OPENSSL_PLAT).dll" Source="!(bindpath.openvpn)bin\libssl-1_1$(var.OPENSSL_PLAT).dll"/>
+                            <File Name="libssl-1_1$(var.OPENSSL_PLAT).dll" Source="!(bindpath.openvpn)bin\libssl-1_1$(var.OPENSSL_PLAT).dll" Checksum="yes"/>
                         </Component>
                         <Component Id="bin.openssl.exe" Guid="{E8876024-809B-40F1-A13B-A0DACFAA0AF0}">
-                            <File Name="openssl.exe" Source="!(bindpath.openvpn)bin\openssl.exe"/>
+                            <File Name="openssl.exe" Source="!(bindpath.openvpn)bin\openssl.exe" Checksum="yes"/>
                         </Component>
                         <Component Id="bin.openvpn.exe" Guid="{4D920FC9-DF3C-4D34-ADE6-3EEEF8AE901A}">
-                            <File Id="bin.openvpn.exe" Name="openvpn.exe" Source="!(bindpath.openvpn)bin\openvpn.exe"/>
+                            <File Id="bin.openvpn.exe" Name="openvpn.exe" Source="!(bindpath.openvpn)bin\openvpn.exe" Checksum="yes"/>
                         </Component>
                         <Component Id="bin.openvpn_gui.exe" Guid="{5A893CD4-EA7E-4887-89D0-15BBE904FE11}">
-                            <File Id="bin.openvpn_gui.exe" Name="openvpn-gui.exe" Source="!(bindpath.openvpn)bin\openvpn-gui.exe"/>
+                            <File Id="bin.openvpn_gui.exe" Name="openvpn-gui.exe" Source="!(bindpath.openvpn)bin\openvpn-gui.exe" Checksum="yes"/>
                         </Component>
                         <Component Id="bin.openvpnserv.exe" Guid="{43A4F408-9399-4BD7-9978-0ECE4A582929}">
-                            <File Name="openvpnserv.exe" Source="!(bindpath.openvpn)bin\openvpnserv.exe"/>
+                            <File Name="openvpnserv.exe" Source="!(bindpath.openvpn)bin\openvpnserv.exe" Checksum="yes"/>
                             <ServiceControl
                                 Id="OpenVPNServiceInteractive"
                                 Name="OpenVPNServiceInteractive"
@@ -761,7 +761,7 @@
                             </ServiceInstall>
                         </Component>
                         <Component Id="bin.openvpnserv2.exe" Guid="{8867EEBF-B928-49D7-A1F5-D33E2BCAAD70}">
-                            <File Name="openvpnserv2.exe" Source="!(bindpath.openvpnserv2)openvpnserv2.exe"/>
+                            <File Name="openvpnserv2.exe" Source="!(bindpath.openvpnserv2)openvpnserv2.exe" Checksum="yes"/>
                             <ServiceControl
                                 Id="OpenVPNService"
                                 Name="OpenVPNService"
@@ -779,7 +779,7 @@
                             </ServiceInstall>
                         </Component>
                         <Component Id="bin.tapctl.exe" Guid="{5A294591-0F71-470F-977B-DD288AB2B437}">
-                            <File Name="tapctl.exe" Source="!(bindpath.openvpn)bin\tapctl.exe" KeyPath="yes"/>
+                            <File Name="tapctl.exe" Source="!(bindpath.openvpn)bin\tapctl.exe" KeyPath="yes" Checksum="yes"/>
                         </Component>
                     </Directory>
 
