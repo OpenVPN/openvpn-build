@@ -1,0 +1,5 @@
+﻿This directory or its subdirectories should contain @PRODUCT_NAME@
+configuration files each having an extension of .@CONFIG_EXTENSION@.
+
+When @PRODUCT_NAME@ GUI is started configs in this directory are added
+to the list of available connections.

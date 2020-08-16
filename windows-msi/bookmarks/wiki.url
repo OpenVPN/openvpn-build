@@ -1,0 +1,4 @@
+[DEFAULT]
+BASEURL=https://community.openvpn.net/openvpn/wiki
+[InternetShortcut]
+URL=https://community.openvpn.net/openvpn/wiki

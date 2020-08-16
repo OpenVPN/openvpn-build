@@ -1,0 +1,4 @@
+[DEFAULT]
+BASEURL=https://openvpn.net/howto.html
+[InternetShortcut]
+URL=https://openvpn.net/howto.html

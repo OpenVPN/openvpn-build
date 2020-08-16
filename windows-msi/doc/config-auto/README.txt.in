@@ -1,0 +1,8 @@
+﻿This directory or its subdirectories should contain @PRODUCT_NAME@
+configuration files each having an extension of .@CONFIG_EXTENSION@
+that should be automatically started at boot up.
+
+When @PRODUCT_NAME@Service is started, a separate @PRODUCT_NAME@
+process will be instantiated for each configuration file.
+
+@PRODUCT_NAME@ GUI does not scan this directory.

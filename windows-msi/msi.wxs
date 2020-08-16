@@ -1,0 +1,1553 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  openvpn-build Ã¢â‚¬â€� OpenVPN packaging
+
+  Copyright (C) 2018-2020 Simon Rozman <simon@rozman.si>
+
+  This program is free software; you can redistribute it and/or modify
+  it under the terms of the GNU General Public License version 2
+  as published by the Free Software Foundation.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License along
+  with this program; if not, write to the Free Software Foundation, Inc.,
+  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+-->
+<Wix
+    xmlns="http://schemas.microsoft.com/wix/2006/wi"
+    xmlns:netfx="http://schemas.microsoft.com/wix/NetFxExtension">
+    <Product
+        Id="$(var.PRODUCT_CODE)"
+        UpgradeCode="$(var.UPGRADE_CODE)"
+        Version="$(var.PRODUCT_VERSION)"
+        Language="1033"
+        Name="$(var.PRODUCT_NAME) $(var.PACKAGE_VERSION) $(var.PRODUCT_PLATFORM)"
+        Manufacturer="$(var.PRODUCT_PUBLISHER)">
+
+        <Package
+            InstallScope="perMachine"
+            InstallerVersion="400"
+            Compressed="yes"
+            SummaryCodepage="1252"
+            ReadOnly="yes"/>
+
+        <Media
+            Id="1"
+            Cabinet="openvpn.cab"
+            EmbedCab="yes"/>
+
+        <Icon
+            Id="genkey.ico"
+            SourceFile="artwork\genkey.ico"/>
+        <Icon
+            Id="openvpn.ico"
+            SourceFile="artwork\openvpn.ico"/>
+        <Icon
+            Id="tapctl_create.ico"
+            SourceFile="artwork\tapctl_create.ico"/>
+        <Binary
+            Id="libopenvpnmsica.dll"
+            SourceFile="!(bindpath.openvpn)bin\libopenvpnmsica.dll"/>
+
+        <Property Id="ARPPRODUCTICON" Value="openvpn.ico"/>
+        <Property Id="ARPURLINFOABOUT" Value="https://openvpn.net/community/"/>
+        <Property Id="ARPURLUPDATEINFO" Value="https://openvpn.net/community-downloads/"/>
+        <Property Id="SimpleProductName" Value="$(var.PRODUCT_NAME)"/>
+        <Property Id="DisplayVersion" Value="$(var.PACKAGE_VERSION)"/>
+        <Property Id="MSICHECKCRCS" Value="1"/>
+        <Property Id="DISABLEROLLBACK" Value="yes"/>
+        <Property Id="EDITOR" Value="notepad.exe"/>
+        <PropertyRef Id="NETFRAMEWORK40FULL"/>
+
+
+        <!--
+            Detect system information
+        -->
+        <CustomAction Id="FindSystemInfo" BinaryKey="libopenvpnmsica.dll" DllEntry="FindSystemInfo" Execute="firstSequence"/>
+        <InstallUISequence>
+            <Custom Action="FindSystemInfo" After="FindRelatedProducts"/>
+        </InstallUISequence>
+        <InstallExecuteSequence>
+            <Custom Action="FindSystemInfo" After="FindRelatedProducts"/>
+        </InstallExecuteSequence>
+        <UI>
+            <ProgressText Action="FindSystemInfo">Detecting system information</ProgressText>
+        </UI>
+
+        <Property Id="TAPWINDOWS6ADAPTERS" Secure="yes"/>
+        <Property Id="ACTIVETAPWINDOWS6ADAPTERS" Secure="yes"/>
+        <Property Id="WINTUNADAPTERS" Secure="yes"/>
+        <Property Id="ACTIVEWINTUNADAPTERS" Secure="yes"/>
+
+
+        <!--
+            Launch conditions
+        -->
+        <Condition Message="[SimpleProductName] requires Windows 7 or later version of Windows."><![CDATA[Installed OR (VersionNT>=601)]]></Condition>
+        <?if $(sys.BUILDARCH)~="x86" Or $(sys.BUILDARCH)~="ARM" ?>
+        <Condition Message="You are attempting to install a 32-bit variant of [SimpleProductName] on a 64-bit operating system. The 32-bit variant will not work with your operating system. An installation of a 64-bit variant is recommended."><![CDATA[Installed OR NOT VersionNT64]]></Condition>
+        <?endif?>
+
+
+        <!--
+            Upgrading functionality
+        -->
+        <MajorUpgrade
+            DowngradeErrorMessage="A newer version of [SimpleProductName] is already installed. Setup will now exit."
+            Schedule="afterInstallExecute"/>
+
+
+        <!--
+            NSIS Installation Detection
+        -->
+        <Property Id="NSIS.OPENVPN">
+            <RegistrySearch Id="nsis.reg.path" Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(var.PRODUCT_NAME)" Name="UninstallString" Type="file"/>
+        </Property>
+        <Property Id="NSIS.OPENVPN.BIN">
+            <RegistrySearch Id="nsis.openvpn.reg.path.bin" Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(var.PRODUCT_NAME)" Name="UninstallString" Type="file">
+                <DirectorySearch Id="nsis.openvpn.reg.path.bin.dir" Path="bin" Depth="0" AssignToProperty="yes"/>
+            </RegistrySearch>
+        </Property>
+        <Property Id="NSIS.OPENVPN.BIN.OPENSSL.EXE">
+            <RegistrySearch Id="nsis.openvpn.reg.path.bin.openssl.exe" Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(var.PRODUCT_NAME)" Name="UninstallString" Type="file">
+                <DirectorySearch Id="nsis.openvpn.reg.path.bin.dir.openssl.exe" Path="bin" Depth="0" AssignToProperty="yes">
+                    <FileSearch Id="nsis.openvpn.reg.path.bin.file.openssl.exe" Name="openssl.exe"/>
+                </DirectorySearch>
+            </RegistrySearch>
+        </Property>
+        <Property Id="NSIS.OPENVPN.BIN.OPENVPN_GUI.EXE">
+            <RegistrySearch Id="nsis.openvpn.reg.path.bin.openvpn_gui.exe" Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(var.PRODUCT_NAME)" Name="UninstallString" Type="file">
+                <DirectorySearch Id="nsis.openvpn.reg.path.bin.dir.openvpn_gui.exe" Path="bin" Depth="0" AssignToProperty="yes">
+                    <FileSearch Id="nsis.openvpn.reg.path.bin.file.openvpn_gui.exe" Name="openvpn-gui.exe"/>
+                </DirectorySearch>
+            </RegistrySearch>
+        </Property>
+        <Property Id="NSIS.OPENVPN.BIN.OPENVPNSERV2.EXE">
+            <RegistrySearch Id="nsis.openvpn.reg.path.bin.openvpnserv2.exe" Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(var.PRODUCT_NAME)" Name="UninstallString" Type="file">
+                <DirectorySearch Id="nsis.openvpn.reg.path.bin.dir.openvpnserv2.exe" Path="bin" Depth="0" AssignToProperty="yes">
+                    <FileSearch Id="nsis.openvpn.reg.path.bin.file.openvpnserv2.exe" Name="openvpnserv2.exe"/>
+                </DirectorySearch>
+            </RegistrySearch>
+        </Property>
+        <Property Id="NSIS.OPENVPN.CONFIG">
+            <RegistrySearch Id="nsis.openvpn.reg.path.config" Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(var.PRODUCT_NAME)" Name="UninstallString" Type="file">
+                <DirectorySearch Id="nsis.openvpn.reg.path.config.dir" Path="config" Depth="0" AssignToProperty="yes"/>
+            </RegistrySearch>
+        </Property>
+        <Property Id="NSIS.OPENVPN.DOC">
+            <RegistrySearch Id="nsis.openvpn.reg.path.doc" Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(var.PRODUCT_NAME)" Name="UninstallString" Type="file">
+                <DirectorySearch Id="nsis.openvpn.reg.path.doc.dir" Path="doc" Depth="0" AssignToProperty="yes"/>
+            </RegistrySearch>
+        </Property>
+        <Property Id="NSIS.OPENVPN.DOC.INSTALL_WIN32.TXT">
+            <RegistrySearch Id="nsis.openvpn.reg.path.doc.INSTALL_win32.txt" Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(var.PRODUCT_NAME)" Name="UninstallString" Type="file">
+                <DirectorySearch Id="nsis.openvpn.reg.path.doc.dir.INSTALL_win32.txt" Path="doc" Depth="0" AssignToProperty="yes">
+                    <FileSearch Id="nsis.openvpn.reg.path.doc.file.INSTALL_win32.txt" Name="INSTALL-win32.txt"/>
+                </DirectorySearch>
+            </RegistrySearch>
+        </Property>
+        <Property Id="NSIS.OPENVPN.EASYRSA">
+            <RegistrySearch Id="nsis.openvpn.reg.path.easyrsa" Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(var.PRODUCT_NAME)" Name="UninstallString" Type="file">
+                <DirectorySearch Id="nsis.openvpn.reg.path.easyrsa.dir" Path="easy-rsa" Depth="0" AssignToProperty="yes"/>
+            </RegistrySearch>
+        </Property>
+        <Property Id="NSIS.OPENVPN.EASYRSA.README.TXT">
+            <RegistrySearch Id="nsis.openvpn.reg.path.easyrsa.README.txt" Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(var.PRODUCT_NAME)" Name="UninstallString" Type="file">
+                <DirectorySearch Id="nsis.openvpn.reg.path.easyrsa.dir.README.txt" Path="easy-rsa" Depth="0" AssignToProperty="yes">
+                    <FileSearch Id="nsis.openvpn.reg.path.easyrsa.file.README.txt" Name="README.txt"/>
+                </DirectorySearch>
+            </RegistrySearch>
+        </Property>
+        <Property Id="NSIS.OPENVPN.LOG">
+            <RegistrySearch Id="nsis.openvpn.reg.path.log" Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(var.PRODUCT_NAME)" Name="UninstallString" Type="file">
+                <DirectorySearch Id="nsis.openvpn.reg.path.log.dir" Path="log" Depth="0" AssignToProperty="yes"/>
+            </RegistrySearch>
+        </Property>
+        <Property Id="NSIS.OPENVPN.SAMPLECFG">
+            <RegistrySearch Id="nsis.openvpn.reg.path.samplecfg" Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(var.PRODUCT_NAME)" Name="UninstallString" Type="file">
+                <DirectorySearch Id="nsis.openvpn.reg.path.samplecfg.dir" Path="sample-config" Depth="0" AssignToProperty="yes"/>
+            </RegistrySearch>
+        </Property>
+        <Property Id="NSIS.OPENVPN.SAMPLECFG.SAMPLE.OVPN">
+            <RegistrySearch Id="nsis.openvpn.reg.path.samplecfg.sample.$(var.CONFIG_EXTENSION)" Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(var.PRODUCT_NAME)" Name="UninstallString" Type="file">
+                <DirectorySearch Id="nsis.openvpn.reg.path.samplecfg.dir.sample.$(var.CONFIG_EXTENSION)" Path="sample-config" Depth="0" AssignToProperty="yes">
+                    <FileSearch Id="nsis.openvpn.reg.path.samplecfg.file.sample.$(var.CONFIG_EXTENSION)" Name="sample.$(var.CONFIG_EXTENSION)"/>
+                </DirectorySearch>
+            </RegistrySearch>
+        </Property>
+        <Property Id="NSIS.TAPWIN">
+            <RegistrySearch Id="nsis.tapwin.reg.path" Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(var.PRODUCT_TAP_WIN_NAME)" Name="UninstallString" Type="file"/>
+        </Property>
+        <Property Id="NSIS.TAPWIN.BIN">
+            <RegistrySearch Id="nsis.tapwin.reg.path.bin" Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(var.PRODUCT_TAP_WIN_NAME)" Name="UninstallString" Type="file">
+                <DirectorySearch Id="nsis.tapwin.reg.path.bin.dir" Path="bin" Depth="0" AssignToProperty="yes"/>
+            </RegistrySearch>
+        </Property>
+        <Property Id="NSIS.TAPWIN.BIN.ADDTAP.BAT">
+            <RegistrySearch Id="nsis.tapwin.reg.path.bin.addtap.bat" Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(var.PRODUCT_TAP_WIN_NAME)" Name="UninstallString" Type="file">
+                <DirectorySearch Id="nsis.tapwin.reg.path.bin.dir.addtap.bat" Path="bin" Depth="0" AssignToProperty="yes">
+                    <FileSearch Id="nsis.tapwin.reg.path.bin.file.addtap.bat" Name="addtap.bat"/>
+                </DirectorySearch>
+            </RegistrySearch>
+        </Property>
+        <Property Id="NSIS.TAPWIN.DRIVER">
+            <RegistrySearch Id="nsis.tapwin.reg.path.driver" Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(var.PRODUCT_TAP_WIN_NAME)" Name="UninstallString" Type="file">
+                <DirectorySearch Id="nsis.tapwin.reg.path.driver.dir" Path="driver" Depth="0" AssignToProperty="yes"/>
+            </RegistrySearch>
+        </Property>
+        <Property Id="NSIS.TAPWIN.INCLUDE">
+            <RegistrySearch Id="nsis.tapwin.reg.path.include" Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(var.PRODUCT_TAP_WIN_NAME)" Name="UninstallString" Type="file">
+                <DirectorySearch Id="nsis.tapwin.reg.path.include.dir" Path="include" Depth="0" AssignToProperty="yes"/>
+            </RegistrySearch>
+        </Property>
+        <Property Id="NSIS.TAPWIN.INCLUDE.TAP_WINDOWS.H">
+            <RegistrySearch Id="nsis.tapwin.reg.path.include.tap_windows.h" Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(var.PRODUCT_TAP_WIN_NAME)" Name="UninstallString" Type="file">
+                <DirectorySearch Id="nsis.tapwin.reg.path.include.dir.tap_windows.h" Path="include" Depth="0" AssignToProperty="yes">
+                    <FileSearch Id="nsis.tapwin.reg.path.include.file.tap_windows.h" Name="tap-windows.h"/>
+                </DirectorySearch>
+            </RegistrySearch>
+        </Property>
+
+        <!-- OpenVPN prior to v2.4.x allowed 32-bit installations on 64-bit Windows. Detect those binaries too. -->
+        <?if $(sys.BUILDARCH)="x64" ?>
+        <Property Id="NSIS.OPENVPN.X86">
+            <RegistrySearch Id="nsis.reg.path.x86" Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(var.PRODUCT_NAME)" Name="UninstallString" Type="file" Win64="no"/>
+        </Property>
+        <Property Id="NSIS.OPENVPN.X86.BIN">
+            <RegistrySearch Id="nsis.openvpn.x86.reg.path.bin" Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(var.PRODUCT_NAME)" Name="UninstallString" Type="file" Win64="no">
+                <DirectorySearch Id="nsis.openvpn.x86.reg.path.bin.dir" Path="bin" Depth="0" AssignToProperty="yes"/>
+            </RegistrySearch>
+        </Property>
+        <Property Id="NSIS.OPENVPN.X86.BIN.OPENSSL.EXE">
+            <RegistrySearch Id="nsis.openvpn.x86.reg.path.bin.openssl.exe" Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(var.PRODUCT_NAME)" Name="UninstallString" Type="file" Win64="no">
+                <DirectorySearch Id="nsis.openvpn.x86.reg.path.bin.dir.openssl.exe" Path="bin" Depth="0" AssignToProperty="yes">
+                    <FileSearch Id="nsis.openvpn.x86.reg.path.bin.file.openssl.exe" Name="openssl.exe"/>
+                </DirectorySearch>
+            </RegistrySearch>
+        </Property>
+        <Property Id="NSIS.OPENVPN.X86.BIN.OPENVPN_GUI.EXE">
+            <RegistrySearch Id="nsis.openvpn.x86.reg.path.bin.openvpn_gui.exe" Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(var.PRODUCT_NAME)" Name="UninstallString" Type="file" Win64="no">
+                <DirectorySearch Id="nsis.openvpn.x86.reg.path.bin.dir.openvpn_gui.exe" Path="bin" Depth="0" AssignToProperty="yes">
+                    <FileSearch Id="nsis.openvpn.x86.reg.path.bin.file.openvpn_gui.exe" Name="openvpn-gui.exe"/>
+                </DirectorySearch>
+            </RegistrySearch>
+        </Property>
+        <Property Id="NSIS.OPENVPN.X86.DOC">
+            <RegistrySearch Id="nsis.openvpn.x86.reg.path.doc" Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(var.PRODUCT_NAME)" Name="UninstallString" Type="file" Win64="no">
+                <DirectorySearch Id="nsis.openvpn.x86.reg.path.doc.dir" Path="doc" Depth="0" AssignToProperty="yes"/>
+            </RegistrySearch>
+        </Property>
+        <Property Id="NSIS.OPENVPN.X86.DOC.INSTALL_WIN32.TXT">
+            <RegistrySearch Id="nsis.openvpn.x86.reg.path.doc.INSTALL_win32.txt" Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(var.PRODUCT_NAME)" Name="UninstallString" Type="file" Win64="no">
+                <DirectorySearch Id="nsis.openvpn.x86.reg.path.doc.dir.INSTALL_win32.txt" Path="doc" Depth="0" AssignToProperty="yes">
+                    <FileSearch Id="nsis.openvpn.x86.reg.path.doc.file.INSTALL_win32.txt" Name="INSTALL-win32.txt"/>
+                </DirectorySearch>
+            </RegistrySearch>
+        </Property>
+        <Property Id="NSIS.OPENVPN.X86.EASYRSA">
+            <RegistrySearch Id="nsis.openvpn.x86.reg.path.easyrsa" Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(var.PRODUCT_NAME)" Name="UninstallString" Type="file" Win64="no">
+                <DirectorySearch Id="nsis.openvpn.x86.reg.path.easyrsa.dir" Path="easy-rsa" Depth="0" AssignToProperty="yes"/>
+            </RegistrySearch>
+        </Property>
+        <Property Id="NSIS.OPENVPN.X86.EASYRSA.README.TXT">
+            <RegistrySearch Id="nsis.openvpn.x86.reg.path.easyrsa.README.txt" Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(var.PRODUCT_NAME)" Name="UninstallString" Type="file" Win64="no">
+                <DirectorySearch Id="nsis.openvpn.x86.reg.path.easyrsa.dir.README.txt" Path="easy-rsa" Depth="0" AssignToProperty="yes">
+                    <FileSearch Id="nsis.openvpn.x86.reg.path.easyrsa.file.README.txt" Name="README.txt"/>
+                </DirectorySearch>
+            </RegistrySearch>
+        </Property>
+        <Property Id="NSIS.OPENVPN.X86.LOG">
+            <RegistrySearch Id="nsis.openvpn.x86.reg.path.log" Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(var.PRODUCT_NAME)" Name="UninstallString" Type="file" Win64="no">
+                <DirectorySearch Id="nsis.openvpn.x86.reg.path.log.dir" Path="log" Depth="0" AssignToProperty="yes"/>
+            </RegistrySearch>
+        </Property>
+        <Property Id="NSIS.OPENVPN.X86.SAMPLECFG">
+            <RegistrySearch Id="nsis.openvpn.x86.reg.path.samplecfg" Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(var.PRODUCT_NAME)" Name="UninstallString" Type="file" Win64="no">
+                <DirectorySearch Id="nsis.openvpn.x86.reg.path.samplecfg.dir" Path="sample-config" Depth="0" AssignToProperty="yes"/>
+            </RegistrySearch>
+        </Property>
+        <Property Id="NSIS.OPENVPN.X86.SAMPLECFG.SAMPLE.OVPN">
+            <RegistrySearch Id="nsis.openvpn.x86.reg.path.samplecfg.sample.$(var.CONFIG_EXTENSION)" Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(var.PRODUCT_NAME)" Name="UninstallString" Type="file" Win64="no">
+                <DirectorySearch Id="nsis.openvpn.x86.reg.path.samplecfg.dir.sample.$(var.CONFIG_EXTENSION)" Path="sample-config" Depth="0" AssignToProperty="yes">
+                    <FileSearch Id="nsis.openvpn.x86.reg.path.samplecfg.file.sample.$(var.CONFIG_EXTENSION)" Name="sample.$(var.CONFIG_EXTENSION)"/>
+                </DirectorySearch>
+            </RegistrySearch>
+        </Property>
+        <?endif?>
+
+
+        <!--
+            1. Initialize install folder with NSIS install folder if detected.
+            2. Set install folder with registry folder if detected.
+            3. Set install folder to the previous installation folder if detected. Use license.txt file to detect previous installation folder.
+            4. Allow overriding install folder by specifying INSTALLDIR=<folder> on the msiexec.exe command line.
+        -->
+        <SetProperty
+            After="AppSearch"
+            Action="SetProductDirNSIS"
+            Id="PRODUCTDIR"
+            Value="[NSIS.OPENVPN]"
+            Sequence="first">NSIS.OPENVPN AND NOT Installed</SetProperty>
+        <Property Id="PRODUCTDIRREG">
+            <RegistrySearch Id="reg.path" Root="HKLM" Key="SOFTWARE\$(var.PRODUCT_NAME)" Type="directory"/>
+        </Property>
+        <SetProperty
+            After="SetProductDirNSIS"
+            Action="SetProductDirReg"
+            Id="PRODUCTDIR"
+            Value="[PRODUCTDIRREG]"
+            Sequence="first">PRODUCTDIRREG AND NOT Installed</SetProperty>
+        <Property Id="PRODUCTDIRPREV">
+            <ComponentSearch Id="license.txt" Guid="{20A13016-5269-48AA-9932-F6E7CE044F40}"/>
+        </Property>
+        <SetProperty
+            After="SetProductDirReg"
+            Action="SetProductDirPrev"
+            Id="PRODUCTDIR"
+            Value="[PRODUCTDIRPREV]"
+            Sequence="first">PRODUCTDIRPREV AND NOT Installed</SetProperty>
+        <SetProperty
+            After="SetProductDirPrev"
+            Action="SetProductDirParam"
+            Id="PRODUCTDIR"
+            Value="[INSTALLDIR]"
+            Sequence="first">INSTALLDIR AND NOT Installed</SetProperty>
+
+
+        <!--
+            1. Set executables folder from NSIS executables folder if detected.
+            1. Set executables folder with registry folder if detected.
+            2. Set executables folder to the previous executable folder if detected. Use openvpn.exe file to detect previous executable folder.
+        -->
+        <SetProperty
+            After="AppSearch"
+            Action="SetBinDirNSIS"
+            Id="BINDIR"
+            Value="[NSIS.OPENVPN.BIN]"
+            Sequence="first">NSIS.OPENVPN.BIN AND NOT Installed</SetProperty>
+        <Property Id="BINDIRREG">
+            <RegistrySearch Id="reg.exe_path" Root="HKLM" Key="SOFTWARE\$(var.PRODUCT_NAME)" Name="exe_path" Type="file"/>
+        </Property>
+        <SetProperty
+            After="SetBinDirNSIS"
+            Action="SetBinDirReg"
+            Id="BINDIR"
+            Value="[BINDIRREG]"
+            Sequence="first">BINDIRREG AND NOT Installed</SetProperty>
+        <Property Id="BINDIRPREV">
+            <ComponentSearch Id="bin.openvpn.exe" Guid="{4D920FC9-DF3C-4D34-ADE6-3EEEF8AE901A}"/>
+        </Property>
+        <SetProperty
+            After="SetBinDirReg"
+            Action="SetBinDirPrev"
+            Id="BINDIR"
+            Value="[BINDIRPREV]"
+            Sequence="first">BINDIRPREV AND NOT Installed</SetProperty>
+
+
+        <!--
+            1. Initialize configuration folder with NSIS configuration folder if detected.
+            2. Set configuration folder with registry folder if detected.
+            3. Set configuration folder to the previous installation folder if detected. Use README.txt file to detect previous configuration folder.
+            4. Allow overriding configuration folder by specifying CONFIG=<folder> on the msiexec.exe command line.
+        -->
+        <SetProperty
+            After="AppSearch"
+            Action="SetConfigDirNSIS"
+            Id="CONFIGDIR"
+            Value="[NSIS.OPENVPN.CONFIG]"
+            Sequence="first">NSIS.OPENVPN.CONFIG AND NOT Installed</SetProperty>
+        <Property Id="CONFIGDIRREG">
+            <RegistrySearch Id="reg.config_dir" Root="HKLM" Key="SOFTWARE\$(var.PRODUCT_NAME)" Name="config_dir" Type="directory"/>
+        </Property>
+        <SetProperty
+            After="SetConfigDirNSIS"
+            Action="SetConfigDirReg"
+            Id="CONFIGDIR"
+            Value="[CONFIGDIRREG]"
+            Sequence="first">CONFIGDIRREG AND NOT Installed</SetProperty>
+        <Property Id="CONFIGDIRPREV">
+            <ComponentSearch Id="config.README.txt" Guid="{9C3B43AF-1399-4E6A-92CA-D7BA3B6BCC3C}"/>
+        </Property>
+        <SetProperty
+            After="SetConfigDirReg"
+            Action="SetConfigDirPrev"
+            Id="CONFIGDIR"
+            Value="[CONFIGDIRPREV]"
+            Sequence="first">CONFIGDIRPREV AND NOT Installed</SetProperty>
+        <SetProperty
+            After="SetConfigDirPrev"
+            Action="SetConfigDirParam"
+            Id="CONFIGDIR"
+            Value="[CONFIG]"
+            Sequence="first">CONFIG AND NOT Installed</SetProperty>
+
+
+        <!--
+            1. Set auto-start configuration folder with registry folder if detected.
+            2. Set auto-start configuration folder to the previous installation folder if detected. Use README.txt file to detect previous configuration folder.
+            3. Allow overriding auto-start configuration folder by specifying CONFIGAUTO=<folder> on the msiexec.exe command line.
+        -->
+        <Property Id="CONFIGAUTODIRREG">
+            <RegistrySearch Id="reg.autostart_config_dir" Root="HKLM" Key="SOFTWARE\$(var.PRODUCT_NAME)" Name="autostart_config_dir" Type="directory"/>
+        </Property>
+        <SetProperty
+            After="AppSearch"
+            Action="SetAutostartConfigDirReg"
+            Id="CONFIGAUTODIR"
+            Value="[CONFIGAUTODIRREG]"
+            Sequence="first">CONFIGAUTODIRREG AND NOT Installed</SetProperty>
+        <Property Id="CONFIGAUTODIRPREV">
+            <ComponentSearch Id="config_auto.README.txt" Guid="{6986BED5-CFB0-4D9F-AB49-1CF2C868395D}"/>
+        </Property>
+        <SetProperty
+            After="SetAutostartConfigDirReg"
+            Action="SetAutostartConfigDirPrev"
+            Id="CONFIGAUTODIR"
+            Value="[CONFIGAUTODIRPREV]"
+            Sequence="first">CONFIGAUTODIRPREV AND NOT Installed</SetProperty>
+        <SetProperty
+            After="SetAutostartConfigDirPrev"
+            Action="SetAutostartConfigDirParam"
+            Id="CONFIGAUTODIR"
+            Value="[CONFIGAUTO]"
+            Sequence="first">CONFIGAUTO AND NOT Installed</SetProperty>
+
+
+        <!--
+            1. Initialize documentation folder from NSIS documentation folder if detected.
+            1. Set documentation folder to the previous documentation folder if detected. Use INSTALL_win32.txt file to detect previous documentation folder.
+            2. Allow overriding documentation folder by specifying DOC=<folder> on the msiexec.exe command line.
+        -->
+        <SetProperty
+            After="AppSearch"
+            Action="SetDocDirNSIS"
+            Id="DOCDIR"
+            Value="[NSIS.OPENVPN.DOC]"
+            Sequence="first">NSIS.OPENVPN.DOC AND NOT Installed</SetProperty>
+        <Property Id="DOCDIRPREV">
+            <ComponentSearch Id="doc.INSTALL_win32.txt" Guid="{2437051B-8A0A-4391-BA43-C2DE4BCCBDD5}"/>
+        </Property>
+        <SetProperty
+            After="SetDocDirNSIS"
+            Action="SetDocDirPrev"
+            Id="DOCDIR"
+            Value="[DOCDIRPREV]"
+            Sequence="first">DOCDIRPREV AND NOT Installed</SetProperty>
+        <SetProperty
+            After="SetDocDirPrev"
+            Action="SetDocDirParam"
+            Id="DOCDIR"
+            Value="[DOC]"
+            Sequence="first">DOC AND NOT Installed</SetProperty>
+
+
+        <!--
+            1. Initialize Easy RSA folder from NSIS Easy RSA folder if detected.
+            2. Set Easy RSA folder to the previous Easy RSA folder if detected. Use README.txt file to detect previous Easy RSA folder.
+            3. Allow overriding Easy RSA folder by specifying EASYRSA=<folder> on the msiexec.exe command line.
+        -->
+        <SetProperty
+            After="AppSearch"
+            Action="SetEasyRSADirNSIS"
+            Id="EASYRSADIR"
+            Value="[NSIS.OPENVPN.EASYRSA]"
+            Sequence="first">NSIS.OPENVPN.EASYRSA AND NOT Installed</SetProperty>
+        <Property Id="EASYRSADIRPREV">
+            <ComponentSearch Id="easyrsa.README.txt" Guid="{69F47537-3E49-4768-9953-BD880272A13B}"/>
+        </Property>
+        <SetProperty
+            After="SetEasyRSADirNSIS"
+            Action="SetEasyRSADirPrev"
+            Id="EASYRSADIR"
+            Value="[EASYRSADIRPREV]"
+            Sequence="first">EASYRSADIRPREV AND NOT Installed</SetProperty>
+        <SetProperty
+            After="SetEasyRSADirPrev"
+            Action="SetEasyRSADirParam"
+            Id="EASYRSADIR"
+            Value="[EASYRSA]"
+            Sequence="first">EASYRSA AND NOT Installed</SetProperty>
+
+
+        <!--
+            1. Initialize log folder with NSIS log folder if detected.
+            2. Set log folder with registry folder if detected.
+            3. Set log folder to the previous log folder if detected. Use README.txt file to detect previous log folder.
+            4. Allow overriding log folder by specifying LOG=<folder> on the msiexec.exe command line.
+        -->
+        <SetProperty
+            After="AppSearch"
+            Action="SetLogDirNSIS"
+            Id="LOGDIR"
+            Value="[NSIS.OPENVPN.LOG]"
+            Sequence="first">NSIS.OPENVPN.LOG AND NOT Installed</SetProperty>
+        <Property Id="LOGDIRREG">
+            <RegistrySearch Id="reg.log_dir" Root="HKLM" Key="SOFTWARE\$(var.PRODUCT_NAME)" Name="log_dir" Type="directory"/>
+        </Property>
+        <SetProperty
+            After="SetLogDirNSIS"
+            Action="SetLogDirReg"
+            Id="LOGDIR"
+            Value="[LOGDIRREG]"
+            Sequence="first">LOGDIRREG AND NOT Installed</SetProperty>
+        <Property Id="LOGDIRPREV">
+            <ComponentSearch Id="log.README.txt" Guid="{CD05C1F7-99E7-45C9-8DE5-9C7FB73EE911}"/>
+        </Property>
+        <SetProperty
+            After="SetLogDirReg"
+            Action="SetLogDirPrev"
+            Id="LOGDIR"
+            Value="[LOGDIRPREV]"
+            Sequence="first">LOGDIRPREV AND NOT Installed</SetProperty>
+        <SetProperty
+            After="SetLogDirPrev"
+            Action="SetLogDirParam"
+            Id="LOGDIR"
+            Value="[LOG]"
+            Sequence="first">LOG AND NOT Installed</SetProperty>
+
+
+        <!--
+            1. Initialize sample configuration folder from NSIS sample configuration folder if detected.
+            2. Set sample configuration folder to the previous sample configuration folder if detected. Use sample.ovpn file to detect previous sample configuration folder.
+            3. Allow overriding sample configuration folder by specifying SAMPLECFG=<folder> on the msiexec.exe command line.
+        -->
+        <SetProperty
+            After="AppSearch"
+            Action="SetSampleCfgDirNSIS"
+            Id="SAMPLECFGDIR"
+            Value="[NSIS.OPENVPN.SAMPLECFG]"
+            Sequence="first">NSIS.OPENVPN.SAMPLECFG AND NOT Installed</SetProperty>
+        <Property Id="SAMPLECFGDIRPREV">
+            <ComponentSearch Id="samplecfg.sample.$(var.CONFIG_EXTENSION)" Guid="{48ECE02F-3E2B-4708-B736-8D36CBCFF509}"/>
+        </Property>
+        <SetProperty
+            After="SetSampleCfgDirNSIS"
+            Action="SetSampleCfgDirPrev"
+            Id="SAMPLECFGDIR"
+            Value="[SAMPLECFGDIRPREV]"
+            Sequence="first">SAMPLECFGDIRPREV AND NOT Installed</SetProperty>
+        <SetProperty
+            After="SetSampleCfgDirPrev"
+            Action="SetSampleCfgDirParam"
+            Id="SAMPLECFGDIR"
+            Value="[SAMPLECFG]"
+            Sequence="first">SAMPLECFG AND NOT Installed</SetProperty>
+
+
+        <!--
+            1. Initialize log append setting with default value.
+            2. Set log append setting with registry value if detected.
+        -->
+        <Property Id="LOGAPPEND" Value="0"/>
+        <Property Id="LOGAPPENDREG">
+            <RegistrySearch Id="reg.log_append" Root="HKLM" Key="SOFTWARE\$(var.PRODUCT_NAME)" Name="log_append" Type="raw"/>
+        </Property>
+        <SetProperty
+            After="AppSearch"
+            Action="SetLogAppendReg"
+            Id="LOGAPPEND"
+            Value="[LOGAPPENDREG]"
+            Sequence="first">LOGAPPENDREG AND NOT Installed</SetProperty>
+
+
+        <!--
+            1. Initialize disable save password setting with default value.
+            2. Set disable save password setting with registry value if detected.
+        -->
+        <Property Id="DISABLESAVEPWD" Value="#0"/>
+        <Property Id="DISABLESAVEPWDREG">
+            <RegistrySearch Id="reg.disable_save_passwords" Root="HKLM" Key="SOFTWARE\$(var.PRODUCT_NAME)" Name="disable_save_passwords" Type="raw"/>
+        </Property>
+        <SetProperty
+            After="AppSearch"
+            Action="SetDisableSavePwdReg"
+            Id="DISABLESAVEPWD"
+            Value="[DISABLESAVEPWDREG]"
+            Sequence="first">DISABLESAVEPWDREG AND NOT Installed</SetProperty>
+
+
+        <!--
+            1. Initialize OpenVPN administrators group setting with default value.
+            2. Set OpenVPN administrators group setting with registry value if detected.
+        -->
+        <Property Id="ADMINGROUP" Value="$(var.PRODUCT_NAME) Administrators"/>
+        <Property Id="ADMINGROUPREG">
+            <RegistrySearch Id="reg.ovpn_admin_group" Root="HKLM" Key="SOFTWARE\$(var.PRODUCT_NAME)" Name="ovpn_admin_group" Type="raw"/>
+        </Property>
+        <SetProperty
+            After="AppSearch"
+            Action="SetAdminGroupReg"
+            Id="ADMINGROUP"
+            Value="[ADMINGROUPREG]"
+            Sequence="first">ADMINGROUPREG AND NOT Installed</SetProperty>
+
+
+        <!--
+            1. Initialize priority setting with default value.
+            2. Set priority setting with registry value if detected.
+        -->
+        <Property Id="PRIORITY" Value="NORMAL_PRIORITY_CLASS"/>
+        <Property Id="PRIORITYREG">
+            <RegistrySearch Id="reg.priority" Root="HKLM" Key="SOFTWARE\$(var.PRODUCT_NAME)" Name="priority" Type="raw"/>
+        </Property>
+        <SetProperty
+            After="AppSearch"
+            Action="SetPriorityReg"
+            Id="PRIORITY"
+            Value="[PRIORITYREG]"
+            Sequence="first">PRIORITYREG AND NOT Installed</SetProperty>
+
+
+        <!--
+            Folders/Files
+        -->
+        <Directory Id="TARGETDIR" Name="SourceDir">
+            <Directory Id="$(var.PROGRAM_FILES_DIR)">
+                <Directory Id="PRODUCTDIR" Name="$(var.PRODUCT_NAME)">
+                    <Component Id="license.txt" Guid="{20A13016-5269-48AA-9932-F6E7CE044F40}">
+                        <File Name="license.txt" Source="!(bindpath.build)$(var.PRODUCT_PLATFORM)\license.txt"/>
+
+                        <!-- Clean-up NSIS installation. -->
+                        <RemoveFile Id="nsis.openvpn.shortcut.uninstall" Directory="ProductShortcutFolder" Name="Uninstall $(var.PRODUCT_NAME).lnk" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.bin.libcrypto_1_1.dll" Property="NSIS.OPENVPN.BIN" Name="libcrypto-1_1$(var.OPENSSL_PLAT).dll" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.bin.libeay32.dll" Property="NSIS.OPENVPN.BIN" Name="libeay32.dll" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.bin.liblzo2_2.dll" Property="NSIS.OPENVPN.BIN" Name="liblzo2-2.dll" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.bin.libpkcs11_helper_1.dll" Property="NSIS.OPENVPN.BIN" Name="libpkcs11-helper-1.dll" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.bin.libssl_1_1.dll" Property="NSIS.OPENVPN.BIN" Name="libssl-1_1$(var.OPENSSL_PLAT).dll" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.bin.openssl.exe" Property="NSIS.OPENVPN.BIN" Name="openssl.exe" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.bin.openvpn.exe" Property="NSIS.OPENVPN.BIN" Name="openvpn.exe" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.bin.openvpn_gui.exe" Property="NSIS.OPENVPN.BIN" Name="openvpn-gui.exe" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.bin.openvpnserv.exe" Property="NSIS.OPENVPN.BIN" Name="openvpnserv.exe" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.bin.openvpnserv2.exe" Property="NSIS.OPENVPN.BIN" Name="openvpnserv2.exe" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.bin.ssleay32.dll" Property="NSIS.OPENVPN.BIN" Name="ssleay32.dll" On="install"/>
+                        <RemoveFolder Id="nsis.openvpn.bin" Property="NSIS.OPENVPN.BIN" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.doc.INSTALL_win32.txt" Property="NSIS.OPENVPN.DOC" Name="INSTALL-win32.txt" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.doc.license.txt" Property="NSIS.OPENVPN.DOC" Name="license.txt" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.doc.openvpn.8.html" Property="NSIS.OPENVPN.DOC" Name="openvpn.8.html" On="install"/>
+                        <RemoveFolder Id="nsis.openvpn.doc" Property="NSIS.OPENVPN.DOC" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.easyrsa.build_ca.bat" Property="NSIS.OPENVPN.EASYRSA" Name="build-ca.bat" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.easyrsa.build_dh.bat" Property="NSIS.OPENVPN.EASYRSA" Name="build-dh.bat" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.easyrsa.build_key.bat" Property="NSIS.OPENVPN.EASYRSA" Name="build-key.bat" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.easyrsa.build_key_pass.bat" Property="NSIS.OPENVPN.EASYRSA" Name="build-key-pass.bat" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.easyrsa.build_key_pkcs12.bat" Property="NSIS.OPENVPN.EASYRSA" Name="build-key-pkcs12.bat" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.easyrsa.build_key_server.bat" Property="NSIS.OPENVPN.EASYRSA" Name="build-key-server.bat" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.easyrsa.clean_all.bat" Property="NSIS.OPENVPN.EASYRSA" Name="clean-all.bat" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.easyrsa.index.txt.start" Property="NSIS.OPENVPN.EASYRSA" Name="index.txt.start" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.easyrsa.init_config.bat" Property="NSIS.OPENVPN.EASYRSA" Name="init-config.bat" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.easyrsa.openssl_1.0.0.cnf" Property="NSIS.OPENVPN.EASYRSA" Name="openssl-1.0.0.cnf" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.easyrsa.README.txt" Property="NSIS.OPENVPN.EASYRSA" Name="README.txt" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.easyrsa.revoke_full.bat" Property="NSIS.OPENVPN.EASYRSA" Name="revoke-full.bat" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.easyrsa.serial.start" Property="NSIS.OPENVPN.EASYRSA" Name="serial.start" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.easyrsa.vars.bat.sample" Property="NSIS.OPENVPN.EASYRSA" Name="vars.bat.sample" On="install"/>
+                        <RemoveFolder Id="nsis.openvpn.easyrsa" Property="NSIS.OPENVPN.EASYRSA" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.log.README.txt" Property="NSIS.OPENVPN.LOG" Name="README.txt" On="install"/>
+                        <RemoveFolder Id="nsis.openvpn.log" Property="NSIS.OPENVPN.LOG" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.samplecfg.client.$(var.CONFIG_EXTENSION)" Property="NSIS.OPENVPN.SAMPLECFG" Name="client.$(var.CONFIG_EXTENSION)" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.samplecfg.sample.$(var.CONFIG_EXTENSION)" Property="NSIS.OPENVPN.SAMPLECFG" Name="sample.$(var.CONFIG_EXTENSION)" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.samplecfg.server.$(var.CONFIG_EXTENSION)" Property="NSIS.OPENVPN.SAMPLECFG" Name="server.$(var.CONFIG_EXTENSION)" On="install"/>
+                        <RemoveFolder Id="nsis.openvpn.samplecfg" Property="NSIS.OPENVPN.SAMPLECFG" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.icon.ico" Property="NSIS.OPENVPN" Name="icon.ico" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.Uninstall.exe" Property="NSIS.OPENVPN" Name="Uninstall.exe" On="install"/>
+                        <RemoveFolder Id="nsis.openvpn" Property="NSIS.OPENVPN" On="install"/>
+                        <RemoveRegistryKey Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(var.PRODUCT_NAME)" Action="removeOnInstall"/>
+
+                        <?if $(sys.BUILDARCH)="x64" ?>
+                        <RemoveFile Id="nsis.openvpn.x86.bin.libeay32.dll" Property="NSIS.OPENVPN.X86.BIN" Name="libeay32.dll" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.x86.bin.liblzo2_2.dll" Property="NSIS.OPENVPN.X86.BIN" Name="liblzo2-2.dll" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.x86.bin.libpkcs11_helper_1.dll" Property="NSIS.OPENVPN.X86.BIN" Name="libpkcs11-helper-1.dll" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.x86.bin.openssl.exe" Property="NSIS.OPENVPN.X86.BIN" Name="openssl.exe" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.x86.bin.openvpn.exe" Property="NSIS.OPENVPN.X86.BIN" Name="openvpn.exe" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.x86.bin.openvpn_gui.exe" Property="NSIS.OPENVPN.X86.BIN" Name="openvpn-gui.exe" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.x86.bin.openvpnserv.exe" Property="NSIS.OPENVPN.X86.BIN" Name="openvpnserv.exe" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.x86.bin.ssleay32.dll" Property="NSIS.OPENVPN.X86.BIN" Name="ssleay32.dll" On="install"/>
+                        <RemoveFolder Id="nsis.openvpn.x86.bin" Property="NSIS.OPENVPN.X86.BIN" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.x86.doc.INSTALL_win32.txt" Property="NSIS.OPENVPN.X86.DOC" Name="INSTALL-win32.txt" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.x86.doc.license.txt" Property="NSIS.OPENVPN.X86.DOC" Name="license.txt" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.x86.doc.openvpn.8.html" Property="NSIS.OPENVPN.X86.DOC" Name="openvpn.8.html" On="install"/>
+                        <RemoveFolder Id="nsis.openvpn.x86.doc" Property="NSIS.OPENVPN.X86.DOC" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.x86.easyrsa.build_ca.bat" Property="NSIS.OPENVPN.X86.EASYRSA" Name="build-ca.bat" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.x86.easyrsa.build_dh.bat" Property="NSIS.OPENVPN.X86.EASYRSA" Name="build-dh.bat" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.x86.easyrsa.build_key.bat" Property="NSIS.OPENVPN.X86.EASYRSA" Name="build-key.bat" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.x86.easyrsa.build_key_pass.bat" Property="NSIS.OPENVPN.X86.EASYRSA" Name="build-key-pass.bat" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.x86.easyrsa.build_key_pkcs12.bat" Property="NSIS.OPENVPN.X86.EASYRSA" Name="build-key-pkcs12.bat" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.x86.easyrsa.build_key_server.bat" Property="NSIS.OPENVPN.X86.EASYRSA" Name="build-key-server.bat" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.x86.easyrsa.clean_all.bat" Property="NSIS.OPENVPN.X86.EASYRSA" Name="clean-all.bat" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.x86.easyrsa.index.txt.start" Property="NSIS.OPENVPN.X86.EASYRSA" Name="index.txt.start" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.x86.easyrsa.init_config.bat" Property="NSIS.OPENVPN.X86.EASYRSA" Name="init-config.bat" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.x86.easyrsa.openssl_1.0.0.cnf" Property="NSIS.OPENVPN.X86.EASYRSA" Name="openssl-1.0.0.cnf" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.x86.easyrsa.README.txt" Property="NSIS.OPENVPN.X86.EASYRSA" Name="README.txt" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.x86.easyrsa.revoke_full.bat" Property="NSIS.OPENVPN.X86.EASYRSA" Name="revoke-full.bat" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.x86.easyrsa.serial.start" Property="NSIS.OPENVPN.X86.EASYRSA" Name="serial.start" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.x86.easyrsa.vars.bat.sample" Property="NSIS.OPENVPN.X86.EASYRSA" Name="vars.bat.sample" On="install"/>
+                        <RemoveFolder Id="nsis.openvpn.x86.easyrsa" Property="NSIS.OPENVPN.X86.EASYRSA" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.x86.log.README.txt" Property="NSIS.OPENVPN.X86.LOG" Name="README.txt" On="install"/>
+                        <RemoveFolder Id="nsis.openvpn.x86.log" Property="NSIS.OPENVPN.X86.LOG" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.x86.samplecfg.client.$(var.CONFIG_EXTENSION)" Property="NSIS.OPENVPN.X86.SAMPLECFG" Name="client.$(var.CONFIG_EXTENSION)" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.x86.samplecfg.sample.$(var.CONFIG_EXTENSION)" Property="NSIS.OPENVPN.X86.SAMPLECFG" Name="sample.$(var.CONFIG_EXTENSION)" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.x86.samplecfg.server.$(var.CONFIG_EXTENSION)" Property="NSIS.OPENVPN.X86.SAMPLECFG" Name="server.$(var.CONFIG_EXTENSION)" On="install"/>
+                        <RemoveFolder Id="nsis.openvpn.x86.samplecfg" Property="NSIS.OPENVPN.X86.SAMPLECFG" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.x86.icon.ico" Property="NSIS.OPENVPN.X86" Name="icon.ico" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.x86.Uninstall.exe" Property="NSIS.OPENVPN.X86" Name="Uninstall.exe" On="install"/>
+                        <RemoveFolder Id="nsis.openvpn.x86" Property="NSIS.OPENVPN.X86" On="install"/>
+                        <RemoveRegistryKey Root="HKLM" Key="SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\$(var.PRODUCT_NAME)" Action="removeOnInstall"/>
+                        <?endif?>
+
+                        <RemoveFile Id="nsis.tapwin.shortcut.utilities.addtap.bat" Directory="TAPWindows6UtilitiesShortcutFolder" Name="Add a new TAP virtual ethernet adapter.lnk" On="install"/>
+                        <RemoveFile Id="nsis.tapwin.shortcut.utilities.deltapall.bat" Directory="TAPWindows6UtilitiesShortcutFolder" Name="Delete ALL TAP virtual ethernet adapters.lnk" On="install"/>
+                        <RemoveFolder Id="nsis.tapwin.shortcut.utilities" Property="TAPWindows6UtilitiesShortcutFolder" On="install"/>
+                        <RemoveFolder Id="nsis.tapwin.shortcut" Property="TAPWindows6ShortcutFolder" On="install"/>
+                        <RemoveFile Id="nsis.tapwin.bin.addtap.bat" Property="NSIS.TAPWIN.BIN" Name="addtap.bat" On="install"/>
+                        <RemoveFile Id="nsis.tapwin.bin.deltapall.bat" Property="NSIS.TAPWIN.BIN" Name="deltapall.bat" On="install"/>
+                        <RemoveFile Id="nsis.tapwin.bin.tapinstall.exe" Property="NSIS.TAPWIN.BIN" Name="tapinstall.exe" On="install"/>
+                        <RemoveFolder Id="nsis.tapwin.bin" Property="NSIS.TAPWIN.BIN" On="install"/>
+                        <RemoveFile Id="nsis.tapwin.driver.OemVista.inf" Property="NSIS.TAPWIN.DRIVER" Name="OemVista.inf" On="install"/>
+                        <RemoveFile Id="nsis.tapwin.driver.$(var.PRODUCT_TAP_WIN_COMPONENT_ID).cat" Property="NSIS.TAPWIN.DRIVER" Name="$(var.PRODUCT_TAP_WIN_COMPONENT_ID).cat" On="install"/>
+                        <RemoveFile Id="nsis.tapwin.driver.$(var.PRODUCT_TAP_WIN_COMPONENT_ID).sys" Property="NSIS.TAPWIN.DRIVER" Name="$(var.PRODUCT_TAP_WIN_COMPONENT_ID).sys" On="install"/>
+                        <RemoveFolder Id="nsis.tapwin.driver" Property="NSIS.TAPWIN.DRIVER" On="install"/>
+                        <RemoveFile Id="nsis.tapwin.include.tap_windows.h" Property="NSIS.TAPWIN.INCLUDE" Name="tap-windows.h" On="install"/>
+                        <RemoveFolder Id="nsis.tapwin.include" Property="NSIS.TAPWIN.INCLUDE" On="install"/>
+                        <RemoveFile Id="nsis.tapwin.icon.ico" Property="NSIS.TAPWIN" Name="icon.ico" On="install"/>
+                        <RemoveFile Id="nsis.tapwin.license.txt" Property="NSIS.TAPWIN" Name="license.txt" On="install"/>
+                        <RemoveFile Id="nsis.tapwin.Uninstall.exe" Property="NSIS.TAPWIN" Name="Uninstall.exe" On="install"/>
+                        <RemoveFolder Id="nsis.tapwin" Property="NSIS.TAPWIN" On="install"/>
+                        <RemoveRegistryKey Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(var.PRODUCT_TAP_WIN_NAME)" Action="removeOnInstall"/>
+                    </Component>
+
+                    <Directory Id="BINDIR" Name="bin">
+                        <Component Id="bin.libcrypto_1_1.dll" Guid="{811694A9-DC99-4CFA-BD72-4877F8E32C7C}">
+                            <File Name="libcrypto-1_1$(var.OPENSSL_PLAT).dll" Source="!(bindpath.openvpn)bin\libcrypto-1_1$(var.OPENSSL_PLAT).dll Checksum="yes"/>
+                        </Component>
+                        <Component Id="bin.liblzo2_2.dll" Guid="{A1A057F0-235B-4F55-9A3A-CDA2112648F8}">
+                            <File Name="liblzo2-2.dll" Source="!(bindpath.openvpn)bin\liblzo2-2.dll" Checksum="yes"/>
+                        </Component>
+                        <Component Id="bin.libpkcs11_helper_1.dll" Guid="{62BB5466-934A-41FE-989B-9D0B6BD5151F}">
+                            <File Name="libpkcs11-helper-1.dll" Source="!(bindpath.openvpn)bin\libpkcs11-helper-1.dll" Checksum="yes"/>
+                        </Component>
+                        <Component Id="bin.libssl_1_1.dll" Guid="{34B9FB21-7621-4C6A-8CA0-2C907F6ADDCE}">
+                            <File Name="libssl-1_1$(var.OPENSSL_PLAT).dll" Source="!(bindpath.openvpn)bin\libssl-1_1$(var.OPENSSL_PLAT).dll" Checksum="yes"/>
+                        </Component>
+                        <Component Id="bin.openssl.exe" Guid="{E8876024-809B-40F1-A13B-A0DACFAA0AF0}">
+                            <File Name="openssl.exe" Source="!(bindpath.openvpn)bin\openssl.exe" Checksum="yes"/>
+                        </Component>
+                        <Component Id="bin.openvpn.exe" Guid="{4D920FC9-DF3C-4D34-ADE6-3EEEF8AE901A}">
+                            <File Id="bin.openvpn.exe" Name="openvpn.exe" Source="!(bindpath.openvpn)bin\openvpn.exe" Checksum="yes"/>
+                        </Component>
+                        <Component Id="bin.openvpn_gui.exe" Guid="{5A893CD4-EA7E-4887-89D0-15BBE904FE11}">
+                            <File Id="bin.openvpn_gui.exe" Name="openvpn-gui.exe" Source="!(bindpath.openvpn)bin\openvpn-gui.exe" Checksum="yes"/>
+                        </Component>
+                        <Component Id="bin.openvpnserv.exe" Guid="{43A4F408-9399-4BD7-9978-0ECE4A582929}">
+                            <File Name="openvpnserv.exe" Source="!(bindpath.openvpn)bin\openvpnserv.exe" Checksum="yes"/>
+                            <ServiceControl
+                                Id="OpenVPNServiceInteractive"
+                                Name="OpenVPNServiceInteractive"
+                                Stop="both"
+                                Start="install"
+                                Remove="uninstall"/>
+                            <ServiceInstall
+                                Id="OpenVPNServiceInteractive"
+                                Name="OpenVPNServiceInteractive"
+                                DisplayName="OpenVPN Interactive Service"
+                                Description="Allows OpenVPN GUI and other clients to establish OpenVPN connections without administrative privileges in a secure way."
+                                Type="shareProcess"
+                                Start="auto"
+                                ErrorControl="normal">
+                                <ServiceDependency Id="Dhcp"/>
+                            </ServiceInstall>
+                        </Component>
+                        <Component Id="bin.openvpnserv2.exe" Guid="{8867EEBF-B928-49D7-A1F5-D33E2BCAAD70}">
+                            <File Name="openvpnserv2.exe" Source="!(bindpath.openvpnserv2)openvpnserv2.exe" Checksum="yes"/>
+                            <ServiceControl
+                                Id="OpenVPNService"
+                                Name="OpenVPNService"
+                                Stop="both"
+                                Start="install"
+                                Remove="uninstall"/>
+                            <ServiceInstall
+                                Id="OpenVPNService"
+                                Name="OpenVPNService"
+                                DisplayName="OpenVPNService"
+                                Type="ownProcess"
+                                Start="auto"
+                                ErrorControl="normal">
+                                <ServiceDependency Id="Dhcp"/>
+                            </ServiceInstall>
+                        </Component>
+                        <Component Id="bin.tapctl.exe" Guid="{5A294591-0F71-470F-977B-DD288AB2B437}">
+                            <File Name="tapctl.exe" Source="!(bindpath.openvpn)bin\tapctl.exe" KeyPath="yes" Checksum="yes"/>
+                        </Component>
+                    </Directory>
+
+                    <Directory Id="CONFIGDIR" Name="config">
+                        <Component Id="config.README.txt" Guid="{9C3B43AF-1399-4E6A-92CA-D7BA3B6BCC3C}">
+                            <File Id="config.README.txt" Name="README.txt" Source="!(bindpath.build)README-config.txt"/>
+                        </Component>
+                        <!-- Move auto-start config files from configuration folder to auto-start configuration folder on update from non-auto-start aware installations. -->
+                        <Component Id="config.Where_are_my_config_files.txt" Guid="{2DFEDF05-F41E-4EB0-A90A-DC76A261E444}">
+                            <Condition><![CDATA[OPENVPNSERVICE AND CONFIGDIRREG AND NOT CONFIGAUTODIRREG]]></Condition>
+                            <File Name="Where are my config files.txt" Source="!(bindpath.build)Where are my config files.txt"/>
+                            <CopyFile
+                                Id="config_auto"
+                                SourceProperty="CONFIGDIRREG"
+                                SourceName="*"
+                                DestinationProperty="CONFIGAUTODIR"
+                                Delete="yes"/>
+                        </Component>
+                    </Directory>
+
+                    <Directory Id="CONFIGAUTODIR" Name="config-auto">
+                        <Component Id="config_auto.README.txt" Guid="{6986BED5-CFB0-4D9F-AB49-1CF2C868395D}">
+                            <File Name="README.txt" Source="!(bindpath.build)README-config-auto.txt"/>
+                        </Component>
+                    </Directory>
+
+                    <Directory Id="DOCDIR" Name="doc">
+                        <Component Id="doc.INSTALL_win32.txt" Guid="{2437051B-8A0A-4391-BA43-C2DE4BCCBDD5}">
+                            <File Name="INSTALL-win32.txt" Source="!(bindpath.build)INSTALL-win32.txt"/>
+                        </Component>
+                        <Component Id="doc.openvpn.8.html" Guid="{81E681BB-B296-44FC-B547-595459E7CE1B}">
+                            <File Name="openvpn.8.html" Source="!(bindpath.openvpn)share\doc\openvpn\openvpn.8.html"/>
+                        </Component>
+                    </Directory>
+
+                    <Directory Id="EASYRSADIR" Name="easy-rsa">
+                        <Component Id="easyrsa.build_ca.bat" Guid="{C1F541D5-2D17-47EF-B3D7-9A05C0C7C9F4}">
+                            <File Name="build-ca.bat" Source="!(bindpath.easyrsa)Windows\build-ca.bat"/>
+                        </Component>
+                        <Component Id="easyrsa.build_dh.bat" Guid="{7A21A71D-D84C-49F3-9752-32A8EE260043}">
+                            <File Name="build-dh.bat" Source="!(bindpath.easyrsa)Windows\build-dh.bat"/>
+                        </Component>
+                        <Component Id="easyrsa.build_key.bat" Guid="{5A1F6F9A-B25E-45AA-992B-640CCF9B3F14}">
+                            <File Name="build-key.bat" Source="!(bindpath.easyrsa)Windows\build-key.bat"/>
+                        </Component>
+                        <Component Id="easyrsa.build_key_pass.bat" Guid="{AF9B9A96-C661-408B-861C-328F3DE3300B}">
+                            <File Name="build-key-pass.bat" Source="!(bindpath.easyrsa)Windows\build-key-pass.bat"/>
+                        </Component>
+                        <Component Id="easyrsa.build_key_pkcs12.bat" Guid="{01C35157-7DA3-4D64-9C1F-8E35D05B6760}">
+                            <File Name="build-key-pkcs12.bat" Source="!(bindpath.easyrsa)Windows\build-key-pkcs12.bat"/>
+                        </Component>
+                        <Component Id="easyrsa.build_key_server.bat" Guid="{99509E1B-6946-4BB9-BDAC-39088F8F3C1C}">
+                            <File Name="build-key-server.bat" Source="!(bindpath.easyrsa)Windows\build-key-server.bat"/>
+                        </Component>
+                        <Component Id="easyrsa.clean_all.bat" Guid="{B14B1938-6F89-4FE5-A7C4-83EFDFF99A16}">
+                            <File Name="clean-all.bat" Source="!(bindpath.easyrsa)Windows\clean-all.bat"/>
+                        </Component>
+                        <Component Id="easyrsa.index.txt.start" Guid="{BFBB96C5-3D98-40CE-B466-84CBFBFD9860}">
+                            <File Name="index.txt.start" Source="!(bindpath.easyrsa)Windows\index.txt.start"/>
+                        </Component>
+                        <Component Id="easyrsa.init_config.bat" Guid="{BE6634C8-4C65-4A34-BA36-ECA89B70D4B7}">
+                            <File Name="init-config.bat" Source="!(bindpath.easyrsa)Windows\init-config.bat"/>
+                        </Component>
+                        <Component Id="easyrsa.openssl_1.0.0.cnf" Guid="{3DF64587-2D75-4157-8EDC-8865918F347E}">
+                            <File Name="openssl-1.0.0.cnf" Source="!(bindpath.easyrsa)2.0\openssl-1.0.0.cnf"/>
+                        </Component>
+                        <Component Id="easyrsa.README.txt" Guid="{69F47537-3E49-4768-9953-BD880272A13B}">
+                            <File Id="easyrsa.README.txt" Name="README.txt" Source="!(bindpath.easyrsa)Windows\README.txt"/>
+                        </Component>
+                        <Component Id="easyrsa.revoke_full.bat" Guid="{E3CE1DCB-9216-4DEE-9328-B8B68CE98D0A}">
+                            <File Name="revoke-full.bat" Source="!(bindpath.easyrsa)Windows\revoke-full.bat"/>
+                        </Component>
+                        <Component Id="easyrsa.serial.start" Guid="{F8AE1791-B35C-42AF-8E98-B21CEBCD8DB0}">
+                            <File Name="serial.start" Source="!(bindpath.easyrsa)Windows\serial.start"/>
+                        </Component>
+                        <Component Id="easyrsa.vars.bat.sample" Guid="{24A177A9-238C-46BC-A2A5-7884F39406D0}">
+                            <File Name="vars.bat.sample" Source="!(bindpath.easyrsa)Windows\vars.bat.sample"/>
+                        </Component>
+                    </Directory>
+
+                    <Directory Id="LOGDIR" Name="log">
+                        <Component Id="log.README.txt" Guid="{CD05C1F7-99E7-45C9-8DE5-9C7FB73EE911}">
+                            <File Id="log.README.txt" Name="README.txt" Source="!(bindpath.build)README-log.txt"/>
+                        </Component>
+                    </Directory>
+
+                    <Directory Id="RESDIR" Name="res">
+                        <Component Id="res.ovpn.ico" Guid="{01C7FEE2-2F5B-4BBF-A7CF-7B7B5E2B44D2}">
+                            <File Id="res.ovpn.ico" Name="ovpn.ico" Source="artwork\ovpn.ico"/>
+                        </Component>
+                    </Directory>
+
+                    <Directory Id="SAMPLECFGDIR" Name="sample-config">
+                        <Component Id="samplecfg.client.$(var.CONFIG_EXTENSION)" Guid="{5A762634-C12E-4D34-B9C6-D6C33513FAF8}">
+                            <File Name="client.$(var.CONFIG_EXTENSION)" Source="!(bindpath.build)$(var.PRODUCT_PLATFORM)\client.ovpn"/>
+                        </Component>
+                        <Component Id="samplecfg.sample.$(var.CONFIG_EXTENSION)" Guid="{48ECE02F-3E2B-4708-B736-8D36CBCFF509}">
+                            <File Name="sample.$(var.CONFIG_EXTENSION)" Source="!(bindpath.build)$(var.PRODUCT_PLATFORM)\sample.ovpn"/>
+                        </Component>
+                        <Component Id="samplecfg.server.$(var.CONFIG_EXTENSION)" Guid="{B0B5E776-3C7A-4B86-87BF-6FAFF9F83E34}">
+                            <File Name="server.$(var.CONFIG_EXTENSION)" Source="!(bindpath.build)$(var.PRODUCT_PLATFORM)\server.ovpn"/>
+                        </Component>
+                    </Directory>
+                </Directory>
+            </Directory>
+
+            <Directory Id="ProgramMenuFolder">
+                <Directory Id="ProductShortcutFolder" Name="$(var.PRODUCT_NAME)">
+                    <Component Id="shortcut.openvpn_gui.exe" Guid="{EC5742CF-E221-497C-A411-6CF74A298612}">
+                        <Shortcut
+                            Id="shortcut.openvpn_gui.exe"
+                            Name="$(var.PRODUCT_NAME) GUI"
+                            Target="[BINDIR]openvpn-gui.exe"
+                            WorkingDirectory="BINDIR"
+                            Icon="openvpn.ico"/>
+                        <RemoveFolder Id="shortcut.openvpn_gui.exe" On="uninstall"/>
+                        <RegistryValue Root="HKCU" Key="Software\$(var.PRODUCT_NAME)\Shortcuts" Name="openvpn_gui.exe" Type="integer" Value="1"/>
+                    </Component>
+
+                    <Directory Id="DocumentationShortcutFolder" Name="Documentation">
+                        <Component Id="shortcut.doc.INSTALL_win32.txt" Guid="{B9929143-87F7-4BE8-A4A8-C5A41E6E180D}">
+                            <Shortcut
+                                Id="shortcut.doc.INSTALL_win32.txt"
+                                Name="$(var.PRODUCT_NAME) Windows Notes"
+                                Target="[DOCDIR]INSTALL-win32.txt"
+                                WorkingDirectory="DOCDIR"/>
+                            <RemoveFolder Id="shortcut.doc.INSTALL_win32.txt" On="uninstall"/>
+                            <RegistryValue Root="HKCU" Key="Software\$(var.PRODUCT_NAME)\Shortcuts" Name="doc.INSTALL_win32.txt" Type="integer" Value="1"/>
+                        </Component>
+                        <Component Id="shortcut.doc.openvpn.8.html" Guid="">
+                            <Shortcut
+                                Id="shortcut.doc.openvpn.8.html"
+                                Name="$(var.PRODUCT_NAME) Manual Page"
+                                Target="[DOCDIR]openvpn.8.html"
+                                WorkingDirectory="DOCDIR"/>
+                            <RemoveFolder Id="shortcut.doc.openvpn.8.html" On="uninstall"/>
+                            <RegistryValue Root="HKCU" Key="Software\$(var.PRODUCT_NAME)\Shortcuts" Name="doc.openvpn.8.html" Type="integer" Value="1"/>
+                        </Component>
+                        <Component Id="shortcut.doc.howto.url" Guid="{0C89847F-45F6-4BBF-9B20-B5FA9BD69906}">
+                            <File Name="$(var.PRODUCT_NAME) HOWTO.url" Source="bookmarks\howto.url"/>
+                            <RemoveFolder Id="shortcut.doc.howto.url" On="uninstall"/>
+                            <RegistryValue Root="HKCU" Key="Software\$(var.PRODUCT_NAME)\Shortcuts" Name="doc.howto.url" Type="integer" Value="1" KeyPath="yes"/>
+                        </Component>
+                        <Component Id="shortcut.doc.support.url" Guid="{2CC129A7-745C-48A5-9C7B-8AFB770D0B85}">
+                            <File Name="$(var.PRODUCT_NAME) Support.url" Source="bookmarks\support.url"/>
+                            <RemoveFolder Id="shortcut.doc.support.url" On="uninstall"/>
+                            <RegistryValue Root="HKCU" Key="Software\$(var.PRODUCT_NAME)\Shortcuts" Name="doc.support.url" Type="integer" Value="1" KeyPath="yes"/>
+                        </Component>
+                        <Component Id="shortcut.doc.website.url" Guid="{9C270D5B-EDE6-4655-A01F-FD70F48C23AB}">
+                            <File Name="$(var.PRODUCT_NAME) Web Site.url" Source="bookmarks\website.url"/>
+                            <RemoveFolder Id="shortcut.doc.website.url" On="uninstall"/>
+                            <RegistryValue Root="HKCU" Key="Software\$(var.PRODUCT_NAME)\Shortcuts" Name="doc.website.url" Type="integer" Value="1" KeyPath="yes"/>
+                        </Component>
+                        <Component Id="shortcut.doc.wiki.url" Guid="{C36D5855-EBE3-4705-B851-96C8A01378DF}">
+                            <File Name="$(var.PRODUCT_NAME) Wiki.url" Source="bookmarks\wiki.url"/>
+                            <RemoveFolder Id="shortcut.doc.wiki.url" On="uninstall"/>
+                            <RegistryValue Root="HKCU" Key="Software\$(var.PRODUCT_NAME)\Shortcuts" Name="doc.wiki.url" Type="integer" Value="1" KeyPath="yes"/>
+                        </Component>
+                    </Directory>
+
+                    <Directory Id="ShortcutsShortcutFolder" Name="Shortcuts">
+                        <Component Id="shortcut.config" Guid="{54EDFEF4-E2FB-4310-BC46-74D3CAEB8C03}">
+                            <Shortcut
+                                Id="shortcut.config"
+                                Name="$(var.PRODUCT_NAME) Configuration File Directory"
+                                Target="[CONFIGDIR]"
+                                WorkingDirectory="CONFIGDIR"/>
+                            <RemoveFolder Id="shortcut.config" On="uninstall"/>
+                            <RegistryValue Root="HKCU" Key="Software\$(var.PRODUCT_NAME)\Shortcuts" Name="config" Type="integer" Value="1"/>
+                        </Component>
+                        <Component Id="shortcut.log" Guid="{FD94C038-D421-40D8-8690-B102625AA784}">
+                            <Shortcut
+                                Id="shortcut.log"
+                                Name="$(var.PRODUCT_NAME) Log File Directory"
+                                Target="[LOGDIR]"
+                                WorkingDirectory="LOGDIR"/>
+                            <RemoveFolder Id="shortcut.log" On="uninstall"/>
+                            <RegistryValue Root="HKCU" Key="Software\$(var.PRODUCT_NAME)\Shortcuts" Name="log" Type="integer" Value="1"/>
+                        </Component>
+                        <Component Id="shortcut.samplecfg" Guid="{32183788-F4CB-4D15-B58A-0C222C201151}">
+                            <Shortcut
+                                Id="shortcut.samplecfg"
+                                Name="$(var.PRODUCT_NAME) Sample Configuration Files"
+                                Target="[SAMPLECFGDIR]"
+                                WorkingDirectory="SAMPLECFGDIR"/>
+                            <RemoveFolder Id="shortcut.samplecfg" On="uninstall"/>
+                            <RegistryValue Root="HKCU" Key="Software\$(var.PRODUCT_NAME)\Shortcuts" Name="samplecfg" Type="integer" Value="1"/>
+                        </Component>
+                    </Directory>
+
+                    <Directory Id="UtilitiesShortcutFolder" Name="Utilities">
+                        <Component Id="shortcut.bin.openvpn.exe.genkey" Guid="{14C9864E-E4D7-401E-B337-2AEBF5E40735}">
+                            <Shortcut
+                                Id="shortcut.bin.openvpn.exe.genkey"
+                                Name="Generate a static $(var.PRODUCT_NAME) key"
+                                Target="[BINDIR]openvpn.exe"
+                                Arguments="--pause-exit --verb 3 --genkey --secret &quot;%USERPROFILE%\Desktop\My $(var.PRODUCT_NAME) Key.txt&quot;"
+                                WorkingDirectory="BINDIR"
+                                Icon="genkey.ico"/>
+                            <RemoveFolder Id="shortcut.bin.openvpn.exe.genkey" On="uninstall"/>
+                            <RegistryValue Root="HKCU" Key="Software\$(var.PRODUCT_NAME)\Shortcuts" Name="bin.openvpn.exe.genkey" Type="integer" Value="1"/>
+                        </Component>
+                        <Component Id="shortcut.bin.tapctl.exe.create.TAPWindows6" Guid="{F31F1774-326F-419F-B74E-29819E161321}">
+                            <Shortcut
+                                Id="shortcut.bin.tapctl.exe.create.TAPWindows6"
+                                Name="Add a new TAP-Windows6 virtual network adapter"
+                                Target="[BINDIR]tapctl.exe"
+                                Arguments="create --hwid root\$(var.PRODUCT_TAP_WIN_COMPONENT_ID)"
+                                WorkingDirectory="BINDIR"
+                                Icon="tapctl_create.ico"/>
+                            <RemoveFolder Id="shortcut.bin.tapctl.exe.create.TAPWindows6" On="uninstall"/>
+                            <RegistryValue Root="HKCU" Key="Software\$(var.PRODUCT_NAME)\Shortcuts" Name="bin.tapctl.exe.create.TAPWindows6" Type="integer" Value="1"/>
+                        </Component>
+                        <Component Id="shortcut.bin.tapctl.exe.create.Wintun" Guid="{D257A1B3-A06E-4CE2-AA93-C36F6487126A}">
+                            <Shortcut
+                                Id="shortcut.bin.tapctl.exe.create.Wintun"
+                                Name="Add a new Wintun virtual network adapter"
+                                Target="[BINDIR]tapctl.exe"
+                                Arguments="create --hwid wintun"
+                                WorkingDirectory="BINDIR"
+                                Icon="tapctl_create.ico"/>
+                            <RemoveFolder Id="shortcut.bin.tapctl.exe.create.Wintun" On="uninstall"/>
+                            <RegistryValue Root="HKCU" Key="Software\$(var.PRODUCT_NAME)\Shortcuts" Name="bin.tapctl.exe.create.Wintun" Type="integer" Value="1"/>
+                        </Component>
+                    </Directory>
+                </Directory>
+
+                <Directory Id="TAPWindows6ShortcutFolder" Name="$(var.PRODUCT_TAP_WIN_NAME)">
+                    <Directory Id="TAPWindows6UtilitiesShortcutFolder" Name="Utilities"/>
+                </Directory>
+            </Directory>
+
+            <Directory Id="DesktopFolder">
+                <Component Id="shortcut.openvpn_gui.exe.desktop" Guid="{B8D9B27E-CCA2-4384-8563-3C80A8FD109B}">
+                    <Shortcut
+                        Id="shortcut.openvpn_gui.exe.desktop"
+                        Name="$(var.PRODUCT_NAME) GUI"
+                        Target="[BINDIR]openvpn-gui.exe"
+                        WorkingDirectory="BINDIR"
+                        Icon="openvpn.ico"/>
+                    <RemoveFolder Id="shortcut.openvpn_gui.exe.desktop" On="uninstall"/>
+                    <RegistryValue Root="HKCU" Key="Software\$(var.PRODUCT_NAME)\Shortcuts" Name="openvpn_gui.exe.desktop" Type="integer" Value="1"/>
+                </Component>
+            </Directory>
+        </Directory>
+
+
+        <!--
+            Registry entries
+        -->
+        <DirectoryRef Id="PRODUCTDIR">
+            <Component Id="reg.path" Guid="{5FF63993-1F41-4EEF-8E04-2C9F10F7C1DC}">
+                <RegistryValue
+                    Root="HKLM"
+                    Key="Software\$(var.PRODUCT_NAME)"
+                    Type="string"
+                    Value="[PRODUCTDIR]"/>
+            </Component>
+            <Component Id="reg.config_dir" Guid="{FA8F296E-3808-4861-AEC1-A14062D060AF}">
+                <RegistryValue
+                    Root="HKLM"
+                    Key="Software\$(var.PRODUCT_NAME)"
+                    Name="config_dir"
+                    Type="string"
+                    Value="[CONFIGDIR]"/>
+            </Component>
+            <Component Id="reg.autostart_config_dir" Guid="{5D2C1C1D-F576-41C9-9A1A-8857DC9F1E63}">
+                <RegistryValue
+                    Root="HKLM"
+                    Key="Software\$(var.PRODUCT_NAME)"
+                    Name="autostart_config_dir"
+                    Type="string"
+                    Value="[CONFIGAUTODIR]"/>
+            </Component>
+            <Component Id="reg.config_ext" Guid="{A5CD806D-8E76-4A2F-86E9-B7FDE718088A}">
+                <RegistryValue
+                    Root="HKLM"
+                    Key="Software\$(var.PRODUCT_NAME)"
+                    Name="config_ext"
+                    Type="string"
+                    Value="$(var.CONFIG_EXTENSION)"/>
+            </Component>
+            <Component Id="reg.disable_save_passwords" Guid="{217D5F60-6F8B-48D1-9B7A-67CDC4511A5E}">
+                <RegistryValue
+                    Root="HKLM"
+                    Key="Software\$(var.PRODUCT_NAME)"
+                    Name="disable_save_passwords"
+                    Type="string"
+                    Value="[DISABLESAVEPWD]"/>
+            </Component>
+            <Component Id="reg.exe_path" Guid="{36718C27-DA91-428D-AF1F-71E9325B6AFB}">
+                <RegistryValue
+                    Root="HKLM"
+                    Key="Software\$(var.PRODUCT_NAME)"
+                    Name="exe_path"
+                    Type="string"
+                    Value="[BINDIR]openvpn.exe"/>
+            </Component>
+            <Component Id="reg.log_append" Guid="{BAC3CB98-4C57-4AA3-A4EC-A1D49B8EF90E}">
+                <RegistryValue
+                    Root="HKLM"
+                    Key="Software\$(var.PRODUCT_NAME)"
+                    Name="log_append"
+                    Type="string"
+                    Value="[LOGAPPEND]"/>
+            </Component>
+            <Component Id="reg.log_dir" Guid="{4ED153F2-E679-4B3E-8D6F-BDD0628195CE}">
+                <RegistryValue
+                    Root="HKLM"
+                    Key="Software\$(var.PRODUCT_NAME)"
+                    Name="log_dir"
+                    Type="string"
+                    Value="[LOGDIR]"/>
+            </Component>
+            <Component Id="reg.ovpn_admin_group" Guid="{FCFFC52F-C813-4DC6-9988-F99DB57FE480}">
+                <RegistryValue
+                    Root="HKLM"
+                    Key="Software\$(var.PRODUCT_NAME)"
+                    Name="ovpn_admin_group"
+                    Type="string"
+                    Value="[ADMINGROUP]"/>
+            </Component>
+            <Component Id="reg.priority" Guid="{7D7E99C2-5BDD-4F52-BDE8-666A4403B64F}">
+                <RegistryValue
+                    Root="HKLM"
+                    Key="Software\$(var.PRODUCT_NAME)"
+                    Name="priority"
+                    Type="string"
+                    Value="[PRIORITY]"/>
+            </Component>
+            <Component Id="reg.conf.extension" Guid="{D93FFD42-2380-490A-8764-52AAC4896ED7}">
+                <RegistryValue
+                    Root="HKCR"
+                    Key=".$(var.CONFIG_EXTENSION)"
+                    Type="string"
+                    Value="$(var.PRODUCT_NAME)File"/>
+            </Component>
+            <Component Id="reg.conf.descr" Guid="{4801346D-45CB-4C8D-A4B1-497066AA4557}">
+                <RegistryValue
+                    Root="HKCR"
+                    Key="$(var.PRODUCT_NAME)File"
+                    Type="string"
+                    Value="$(var.PRODUCT_NAME) Config File"/>
+            </Component>
+            <Component Id="reg.conf.verb.default" Guid="{424B0990-09A2-4390-8616-E0A1D8116EFB}">
+                <RegistryValue
+                    Root="HKCR"
+                    Key="$(var.PRODUCT_NAME)File\shell"
+                    Type="string"
+                    Value="open"/>
+            </Component>
+            <Component Id="reg.conf.icon" Guid="{9C61734E-69E5-4638-A400-2AD0517F5AEC}">
+                <RegistryValue
+                    Root="HKCR"
+                    Key="$(var.PRODUCT_NAME)File\DefaultIcon"
+                    Type="string"
+                    Value="[RESDIR]ovpn.ico,0"/>
+            </Component>
+            <Component Id="reg.conf.open.command" Guid="{F11A8A05-AB43-4C06-BF35-C59B77E3F7BB}">
+                <RegistryValue
+                    Root="HKCR"
+                    Key="$(var.PRODUCT_NAME)File\shell\open\command"
+                    Type="string"
+                    Value="&quot;[EDITOR]&quot; &quot;%1&quot;"/>
+            </Component>
+            <Component Id="reg.conf.run" Guid="{32B39844-BBDD-4D10-AD89-64F2A955E101}">
+                <RegistryValue
+                    Root="HKCR"
+                    Key="$(var.PRODUCT_NAME)File\shell\run"
+                    Type="string"
+                    Value="Start $(var.PRODUCT_NAME) on this config file"/>
+            </Component>
+            <Component Id="reg.conf.run.command" Guid="{1F23876D-F1BB-4154-9248-AC1C7700FA99}">
+                <RegistryValue
+                    Root="HKCR"
+                    Key="$(var.PRODUCT_NAME)File\shell\run\command"
+                    Type="string"
+                    Value="&quot;[BINDIR]openvpn.exe&quot; &#45;&#45;pause-exit &#45;&#45;config &quot;%1&quot;"/>
+            </Component>
+            <Component Id="reg.openvpngui.startup" Guid="{073B129C-665D-4CF6-9E10-91A132C4B4BA}">
+                <RegistryKey
+                    Root="HKCU"
+                    Key="Software\Microsoft\Windows\CurrentVersion\Run"
+                    ForceCreateOnInstall="yes">
+                    <RegistryValue
+                        Name="$(var.PRODUCT_NAME)-GUI"
+                        Type="string"
+                        Value="[BINDIR]openvpn-gui.exe"/>
+                </RegistryKey>
+            </Component>
+        </DirectoryRef>
+
+
+        <!--
+            Configure Active Setup to install HKCU registry entries by triggering a repair when other users logs in.
+        -->
+        <Binary
+            Id="ActiveSetupCA.js"
+            SourceFile="script\ActiveSetupCA.js"/>
+
+        <CustomAction Id="EvaluateActiveSetup" BinaryKey="ActiveSetupCA.js" JScriptCall="EvaluateActiveSetup"/>
+        <CustomAction Id="PublishActiveSetup"  BinaryKey="ActiveSetupCA.js" JScriptCall="PublishActiveSetup" Execute="commit" Impersonate="no"/>
+        <InstallExecuteSequence>
+            <Custom Action="EvaluateActiveSetup" After="ProcessComponents"/>
+            <Custom Action="PublishActiveSetup"  After="PublishProduct"/>
+        </InstallExecuteSequence>
+
+        <UI>
+            <ProgressText Action="EvaluateActiveSetup">Evaluating Active Setup components</ProgressText>
+            <ProgressText Action="PublishActiveSetup">Publishing Active Setup components</ProgressText>
+        </UI>
+
+
+        <!--
+            TUN/TAP Driver Installation
+        -->
+        <DirectoryRef Id="PRODUCTDIR">
+            <Merge Id="TAPWindows6MergeModule" Language="0" DiskId="1" SourceFile="!(bindpath.build)$(var.PRODUCT_PLATFORM)\tap-windows6.msm"/>
+            <Merge Id="WintunMergeModule"      Language="0" DiskId="1" SourceFile="!(bindpath.build)$(var.PRODUCT_PLATFORM)\wintun.msm"/>
+        </DirectoryRef>
+
+        <UI>
+            <ProgressText Action="$(var.PRODUCT_TAP_WIN_COMPONENT_ID)_Evaluate">Evaluating TAP-Windows6 driver</ProgressText>
+            <ProgressText Action="$(var.PRODUCT_TAP_WIN_COMPONENT_ID)_Process">Processing TAP-Windows6 driver</ProgressText>
+            <ProgressText Action="EvaluateWintun">Evaluating Wintun driver</ProgressText>
+            <ProgressText Action="ProcessWintun">Processing Wintun driver</ProgressText>
+        </UI>
+
+
+        <!--
+            TUN/TAP adapters
+        -->
+        <CustomAction Id="EvaluateTUNTAPAdapters"          BinaryKey="libopenvpnmsica.dll" DllEntry="EvaluateTUNTAPAdapters"/>
+        <CustomAction Id="UninstallTUNTAPAdapters"         BinaryKey="libopenvpnmsica.dll" DllEntry="ProcessDeferredAction" Execute="deferred" Impersonate="no"/>
+        <CustomAction Id="UninstallTUNTAPAdaptersCommit"   BinaryKey="libopenvpnmsica.dll" DllEntry="ProcessDeferredAction" Execute="commit"   Impersonate="no"/>
+        <CustomAction Id="UninstallTUNTAPAdaptersRollback" BinaryKey="libopenvpnmsica.dll" DllEntry="ProcessDeferredAction" Execute="rollback" Impersonate="no"/>
+        <CustomAction Id="InstallTUNTAPAdapters"           BinaryKey="libopenvpnmsica.dll" DllEntry="ProcessDeferredAction" Execute="deferred" Impersonate="no"/>
+        <CustomAction Id="InstallTUNTAPAdaptersCommit"     BinaryKey="libopenvpnmsica.dll" DllEntry="ProcessDeferredAction" Execute="commit"   Impersonate="no"/>
+        <CustomAction Id="InstallTUNTAPAdaptersRollback"   BinaryKey="libopenvpnmsica.dll" DllEntry="ProcessDeferredAction" Execute="rollback" Impersonate="no"/>
+
+        <InstallExecuteSequence>
+            <Custom Action="EvaluateTUNTAPAdapters"           After="ProcessComponents"/>
+            <Custom Action="UninstallTUNTAPAdapters"          After="DeleteServices"/>
+            <Custom Action="UninstallTUNTAPAdaptersCommit"    After="UninstallTUNTAPAdapters"/>
+            <Custom Action="UninstallTUNTAPAdaptersRollback" Before="UninstallTUNTAPAdapters"/>
+            <Custom Action="InstallTUNTAPAdapters"           Before="InstallServices"/>
+            <Custom Action="InstallTUNTAPAdaptersCommit"      After="InstallTUNTAPAdapters"/>
+            <Custom Action="InstallTUNTAPAdaptersRollback"   Before="InstallTUNTAPAdapters"/>
+        </InstallExecuteSequence>
+
+        <UI>
+            <ProgressText
+                Action="EvaluateTUNTAPAdapters">Evaluating TUN/TAP adapters</ProgressText>
+            <ProgressText
+                Action="UninstallTUNTAPAdapters"
+                Template="[1]: [2] [3]">Deleting TUN/TAP adapters</ProgressText>
+            <ProgressText
+                Action="InstallTUNTAPAdapters"
+                Template="[1]: [2] [3] [4]">Creating TUN/TAP adapters</ProgressText>
+
+            <Error Id="2550">OpenVPNMSICA: [2]</Error>
+            <Error Id="2551">OpenVPNMSICA: [2]  Error [3]: [4]</Error>
+        </UI>
+
+        <CustomTable Id="TUNTAPAdapter">
+            <Column
+                Id="Adapter"
+                Description="Primary key used to identify a particular adapter record."
+                Category="Identifier"
+                Type="string"
+                Width="72"
+                Nullable="no"
+                Localizable="no"
+                PrimaryKey="yes"/>
+
+            <Column
+                Id="DisplayName"
+                Description="Adapter display name, may be localized."
+                Category="Filename"
+                Type="string"
+                Width="255"
+                Nullable="yes"
+                Localizable="yes"/>
+
+            <Column
+                Id="HardwareId"
+                Description="Device hardware ID."
+                Category="Text"
+                Type="string"
+                Width="100"
+                Nullable="no"
+                Localizable="no"/>
+
+            <Column
+                Id="Condition"
+                Description="A conditional that can control whether a TUN/TAP adapter is installed. If the condition is null or evaluates to true, then the adapter is installed when its component is installed. Note: When its component is uninstalled, the TUN/TAP adapter is unconditionally uninstalled."
+                Category="Condition"
+                Type="string"
+                Width="255"
+                Nullable="yes"
+                Localizable="no"/>
+
+            <Column
+                Id="Component_"
+                Description="Foreign key into the Component table denoting the component whose selection gates the the adapter creation/deletion."
+                Category="Identifier"
+                Type="string"
+                Width="72"
+                Nullable="no"
+                Localizable="no"
+                KeyTable="Component"
+                KeyColumn="1"/>
+
+            <Row>
+                <Data Column="Adapter"    >TAPWindows6</Data>
+                <Data Column="DisplayName">TAPWin~6|$(var.PRODUCT_NAME) TAP-Windows6</Data>
+                <Data Column="HardwareId" >root\$(var.PRODUCT_TAP_WIN_COMPONENT_ID)</Data>
+                <Data Column="Condition"  ><![CDATA[NOT TAPWINDOWS6ADAPTERS]]></Data>
+                <Data Column="Component_" >regD8053A2D8D674155AF2620A90720BE55.8D9A59BA_33C1_4CA0_96AF_E7F728DEC8D7</Data>
+            </Row>
+
+            <Row>
+                <Data Column="Adapter"    >Wintun</Data>
+                <Data Column="DisplayName">Wintun|$(var.PRODUCT_NAME) Wintun</Data>
+                <Data Column="HardwareId" >Wintun</Data>
+                <Data Column="Condition"  ><![CDATA[NOT WINTUNADAPTERS]]></Data>
+                <Data Column="Component_" >reg11F81A5FFB49D87B59FD3777E57FF853.C28309D9_1954_4F2D_A7D1_228850092460</Data>
+            </Row>
+        </CustomTable>
+
+
+        <!--
+            Close OpenVPN-GUI before install
+        -->
+        <CustomAction Id="CloseOpenVPNGUI" BinaryKey="libopenvpnmsica.dll" DllEntry="CloseOpenVPNGUI"/>
+        <InstallUISequence>
+            <Custom Action="CloseOpenVPNGUI" After="ProgressPage"/>
+        </InstallUISequence>
+        <UI>
+            <ProgressText Action="CloseOpenVPNGUI">Closing OpenVPN-GUI</ProgressText>
+        </UI>
+
+
+        <!--
+            Launch OpenVPN-GUI after install
+        -->
+        <CustomAction Id="StartOpenVPNGUI" BinaryKey="libopenvpnmsica.dll" DllEntry="StartOpenVPNGUI" Impersonate="yes"/>
+        <UI>
+            <ProgressText Action="StartOpenVPNGUI">Launching OpenVPN-GUI</ProgressText>
+            <!-- Note that the OpenVPN-GUI is launched only when the OpenVPN.GUI.OnLogon feature is being installed. -->
+            <Publish
+                Dialog="ExitPage"
+                Control="Close"
+                Event="DoAction" Value="StartOpenVPNGUI"><![CDATA[$reg.openvpngui.startup=3 AND NOT Installed]]></Publish>
+        </UI>
+
+
+        <!--
+            Features
+        -->
+        <Property Id="INSTALLLEVEL" Value="2"/>
+        <Feature
+            Id="OpenVPN"
+            Title="$(var.PRODUCT_NAME)"
+            Description="User-space components, including openvpn.exe"
+            Level="2"
+            ConfigurableDirectory="PRODUCTDIR"
+            AllowAdvertise="no"
+            Display="expand">
+            <ComponentRef Id="license.txt"/>
+            <ComponentRef Id="bin.libcrypto_1_1.dll"/>
+            <ComponentRef Id="bin.liblzo2_2.dll"/>
+            <ComponentRef Id="bin.libpkcs11_helper_1.dll"/>
+            <ComponentRef Id="bin.libssl_1_1.dll"/>
+            <ComponentRef Id="bin.openvpn.exe"/>
+            <ComponentRef Id="bin.openvpnserv.exe"/>
+            <ComponentRef Id="bin.tapctl.exe"/>
+            <ComponentRef Id="config.README.txt"/>
+            <ComponentRef Id="log.README.txt"/>
+            <ComponentRef Id="res.ovpn.ico"/>
+            <ComponentRef Id="shortcut.bin.openvpn.exe.genkey"/>
+            <ComponentRef Id="reg.path"/>
+            <ComponentRef Id="reg.config_dir"/>
+            <ComponentRef Id="reg.config_ext"/>
+            <ComponentRef Id="reg.exe_path"/>
+            <ComponentRef Id="reg.log_append"/>
+            <ComponentRef Id="reg.log_dir"/>
+            <ComponentRef Id="reg.ovpn_admin_group"/>
+            <ComponentRef Id="reg.priority"/>
+            <ComponentRef Id="reg.conf.extension"/>
+            <ComponentRef Id="reg.conf.descr"/>
+            <ComponentRef Id="reg.conf.verb.default"/>
+            <ComponentRef Id="reg.conf.icon"/>
+            <ComponentRef Id="reg.conf.open.command"/>
+            <ComponentRef Id="reg.conf.run"/>
+            <ComponentRef Id="reg.conf.run.command"/>
+            <ComponentRef Id="shortcut.config"/>
+            <ComponentRef Id="shortcut.log"/>
+            <ComponentRef Id="shortcut.samplecfg"/>
+
+            <Feature
+                Id="OpenVPN.GUI"
+                Title="$(var.PRODUCT_NAME) GUI"
+                Description="GUI by Mathias Sundman"
+                Level="2"
+                ConfigurableDirectory="PRODUCTDIR"
+                AllowAdvertise="no"
+                Display="expand">
+                <Condition Level="1"><![CDATA[NSIS.OPENVPN.BIN.OPENVPN_GUI.EXE OR NSIS.OPENVPN.X86.BIN.OPENVPN_GUI.EXE]]></Condition>
+                <ComponentRef Id="bin.openvpn_gui.exe"/>
+                <ComponentRef Id="shortcut.openvpn_gui.exe"/>
+                <ComponentRef Id="shortcut.openvpn_gui.exe.desktop"/>
+                <ComponentRef Id="reg.disable_save_passwords"/>
+
+                <Feature
+                    Id="OpenVPN.GUI.OnLogon"
+                    Title="Launch on User Logon"
+                    Level="2"
+                    ConfigurableDirectory="PRODUCTDIR"
+                    AllowAdvertise="no">
+                    <ComponentRef Id="reg.openvpngui.startup"/>
+                </Feature>
+            </Feature>
+
+            <Feature
+                Id="OpenVPN.Service"
+                Title="$(var.PRODUCT_NAME) Service"
+                Description="Service wrappers"
+                Level="3"
+                ConfigurableDirectory="PRODUCTDIR"
+                AllowAdvertise="no">
+                <Condition Level="1"><![CDATA[NETFRAMEWORK40FULL AND OPENVPNSERVICE AND CONFIGDIRREG AND NOT CONFIGAUTODIRREG]]></Condition>
+                <Condition Level="0"><![CDATA[NOT NETFRAMEWORK40FULL AND NOT Installed]]></Condition>
+                <ComponentRef Id="bin.openvpnserv2.exe"/>
+                <ComponentRef Id="config.Where_are_my_config_files.txt"/>
+                <ComponentRef Id="config_auto.README.txt"/>
+                <ComponentRef Id="reg.autostart_config_dir"/>
+            </Feature>
+
+            <Feature
+                Id="OpenVPN.Documentation"
+                Title="Documentation"
+                Description="$(var.PRODUCT_NAME) documentation"
+                Level="2"
+                ConfigurableDirectory="DOCDIR"
+                AllowAdvertise="no">
+                <Condition Level="1"><![CDATA[NSIS.OPENVPN.DOC.INSTALL_WIN32.TXT OR NSIS.OPENVPN.X86.DOC.INSTALL_WIN32.TXT]]></Condition>
+                <ComponentRef Id="doc.INSTALL_win32.txt"/>
+                <ComponentRef Id="doc.openvpn.8.html"/>
+                <ComponentRef Id="shortcut.doc.INSTALL_win32.txt"/>
+                <ComponentRef Id="shortcut.doc.openvpn.8.html"/>
+                <ComponentRef Id="shortcut.doc.howto.url"/>
+                <ComponentRef Id="shortcut.doc.support.url"/>
+                <ComponentRef Id="shortcut.doc.website.url"/>
+                <ComponentRef Id="shortcut.doc.wiki.url"/>
+            </Feature>
+
+            <Feature
+                Id="OpenVPN.SampleCfg"
+                Title="Configuration Samples"
+                Description="$(var.PRODUCT_NAME) client/server configuration examples"
+                Level="2"
+                ConfigurableDirectory="SAMPLECFGDIR"
+                AllowAdvertise="no">
+                <Condition Level="1"><![CDATA[NSIS.OPENVPN.SAMPLECFG.SAMPLE.OVPN OR NSIS.OPENVPN.X86.SAMPLECFG.SAMPLE.OVPN]]></Condition>
+                <ComponentRef Id="samplecfg.client.$(var.CONFIG_EXTENSION)"/>
+                <ComponentRef Id="samplecfg.sample.$(var.CONFIG_EXTENSION)"/>
+                <ComponentRef Id="samplecfg.server.$(var.CONFIG_EXTENSION)"/>
+            </Feature>
+        </Feature>
+
+        <Feature
+            Id="Drivers"
+            Title="Drivers"
+            Description="TUN/TAP drivers"
+            Level="1"
+            ConfigurableDirectory="PRODUCTDIR"
+            AllowAdvertise="no"
+            Display="expand">
+
+            <Feature
+                Id="Drivers.TAPWindows6"
+                Title="TAP-Windows6"
+                Description="TAP-Windows driver (NDIS 6)"
+                Level="1"
+                ConfigurableDirectory="PRODUCTDIR"
+                AllowAdvertise="no">
+                <ComponentRef Id="shortcut.bin.tapctl.exe.create.TAPWindows6"/>
+                <MergeRef Id="TAPWindows6MergeModule"/>
+            </Feature>
+
+            <Feature
+                Id="Drivers.Wintun"
+                Title="Wintun"
+                Description="Layer 3 TUN Driver for Windows"
+                Level="1"
+                ConfigurableDirectory="PRODUCTDIR"
+                AllowAdvertise="no">
+                <ComponentRef Id="shortcut.bin.tapctl.exe.create.Wintun"/>
+                <MergeRef Id="WintunMergeModule"/>
+            </Feature>
+        </Feature>
+
+        <Feature
+            Id="OpenSSL"
+            Title="OpenSSL Utilities"
+            Description="Used for generating public/private key pairs"
+            Level="3"
+            ConfigurableDirectory="PRODUCTDIR"
+            AllowAdvertise="no"
+            Display="expand">
+            <Condition Level="1"><![CDATA[NSIS.OPENVPN.BIN.OPENSSL.EXE OR NSIS.OPENVPN.X86.BIN.OPENSSL.EXE]]></Condition>
+            <ComponentRef Id="license.txt"/>
+            <ComponentRef Id="bin.openssl.exe"/>
+            <ComponentRef Id="bin.libcrypto_1_1.dll"/>
+            <ComponentRef Id="bin.libssl_1_1.dll"/>
+
+            <Feature
+                Id="EasyRSA"
+                Title="EasyRSA 2 Certificate Management Scripts"
+                Description="Scripts for X509 certificate management"
+                Level="3"
+                ConfigurableDirectory="EASYRSADIR"
+                AllowAdvertise="no">
+                <Condition Level="1"><![CDATA[NSIS.OPENVPN.EASYRSA.README.TXT OR NSIS.OPENVPN.X86.EASYRSA.README.TXT]]></Condition>
+                <ComponentRef Id="easyrsa.build_ca.bat"/>
+                <ComponentRef Id="easyrsa.build_dh.bat"/>
+                <ComponentRef Id="easyrsa.build_key.bat"/>
+                <ComponentRef Id="easyrsa.build_key_pass.bat"/>
+                <ComponentRef Id="easyrsa.build_key_pkcs12.bat"/>
+                <ComponentRef Id="easyrsa.build_key_server.bat"/>
+                <ComponentRef Id="easyrsa.clean_all.bat"/>
+                <ComponentRef Id="easyrsa.index.txt.start"/>
+                <ComponentRef Id="easyrsa.init_config.bat"/>
+                <ComponentRef Id="easyrsa.openssl_1.0.0.cnf"/>
+                <ComponentRef Id="easyrsa.README.txt"/>
+                <ComponentRef Id="easyrsa.revoke_full.bat"/>
+                <ComponentRef Id="easyrsa.serial.start"/>
+                <ComponentRef Id="easyrsa.vars.bat.sample"/>
+            </Feature>
+        </Feature>
+
+
+        <!--
+            UI
+        -->
+        <InstallUISequence>
+            <Show Dialog="PreparePage"          Before="FindRelatedProducts"/>
+            <!--<Show Dialog="LicenseAgreementPage" Before="SetupTypePage">NOT Installed</Show>-->
+            <Show Dialog="SetupTypePage"        Before="ProgressPage">NOT Installed</Show>
+            <Show Dialog="ResumePage"           Before="ProgressPage">Installed AND (RESUME OR Preselected)</Show>
+            <Show Dialog="MaintenanceTypePage"  Before="ProgressPage">Installed AND NOT RESUME AND NOT Preselected</Show>
+            <Show Dialog="ProgressPage"         Before="ExecuteAction"/>
+
+            <Show Dialog="ExitPage"       OnExit="success"/>
+            <Show Dialog="UserExitPage"   OnExit="cancel"/>
+            <Show Dialog="FatalErrorPage" OnExit="error"/>
+        </InstallUISequence>
+
+        <AdminUISequence>
+            <Show Dialog="PreparePage"           Before="CostInitialize"/>
+            <!--<Show Dialog="LicenseAgreementPage"  Before="AdminInstallPointPage"/>-->
+            <Show Dialog="AdminInstallPointPage" Before="ProgressPage"/>
+            <Show Dialog="ProgressPage"          Before="ExecuteAction"/>
+
+            <Show Dialog="ExitPage"       OnExit="success"/>
+            <Show Dialog="UserExitPage"   OnExit="cancel"/>
+            <Show Dialog="FatalErrorPage" OnExit="error"/>
+        </AdminUISequence>
+    </Product>
+</Wix>
