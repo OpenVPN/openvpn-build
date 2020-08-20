@@ -15,7 +15,7 @@ About
     hardware platforms and operating systems (e.g. Windows,
     ARM). You do not need any of these scripts if you're
     building a native version of OpenVPN on a UNIX-like
-    operatingsystem.
+    operating system.
 
     Thorough documentation is available in the OpenVPN wiki:
 
@@ -43,7 +43,7 @@ Patches
 **************************************************
 
     The "generic/patches" directory contains patches applied
-    to openvpn or its dependencies ("products") before
+    to OpenVPN or its dependencies ("products") before
     starting the build. The product name is determined from
     the first part of the patch filename before a dash ("-").
 
