@@ -183,6 +183,8 @@
                 <Control Id="Text" Type="Text" X="15" Y="60" Width="370" Height="24" Text="Maintenance allows you to change the way features are installed on your computer or even to remove [SimpleProductName] from your computer." TabSkip="no" Transparent="yes" NoPrefix="yes"/>
                 <Control Id="Buttons" Type="RadioButtonGroup" X="45" Y="99" Width="310" Height="117" Property="InstallModeRB" TabSkip="no"/>
                 <Control Id="Continue" Type="PushButton" X="325" Y="265" Width="60" Height="20" Text="&amp;Continue" TabSkip="no" Default="yes">
+                    <Condition Action="disable">InstallModeRB&lt;&gt;"Remove"</Condition>
+                    <Condition Action="enable">InstallModeRB="Remove"</Condition>
                     <Publish Property="InstallMode" Value="[InstallModeRB]">1</Publish>
                     <Publish Event="ReinstallMode" Value="ecmus">InstallMode="Repair" AND OutOfDiskSpace&lt;&gt;1</Publish>
                     <Publish Event="Remove" Value="All">InstallMode="Remove" AND OutOfDiskSpace&lt;&gt;1</Publish>
@@ -219,7 +221,7 @@
             </RadioButtonGroup>
         </UI>
 
-        <Property Id="InstallModeRB" Value="Change"/>
+        <Property Id="InstallModeRB" Value="Remove"/>
 
 
         <!--
