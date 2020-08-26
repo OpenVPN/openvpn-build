@@ -56,6 +56,7 @@
         <Property Id="ARPPRODUCTICON" Value="openvpn.ico"/>
         <Property Id="ARPURLINFOABOUT" Value="https://openvpn.net/community/"/>
         <Property Id="ARPURLUPDATEINFO" Value="https://openvpn.net/community-downloads/"/>
+        <Property Id="ARPNOMODIFY" Value="1"/>
         <Property Id="SimpleProductName" Value="$(var.PRODUCT_NAME)"/>
         <Property Id="DisplayVersion" Value="$(var.PACKAGE_VERSION)"/>
         <Property Id="MSICHECKCRCS" Value="1"/>
