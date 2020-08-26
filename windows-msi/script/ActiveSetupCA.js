@@ -45,11 +45,13 @@ function EvaluateActiveSetup()
         version = v.join(",");
     }
 
+    var runOnLogon = Session.FeatureRequestState("OpenVPN.GUI.OnLogon") == 3;
+
     // Save the data for deferred action.
     Session.Property("PublishActiveSetup") =
         (Session.EvaluateCondition("REMOVE=\"ALL\"") == 1/*msiEvaluateConditionTrue*/ ?
             ["uninstall", productCode] :
-            ["install", productCode, Session.Property("ProductName"), version]
+            ["install", productCode, Session.Property("ProductName"), version, runOnLogon, Session.Property("BINDIR")]
         ).join("\t");
 
     return 1/*msiDoActionStatusSuccess*/;
@@ -74,11 +76,15 @@ function PublishActiveSetup()
     if (data && data.length >= 2) {
         var
             wsh = new ActiveXObject("WScript.Shell"),
-            regPath = "HKLM\\Software\\Microsoft\\Active Setup\\Installed Components\\" + data[1] + "\\";
+            regPath = "HKLM\\Software\\Microsoft\\Active Setup\\Installed Components\\" + data[1] + "\\",
+            hkcu_run = "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run";
 
         switch (data[0].toLowerCase()) {
             case "install":
-                if (data.length >= 4) {
+                if (data.length >= 6) {
+                    var runOnLogon = data[4] == "true";
+                    var bindir = data[5];
+
                     // Register component.
                     wsh.RegWrite(regPath,             data[2], "REG_SZ");
                     wsh.RegWrite(regPath + "Version", data[3], "REG_SZ");
@@ -87,8 +93,12 @@ function PublishActiveSetup()
                     wsh.RegWrite(regPath + "IsInstalled", 1, "REG_DWORD");
                     wsh.RegWrite(regPath + "DontAsk"    , 2, "REG_DWORD");
 
-                    // Set action to execute on user logon.
-                    wsh.RegWrite(regPath + "StubPath", "\"%SystemRoot%\\system32\\msiexec.exe\" /fu \"" + data[1] + "\" /qn", "REG_EXPAND_SZ");
+                    // StubPath command will be executed on user logon
+                    if (runOnLogon) {
+                        wsh.RegWrite(regPath + "StubPath" , "reg add " + hkcu_run + " /f /v OPENVPN-GUI /t REG_SZ /d \"" + bindir + "openvpn-gui.exe\"", "REG_EXPAND_SZ");
+                    } else {
+                        wsh.RegWrite(regPath + "StubPath" , "reg delete " + hkcu_run + " /v OPENVPN-GUI /f");
+                    }
                 }
                 break;
 
@@ -96,10 +106,8 @@ function PublishActiveSetup()
                 // Mark component as uninstalled.
                 wsh.RegWrite(regPath + "IsInstalled", 0, "REG_DWORD");
 
-                // We should have set the StubPath to execute cleanup. Unfortunately, when
-                // the StubPath gets executed, the MSI package is gone already. So, a
-                // `msiexec /x [ProductCode] /qn` is not possible any more.
-                try { wsh.RegDelete(regPath + "StubPath"); } catch (err) {}
+                // StubPath command will be executed on user logon
+                wsh.RegWrite(regPath + "StubPath" , "reg delete " + hkcu_run + " /v OPENVPN-GUI /f");
                 break;
         }
     }

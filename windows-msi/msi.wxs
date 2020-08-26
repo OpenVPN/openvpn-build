@@ -1176,7 +1176,7 @@
 
 
         <!--
-            Configure Active Setup to install HKCU registry entries by triggering a repair when other users logs in.
+            Configure Active Setup to install HKCU "run on logon" registry entry when other users logs in.
         -->
         <Binary
             Id="ActiveSetupCA.js"
