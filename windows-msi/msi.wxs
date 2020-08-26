@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  openvpn-build Ã¢â‚¬â€� OpenVPN packaging
+  openvpn-build — OpenVPN packaging
 
   Copyright (C) 2018-2020 Simon Rozman <simon@rozman.si>
 
@@ -56,6 +56,8 @@
         <Property Id="ARPPRODUCTICON" Value="openvpn.ico"/>
         <Property Id="ARPURLINFOABOUT" Value="https://openvpn.net/community/"/>
         <Property Id="ARPURLUPDATEINFO" Value="https://openvpn.net/community-downloads/"/>
+        <Property Id="ARPNOMODIFY" Value="1"/>
+        <Property Id="ARPNOREPAIR" Value="1"/>
         <Property Id="SimpleProductName" Value="$(var.PRODUCT_NAME)"/>
         <Property Id="DisplayVersion" Value="$(var.PACKAGE_VERSION)"/>
         <Property Id="MSICHECKCRCS" Value="1"/>
@@ -721,7 +723,7 @@
 
                     <Directory Id="BINDIR" Name="bin">
                         <Component Id="bin.libcrypto_1_1.dll" Guid="{811694A9-DC99-4CFA-BD72-4877F8E32C7C}">
-                            <File Name="libcrypto-1_1$(var.OPENSSL_PLAT).dll" Source="!(bindpath.openvpn)bin\libcrypto-1_1$(var.OPENSSL_PLAT).dll Checksum="yes"/>
+                            <File Name="libcrypto-1_1$(var.OPENSSL_PLAT).dll" Source="!(bindpath.openvpn)bin\libcrypto-1_1$(var.OPENSSL_PLAT).dll" Checksum="yes"/>
                         </Component>
                         <Component Id="bin.liblzo2_2.dll" Guid="{A1A057F0-235B-4F55-9A3A-CDA2112648F8}">
                             <File Name="liblzo2-2.dll" Source="!(bindpath.openvpn)bin\liblzo2-2.dll" Checksum="yes"/>
