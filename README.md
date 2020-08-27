@@ -31,7 +31,7 @@ NetworkManager.
 
 Check out sbuild_wrapper code from GitHub:
 
-    $ git clone https://github.com/mattock/sbuild_wrapper.git
+    $ git clone https://github.com/OpenVPN/sbuild_wrapper.git
 
 Configuration
 =============
