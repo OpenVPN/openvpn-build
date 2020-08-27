@@ -29,7 +29,7 @@ Once prerequisites are set up copy vars.example to vars and add your GPG key ID.
 Making a full release
 =====================
 
-Typically you need / want to edit build parameters in var:
+Typically you need / want to edit build parameters in vars:
 
     OPENVPN_PREVIOUS_VERSION="${OPENVPN_PREVIOUS_VERSION:-2.4.7}"
     OPENVPN_CURRENT_VERSION="${OPENVPN_CURRENT_VERSION:-2.4.8}"
