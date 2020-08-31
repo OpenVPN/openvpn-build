@@ -65,6 +65,11 @@
         <Property Id="EDITOR" Value="notepad.exe"/>
         <PropertyRef Id="NETFRAMEWORK40FULL"/>
 
+        <!--
+            Overwrite all files regardless of versions on install
+            See https://docs.microsoft.com/en-us/windows/win32/msi/reinstallmode
+        -->
+        <Property Id="REINSTALLMODE" Value="amus"/>
 
         <!--
             Detect system information
