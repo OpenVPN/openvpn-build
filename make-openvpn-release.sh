@@ -67,7 +67,7 @@ sed -E -i s/"define\(\[_GUI_VERSION_MINOR\], \[([[:digit:]]+)\]\)"/"define\(\[_G
 git add configure.ac
 git commit --author="$GIT_AUTHOR" -s -m "Bump version to $OPENVPN_GUI_CURRENT_FULL_VERSION" configure.ac
 git tag -a "v$OPENVPN_GUI_CURRENT_FULL_VERSION" -m "Version $OPENVPN_GUI_CURRENT_FULL_VERSION"
-git tag -a "openvpn-install-$OPENVPN_CURRENT_VERSION-$INSTALLER_VERSION" -m "openvpn-install-$OPENVPN_CURRENT_VERSION-$INSTALLER_VERSION"
+git tag -a "OpenVPN-$OPENVPN_CURRENT_VERSION-$INSTALLER_VERSION" -m "OpenVPN-$OPENVPN_CURRENT_VERSION-$INSTALLER_VERSION"
 
 echo "Creating OpenVPN-GUI source package"
 autoreconf -vi > /dev/null 2>&1
