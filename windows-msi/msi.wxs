@@ -3,6 +3,7 @@
   openvpn-build — OpenVPN packaging
 
   Copyright (C) 2018-2020 Simon Rozman <simon@rozman.si>
+  Copyright (C) 2020-2020 Lev Stipakov <lev@openvpn.net>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License version 2
@@ -823,48 +824,150 @@
                     </Directory>
 
                     <Directory Id="EASYRSADIR" Name="easy-rsa">
-                        <Component Id="easyrsa.build_ca.bat" Guid="{C1F541D5-2D17-47EF-B3D7-9A05C0C7C9F4}">
-                            <File Name="build-ca.bat" Source="!(bindpath.easyrsa)Windows\build-ca.bat"/>
+                        <Component Id="easyrsa.changelog" Guid="{FBF83B41-C0B9-46D2-82AC-99288113005F}">
+                            <File Name="ChangeLog" Source="!(bindpath.easyrsa)\ChangeLog"/>
                         </Component>
-                        <Component Id="easyrsa.build_dh.bat" Guid="{7A21A71D-D84C-49F3-9752-32A8EE260043}">
-                            <File Name="build-dh.bat" Source="!(bindpath.easyrsa)Windows\build-dh.bat"/>
+                        <Component Id="easyrsa.easyrsa" Guid="{8FF458C6-5CC7-46AD-B42B-AEA0454BC2F4}">
+                            <File Name="easyrsa" Source="!(bindpath.easyrsa)\easyrsa"/>
                         </Component>
-                        <Component Id="easyrsa.build_key.bat" Guid="{5A1F6F9A-B25E-45AA-992B-640CCF9B3F14}">
-                            <File Name="build-key.bat" Source="!(bindpath.easyrsa)Windows\build-key.bat"/>
+                        <Component Id="easyrsa.easyrsa_start.bat" Guid="{73B9B29E-E5D7-4AD0-ADEE-FB1B5306711E}">
+                            <File Name="EasyRSA-Start.bat" Source="!(bindpath.easyrsa)\EasyRSA-Start.bat"/>
                         </Component>
-                        <Component Id="easyrsa.build_key_pass.bat" Guid="{AF9B9A96-C661-408B-861C-328F3DE3300B}">
-                            <File Name="build-key-pass.bat" Source="!(bindpath.easyrsa)Windows\build-key-pass.bat"/>
+                        <Component Id="easyrsa.openssl_easyrsa.cnf" Guid="{68190566-5984-4D76-AA64-5FA3A96CCC4E}">
+                            <File Name="openssl-easyrsa.cnf" Source="!(bindpath.easyrsa)\openssl-easyrsa.cnf"/>
                         </Component>
-                        <Component Id="easyrsa.build_key_pkcs12.bat" Guid="{01C35157-7DA3-4D64-9C1F-8E35D05B6760}">
-                            <File Name="build-key-pkcs12.bat" Source="!(bindpath.easyrsa)Windows\build-key-pkcs12.bat"/>
+                        <Component Id="easyrsa.vars.example" Guid="{7032A7EC-FED9-496D-9619-9F29C22A866B}">
+                            <File Name="vars.example" Source="!(bindpath.easyrsa)\vars.example"/>
                         </Component>
-                        <Component Id="easyrsa.build_key_server.bat" Guid="{99509E1B-6946-4BB9-BDAC-39088F8F3C1C}">
-                            <File Name="build-key-server.bat" Source="!(bindpath.easyrsa)Windows\build-key-server.bat"/>
+                        <Component Id="easyrsa.copying.html" Guid="{CF0753CE-1583-412A-B2C4-941662EC1EF2}">
+                            <File Name="COPYING.html" Source="!(bindpath.easyrsa)\COPYING.html"/>
                         </Component>
-                        <Component Id="easyrsa.clean_all.bat" Guid="{B14B1938-6F89-4FE5-A7C4-83EFDFF99A16}">
-                            <File Name="clean-all.bat" Source="!(bindpath.easyrsa)Windows\clean-all.bat"/>
+                        <Component Id="easyrsa.readme.html" Guid="{99D19F03-CBD0-487A-A165-EFA7451DAC05}">
+                            <File Name="README.html" Source="!(bindpath.easyrsa)\README.html"/>
                         </Component>
-                        <Component Id="easyrsa.index.txt.start" Guid="{BFBB96C5-3D98-40CE-B466-84CBFBFD9860}">
-                            <File Name="index.txt.start" Source="!(bindpath.easyrsa)Windows\index.txt.start"/>
+                        <Component Id="easyrsa.readme.quickstart.html" Guid="{810800FE-435C-49C7-B1AC-6D2BFE0543E1}">
+                            <File Name="README.quickstart.html" Source="!(bindpath.easyrsa)\README.quickstart.html"/>
                         </Component>
-                        <Component Id="easyrsa.init_config.bat" Guid="{BE6634C8-4C65-4A34-BA36-ECA89B70D4B7}">
-                            <File Name="init-config.bat" Source="!(bindpath.easyrsa)Windows\init-config.bat"/>
+                        <Component Id="easyrsa.copying.md" Guid="{0B169A7A-BB86-497A-B92E-1E76287B7F00}">
+                            <File Name="COPYING.md" Source="!(bindpath.easyrsa)\COPYING.md"/>
                         </Component>
-                        <Component Id="easyrsa.openssl_1.0.0.cnf" Guid="{3DF64587-2D75-4157-8EDC-8865918F347E}">
-                            <File Name="openssl-1.0.0.cnf" Source="!(bindpath.easyrsa)2.0\openssl-1.0.0.cnf"/>
+                        <Component Id="easyrsa.readme_windows.txt" Guid="{4E412AF9-839C-43DD-ADCF-81B0865F8029}">
+                            <File Name="README-Windows.txt" Source="!(bindpath.easyrsa)\README-Windows.txt"/>
                         </Component>
-                        <Component Id="easyrsa.README.txt" Guid="{69F47537-3E49-4768-9953-BD880272A13B}">
-                            <File Id="easyrsa.README.txt" Name="README.txt" Source="!(bindpath.easyrsa)Windows\README.txt"/>
-                        </Component>
-                        <Component Id="easyrsa.revoke_full.bat" Guid="{E3CE1DCB-9216-4DEE-9328-B8B68CE98D0A}">
-                            <File Name="revoke-full.bat" Source="!(bindpath.easyrsa)Windows\revoke-full.bat"/>
-                        </Component>
-                        <Component Id="easyrsa.serial.start" Guid="{F8AE1791-B35C-42AF-8E98-B21CEBCD8DB0}">
-                            <File Name="serial.start" Source="!(bindpath.easyrsa)Windows\serial.start"/>
-                        </Component>
-                        <Component Id="easyrsa.vars.bat.sample" Guid="{24A177A9-238C-46BC-A2A5-7884F39406D0}">
-                            <File Name="vars.bat.sample" Source="!(bindpath.easyrsa)Windows\vars.bat.sample"/>
-                        </Component>
+
+                        <Directory Id="EASYRSADIR.BIN" Name="bin">
+                            <Component Id="easyrsa.bin.awk.exe" Guid="{2633D452-FCA9-485C-89D0-EDFAE7AACEA5}">
+                                <File Name="awk.exe" Source="!(bindpath.easyrsa)\bin\awk.exe"/>
+                            </Component>
+                            <Component Id="easyrsa.bin.cat.exe" Guid="{6F68B583-3F31-42BD-960B-F1DB86479BF8}">
+                                <File Name="cat.exe" Source="!(bindpath.easyrsa)\bin\cat.exe"/>
+                            </Component>
+                            <Component Id="easyrsa.bin.cp.exe" Guid="{CE7B5061-E44F-46C4-9C0E-B6795C228AC9}">
+                                <File Name="cp.exe" Source="!(bindpath.easyrsa)\bin\cp.exe"/>
+                            </Component>
+                            <Component Id="easyrsa.bin.date.exe" Guid="{41030315-4F05-45B5-BEC0-9515D0B6FF3C}">
+                                <File Name="date.exe" Source="!(bindpath.easyrsa)\bin\date.exe"/>
+                            </Component>
+                            <Component Id="easyrsa.bin.diff.exe" Guid="{92BFE44C-8EF5-4800-BC6C-C32D727796BC}">
+                                <File Name="diff.exe" Source="!(bindpath.easyrsa)\bin\diff.exe"/>
+                            </Component>
+                            <Component Id="easyrsa.bin.grep.exe" Guid="{13566D79-D95D-4ADC-B2F6-A8529B2F56BE}">
+                                <File Name="grep.exe" Source="!(bindpath.easyrsa)\bin\grep.exe"/>
+                            </Component>
+                            <Component Id="easyrsa.bin.ls.exe" Guid="{E14FAA3D-3299-4AB5-ADC6-8AFF67A5508E}">
+                                <File Name="ls.exe" Source="!(bindpath.easyrsa)\bin\ls.exe"/>
+                            </Component>
+                            <Component Id="easyrsa.bin.md5sum.exe" Guid="{CF1F048F-9941-405D-BE57-0CC3660CAEBF}">
+                                <File Name="md5sum.exe" Source="!(bindpath.easyrsa)\bin\md5sum.exe"/>
+                            </Component>
+                            <Component Id="easyrsa.bin.mkdir.exe" Guid="{279A157F-662E-483C-9780-5D9AB54BB222}">
+                                <File Name="mkdir.exe" Source="!(bindpath.easyrsa)\bin\mkdir.exe"/>
+                            </Component>
+                            <Component Id="easyrsa.bin.mktemp.exe" Guid="{255DF4BC-1325-453D-B357-832698E576B8}">
+                                <File Name="mktemp.exe" Source="!(bindpath.easyrsa)\bin\mktemp.exe"/>
+                            </Component>
+                            <Component Id="easyrsa.bin.mv.exe" Guid="{855E68BE-109B-44A8-A42A-299F788B3A4C}">
+                                <File Name="mv.exe" Source="!(bindpath.easyrsa)\bin\mv.exe"/>
+                            </Component>
+                            <Component Id="easyrsa.bin.printf.exe" Guid="{6CA1E952-B22F-4326-A9F8-BAF2CE4DBB87}">
+                                <File Name="printf.exe" Source="!(bindpath.easyrsa)\bin\printf.exe"/>
+                            </Component>
+                            <Component Id="easyrsa.bin.rm.exe" Guid="{D9E2687D-87FA-4B8A-BED9-A2D3FB1BEBF2}">
+                                <File Name="rm.exe" Source="!(bindpath.easyrsa)\bin\rm.exe"/>
+                            </Component>
+                            <Component Id="easyrsa.bin.sed.exe" Guid="{BB09F65D-AF34-469E-9027-4E6022FF1311}">
+                                <File Name="sed.exe" Source="!(bindpath.easyrsa)\bin\sed.exe"/>
+                            </Component>
+                            <Component Id="easyrsa.bin.sh.exe" Guid="{8B63AD2C-27CC-4A8F-9FA2-FEC4882AA564}">
+                                <File Name="sh.exe" Source="!(bindpath.easyrsa)\bin\sh.exe"/>
+                            </Component>
+                            <Component Id="easyrsa.bin.which.exe" Guid="{76EA7581-0E37-43D4-B573-F730AFA799F8}">
+                                <File Name="which.exe" Source="!(bindpath.easyrsa)\bin\which.exe"/>
+                            </Component>
+                            <Component Id="easyrsa.bin.easyrsa_shell_init.sh" Guid="{594834EB-EED6-4D79-9D9C-CD670E019EE7}">
+                                <File Name="easyrsa-shell-init.sh" Source="!(bindpath.easyrsa)\bin\easyrsa-shell-init.sh"/>
+                            </Component>
+                        </Directory>
+
+                        <Directory Id="EASYRSADIR.DOC" Name="doc">
+                            <Component Id="easyrsa.doc.easyrsa_advanced.html" Guid="{376D8D79-9219-4FB4-B074-8E125C3AC8A5}">
+                                <File Name="EasyRSA-Advanced.html" Source="!(bindpath.easyrsa)\doc\EasyRSA-Advanced.html"/>
+                            </Component>
+                            <Component Id="easyrsa.doc.easyrsa_readme.html" Guid="{89CB1AF3-FDA6-437A-A53E-1F70E582640E}">
+                                <File Name="EasyRSA-Readme.html" Source="!(bindpath.easyrsa)\doc\EasyRSA-Readme.html"/>
+                            </Component>
+                            <Component Id="easyrsa.doc.easyrsa_upgrade_notes.html" Guid="{AC4984BF-FA9C-4A48-B3D4-5E02354381E1}">
+                                <File Name="EasyRSA-Upgrade-Notes.html" Source="!(bindpath.easyrsa)\doc\EasyRSA-Upgrade-Notes.html"/>
+                            </Component>
+                            <Component Id="easyrsa.doc.hacking.html" Guid="{BF3BCD42-8132-479E-A96D-3661025A7820}">
+                                <File Name="Hacking.html" Source="!(bindpath.easyrsa)\doc\Hacking.html"/>
+                            </Component>
+                            <Component Id="easyrsa.doc.intro_to_pki.html" Guid="{D1616A08-EF89-495B-AB6C-93183D943B5F}">
+                                <File Name="Intro-To-PKI.html" Source="!(bindpath.easyrsa)\doc\Intro-To-PKI.html"/>
+                            </Component>
+                        </Directory>
+
+                        <Directory Id="EASYRSADIR.LICENSING" Name="Licensing">
+                            <Component Id="easyrsa.licensing.gpl_2.0.txt" Guid="{AEA65E64-51F0-4919-A0B8-D075A06658B8}">
+                                <File Name="gpl-2.0.txt" Source="!(bindpath.easyrsa)\licensing\gpl-2.0.txt"/>
+                            </Component>
+                            <Component Id="easyrsa.licensing.license_openssl.txt" Guid="{EE81E309-B2C8-4879-9DA5-C0FDA016354E}">
+                                <File Name="LICENSE-OpenSSL.txt" Source="!(bindpath.easyrsa)\licensing\LICENSE-OpenSSL.txt"/>
+                            </Component>
+                            <Component Id="easyrsa.licensing.mksh_win32.txt" Guid="{BB26EDA2-7DEC-49F3-AD57-F26F4B2D0728}">
+                                <File Name="mksh-Win32.txt" Source="!(bindpath.easyrsa)\licensing\mksh-Win32.txt"/>
+                            </Component>
+                            <Component Id="easyrsa.licensing.mktemp.txt" Guid="{F07A7DAC-BF9E-430C-A3BD-8F60F38EF977}">
+                                <File Name="mktemp.txt" Source="!(bindpath.easyrsa)\licensing\mktemp.txt"/>
+                            </Component>
+                        </Directory>
+
+                        <Directory Id="EASYRSADIR.X509TYPES" Name="x509-types">
+                            <Component Id="easyrsa.x509types.ca" Guid="{207CE196-86FB-484C-BF4C-C577DBD1EF9E}">
+                                <File Name="ca" Source="!(bindpath.easyrsa)\x509-types\ca"/>
+                            </Component>
+                            <Component Id="easyrsa.x509types.client" Guid="{C11D9541-D91E-43E2-8D21-D760B9EB038B}">
+                                <File Name="client" Source="!(bindpath.easyrsa)\x509-types\client"/>
+                            </Component>
+                            <Component Id="easyrsa.x509types.code_signing" Guid="{FDC29871-A112-4AD2-869A-F9F80FC4A167}">
+                                <File Name="code-signing" Source="!(bindpath.easyrsa)\x509-types\code-signing"/>
+                            </Component>
+                            <Component Id="easyrsa.x509types.common" Guid="{8A9D16B3-1D87-4816-BF36-4E419C8D31BE}">
+                                <File Name="COMMON" Source="!(bindpath.easyrsa)\x509-types\COMMON"/>
+                            </Component>
+                            <Component Id="easyrsa.x509types.email" Guid="{A8EBF994-63B9-4731-BC27-93CFDCFC579F}">
+                                <File Name="email" Source="!(bindpath.easyrsa)\x509-types\email"/>
+                            </Component>
+                            <Component Id="easyrsa.x509types.kdc" Guid="{DA1F3D82-2808-4CC0-8E59-FC34ABFEC2E0}">
+                                <File Name="kdc" Source="!(bindpath.easyrsa)\x509-types\kdc"/>
+                            </Component>
+                            <Component Id="easyrsa.x509types.server" Guid="{1F23B67D-67E6-4F0A-B23E-E9CFC7CF5F06}">
+                                <File Name="server" Source="!(bindpath.easyrsa)\x509-types\server"/>
+                            </Component>
+                            <Component Id="easyrsa.x509types.serverclient" Guid="{40EDD9D9-3298-4EC6-B9AB-C9E46314969F}">
+                                <File Name="serverClient" Source="!(bindpath.easyrsa)\x509-types\serverClient"/>
+                            </Component>
+                        </Directory>
                     </Directory>
 
                     <Directory Id="LOGDIR" Name="log">
@@ -1506,26 +1609,60 @@
 
             <Feature
                 Id="EasyRSA"
-                Title="EasyRSA 2 Certificate Management Scripts"
+                Title="EasyRSA 3 Certificate Management Scripts"
                 Description="Scripts for X509 certificate management"
                 Level="3"
                 ConfigurableDirectory="EASYRSADIR"
                 AllowAdvertise="no">
                 <Condition Level="1"><![CDATA[NSIS.OPENVPN.EASYRSA.README.TXT OR NSIS.OPENVPN.X86.EASYRSA.README.TXT]]></Condition>
-                <ComponentRef Id="easyrsa.build_ca.bat"/>
-                <ComponentRef Id="easyrsa.build_dh.bat"/>
-                <ComponentRef Id="easyrsa.build_key.bat"/>
-                <ComponentRef Id="easyrsa.build_key_pass.bat"/>
-                <ComponentRef Id="easyrsa.build_key_pkcs12.bat"/>
-                <ComponentRef Id="easyrsa.build_key_server.bat"/>
-                <ComponentRef Id="easyrsa.clean_all.bat"/>
-                <ComponentRef Id="easyrsa.index.txt.start"/>
-                <ComponentRef Id="easyrsa.init_config.bat"/>
-                <ComponentRef Id="easyrsa.openssl_1.0.0.cnf"/>
-                <ComponentRef Id="easyrsa.README.txt"/>
-                <ComponentRef Id="easyrsa.revoke_full.bat"/>
-                <ComponentRef Id="easyrsa.serial.start"/>
-                <ComponentRef Id="easyrsa.vars.bat.sample"/>
+                <ComponentRef Id="easyrsa.changelog"/>
+                <ComponentRef Id="easyrsa.easyrsa"/>
+                <ComponentRef Id="easyrsa.easyrsa_start.bat"/>
+                <ComponentRef Id="easyrsa.openssl_easyrsa.cnf"/>
+                <ComponentRef Id="easyrsa.vars.example"/>
+                <ComponentRef Id="easyrsa.copying.html"/>
+                <ComponentRef Id="easyrsa.readme.html"/>
+                <ComponentRef Id="easyrsa.readme.quickstart.html"/>
+                <ComponentRef Id="easyrsa.copying.md"/>
+                <ComponentRef Id="easyrsa.readme_windows.txt"/>
+
+                <ComponentRef Id="easyrsa.bin.awk.exe"/>
+                <ComponentRef Id="easyrsa.bin.cat.exe"/>
+                <ComponentRef Id="easyrsa.bin.cp.exe"/>
+                <ComponentRef Id="easyrsa.bin.date.exe"/>
+                <ComponentRef Id="easyrsa.bin.diff.exe"/>
+                <ComponentRef Id="easyrsa.bin.grep.exe"/>
+                <ComponentRef Id="easyrsa.bin.ls.exe"/>
+                <ComponentRef Id="easyrsa.bin.md5sum.exe"/>
+                <ComponentRef Id="easyrsa.bin.mkdir.exe"/>
+                <ComponentRef Id="easyrsa.bin.mktemp.exe"/>
+                <ComponentRef Id="easyrsa.bin.mv.exe"/>
+                <ComponentRef Id="easyrsa.bin.printf.exe"/>
+                <ComponentRef Id="easyrsa.bin.rm.exe"/>
+                <ComponentRef Id="easyrsa.bin.sed.exe"/>
+                <ComponentRef Id="easyrsa.bin.sh.exe"/>
+                <ComponentRef Id="easyrsa.bin.which.exe"/>
+                <ComponentRef Id="easyrsa.bin.easyrsa_shell_init.sh"/>
+
+                <ComponentRef Id="easyrsa.doc.easyrsa_advanced.html"/>
+                <ComponentRef Id="easyrsa.doc.easyrsa_readme.html"/>
+                <ComponentRef Id="easyrsa.doc.easyrsa_upgrade_notes.html"/>
+                <ComponentRef Id="easyrsa.doc.hacking.html"/>
+                <ComponentRef Id="easyrsa.doc.intro_to_pki.html"/>
+
+                <ComponentRef Id="easyrsa.licensing.gpl_2.0.txt"/>
+                <ComponentRef Id="easyrsa.licensing.license_openssl.txt"/>
+                <ComponentRef Id="easyrsa.licensing.mksh_win32.txt"/>
+                <ComponentRef Id="easyrsa.licensing.mktemp.txt"/>
+
+                <ComponentRef Id="easyrsa.x509types.ca"/>
+                <ComponentRef Id="easyrsa.x509types.client"/>
+                <ComponentRef Id="easyrsa.x509types.code_signing"/>
+                <ComponentRef Id="easyrsa.x509types.common"/>
+                <ComponentRef Id="easyrsa.x509types.email"/>
+                <ComponentRef Id="easyrsa.x509types.kdc"/>
+                <ComponentRef Id="easyrsa.x509types.server"/>
+                <ComponentRef Id="easyrsa.x509types.serverclient"/>
             </Feature>
         </Feature>
 

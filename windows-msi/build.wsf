@@ -3,6 +3,7 @@
   openvpn-build — OpenVPN packaging
 
   Copyright (C) 2018-2020 Simon Rozman <simon@rozman.si>
+  Copyright (C) 2020-2020 Lev Stipakov <lev@openvpn.net>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License version 2
@@ -47,7 +48,7 @@ clean	Cleans intermediate and output files</example>
                 rootPath       = ".."
                 buildPath      = "tmp",
                 sourcePath     = "sources",
-                easyRSAPath    = BuildPath(buildPath, "easy-rsa-" + ver.define.EASYRSA_VERSION, "easy-rsa"),
+                easyRSAPath    = BuildPath(buildPath, "easyrsa-" + ver.define.EASYRSA_VERSION),
                 outputPath     = "image";
 
             // Platform specific info
@@ -96,30 +97,26 @@ clean	Cleans intermediate and output files</example>
 
                     // Downloading and extracting Easy RSA
                     b.pushRule(new DownloadBuildRule(
-                        BuildPath(sourcePath, "easy-rsa-" + ver.define.EASYRSA_VERSION + ".tar.gz"),
+                        BuildPath(sourcePath, "easyrsa-" + ver.define.EASYRSA_VERSION + ".zip"),
                         ver.define.EASYRSA_URL,
                         ["version.m4"]));
                     b.pushRule(new ExtractBuildRule(
                         [
-                            BuildPath(easyRSAPath, "2.0", "openssl-1.0.0.cnf"),
-                            BuildPath(easyRSAPath, "Windows", "build-ca.bat"),
-                            BuildPath(easyRSAPath, "Windows", "build-dh.bat"),
-                            BuildPath(easyRSAPath, "Windows", "build-key.bat"),
-                            BuildPath(easyRSAPath, "Windows", "build-key-pass.bat"),
-                            BuildPath(easyRSAPath, "Windows", "build-key-pkcs12.bat"),
-                            BuildPath(easyRSAPath, "Windows", "build-key-server.bat"),
-                            BuildPath(easyRSAPath, "Windows", "clean-all.bat"),
-                            BuildPath(easyRSAPath, "Windows", "index.txt.start"),
-                            BuildPath(easyRSAPath, "Windows", "init-config.bat"),
-                            BuildPath(easyRSAPath, "Windows", "README.txt"),
-                            BuildPath(easyRSAPath, "Windows", "revoke-full.bat"),
-                            BuildPath(easyRSAPath, "Windows", "serial.start"),
-                            BuildPath(easyRSAPath, "Windows", "vars.bat.sample")
+                            BuildPath(easyRSAPath, "easyrsa")
                         ],
-                        buildPath, // "easy-rsa-" + ver.define.EASYRSA_VERSION folder is provided by .tar.gz file.
-                        BuildPath(buildPath, "easy-rsa-" + ver.define.EASYRSA_VERSION + ".timestamp"),
-                        BuildPath(sourcePath, "easy-rsa-" + ver.define.EASYRSA_VERSION + ".tar.gz"),
+                        buildPath, // "easyrsa-" + ver.define.EASYRSA_VERSION folder is provided by .zip file.
+                        BuildPath(buildPath, "easyrsa-" + ver.define.EASYRSA_VERSION + ".timestamp"),
+                        BuildPath(sourcePath, "easyrsa-" + ver.define.EASYRSA_VERSION + ".zip"),
                         []));
+                    b.pushRule(new CreateFileBuildRule(
+                        BuildPath(easyRSAPath, "EasyRSA-Start.bat"),
+                        [
+                            "@echo OFF",
+                            "rem Automatically set PATH to openssl.exe",
+                            "FOR /F \"tokens=2*\" %%a IN ('REG QUERY \"HKEY_LOCAL_MACHINE\\SOFTWARE\\OpenVPN\" /ve') DO set \"PATH=%PATH%;%%b\\bin\"",
+                            "bin\\sh.exe bin\\easyrsa-shell-init.sh"
+                        ],
+                        ["version.m4"]));
 
                     // Add platform-specific build rules.
                     for (i in platforms) {
@@ -244,20 +241,8 @@ clean	Cleans intermediate and output files</example>
                                 BuildPath("bookmarks", "support.url"),
                                 BuildPath("bookmarks", "website.url"),
                                 BuildPath("bookmarks", "wiki.url"),
-                                BuildPath(easyRSAPath, "Windows", "build-ca.bat"),
-                                BuildPath(easyRSAPath, "Windows", "build-dh.bat"),
-                                BuildPath(easyRSAPath, "Windows", "build-key.bat"),
-                                BuildPath(easyRSAPath, "Windows", "build-key-pass.bat"),
-                                BuildPath(easyRSAPath, "Windows", "build-key-pkcs12.bat"),
-                                BuildPath(easyRSAPath, "Windows", "build-key-server.bat"),
-                                BuildPath(easyRSAPath, "Windows", "clean-all.bat"),
-                                BuildPath(easyRSAPath, "Windows", "index.txt.start"),
-                                BuildPath(easyRSAPath, "Windows", "init-config.bat"),
-                                BuildPath(easyRSAPath, "2.0", "openssl-1.0.0.cnf"),
-                                BuildPath(easyRSAPath, "Windows", "README.txt"),
-                                BuildPath(easyRSAPath, "Windows", "revoke-full.bat"),
-                                BuildPath(easyRSAPath, "Windows", "serial.start"),
-                                BuildPath(easyRSAPath, "Windows", "vars.bat.sample"),
+                                BuildPath(easyRSAPath, "easyrsa"),
+                                BuildPath(easyRSAPath, "EasyRSA-Start.bat"),
                                 BuildPath(buildPath, "README-log.txt"),
                                 BuildPath(p.buildPath, "client.ovpn"),
                                 BuildPath(p.buildPath, "sample.ovpn"),

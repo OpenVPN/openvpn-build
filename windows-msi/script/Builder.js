@@ -2,6 +2,7 @@
  *  openvpn-build — OpenVPN packaging
  *
  *  Copyright (C) 2018-2020 Simon Rozman <simon@rozman.si>
+ *  Copyright (C) 2020-2020 Lev Stipakov <lev@openvpn.net>
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License version 2
@@ -1054,5 +1055,52 @@ ExtractBuildRule.prototype.buildTime = function (builder)
  */
 ExtractBuildRule.prototype.clean = BuildRule.prototype.clean;
 
+
+/**
+ * Create file build rule
+ * 
+ * @param outName     Output file name
+ * @param inLines     Lines to append
+ *
+ * @returns  Build rule
+ */
+function CreateFileBuildRule(outName, inLines, depNames)
+{
+    BuildRule.call(this, [outName], depNames);
+    this.inLines = inLines;
+    return this;
+}
+
+/**
+ * Builds the rule
+ * 
+ * @param builder  The builder object
+ */
+CreateFileBuildRule.prototype.build = function (builder)
+{
+    f = builder.fso.OpenTextFile(this.outNames[0], ForWriting, true);
+    for (var i in this.inLines)
+        f.WriteLine(this.inLines[i])
+    f.Close();
+    BuildRule.prototype.build.call(this, builder);
+}
+
+
+/**
+ * Returns the time the rule was built
+ * 
+ * @param builder  The builder object
+ * 
+ * @returns  Oldest timestamp of the output files if all exist; 0 otherwise
+ */
+CreateFileBuildRule.prototype.buildTime = BuildRule.prototype.buildTime;
+
+
+/**
+ * Removes all output files
+ * 
+ * @param builder  The builder object
+ */
+CreateFileBuildRule.prototype.clean = BuildRule.prototype.clean;
 
 /*@end @*/

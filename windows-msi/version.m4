@@ -16,8 +16,8 @@ dnl OpenVPNServ2.exe binary
 define([OPENVPNSERV2_URL], [http://build.openvpn.net/downloads/releases/openvpnserv2-1.4.0.1.exe])
 
 dnl Easy RSA binaries (URL to .tar.gz file containing "easy-rsa-[EASYRSA_VERSION]" folder with Easy RSA)
-define([EASYRSA_VERSION], [2.3.3_master])
-define([EASYRSA_URL],     [http://build.openvpn.net/downloads/releases/easy-rsa-2.3.3_master.tar.gz])
+define([EASYRSA_VERSION], [3.0.8])
+define([EASYRSA_URL],     [https://github.com/OpenVPN/easy-rsa/releases/download/v3.0.8/EasyRSA-3.0.8-win64.zip])
 
 
 dnl ============================================================
