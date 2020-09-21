@@ -78,4 +78,4 @@ override_dh_compress:
 	dh_compress --exclude=.cnf --exclude=pkitool
 
 override_dh_installsystemd:
-	dh_installsystemd --restart-after-upgrade
+	dh_installsystemd --no-restart-after-upgrade -r

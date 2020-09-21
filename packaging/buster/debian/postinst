@@ -49,17 +49,12 @@ case "$1" in
       echo "$b" | grep -q '\*' && continue
       ln -sf "/run/openvpn/$b" "/run/sendsigs.omit.d/openvpn.$b"
     done
+    if pidof -c /usr/sbin/openvpn >/dev/null; then
+        echo "A reboot is required to replace the running openvpn." >&2
+        echo "Please reboot the system as soon as possible." >&2
+    fi
   ;;
 esac
-
-if [ -x "/etc/init.d/openvpn" ]; then
-	pathfind invoke-rc.d
-	if [ $? = 0 ]; then
-	   invoke-rc.d openvpn cond-restart || invoke-rc.d openvpn restart
-	else
-	   /etc/init.d/openvpn cond-restart || /etc/init.d/openvpn restart
-	fi
-fi
 
 db_stop
 
