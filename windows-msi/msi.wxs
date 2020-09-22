@@ -1114,6 +1114,15 @@
                             <RemoveFolder Id="shortcut.bin.tapctl.exe.create.Wintun" On="uninstall"/>
                             <RegistryValue Root="HKCU" Key="Software\$(var.PRODUCT_NAME)\Shortcuts" Name="bin.tapctl.exe.create.Wintun" Type="integer" Value="1"/>
                         </Component>
+                        <Component Id="shortcut.easyrsa.easyrsa_start.bat" Guid="{FE9645C1-6EF1-4046-895A-4ED5C98E2570}">
+                            <Shortcut
+                                Id="shortcut.easyrsa.easyrsa_start.bat"
+                                Name="Start EasyRSA shell"
+                                Target="[EASYRSADIR]EasyRSA-Start.bat"
+                                WorkingDirectory="EASYRSADIR"/>
+                            <RemoveFolder Id="shortcut.easyrsa.easyrsa_start.bat" On="uninstall"/>
+                            <RegistryValue Root="HKCU" Key="Software\$(var.PRODUCT_NAME)\Shortcuts" Name="easyrsa.easyrsa_start.bat" Type="integer" Value="1"/>
+                        </Component>
                     </Directory>
                 </Directory>
 
@@ -1663,6 +1672,8 @@
                 <ComponentRef Id="easyrsa.x509types.kdc"/>
                 <ComponentRef Id="easyrsa.x509types.server"/>
                 <ComponentRef Id="easyrsa.x509types.serverclient"/>
+
+                <ComponentRef Id="shortcut.easyrsa.easyrsa_start.bat"/>
             </Feature>
         </Feature>
 
