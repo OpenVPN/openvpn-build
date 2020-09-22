@@ -47,14 +47,15 @@ make dist-gzip > /dev/null
 make dist-zip > /dev/null
 make dist-xz > /dev/null
 
+
 # Generate changelogs
 git shortlog $OPENVPN_PREVIOUS_TAG...$OPENVPN_CURRENT_TAG > "$BASEDIR/changelog/openvpn-$OPENVPN_CURRENT_VERSION-changelog"
 git log --pretty=short --abbrev-commit --format="  * %s (%an, %h)" $OPENVPN_PREVIOUS_TAG...$OPENVPN_CURRENT_TAG > "$BASEDIR/changelog/openvpn-$OPENVPN_CURRENT_VERSION-changelog-debian"
 
-# Generate man-page, fix some errors and remove HTML header/footer crap to allow easy copy-and-paste to Trac
-man2html doc/openvpn.8 | awk -f "$OVPN_MAN2HTML" | head -n -2 | tail -n +4 > "$BASEDIR/man/openvpn-$OPENVPN_CURRENT_VERSION-man.html"
-
+# Copy the man-page and tarballs
+cp -v doc/openvpn.8.html "$BASEDIR/man/"
 cp -v openvpn-$OPENVPN_VERSION* "$SOURCES"
+
 cd "$BASEDIR"
 
 # Generate OpenVPN-GUI tarball from the correct tag/branch
