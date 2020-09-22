@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# make-openvpn-release.sh
+# create-release-files.sh
 
 . ./vars
 

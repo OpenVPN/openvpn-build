@@ -3,7 +3,7 @@ openvpn-release-scripts
 
 These scripts automate a large subset of the OpenVPN 2.x release process:
 
-* **make-openvpn-release.sh**: produces tarballs, changelog and man-pages
+* **create-release-files.sh**: produces tarballs, changelog and man-pages
 * **sign-and-push.sh**: sign release files with GPG and push them to the secondary webserver
 * **verify-openvpn-release.sh**: download release files from webservers and verify their GPG signatures
 
@@ -40,7 +40,7 @@ OpenVPN GUI min version refers to the minor version for _this_ release.
 
 Once build parameters are correct do
 
-    $ ./make-openvpn-release.sh
+    $ ./create-release-files.sh
 
 This will produce a directory called "release" with all the release files. Note
 that any previous "release" directory will be unconditionally wiped away. You
@@ -50,11 +50,11 @@ copy.
 You can override some variables on the command-line. A typical use-case is
 changing the OpenVPN versions:
 
-    OPENVPN_PREVIOUS_VERSION=2.3.16 OPENVPN_CURRENT_VERSION=2.3.17 ./make-openvpn-release.sh
+    OPENVPN_PREVIOUS_VERSION=2.3.16 OPENVPN_CURRENT_VERSION=2.3.17 ./create-release-files.sh
 
 Another one is using a custom OpenVPN repository as the source:
 
-    OPENVPN_REPO="<url>/openvpn.git" ./make-openvpn-release.sh
+    OPENVPN_REPO="<url>/openvpn.git" ./create-release-files.sh
 
 Refer to vars.example for all overrideable parameters.
 
@@ -94,7 +94,7 @@ You will need to update and tag openvpn-gui etc. manually for now.
 What do these scripts do and don't do?
 ======================================
 
-make-openvpn-release.sh produces:
+create-release-files.sh produces:
 
 * openvpn release tarball
 * openvpn changelog for debian packages
@@ -104,7 +104,7 @@ make-openvpn-release.sh produces:
 * increments openvpn-gui version
 * adds openvpn-gui git tags
 
-make-openvpn-release.sh does not:
+create-release-files.sh does not:
 
 * push any of the produced files anywhere
 * push any changes it makes to Git
