@@ -209,7 +209,6 @@ clean	Cleans intermediate and output files</example>
                                 BuildPath("artwork", "info.ico"),
                                 BuildPath("artwork", "folder_new.ico"),
                                 BuildPath("artwork", "folder_up.ico"),
-                                BuildPath("artwork", "genkey.ico"),
                                 BuildPath("artwork", "header.bmp"),
                                 BuildPath("artwork", "openvpn.ico"),
                                 BuildPath("artwork", "ovpn.ico"),
