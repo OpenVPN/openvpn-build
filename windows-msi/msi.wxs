@@ -1016,7 +1016,7 @@
                             <RemoveFolder Id="shortcut.doc.INSTALL_win32.txt" On="uninstall"/>
                             <RegistryValue Root="HKCU" Key="Software\$(var.PRODUCT_NAME)\Shortcuts" Name="doc.INSTALL_win32.txt" Type="integer" Value="1"/>
                         </Component>
-                        <Component Id="shortcut.doc.openvpn.8.html" Guid="">
+                        <Component Id="shortcut.doc.openvpn.8.html" Guid="{58361bff-242a-4f46-9665-aaf414a49d93}">
                             <Shortcut
                                 Id="shortcut.doc.openvpn.8.html"
                                 Name="$(var.PRODUCT_NAME) Manual Page"
@@ -1482,7 +1482,6 @@
             <ComponentRef Id="reg.conf.run.command"/>
             <ComponentRef Id="shortcut.config"/>
             <ComponentRef Id="shortcut.log"/>
-            <ComponentRef Id="shortcut.samplecfg"/>
 
             <Feature
                 Id="OpenVPN.GUI"
@@ -1549,6 +1548,7 @@
                 ConfigurableDirectory="SAMPLECFGDIR"
                 AllowAdvertise="no">
                 <Condition Level="1"><![CDATA[NSIS.OPENVPN.SAMPLECFG.SAMPLE.OVPN OR NSIS.OPENVPN.X86.SAMPLECFG.SAMPLE.OVPN]]></Condition>
+                <ComponentRef Id="shortcut.samplecfg"/>
                 <ComponentRef Id="samplecfg.client.$(var.CONFIG_EXTENSION)"/>
                 <ComponentRef Id="samplecfg.sample.$(var.CONFIG_EXTENSION)"/>
                 <ComponentRef Id="samplecfg.server.$(var.CONFIG_EXTENSION)"/>
