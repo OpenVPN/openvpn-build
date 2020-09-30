@@ -25,7 +25,7 @@ if [ $? -ne 0 ]; then
 fi
 
 # Sign only files that match this pattern
-MATCH="\.(exe|tar.gz|tar.xz|zip|msi)$"
+MATCH="\.(exe|tar.gz|tar.xz|zip|msi|msm)$"
 
 . ./vars
 
