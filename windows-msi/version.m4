@@ -3,8 +3,8 @@ dnl Downloadables
 dnl ============================================================
 
 dnl TAP-Windows binaries
-define([PRODUCT_TAP_WIN_URL_x86],      [https://build.openvpn.net/downloads/releases/tap-windows-9.24.4-I601-i386.msm])
-define([PRODUCT_TAP_WIN_URL_amd64],    [https://build.openvpn.net/downloads/releases/tap-windows-9.24.4-I601-amd64.msm])
+define([PRODUCT_TAP_WIN_URL_x86],      [https://build.openvpn.net/downloads/releases/tap-windows-9.24.5-I601-i386.msm])
+define([PRODUCT_TAP_WIN_URL_amd64],    [https://build.openvpn.net/downloads/releases/tap-windows-9.24.5-I601-amd64.msm])
 define([PRODUCT_TAP_WIN_COMPONENT_ID], [tap0901])
 define([PRODUCT_TAP_WIN_NAME],         [TAP-Windows])
 
@@ -29,15 +29,15 @@ define([PRODUCT_NAME],      [OpenVPN])
 define([PRODUCT_PUBLISHER], [OpenVPN, Inc.])
 
 dnl The package version as displayed by UI and used in filenames (no spaces, please).
-define([PACKAGE_VERSION], [2.5-rc1-I601])
+define([PACKAGE_VERSION], [2.5-rc2-I601])
 
 dnl The MSI product version in the form of n[.n[.n]] (numbers only).
 dnl The third field is 100*product release + package version.
 dnl The fourth field is ignored by MSI.
-define([PRODUCT_VERSION], [2.5.015])
+define([PRODUCT_VERSION], [2.5.016])
 
 dnl The MSI product code MUST change on each product release.
-define([PRODUCT_CODE], [{E5931AF4-2A8F-48A5-AFC8-6486067C4878}])
+define([PRODUCT_CODE], [{E5931AF4-2A8F-48A5-AFC8-87C09FBC99F1}])
 
 dnl The MSI upgrade codes MUST persist for all versions of the same product line.
 dnl Please use own upgrade codes when deploying a non-official OpenVPN release.
