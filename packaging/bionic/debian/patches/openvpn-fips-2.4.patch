@@ -1,0 +1,102 @@
+Description: Use openssl FIPS flag to indicate MD5 use for PRF.
+ MD5 is not allowed in FIPS 140-2 except for PRF. OpenVPN needs
+ to send EVP_MD_CTX_FLAG_NON_FIPS_ALLOW flag to FIPS mode openssl
+ for PRF to indicate the exception.
+Bug: https://community.openvpn.net/openvpn/ticket/725
+Bug-Ubuntu: https://bugs.launchpad.net/bugs/1807439
+Author: Stephan Mueller <stephan.mueller@atsec.com>
+
+diff --git a/src/openvpn/crypto.c b/src/openvpn/crypto.c
+index 03e880e..25e8fc4 100644
+--- a/src/openvpn/crypto.c
++++ b/src/openvpn/crypto.c
+@@ -876,7 +876,7 @@ init_key_ctx(struct key_ctx *ctx, struct key *key,
+     if (kt->digest && kt->hmac_length > 0)
+     {
+         ctx->hmac = hmac_ctx_new();
+-        hmac_ctx_init(ctx->hmac, key->hmac, kt->hmac_length, kt->digest);
++        hmac_ctx_init(ctx->hmac, key->hmac, kt->hmac_length, kt->digest, 0);
+ 
+         msg(D_HANDSHAKE,
+             "%s: Using %d bit message hash '%s' for HMAC authentication",
+diff --git a/src/openvpn/crypto_backend.h b/src/openvpn/crypto_backend.h
+index b7f519b..8662600 100644
+--- a/src/openvpn/crypto_backend.h
++++ b/src/openvpn/crypto_backend.h
+@@ -604,10 +604,11 @@ void hmac_ctx_free(hmac_ctx_t *ctx);
+  * @param key           The key to use for the HMAC
+  * @param key_len       The key length to use
+  * @param kt            Static message digest parameters
++ * @param prf_use       Intended use for PRF in TLS protocol
+  *
+  */
+ void hmac_ctx_init(hmac_ctx_t *ctx, const uint8_t *key, int key_length,
+-                   const md_kt_t *kt);
++                   const md_kt_t *kt, bool prf_use);
+ 
+ /*
+  * Free the given HMAC context.
+diff --git a/src/openvpn/crypto_mbedtls.c b/src/openvpn/crypto_mbedtls.c
+index 0cb7f81..d7f931d 100644
+--- a/src/openvpn/crypto_mbedtls.c
++++ b/src/openvpn/crypto_mbedtls.c
+@@ -857,7 +857,7 @@ hmac_ctx_free(mbedtls_md_context_t *ctx)
+ 
+ void
+ hmac_ctx_init(mbedtls_md_context_t *ctx, const uint8_t *key, int key_len,
+-              const mbedtls_md_info_t *kt)
++              const mbedtls_md_info_t *kt, bool prf_use)
+ {
+     ASSERT(NULL != kt && NULL != ctx);
+ 
+diff --git a/src/openvpn/crypto_openssl.c b/src/openvpn/crypto_openssl.c
+index 9e8d3f3..d5302ae 100644
+--- a/src/openvpn/crypto_openssl.c
++++ b/src/openvpn/crypto_openssl.c
+@@ -926,11 +926,17 @@ hmac_ctx_free(HMAC_CTX *ctx)
+ 
+ void
+ hmac_ctx_init(HMAC_CTX *ctx, const uint8_t *key, int key_len,
+-              const EVP_MD *kt)
++              const EVP_MD *kt, bool prf_use)
+ {
+     ASSERT(NULL != kt && NULL != ctx);
+ 
+     HMAC_CTX_reset(ctx);
++
++   /* FIPS 140-2 explicitly allows MD5 for the use in PRF although it is not
++    * to be used anywhere else */
++    if(kt == EVP_md5() && prf_use)
++       HMAC_CTX_set_flags(ctx, EVP_MD_CTX_FLAG_NON_FIPS_ALLOW);
++
+     HMAC_Init_ex(ctx, key, key_len, kt, NULL);
+ 
+     /* make sure we used a big enough key */
+diff --git a/src/openvpn/ntlm.c b/src/openvpn/ntlm.c
+index 077fa3e..83585e2 100644
+--- a/src/openvpn/ntlm.c
++++ b/src/openvpn/ntlm.c
+@@ -88,7 +88,7 @@ gen_hmac_md5(const uint8_t *data, int data_len, const uint8_t *key, int key_len,
+     const md_kt_t *md5_kt = md_kt_get("MD5");
+     hmac_ctx_t *hmac_ctx = hmac_ctx_new();
+ 
+-    hmac_ctx_init(hmac_ctx, key, key_len, md5_kt);
++    hmac_ctx_init(hmac_ctx, key, key_len, md5_kt, 0);
+     hmac_ctx_update(hmac_ctx, data, data_len);
+     hmac_ctx_final(hmac_ctx, result);
+     hmac_ctx_cleanup(hmac_ctx);
+diff --git a/src/openvpn/ssl.c b/src/openvpn/ssl.c
+index c0e1dd6..f929237 100644
+--- a/src/openvpn/ssl.c
++++ b/src/openvpn/ssl.c
+@@ -1637,8 +1637,8 @@ tls1_P_hash(const md_kt_t *md_kt,
+     chunk = md_kt_size(md_kt);
+     A1_len = md_kt_size(md_kt);
+ 
+-    hmac_ctx_init(ctx, sec, sec_len, md_kt);
+-    hmac_ctx_init(ctx_tmp, sec, sec_len, md_kt);
++    hmac_ctx_init(ctx, sec, sec_len, md_kt, 1);
++    hmac_ctx_init(ctx_tmp, sec, sec_len, md_kt, 1);
+ 
+     hmac_ctx_update(ctx,seed,seed_len);
+     hmac_ctx_final(ctx, A1);

@@ -19,8 +19,8 @@ Build-Depends:
  systemd [linux-any]
 Standards-Version: 4.1.2
 Homepage: https://openvpn.net/
-Vcs-Git: https://github.com/OpenVPN/openvpn.git
-Vcs-Browser: https://github.com/OpenVPN/openvpn
+Vcs-Git: https://anonscm.debian.org/git/collab-maint/openvpn.git
+Vcs-Browser: https://anonscm.debian.org/git/collab-maint/openvpn.git
 
 Package: openvpn
 Architecture: any

@@ -1,3 +1,18 @@
+openvpn (2.4.4-2ubuntu1.3) bionic; urgency=medium
+
+  * d/p/lp-1828771-CapabilityBoundingSet-for-auth_pam.patch: Add CAP_AUDIT_WRITE
+    to upstreams set of .service files to avoid issues with callout scripts
+    breaking due to sudo/pam being unable to audit the action (LP: #1828771)
+
+ -- Christian Ehrhardt <christian.ehrhardt@canonical.com>  Tue, 14 May 2019 10:25:51 +0200
+
+openvpn (2.4.4-2ubuntu1.2) bionic; urgency=medium
+
+  * d/p/openvpn-fips-2.4.patch: Allow MD5 in FIPS mode (openssl) for PRF.
+    (LP: #1807439)
+
+ -- Joy Latten <joy.latten@canonical.com>  Wed, 09 Jan 2019 15:50:03 -0600
+
 openvpn (2.4.4-2ubuntu1.1) bionic; urgency=medium
 
   * d/openvpn@.service: Add CAP_AUDIT_WRITE to avoid issues with callout

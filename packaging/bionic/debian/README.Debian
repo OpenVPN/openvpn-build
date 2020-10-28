@@ -1,15 +1,3 @@
-Note from upstream
--------------------
-
-This package has been modified by the OpenVPN project. The main change is
-that openvpn-client and openvpn-server services are restarted automatically on
-upgrades.
-
-Everything below this section comes unmodified from downstream (Ubuntu)
-OpenVPN package and given the above is to some extent outdated.
-
-------------------
-
 In this file:
 
 - systemd service file and limits/capabilities
