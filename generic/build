@@ -28,7 +28,7 @@
 #
 OSSLSIGNCODE="${OSSLSIGNCODE:-osslsigncode}"
 SIGN_DIGEST=${SIGN_DIGEST:-sha256}
-SIGN_TIMESTAMP_URL="${SIGN_TIMESTAMP_URL:-http://timestamp.verisign.com/scripts/timstamp.dll}"
+SIGN_TIMESTAMP_URL="${SIGN_TIMESTAMP_URL:-http://timestamp.digicert.com}"
 
 set -e
 
