@@ -38,4 +38,4 @@ done
 
 # Package all the packages into a tar.gz for transfer
 cd $BASEDIR
-tar -zcf output.tar.gz output
+tar -zcf $OUTPUT_NAME.tar.gz $OUTPUT_NAME
