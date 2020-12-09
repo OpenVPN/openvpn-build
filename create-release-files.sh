@@ -4,6 +4,8 @@
 
 . ./vars
 
+# Setting the language is needed for Debian changelog generation
+LANG=en_us.UTF-8
 CWD=`pwd`
 
 # Remove old release directory to prevent various warnigs and errors
@@ -48,9 +50,17 @@ make dist-zip > /dev/null
 make dist-xz > /dev/null
 
 
-# Generate changelogs
+# Generate changelog for Trac
 git shortlog $OPENVPN_PREVIOUS_TAG...$OPENVPN_CURRENT_TAG > "$BASEDIR/changelog/openvpn-$OPENVPN_CURRENT_VERSION-changelog"
-git log --pretty=short --abbrev-commit --format="  * %s (%an, %h)" $OPENVPN_PREVIOUS_TAG...$OPENVPN_CURRENT_TAG > "$BASEDIR/changelog/openvpn-$OPENVPN_CURRENT_VERSION-changelog-debian"
+
+# Create changelog for Debian packages
+DEBIAN_CHANGELOG="$BASEDIR/changelog/openvpn-$OPENVPN_CURRENT_VERSION-changelog-debian"
+DEBIAN_DATE=`date +'%a, %-d %b %Y %X %z'`
+echo "openvpn (${OPENVPN_CURRENT_VERSION}-debian0) stable; urgency=medium" > $DEBIAN_CHANGELOG
+echo >> $DEBIAN_CHANGELOG
+git log --pretty=short --abbrev-commit --format="  * %s (%an, %h)" $OPENVPN_PREVIOUS_TAG...$OPENVPN_CURRENT_TAG >> $DEBIAN_CHANGELOG
+echo >> $DEBIAN_CHANGELOG
+echo " -- $GIT_AUTHOR $DEBIAN_DATE" >> $DEBIAN_CHANGELOG
 
 # Copy the man-page and tarballs
 cp -v doc/openvpn.8.html "$BASEDIR/man/"
