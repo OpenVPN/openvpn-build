@@ -26,6 +26,7 @@ codesign() {
 	if [ -n "${DO_SIGN}" ]; then
 		echo "Signing '${f}'"
 		"${OSSLSIGNCODE}" \
+			sign \
 			-h "${SIGN_DIGEST}" \
 			-pkcs12 "${SIGN_PKCS12}" \
 			-pass "${SIGN_PKCS12_PASS}" \
@@ -196,6 +197,6 @@ if [ -n "${DO_SIGN}" ]; then
 	[ -n "${SIGN_PKCS12}" ] || die "please specify PKCS#12 file"
 	[ -f "${SIGN_PKCS12}" ] || die "cannot find PKCS#12 file '${SIGN_PKCS12}'"
 fi
-SIGN_TIMESTAMP_URL="${SIGN_TIMESTAMP_URL:-http://timestamp.verisign.com/scripts/timstamp.dll}"
+SIGN_TIMESTAMP_URL="${SIGN_TIMESTAMP_URL:-http://timestamp.digicert.com}"
 
 main

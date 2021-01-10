@@ -25,6 +25,8 @@ rem To build only openvpn, run
 rem    set MODE=OPENVPN&& build.bat
 rem To build only dependencies, run
 rem    set MODE=DEPS&& build.bat
+rem To build for 32bit architecture, run
+rem    set ARCH=32S&& build.bat
 
 setlocal ENABLEDELAYEDEXPANSION
 
@@ -35,12 +37,14 @@ SET OPENVPN_BUILD_OPENVPN=openvpn-build-openvpn
 call build-env.bat
 if exist build-env-local.bat call build-env-local.bat
 
+echo Building for %ARCH%bit architecture
+
 if exist "%VCHOME%\vcvarsall.bat" (
 	call "%VCHOME%\vcvarsall.bat"
-) else if exist "%VCHOME%\bin\vcvars64.bat" (
-	call "%VCHOME%\bin\vcvars64.bat"
-) else if exist "%VCHOME%\Auxiliary\Build\vcvars64.bat" (
-	call "%VCHOME%\Auxiliary\Build\vcvars64.bat"
+) else if exist "%VCHOME%\bin\vcvars%ARCH%.bat" (
+	call "%VCHOME%\bin\vcvars%ARCH%.bat"
+) else if exist "%VCHOME%\Auxiliary\Build\vcvars%ARCH%.bat" (
+	call "%VCHOME%\Auxiliary\Build\vcvars%ARCH%.bat"
 ) else (
 	echo Cannot detect visual studio environment
 	goto error
@@ -55,7 +59,7 @@ if not exist "%NASM_DIR%" (
 	echo "Could't find %NASM_DIR%/nasm.exe, please install NASM (https://www.nasm.us)"
 	goto error
 )
-echo Adding %NASM_DIR% to PATH	
+echo Adding %NASM_DIR% to PATH
 set PATH=%NASM_DIR%;%PATH%
 :cont1
 
@@ -113,7 +117,8 @@ if errorlevel 1 goto error
 echo Build OpenSSL
 
 cd build.tmp\openssl*
-perl Configure VC-WIN64A --prefix="%TARGET%" --openssldir="%TARGET%"\ssl
+if %ARCH%==32 ( SET CONF=VC-WIN32 ) else ( SET CONF=VC-WIN64A )
+perl Configure %CONF% --prefix="%TARGET%" --openssldir="%TARGET%"\ssl
 if errorlevel 1 goto error
 nmake install
 if errorlevel 1 goto error
@@ -129,7 +134,7 @@ cd %ROOT%
 echo Build LZO
 
 cd build.tmp\lzo*
-call B\win64\vc_dll.bat
+call B\win%ARCH%\vc_dll.bat
 rem if errorlevel 1 goto error - returns 1!!
 xcopy include\lzo "%TARGET%\include\lzo" /e /i /y
 if errorlevel 1 goto error
@@ -173,7 +178,9 @@ mkdir ..\..\%OPENVPN_BUILD_OPENVPN% > nul 2>&1
 cd build.tmp\openvpn*
 xcopy * ..\..\..\..\%OPENVPN_BUILD_OPENVPN% /E
 cd ..\..\..\..\%OPENVPN_BUILD_OPENVPN%
-msbuild openvpn.sln /p:Platform=x64 /p:Configuration=%RELEASE%
+
+if %ARCH%==32 ( SET PLAT=Win32 ) else ( SET PLAT=x64 )
+msbuild openvpn.sln /p:Platform=%PLAT% /p:Configuration=%RELEASE%
 if errorlevel 1 goto error
 copy x64-Output\%RELEASE%\*.exe "%TARGET%\bin"
 if errorlevel 1 goto error
