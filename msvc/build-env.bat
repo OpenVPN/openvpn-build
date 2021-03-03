@@ -14,7 +14,7 @@ set LZO_URL=http://www.oberhumer.com/opensource/lzo/download/lzo-%LZO_VERSION%.t
 set PKCS11_URL=https://github.com/OpenSC/pkcs11-helper/releases/download/pkcs11-helper-%PKCS11_VERSION%/pkcs11-helper-%PKCS11_VERSION%.tar.bz2
 set TAP_URL=https://github.com/OpenVPN/tap-windows6/archive/%TAP_VERSION%.zip
 set OPENVPN_URL=https://github.com/%GITHUB_USER%/openvpn/archive/%OPENVPN_VERSION%.tar.gz
-set OPENVPN_GIT=https://github.com/OpenVPN/openvpn.git
+set OPENVPN_GIT=https://github.com/%GITHUB_USER%/openvpn.git
 set P7ZIP_URL=https://netcologne.dl.sourceforge.net/project/sevenzip/7-Zip/9.20/7za920.zip
 
 if "%ProgramFiles(x86)%"=="" set ProgramFiles(x86)=%ProgramFiles%
