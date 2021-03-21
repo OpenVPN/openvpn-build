@@ -93,10 +93,12 @@ set download_list=openssl lzo pkcs11 tap
 if "%OPENVPN_SOURCE%"=="tarball" set download_list=%download_list% openvpn
 for %%f in (%download_list%) do (
 	set URL=!%%f_URL!
-	for /f %%i in ("!URL!") do set NAME=%%~ni%%~xi
-	set found=
-	for %%i in (sources\%%f*) do set found=1
-	if "!found!" == "" (
+	for /f %%i in ("!URL!") do (
+		set tarball=
+		for /f %%j in ("%%~ni") do if "%%~xj" == ".tar" set tarball=".tar"
+		set NAME=%%f-!%%f_VERSION!!tarball!%%~xi
+	)
+	if not exist "sources/!NAME!" (
 		echo Downloading !URL!
 		cscript //nologo wget.js !URL! sources/!NAME!
 		if errorlevel 1 goto error
