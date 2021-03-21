@@ -31,6 +31,3 @@ if "%NASM_DIR%"=="" SET NASM_DIR=c:\Program Files\NASM
 if "%ARCH%"=="" SET ARCH=64
 if "%TARGET%"=="" SET TARGET=%ROOT%\image%ARCH%
 if "%RELEASE%"=="" SET RELEASE=Release
-
-rem OpenSSL build defines RC as "1" when undefined on some environments.
-if "%RC%"=="" SET RC=rc

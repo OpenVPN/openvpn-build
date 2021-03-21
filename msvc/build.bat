@@ -189,12 +189,12 @@ if errorlevel 1 goto error
 cd %ROOT%
 
 echo SUCCESS
-set rc=0
+set result=0
 goto end
 :error
 echo FAILED!
-set rc=1
+set result=1
 :end
 cd %ROOT%
-endlocal && set rc=%rc%
-exit /b %rc%
+endlocal && set result=%result%
+exit /b %result%
