@@ -64,6 +64,10 @@ download1() {
 	local url="$1"
 	local prefix="$(basename "${url}" | sed 's/-[0-9].*//g')"
 
+	# LZ4 download is just "v1.9.3.tar.gz", so check for exact file exist
+	if [ -f "${SOURCESROOT}/${prefix}" ] ; then
+		return
+	fi
 	if ! [ -n "$(ls "${SOURCESROOT}/${prefix}-"[0-9]* 2> /dev/null)" ]; then
 		geturl ${url} || die "Cannot download ${url}"
 	fi
@@ -72,6 +76,7 @@ download1() {
 download() {
 	for url in \
 		${LZO_URL} \
+		${LZ4_URL} \
 		${OPENSSL_URL} \
 		${PKCS11_HELPER_URL} \
 		${TAP_WINDOWS_URL} \
@@ -81,7 +86,7 @@ download() {
 		download1 "${url}"
 	done
 
-	if [ "$(ls "${SOURCESROOT}" | wc -l | sed 's/[ \t]//g')" != 6 ]; then
+	if [ "$(ls "${SOURCESROOT}" | wc -l | sed 's/[ \t]//g')" != 7 ]; then
 		die "sources is unclean."
 	fi
 }
@@ -227,6 +232,30 @@ build_dep() {
 			|| die "make lzo"
 
 		[ -n "${SAVE_DEP_CACHE}" ] && depcache_save lzo
+	fi
+
+	if [ -n "${USE_DEP_CACHE}" ]; then
+		depcache_extract lz4
+	else
+		echo "Build lz4"
+		cd "${BUILDROOT}/lz4"* || die "cd lz4"
+		echo ./configure ${CONFIGOPTS} ${EXTRA_LZ4_CONFIG} \
+			$(empty_ifelse "${DO_STATIC}" --enable-shared --disable-shared) \
+			|| die "Configure lz4"
+		# lz4 does not have a configure, so pass CC/LD instead
+		# ... and we only want the static library
+		${MAKE} ${MAKEOPTS} CC=${CHOST}-gcc LD=${CHOST}-gcc \
+			WINDRES=${CHOST}-windres TARGET_OS=MINGW32 \
+			BUILD_STATIC=yes BUILD_SHARED=no \
+			PREFIX=/ DESTDIR="${INSTALL_ROOT}" V=1 \
+			|| die "make lz4"
+		${MAKE} ${MAKEOPTS} CC=${CHOST}-gcc LD=${CHOST}-gcc \
+			WINDRES=${CHOST}-windres TARGET_OS=MINGW32 \
+			BUILD_STATIC=yes BUILD_SHARED=no \
+			PREFIX=/ DESTDIR="${INSTALL_ROOT}" V=1 install \
+			|| die "make lz4"
+
+		[ -n "${SAVE_DEP_CACHE}" ] && depcache_save lz4
 	fi
 
 	if [ -z "${DO_STATIC}" ]; then
@@ -413,6 +442,8 @@ export OPENSSL_CFLAGS="-I${OPENVPN_ROOT}/include"
 export OPENSSL_LIBS="-L${OPENVPN_ROOT}/lib -lssl -lcrypto"
 export LZO_CFLAGS="-I${OPENVPN_ROOT}/include"
 export LZO_LIBS="-L${OPENVPN_ROOT}/lib -llzo2"
+export LZ4_CFLAGS="-I${OPENVPN_ROOT}/include"
+export LZ4_LIBS="-L${OPENVPN_ROOT}/lib -llz4"
 export PKCS11_HELPER_CFLAGS="-I${OPENVPN_ROOT}/include"
 export PKCS11_HELPER_LIBS="-L${OPENVPN_ROOT}/lib -lpkcs11-helper"
 export TAP_CFLAGS="-I${OPENVPN_ROOT}/include"
