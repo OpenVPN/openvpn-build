@@ -60,7 +60,7 @@ echo "openvpn (${OPENVPN_CURRENT_VERSION}-debian0) stable; urgency=medium" > $DE
 echo >> $DEBIAN_CHANGELOG
 git log --pretty=short --abbrev-commit --format="  * %s (%an, %h)" $OPENVPN_PREVIOUS_TAG...$OPENVPN_CURRENT_TAG >> $DEBIAN_CHANGELOG
 echo >> $DEBIAN_CHANGELOG
-echo " -- $GIT_AUTHOR $DEBIAN_DATE" >> $DEBIAN_CHANGELOG
+echo " -- $GIT_AUTHOR  $DEBIAN_DATE" >> $DEBIAN_CHANGELOG
 
 # Copy the man-page and tarballs
 cp -v doc/openvpn.8.html "$BASEDIR/man/"
