@@ -63,6 +63,12 @@
         <Property Id="EDITOR" Value="notepad.exe"/>
         <PropertyRef Id="NETFRAMEWORK40FULL"/>
 
+        <Property Id="WIN102004" Secure="yes">
+            <DirectorySearch Id="searchSystem" Path="[SystemFolder]" Depth="0">
+                <FileSearch Id="searchFile" Name="advapi32.dll" MinVersion="6.3.19041.0"/>
+            </DirectorySearch>
+        </Property>
+
         <!--
             Overwrite all files regardless of versions on install
             See https://docs.microsoft.com/en-us/windows/win32/msi/reinstallmode
@@ -87,6 +93,8 @@
         <Property Id="ACTIVETAPWINDOWS6ADAPTERS" Secure="yes"/>
         <Property Id="WINTUNADAPTERS" Secure="yes"/>
         <Property Id="ACTIVEWINTUNADAPTERS" Secure="yes"/>
+        <Property Id="OVPNDCOADAPTERS" Secure="yes"/>
+        <Property Id="ACTIVEOVPNDCOADAPTERS" Secure="yes"/>
 
 
         <!--
@@ -996,6 +1004,20 @@
                         </Component>
                     </Directory>
                 </Directory>
+
+                <Directory Id="CommonFiles" Name="Common Files">
+                    <Directory Id="OVPNDCO" Name="ovpn-dco">
+                        <Component Id="CMP_ovpn_dco.inf" Guid="4BE20469-2292-4AE2-B953-49AA0DA4165E">
+                            <File Id="ovpndco.inf" Name="ovpn-dco.inf" Source="!(bindpath.ovpndco)\ovpn-dco.inf" KeyPath="yes" />
+                        </Component>
+                        <Component Id="CMP_ovpn_dco.cat" Guid="EB59AE6E-191E-4FE1-B414-005217348183">
+                            <File Id="ovpndco.cat" Name="ovpn-dco.cat" Source="!(bindpath.ovpndco)\ovpn-dco.cat" KeyPath="yes" />
+                        </Component>
+                        <Component Id="CMP_ovpn_dco.sys" Guid="0007BFDB-42A9-4F67-BDD9-AB3B797DEF1F">
+                            <File Id="ovpndco.sys" Name="ovpn-dco.sys" Source="!(bindpath.ovpndco)\ovpn-dco.sys" KeyPath="yes" />
+                        </Component>
+                    </Directory>
+                </Directory>
             </Directory>
 
             <Directory Id="ProgramMenuFolder">
@@ -1320,6 +1342,9 @@
             <ProgressText Action="$(var.PRODUCT_TAP_WIN_COMPONENT_ID)_Process">Processing TAP-Windows6 driver</ProgressText>
             <ProgressText Action="EvaluateWintun">Evaluating Wintun driver</ProgressText>
             <ProgressText Action="ProcessWintun">Processing Wintun driver</ProgressText>
+            <ProgressText Action="OvpnDcoEvaluate">Evaluating ovpn-dco driver</ProgressText>
+            <ProgressText Action="OvpnDcoProcess">Processing ovpn-dco driver</ProgressText>
+            <ProgressText Action="CheckAndScheduleReboot">Checking if reboot is required</ProgressText>
         </UI>
 
 
@@ -1335,7 +1360,13 @@
         <CustomAction Id="InstallTUNTAPAdaptersRollback"   BinaryKey="libopenvpnmsica.dll" DllEntry="ProcessDeferredAction" Execute="rollback" Impersonate="no"/>
         <CustomAction Id="CheckAndScheduleReboot"          BinaryKey="libopenvpnmsica.dll" DllEntry="CheckAndScheduleReboot"/>
 
+        <!-- ovpn-dco driver -->
+        <CustomAction Id="OvpnDcoEvaluate"    BinaryKey="libopenvpnmsica.dll" DllEntry="EvaluateDriver" Execute="immediate"/>
+        <CustomAction Id="OvpnDcoProcess"     BinaryKey="libopenvpnmsica.dll" DllEntry="ProcessDriver" Execute="deferred" Impersonate="no"/>
+
         <InstallExecuteSequence>
+            <Custom Action="OvpnDcoEvaluate"                 Before="OvpnDcoProcess"/>
+            <Custom Action="OvpnDcoProcess"                   After="InstallFiles" />
             <Custom Action="EvaluateTUNTAPAdapters"           After="ProcessComponents"/>
             <Custom Action="UninstallTUNTAPAdapters"          After="DeleteServices"/>
             <Custom Action="UninstallTUNTAPAdaptersCommit"    After="UninstallTUNTAPAdapters"/>
@@ -1355,7 +1386,6 @@
             <ProgressText
                 Action="InstallTUNTAPAdapters"
                 Template="[1]: [2] [3] [4]">Creating TUN/TAP adapters</ProgressText>
-
             <Error Id="2550">OpenVPNMSICA: [2]</Error>
             <Error Id="2551">OpenVPNMSICA: [2]  Error [3]: [4]</Error>
         </UI>
@@ -1426,6 +1456,14 @@
                     <Data Column="Component_" >reg11F81A5FFB49D87B59FD3777E57FF853.C28309D9_1954_4F2D_A7D1_228850092460</Data>
                 </Row>
             <?endif?>
+
+            <Row>
+                <Data Column="Adapter"    >ovpndco</Data>
+                <Data Column="DisplayName">ovpn-dco|$(var.PRODUCT_NAME) Data Channel Offload</Data>
+                <Data Column="HardwareId" >ovpn-dco</Data>
+                <Data Column="Condition"  ><![CDATA[NOT OVPNDCOADAPTERS]]></Data>
+                <Data Column="Component_" >CMP_ovpn_dco.inf</Data>
+            </Row>
         </CustomTable>
 
 
@@ -1603,6 +1641,19 @@
                     <MergeRef Id="WintunMergeModule"/>
                 </Feature>
             <?endif?>
+
+            <Feature
+                Id="Drivers.OvpnDco"
+                Title="ovpn-dco"
+                Description="OpenVPN Data Channel Offload"
+                Level="0"
+                ConfigurableDirectory="PRODUCTDIR"
+                AllowAdvertise="no">
+                <ComponentRef Id="CMP_ovpn_dco.inf"/>
+                <ComponentRef Id="CMP_ovpn_dco.cat"/>
+                <ComponentRef Id="CMP_ovpn_dco.sys"/>
+                <Condition Level="1">WIN102004</Condition>
+            </Feature>
         </Feature>
 
         <Feature
