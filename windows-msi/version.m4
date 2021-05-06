@@ -5,12 +5,15 @@ dnl ============================================================
 dnl TAP-Windows binaries
 define([PRODUCT_TAP_WIN_URL_x86],      [https://build.openvpn.net/downloads/releases/tap-windows-9.24.6-I601-i386.msm])
 define([PRODUCT_TAP_WIN_URL_amd64],    [https://build.openvpn.net/downloads/releases/tap-windows-9.24.6-I601-amd64.msm])
+define([PRODUCT_TAP_WIN_URL_arm64],    [https://build.openvpn.net/downloads/releases/tap-windows-9.24.6-I601-arm64.msm])
 define([PRODUCT_TAP_WIN_COMPONENT_ID], [tap0901])
 define([PRODUCT_TAP_WIN_NAME],         [TAP-Windows])
 
 dnl Wintun binaries
 define([PRODUCT_WINTUN_URL_x86],       [https://www.wintun.net/builds/wintun-x86-0.8.1.msm])
 define([PRODUCT_WINTUN_URL_amd64],     [https://www.wintun.net/builds/wintun-amd64-0.8.1.msm])
+dnl This is only to make build script happy - the file is only downloaded but not used, since there is no arm64 wintun MSM (yet)
+define([PRODUCT_WINTUN_URL_arm64],     [https://www.wintun.net/builds/wintun-amd64-0.8.1.msm])
 
 dnl OpenVPNServ2.exe binary
 define([OPENVPNSERV2_URL], [http://build.openvpn.net/downloads/releases/openvpnserv2-1.4.0.1.exe])
@@ -43,6 +46,7 @@ dnl The MSI upgrade codes MUST persist for all versions of the same product line
 dnl Please use own upgrade codes when deploying a non-official OpenVPN release.
 define([UPGRADE_CODE_x86],   [{1195A47B-A37A-4055-9D34-B7A691F7E97B}])
 define([UPGRADE_CODE_amd64], [{461BDF86-D389-4471-BF36-99806B64C127}])
+define([UPGRADE_CODE_arm64], [{1E8C4DDC-9E93-4AE2-9495-DF86821EAA3A}])
 
 dnl OpenVPN configration file extension (e.g. conf, ovpn...)
 define([CONFIG_EXTENSION], [ovpn])
