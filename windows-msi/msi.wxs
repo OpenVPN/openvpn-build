@@ -1324,6 +1324,7 @@
         <CustomAction Id="InstallTUNTAPAdapters"           BinaryKey="libopenvpnmsica.dll" DllEntry="ProcessDeferredAction" Execute="deferred" Impersonate="no"/>
         <CustomAction Id="InstallTUNTAPAdaptersCommit"     BinaryKey="libopenvpnmsica.dll" DllEntry="ProcessDeferredAction" Execute="commit"   Impersonate="no"/>
         <CustomAction Id="InstallTUNTAPAdaptersRollback"   BinaryKey="libopenvpnmsica.dll" DllEntry="ProcessDeferredAction" Execute="rollback" Impersonate="no"/>
+        <CustomAction Id="CheckAndScheduleReboot"          BinaryKey="libopenvpnmsica.dll" DllEntry="CheckAndScheduleReboot"/>
 
         <InstallExecuteSequence>
             <Custom Action="EvaluateTUNTAPAdapters"           After="ProcessComponents"/>
@@ -1333,6 +1334,7 @@
             <Custom Action="InstallTUNTAPAdapters"           Before="InstallServices"/>
             <Custom Action="InstallTUNTAPAdaptersCommit"      After="InstallTUNTAPAdapters"/>
             <Custom Action="InstallTUNTAPAdaptersRollback"   Before="InstallTUNTAPAdapters"/>
+            <Custom Action="CheckAndScheduleReboot"           After="InstallFinalize"/>
         </InstallExecuteSequence>
 
         <UI>
