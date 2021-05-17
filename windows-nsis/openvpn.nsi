@@ -129,6 +129,8 @@ LangString DESC_SecOpenSSLDLLs ${LANG_ENGLISH} "Install OpenSSL DLLs locally (ma
 
 LangString DESC_SecLZODLLs ${LANG_ENGLISH} "Install LZO DLLs locally (may be omitted if DLLs are already installed globally)."
 
+LangString DESC_SecLZ4DLLs ${LANG_ENGLISH} "Install LZ4 DLLs locally (may be omitted if DLLs are already installed globally)."
+
 LangString DESC_SecPKCS11DLLs ${LANG_ENGLISH} "Install PKCS#11 helper DLLs locally (may be omitted if DLLs are already installed globally)."
 
 LangString DESC_SecService ${LANG_ENGLISH} "Install the ${PACKAGE_NAME} service wrappers"
@@ -616,9 +618,9 @@ Section "-OpenSSL DLLs" SecOpenSSLDLLs
 	SetOverwrite on
 	SetOutPath "$INSTDIR\bin"
 	${If} ${RunningX64}
-		File /x liblzo2-2.dll /x libpkcs11-helper-1.dll "${OPENVPN_ROOT_X86_64}\bin\*.dll"
+		File /x liblzo2-2.dll /x libpkcs11-helper-1.dll /x liblz4.dll "${OPENVPN_ROOT_X86_64}\bin\*.dll"
 	${Else}
-		File /x liblzo2-2.dll /x libpkcs11-helper-1.dll "${OPENVPN_ROOT_I686}\bin\*.dll"
+		File /x liblzo2-2.dll /x libpkcs11-helper-1.dll /x liblz4.dll "${OPENVPN_ROOT_I686}\bin\*.dll"
 	${EndIf}
 
 SectionEnd
@@ -631,6 +633,18 @@ Section "-LZO DLLs" SecLZODLLs
 		File "${OPENVPN_ROOT_X86_64}\bin\liblzo2-2.dll"
 	${Else}
 		File "${OPENVPN_ROOT_I686}\bin\liblzo2-2.dll"
+	${EndIf}
+
+SectionEnd
+
+Section "-LZ4 DLLs" SecLZ4DLLs
+
+	SetOverwrite on
+	SetOutPath "$INSTDIR\bin"
+	${If} ${RunningX64}
+		File "${OPENVPN_ROOT_X86_64}\bin\liblz4.dll"
+	${Else}
+		File "${OPENVPN_ROOT_I686}\bin\liblz4.dll"
 	${EndIf}
 
 SectionEnd
@@ -695,6 +709,7 @@ ${EndIf}
 	!insertmacro SelectByParameter ${SecDisableSavePass} SELECT_DISABLE_SAVEPASS 0
 	!insertmacro SelectByParameter ${SecOpenSSLDLLs} SELECT_OPENSSLDLLS 1
 	!insertmacro SelectByParameter ${SecLZODLLs} SELECT_LZODLLS 1
+	!insertmacro SelectByParameter ${SecLZ4DLLs} SELECT_LZ4DLLS 1
 	!insertmacro SelectByParameter ${SecPKCS11DLLs} SELECT_PKCS11DLLS 1
 
 	!insertmacro MULTIUSER_INIT
@@ -788,6 +803,7 @@ SectionEnd
 	!insertmacro MUI_DESCRIPTION_TEXT ${SecOpenSSLUtilities} $(DESC_SecOpenSSLUtilities)
 	!insertmacro MUI_DESCRIPTION_TEXT ${SecOpenSSLDLLs} $(DESC_SecOpenSSLDLLs)
 	!insertmacro MUI_DESCRIPTION_TEXT ${SecLZODLLs} $(DESC_SecLZODLLs)
+	!insertmacro MUI_DESCRIPTION_TEXT ${SecLZ4DLLs} $(DESC_SecLZ4DLLs)
 	!insertmacro MUI_DESCRIPTION_TEXT ${SecPKCS11DLLs} $(DESC_SecPKCS11DLLs)
 	!insertmacro MUI_DESCRIPTION_TEXT ${SecAddShortcuts} $(DESC_SecAddShortcuts)
 	!insertmacro MUI_DESCRIPTION_TEXT ${SecLaunchGUIOnLogon} $(DESC_SecLaunchGUIOnLogon)
@@ -859,6 +875,7 @@ Section "Uninstall"
 	Delete "$INSTDIR\bin\libeay32.dll"
 	Delete "$INSTDIR\bin\ssleay32.dll"
 	Delete "$INSTDIR\bin\liblzo2-2.dll"
+	Delete "$INSTDIR\bin\liblz4.dll"
 	Delete "$INSTDIR\bin\libpkcs11-helper-1.dll"
 	Delete "$INSTDIR\bin\libcrypto-1_1.dll"
 	Delete "$INSTDIR\bin\libcrypto-1_1-x64.dll"

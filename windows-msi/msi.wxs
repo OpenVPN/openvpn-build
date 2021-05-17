@@ -623,6 +623,7 @@
                         <RemoveFile Id="nsis.openvpn.bin.libcrypto_1_1.dll" Property="NSIS.OPENVPN.BIN" Name="libcrypto-1_1$(var.OPENSSL_PLAT).dll" On="install"/>
                         <RemoveFile Id="nsis.openvpn.bin.libeay32.dll" Property="NSIS.OPENVPN.BIN" Name="libeay32.dll" On="install"/>
                         <RemoveFile Id="nsis.openvpn.bin.liblzo2_2.dll" Property="NSIS.OPENVPN.BIN" Name="liblzo2-2.dll" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.bin.liblz4.dll" Property="NSIS.OPENVPN.BIN" Name="liblz4.dll" On="install"/>
                         <RemoveFile Id="nsis.openvpn.bin.libpkcs11_helper_1.dll" Property="NSIS.OPENVPN.BIN" Name="libpkcs11-helper-1.dll" On="install"/>
                         <RemoveFile Id="nsis.openvpn.bin.libssl_1_1.dll" Property="NSIS.OPENVPN.BIN" Name="libssl-1_1$(var.OPENSSL_PLAT).dll" On="install"/>
                         <RemoveFile Id="nsis.openvpn.bin.openssl.exe" Property="NSIS.OPENVPN.BIN" Name="openssl.exe" On="install"/>
@@ -665,6 +666,7 @@
                         <?if $(sys.BUILDARCH)="x64" ?>
                         <RemoveFile Id="nsis.openvpn.x86.bin.libeay32.dll" Property="NSIS.OPENVPN.X86.BIN" Name="libeay32.dll" On="install"/>
                         <RemoveFile Id="nsis.openvpn.x86.bin.liblzo2_2.dll" Property="NSIS.OPENVPN.X86.BIN" Name="liblzo2-2.dll" On="install"/>
+                        <RemoveFile Id="nsis.openvpn.x86.bin.liblz4.dll" Property="NSIS.OPENVPN.X86.BIN" Name="liblz4.dll" On="install"/>
                         <RemoveFile Id="nsis.openvpn.x86.bin.libpkcs11_helper_1.dll" Property="NSIS.OPENVPN.X86.BIN" Name="libpkcs11-helper-1.dll" On="install"/>
                         <RemoveFile Id="nsis.openvpn.x86.bin.openssl.exe" Property="NSIS.OPENVPN.X86.BIN" Name="openssl.exe" On="install"/>
                         <RemoveFile Id="nsis.openvpn.x86.bin.openvpn.exe" Property="NSIS.OPENVPN.X86.BIN" Name="openvpn.exe" On="install"/>
@@ -730,6 +732,9 @@
                         </Component>
                         <Component Id="bin.liblzo2_2.dll" Guid="{A1A057F0-235B-4F55-9A3A-CDA2112648F8}">
                             <File Name="liblzo2-2.dll" Source="!(bindpath.openvpn)bin\liblzo2-2.dll" Checksum="yes"/>
+                        </Component>
+                        <Component Id="bin.liblz4.dll" Guid="{A4DA1C46-8058-4AF2-8468-B1DF80BF670D}">
+                            <File Name="$(var.LZ4_DLL).dll" Source="!(bindpath.openvpn)bin\$(var.LZ4_DLL).dll" Checksum="yes"/>
                         </Component>
                         <Component Id="bin.libpkcs11_helper_1.dll" Guid="{62BB5466-934A-41FE-989B-9D0B6BD5151F}">
                             <File Name="libpkcs11-helper-1.dll" Source="!(bindpath.openvpn)bin\libpkcs11-helper-1.dll" Checksum="yes"/>
@@ -1457,6 +1462,7 @@
             <ComponentRef Id="license.txt"/>
             <ComponentRef Id="bin.libcrypto_1_1.dll"/>
             <ComponentRef Id="bin.liblzo2_2.dll"/>
+            <ComponentRef Id="bin.liblz4.dll"/>
             <ComponentRef Id="bin.libpkcs11_helper_1.dll"/>
             <ComponentRef Id="bin.libssl_1_1.dll"/>
             <ComponentRef Id="bin.openvpn.exe"/>

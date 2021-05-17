@@ -59,6 +59,7 @@ clean	Cleans intermediate and output files</example>
                     "openVPNPath": BuildPath(rootPath, "generic", "image-win32", "openvpn"),
                     "programFilesPath": "ProgramFilesFolder",
                     "openSSLPlat": "",
+                    "LZ4DLL": "liblz4",
                     "wixPlat": "x86",
                     "wixLinkDepenencies": []
                 },
@@ -68,6 +69,7 @@ clean	Cleans intermediate and output files</example>
                     "openVPNPath": BuildPath(rootPath, "generic", "image-win64", "openvpn"),
                     "programFilesPath": "ProgramFiles64Folder",
                     "openSSLPlat": "-x64",
+                    "LZ4DLL": "liblz4",
                     "wixPlat": "x64",
                     "wixLinkDepenencies": []
                 }
@@ -151,7 +153,8 @@ clean	Cleans intermediate and output files</example>
                             "-dUPGRADE_CODE=\""                 + _CMD(ver.define["UPGRADE_CODE_" + plat        ]) + "\"",
                             "-dCONFIG_EXTENSION=\""             + _CMD(ver.define["CONFIG_EXTENSION"            ]) + "\"",
                             "-dPROGRAM_FILES_DIR=\""            + _CMD(p.programFilesPath                        ) + "\"",
-                            "-dOPENSSL_PLAT=\""                 + _CMD(p.openSSLPlat                             ) + "\""];
+                            "-dOPENSSL_PLAT=\""                 + _CMD(p.openSSLPlat                             ) + "\"",
+                            "-dLZ4_DLL=\""                      + _CMD(p.LZ4DLL                                  ) + "\""];
 
                         // WiX compiling
                         b.pushRule(new WiXCompileBuildRule(
@@ -222,6 +225,7 @@ clean	Cleans intermediate and output files</example>
                                 BuildPath(p.buildPath, "wintun.msm"),
                                 BuildPath(p.openVPNPath, "bin", "libcrypto-1_1" + p.openSSLPlat + ".dll"),
                                 BuildPath(p.openVPNPath, "bin", "liblzo2-2.dll"),
+                                BuildPath(p.openVPNPath, "bin", p.LZ4DLL + ".dll"),
                                 BuildPath(p.openVPNPath, "bin", "libopenvpnmsica.dll"),
                                 BuildPath(p.openVPNPath, "bin", "libpkcs11-helper-1.dll"),
                                 BuildPath(p.openVPNPath, "bin", "libssl-1_1" + p.openSSLPlat + ".dll"),

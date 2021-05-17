@@ -239,19 +239,15 @@ build_dep() {
 	else
 		echo "Build lz4"
 		cd "${BUILDROOT}/lz4"* || die "cd lz4"
-		echo ./configure ${CONFIGOPTS} ${EXTRA_LZ4_CONFIG} \
-			$(empty_ifelse "${DO_STATIC}" --enable-shared --disable-shared) \
-			|| die "Configure lz4"
 		# lz4 does not have a configure, so pass CC/LD instead
-		# ... and we only want the static library
 		${MAKE} ${MAKEOPTS} CC=${CHOST}-gcc LD=${CHOST}-gcc \
 			WINDRES=${CHOST}-windres TARGET_OS=MINGW32 \
-			BUILD_STATIC=yes BUILD_SHARED=no \
+			BUILD_STATIC=no BUILD_SHARED=yes \
 			PREFIX=/ DESTDIR="${INSTALL_ROOT}" V=1 \
 			|| die "make lz4"
 		${MAKE} ${MAKEOPTS} CC=${CHOST}-gcc LD=${CHOST}-gcc \
 			WINDRES=${CHOST}-windres TARGET_OS=MINGW32 \
-			BUILD_STATIC=yes BUILD_SHARED=no \
+			BUILD_STATIC=no BUILD_SHARED=yes \
 			PREFIX=/ DESTDIR="${INSTALL_ROOT}" V=1 install \
 			|| die "make lz4"
 
