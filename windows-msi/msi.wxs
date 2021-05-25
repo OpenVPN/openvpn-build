@@ -63,6 +63,12 @@
         <Property Id="EDITOR" Value="notepad.exe"/>
         <PropertyRef Id="NETFRAMEWORK40FULL"/>
 
+        <Property Id="WIN102004" Secure="yes">
+            <DirectorySearch Id="searchSystem" Path="[SystemFolder]" Depth="0">
+                <FileSearch Id="searchFile" Name="advapi32.dll" MinVersion="6.3.19041.0"/>
+            </DirectorySearch>
+        </Property>
+
         <!--
             Overwrite all files regardless of versions on install
             See https://docs.microsoft.com/en-us/windows/win32/msi/reinstallmode
@@ -87,6 +93,8 @@
         <Property Id="ACTIVETAPWINDOWS6ADAPTERS" Secure="yes"/>
         <Property Id="WINTUNADAPTERS" Secure="yes"/>
         <Property Id="ACTIVEWINTUNADAPTERS" Secure="yes"/>
+        <Property Id="OVPNDCOADAPTERS" Secure="yes"/>
+        <Property Id="ACTIVEOVPNDCOADAPTERS" Secure="yes"/>
 
 
         <!--
@@ -725,29 +733,34 @@
                     </Component>
 
                     <Directory Id="BINDIR" Name="bin">
+                        <?if $(sys.BUILDARCH)~="arm64"?>
+                            <Component Id="bin.vcruntime140.dll" Guid="{B4440841-D2A6-4E2C-9B59-67591311F955}">
+                                <File Name="vcruntime140.dll" Source="vcredist\arm64\vcruntime140.dll"/>
+                            </Component>
+                        <?endif?>
                         <Component Id="bin.libcrypto_1_1.dll" Guid="{811694A9-DC99-4CFA-BD72-4877F8E32C7C}">
-                            <File Name="libcrypto-1_1$(var.OPENSSL_PLAT).dll" Source="!(bindpath.openvpn)bin\libcrypto-1_1$(var.OPENSSL_PLAT).dll" Checksum="yes"/>
+                            <File Name="libcrypto-1_1$(var.OPENSSL_PLAT).dll" Source="!(bindpath.openvpn)bin\libcrypto-1_1$(var.OPENSSL_PLAT).dll"/>
                         </Component>
                         <Component Id="bin.liblzo2_2.dll" Guid="{A1A057F0-235B-4F55-9A3A-CDA2112648F8}">
-                            <File Name="liblzo2-2.dll" Source="!(bindpath.openvpn)bin\liblzo2-2.dll" Checksum="yes"/>
+                            <File Name="$(var.LZO_DLL)" Source="!(bindpath.openvpn)bin\$(var.LZO_DLL)"/>
                         </Component>
                         <Component Id="bin.libpkcs11_helper_1.dll" Guid="{62BB5466-934A-41FE-989B-9D0B6BD5151F}">
-                            <File Name="libpkcs11-helper-1.dll" Source="!(bindpath.openvpn)bin\libpkcs11-helper-1.dll" Checksum="yes"/>
+                            <File Name="libpkcs11-helper-1.dll" Source="!(bindpath.openvpn)bin\libpkcs11-helper-1.dll"/>
                         </Component>
                         <Component Id="bin.libssl_1_1.dll" Guid="{34B9FB21-7621-4C6A-8CA0-2C907F6ADDCE}">
-                            <File Name="libssl-1_1$(var.OPENSSL_PLAT).dll" Source="!(bindpath.openvpn)bin\libssl-1_1$(var.OPENSSL_PLAT).dll" Checksum="yes"/>
+                            <File Name="libssl-1_1$(var.OPENSSL_PLAT).dll" Source="!(bindpath.openvpn)bin\libssl-1_1$(var.OPENSSL_PLAT).dll"/>
                         </Component>
                         <Component Id="bin.openssl.exe" Guid="{E8876024-809B-40F1-A13B-A0DACFAA0AF0}">
-                            <File Name="openssl.exe" Source="!(bindpath.openvpn)bin\openssl.exe" Checksum="yes"/>
+                            <File Name="openssl.exe" Source="!(bindpath.openvpn)bin\openssl.exe"/>
                         </Component>
                         <Component Id="bin.openvpn.exe" Guid="{4D920FC9-DF3C-4D34-ADE6-3EEEF8AE901A}">
-                            <File Id="bin.openvpn.exe" Name="openvpn.exe" Source="!(bindpath.openvpn)bin\openvpn.exe" Checksum="yes"/>
+                            <File Id="bin.openvpn.exe" Name="openvpn.exe" Source="!(bindpath.openvpn)bin\openvpn.exe"/>
                         </Component>
                         <Component Id="bin.openvpn_gui.exe" Guid="{5A893CD4-EA7E-4887-89D0-15BBE904FE11}">
-                            <File Id="bin.openvpn_gui.exe" Name="openvpn-gui.exe" Source="!(bindpath.openvpn)bin\openvpn-gui.exe" Checksum="yes"/>
+                            <File Id="bin.openvpn_gui.exe" Name="openvpn-gui.exe" Source="!(bindpath.openvpn)bin\openvpn-gui.exe"/>
                         </Component>
                         <Component Id="bin.openvpnserv.exe" Guid="{43A4F408-9399-4BD7-9978-0ECE4A582929}">
-                            <File Name="openvpnserv.exe" Source="!(bindpath.openvpn)bin\openvpnserv.exe" Checksum="yes"/>
+                            <File Name="openvpnserv.exe" Source="!(bindpath.openvpn)bin\openvpnserv.exe"/>
                             <ServiceControl
                                 Id="OpenVPNServiceInteractive"
                                 Name="OpenVPNServiceInteractive"
@@ -766,7 +779,7 @@
                             </ServiceInstall>
                         </Component>
                         <Component Id="bin.openvpnserv2.exe" Guid="{8867EEBF-B928-49D7-A1F5-D33E2BCAAD70}">
-                            <File Name="openvpnserv2.exe" Source="!(bindpath.openvpnserv2)openvpnserv2.exe" Checksum="yes"/>
+                            <File Name="openvpnserv2.exe" Source="!(bindpath.openvpnserv2)openvpnserv2.exe"/>
                             <ServiceControl
                                 Id="OpenVPNService"
                                 Name="OpenVPNService"
@@ -784,7 +797,7 @@
                             </ServiceInstall>
                         </Component>
                         <Component Id="bin.tapctl.exe" Guid="{5A294591-0F71-470F-977B-DD288AB2B437}">
-                            <File Name="tapctl.exe" Source="!(bindpath.openvpn)bin\tapctl.exe" KeyPath="yes" Checksum="yes"/>
+                            <File Name="tapctl.exe" Source="!(bindpath.openvpn)bin\tapctl.exe" KeyPath="yes"/>
                         </Component>
                     </Directory>
 
@@ -991,6 +1004,20 @@
                         </Component>
                     </Directory>
                 </Directory>
+
+                <Directory Id="CommonFiles" Name="Common Files">
+                    <Directory Id="OVPNDCO" Name="ovpn-dco">
+                        <Component Id="CMP_ovpn_dco.inf" Guid="4BE20469-2292-4AE2-B953-49AA0DA4165E">
+                            <File Id="ovpndco.inf" Name="ovpn-dco.inf" Source="!(bindpath.ovpndco)\ovpn-dco.inf" KeyPath="yes" />
+                        </Component>
+                        <Component Id="CMP_ovpn_dco.cat" Guid="EB59AE6E-191E-4FE1-B414-005217348183">
+                            <File Id="ovpndco.cat" Name="ovpn-dco.cat" Source="!(bindpath.ovpndco)\ovpn-dco.cat" KeyPath="yes" />
+                        </Component>
+                        <Component Id="CMP_ovpn_dco.sys" Guid="0007BFDB-42A9-4F67-BDD9-AB3B797DEF1F">
+                            <File Id="ovpndco.sys" Name="ovpn-dco.sys" Source="!(bindpath.ovpndco)\ovpn-dco.sys" KeyPath="yes" />
+                        </Component>
+                    </Directory>
+                </Directory>
             </Directory>
 
             <Directory Id="ProgramMenuFolder">
@@ -1089,17 +1116,19 @@
                             <RemoveFolder Id="shortcut.bin.tapctl.exe.create.TAPWindows6" On="uninstall"/>
                             <RegistryValue Root="HKCU" Key="Software\$(var.PRODUCT_NAME)\Shortcuts" Name="bin.tapctl.exe.create.TAPWindows6" Type="integer" Value="1"/>
                         </Component>
-                        <Component Id="shortcut.bin.tapctl.exe.create.Wintun" Guid="{D257A1B3-A06E-4CE2-AA93-C36F6487126A}">
-                            <Shortcut
-                                Id="shortcut.bin.tapctl.exe.create.Wintun"
-                                Name="Add a new Wintun virtual network adapter"
-                                Target="[BINDIR]tapctl.exe"
-                                Arguments="create --hwid wintun"
-                                WorkingDirectory="BINDIR"
-                                Icon="tapctl_create.ico"/>
-                            <RemoveFolder Id="shortcut.bin.tapctl.exe.create.Wintun" On="uninstall"/>
-                            <RegistryValue Root="HKCU" Key="Software\$(var.PRODUCT_NAME)\Shortcuts" Name="bin.tapctl.exe.create.Wintun" Type="integer" Value="1"/>
-                        </Component>
+                        <?if $(sys.BUILDARCH)~="x86" Or $(sys.BUILDARCH)~="x64" ?>
+                            <Component Id="shortcut.bin.tapctl.exe.create.Wintun" Guid="{D257A1B3-A06E-4CE2-AA93-C36F6487126A}">
+                                <Shortcut
+                                    Id="shortcut.bin.tapctl.exe.create.Wintun"
+                                    Name="Add a new Wintun virtual network adapter"
+                                    Target="[BINDIR]tapctl.exe"
+                                    Arguments="create --hwid wintun"
+                                    WorkingDirectory="BINDIR"
+                                    Icon="tapctl_create.ico"/>
+                                <RemoveFolder Id="shortcut.bin.tapctl.exe.create.Wintun" On="uninstall"/>
+                                <RegistryValue Root="HKCU" Key="Software\$(var.PRODUCT_NAME)\Shortcuts" Name="bin.tapctl.exe.create.Wintun" Type="integer" Value="1"/>
+                            </Component>
+                        <?endif?>
                         <Component Id="shortcut.easyrsa.easyrsa_start.bat" Guid="{FE9645C1-6EF1-4046-895A-4ED5C98E2570}">
                             <Shortcut
                                 Id="shortcut.easyrsa.easyrsa_start.bat"
@@ -1303,7 +1332,9 @@
         -->
         <DirectoryRef Id="PRODUCTDIR">
             <Merge Id="TAPWindows6MergeModule" Language="0" DiskId="1" SourceFile="!(bindpath.build)$(var.PRODUCT_PLATFORM)\tap-windows6.msm"/>
-            <Merge Id="WintunMergeModule"      Language="0" DiskId="1" SourceFile="!(bindpath.build)$(var.PRODUCT_PLATFORM)\wintun.msm"/>
+            <?if $(sys.BUILDARCH)~="x86" Or $(sys.BUILDARCH)~="x64" ?>
+                <Merge Id="WintunMergeModule" Language="0" DiskId="1" SourceFile="!(bindpath.build)$(var.PRODUCT_PLATFORM)\wintun.msm"/>
+            <?endif ?>
         </DirectoryRef>
 
         <UI>
@@ -1311,6 +1342,9 @@
             <ProgressText Action="$(var.PRODUCT_TAP_WIN_COMPONENT_ID)_Process">Processing TAP-Windows6 driver</ProgressText>
             <ProgressText Action="EvaluateWintun">Evaluating Wintun driver</ProgressText>
             <ProgressText Action="ProcessWintun">Processing Wintun driver</ProgressText>
+            <ProgressText Action="OvpnDcoEvaluate">Evaluating ovpn-dco driver</ProgressText>
+            <ProgressText Action="OvpnDcoProcess">Processing ovpn-dco driver</ProgressText>
+            <ProgressText Action="CheckAndScheduleReboot">Checking if reboot is required</ProgressText>
         </UI>
 
 
@@ -1326,7 +1360,13 @@
         <CustomAction Id="InstallTUNTAPAdaptersRollback"   BinaryKey="libopenvpnmsica.dll" DllEntry="ProcessDeferredAction" Execute="rollback" Impersonate="no"/>
         <CustomAction Id="CheckAndScheduleReboot"          BinaryKey="libopenvpnmsica.dll" DllEntry="CheckAndScheduleReboot"/>
 
+        <!-- ovpn-dco driver -->
+        <CustomAction Id="OvpnDcoEvaluate"    BinaryKey="libopenvpnmsica.dll" DllEntry="EvaluateDriver" Execute="immediate"/>
+        <CustomAction Id="OvpnDcoProcess"     BinaryKey="libopenvpnmsica.dll" DllEntry="ProcessDriver" Execute="deferred" Impersonate="no"/>
+
         <InstallExecuteSequence>
+            <Custom Action="OvpnDcoEvaluate"                 Before="OvpnDcoProcess"/>
+            <Custom Action="OvpnDcoProcess"                   After="InstallFiles" />
             <Custom Action="EvaluateTUNTAPAdapters"           After="ProcessComponents"/>
             <Custom Action="UninstallTUNTAPAdapters"          After="DeleteServices"/>
             <Custom Action="UninstallTUNTAPAdaptersCommit"    After="UninstallTUNTAPAdapters"/>
@@ -1346,7 +1386,6 @@
             <ProgressText
                 Action="InstallTUNTAPAdapters"
                 Template="[1]: [2] [3] [4]">Creating TUN/TAP adapters</ProgressText>
-
             <Error Id="2550">OpenVPNMSICA: [2]</Error>
             <Error Id="2551">OpenVPNMSICA: [2]  Error [3]: [4]</Error>
         </UI>
@@ -1408,12 +1447,22 @@
                 <Data Column="Component_" >regD8053A2D8D674155AF2620A90720BE55.8D9A59BA_33C1_4CA0_96AF_E7F728DEC8D7</Data>
             </Row>
 
+            <?if $(sys.BUILDARCH)~="x86" Or $(sys.BUILDARCH)~="x64" ?>
+                <Row>
+                    <Data Column="Adapter"    >Wintun</Data>
+                    <Data Column="DisplayName">Wintun|$(var.PRODUCT_NAME) Wintun</Data>
+                    <Data Column="HardwareId" >Wintun</Data>
+                    <Data Column="Condition"  ><![CDATA[NOT WINTUNADAPTERS]]></Data>
+                    <Data Column="Component_" >reg11F81A5FFB49D87B59FD3777E57FF853.C28309D9_1954_4F2D_A7D1_228850092460</Data>
+                </Row>
+            <?endif?>
+
             <Row>
-                <Data Column="Adapter"    >Wintun</Data>
-                <Data Column="DisplayName">Wintun|$(var.PRODUCT_NAME) Wintun</Data>
-                <Data Column="HardwareId" >Wintun</Data>
-                <Data Column="Condition"  ><![CDATA[NOT WINTUNADAPTERS]]></Data>
-                <Data Column="Component_" >reg11F81A5FFB49D87B59FD3777E57FF853.C28309D9_1954_4F2D_A7D1_228850092460</Data>
+                <Data Column="Adapter"    >ovpndco</Data>
+                <Data Column="DisplayName">ovpn-dco|$(var.PRODUCT_NAME) Data Channel Offload</Data>
+                <Data Column="HardwareId" >ovpn-dco</Data>
+                <Data Column="Condition"  ><![CDATA[NOT OVPNDCOADAPTERS]]></Data>
+                <Data Column="Component_" >CMP_ovpn_dco.inf</Data>
             </Row>
         </CustomTable>
 
@@ -1457,6 +1506,9 @@
             AllowAdvertise="no"
             Display="expand">
             <ComponentRef Id="license.txt"/>
+            <?if $(sys.BUILDARCH)~="arm64"?>
+                <ComponentRef Id="bin.vcruntime140.dll"/>
+            <?endif?>
             <ComponentRef Id="bin.libcrypto_1_1.dll"/>
             <ComponentRef Id="bin.liblzo2_2.dll"/>
             <ComponentRef Id="bin.libpkcs11_helper_1.dll"/>
@@ -1577,15 +1629,30 @@
                 <MergeRef Id="TAPWindows6MergeModule"/>
             </Feature>
 
+            <?if $(sys.BUILDARCH)~="x86" Or $(sys.BUILDARCH)~="x64" ?>
+                <Feature
+                    Id="Drivers.Wintun"
+                    Title="Wintun"
+                    Description="Layer 3 TUN Driver for Windows"
+                    Level="1"
+                    ConfigurableDirectory="PRODUCTDIR"
+                    AllowAdvertise="no">
+                    <ComponentRef Id="shortcut.bin.tapctl.exe.create.Wintun"/>
+                    <MergeRef Id="WintunMergeModule"/>
+                </Feature>
+            <?endif?>
+
             <Feature
-                Id="Drivers.Wintun"
-                Title="Wintun"
-                Description="Layer 3 TUN Driver for Windows"
-                Level="1"
+                Id="Drivers.OvpnDco"
+                Title="ovpn-dco"
+                Description="OpenVPN Data Channel Offload"
+                Level="0"
                 ConfigurableDirectory="PRODUCTDIR"
                 AllowAdvertise="no">
-                <ComponentRef Id="shortcut.bin.tapctl.exe.create.Wintun"/>
-                <MergeRef Id="WintunMergeModule"/>
+                <ComponentRef Id="CMP_ovpn_dco.inf"/>
+                <ComponentRef Id="CMP_ovpn_dco.cat"/>
+                <ComponentRef Id="CMP_ovpn_dco.sys"/>
+                <Condition Level="1">WIN102004</Condition>
             </Feature>
         </Feature>
 
