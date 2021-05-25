@@ -243,6 +243,7 @@ clean	Cleans intermediate and output files</example>
                                 BuildPath(p.openVPNPath, "bin", "openvpn-gui.exe"),
                                 BuildPath(p.openVPNPath, "bin", "openvpnserv.exe"),
                                 BuildPath(p.openVPNPath, "bin", "tapctl.exe"),
+                                BuildPath("vcredist", p.wixPlat, "vcruntime140.dll"),
                                 BuildPath(buildPath, "openvpnserv2.exe"),
                                 BuildPath(buildPath, "README-config.txt"),
                                 BuildPath(buildPath, "Where are my config files.txt"),
