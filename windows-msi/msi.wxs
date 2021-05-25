@@ -725,6 +725,9 @@
                     </Component>
 
                     <Directory Id="BINDIR" Name="bin">
+                        <Component Id="bin.vcruntime140.dll" Guid="{B4440841-D2A6-4E2C-9B59-67591311F955}">
+                            <File Name="vcruntime140.dll" Source="vcredist\$(sys.BUILDARCH)\vcruntime140.dll"/>
+                        </Component>
                         <Component Id="bin.libcrypto_1_1.dll" Guid="{811694A9-DC99-4CFA-BD72-4877F8E32C7C}">
                             <File Name="libcrypto-1_1$(var.OPENSSL_PLAT).dll" Source="!(bindpath.openvpn)bin\libcrypto-1_1$(var.OPENSSL_PLAT).dll"/>
                         </Component>
@@ -1461,6 +1464,7 @@
             AllowAdvertise="no"
             Display="expand">
             <ComponentRef Id="license.txt"/>
+            <ComponentRef Id="bin.vcruntime140.dll"/>
             <ComponentRef Id="bin.libcrypto_1_1.dll"/>
             <ComponentRef Id="bin.liblzo2_2.dll"/>
             <ComponentRef Id="bin.libpkcs11_helper_1.dll"/>
