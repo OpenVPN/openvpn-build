@@ -203,6 +203,7 @@ build_dep() {
 			$(CHOST="${VIRTUAL_CHOST}" "${SCRIPTROOT}/gentoo.config-0.9.8") \
 			${CFLAGS} ${LDFLAGS} \
 			no-capieng \
+			no-autoload-config \
 			--openssldir=/etc/ssl \
 			--libdir=/lib \
 			${EXTRA_OPENSSL_CONFIG} \
