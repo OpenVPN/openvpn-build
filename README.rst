@@ -12,10 +12,10 @@ About
 
     These directories contain scripts to help build and
     package OpenVPN and its dependencies for various
-    hardware platforms and operating systems (e.g. Windows,
-    ARM). You do not need any of these scripts if you're
-    building a native version of OpenVPN on a UNIX-like
-    operating system.
+    hardware platforms and operating systems. You do not
+    need any of these scripts if you're building a native
+    version of OpenVPN on a UNIX-like or Windows operating
+    system.
 
     Thorough documentation is available in the OpenVPN wiki:
 
@@ -26,9 +26,6 @@ Directories
 
     The "generic" subdir contains scripts to cross-compile
     OpenVPN using mingw_w64 (e.g. Linux -> Windows).
-
-    The "msvc" subdir is used to compile OpenVPN on Windows
-    for Windows using Microsoft Visual Studio 2019.
 
     The "windows-msi" subdir contains scripts to
     package OpenVPN for Windows.

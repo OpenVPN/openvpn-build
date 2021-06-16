@@ -21,8 +21,6 @@ environment:
       CHOST: x86_64-w64-mingw32
       RANLIB: gcc-ranlib
       AR: gcc-ar
-    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
-      BUILDSYSTEM: VS2019
 
 for:
   -
@@ -35,15 +33,3 @@ for:
       - "%CYGWIN%\\bin\\bash -lc 'cd /cygdrive/c/projects/%APPVEYOR_PROJECT_SLUG% ; generic/build'"
     artifacts:
       - path: generic/image/openvpn/bin
-
-  -
-    matrix:
-      only:
-        - BUILDSYSTEM: VS2019
-    init:
-      - choco install -y --allow-empty-checksums nasm strawberryperl
-    build_script:
-      - set PATH=C:\Program Files\NASM;C:\Strawberry\Perl\bin;%PATH%
-      - msvc/build.bat
-    artifacts:
-      - path: msvc/image/bin
