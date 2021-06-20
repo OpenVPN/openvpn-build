@@ -1,5 +1,5 @@
 sudo: required
-dist: bionic
+dist: focal
 
 os: linux
 language: cpp
@@ -13,6 +13,7 @@ env:
   global:
     - CBUILD=x86_64-pc-linux-gnu
     - SCRIPT=generic/build
+
 
 matrix:
   fast_finish: true
