@@ -63,7 +63,7 @@ fi
 case "${CHOST}" in
 	i*86-*-mingw*|i*86-mingw*|mingw*)	system="mingw";;
 	x86_64-*-mingw*)	system="mingw64";;
-	aarch64-*-linux-*)	system="linux-aarch64";;
+	aarch64-*-linux-*|aarch64-linux-*)      system="linux-aarch64";;
 	*-linux*)		system="linux";;
 	*-freebsd*)		system="BSD";;
 	*-solaris*)
