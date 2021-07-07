@@ -57,12 +57,13 @@ function Builder()
 
     // Get the codepage Windows is using for stdin/stdout/stderr.
     switch (parseInt(this.wsh.RegRead("HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Nls\\CodePage\\OEMCP"), 10)) {
-        case  437: this.cpOEMMime = "cp437"       ; break;
-        case  850: this.cpOEMMime = "ibm850"      ; break;
-        case  852: this.cpOEMMime = "ibm852"      ; break;
-        case 1250: this.cpOEMMime = "windows-1250"; break;
-        case 1251: this.cpOEMMime = "windows-1251"; break;
-        default  : this.cpOEMMime = null;
+        case   437: this.cpOEMMime = "cp437"       ; break;
+        case   850: this.cpOEMMime = "ibm850"      ; break;
+        case   852: this.cpOEMMime = "ibm852"      ; break;
+        case  1250: this.cpOEMMime = "windows-1250"; break;
+        case  1251: this.cpOEMMime = "windows-1251"; break;
+        case 65001: this.cpOEMMime = "utf-8"       ; break;
+        default   : this.cpOEMMime = null;
     }
 
     this.force = false;

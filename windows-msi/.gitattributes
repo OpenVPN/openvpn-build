@@ -1,2 +1,3 @@
+*.bat    eol=crlf
 *.txt.in eol=lf
 *.wsf.in eol=lf
