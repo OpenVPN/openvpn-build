@@ -21,29 +21,40 @@ Note: ``unzip.exe``, ``tar.exe``, ``gzip.exe``, and ``bzip2.exe`` must be in
 Usage
 -----
 
-1. Cross compile OpenVPN using ``openvpn-build/generic`` build system on
-   Linux.
+This packaging system expects the following directories to be right next to each other:
 
-2. Digitally sign binaries in ``openvpn-build/generic/image-win(32|64)/openvpn/
-   bin`` folder. The ``tapctl.exe`` requires elevation, therefore it should be
+- openvpn-build
+
+- vcpkg (openssl etc.)
+
+- openvpn-gui
+
+- openvpn
+
+It is also expected that all the binaries have been built and signed before packaging. In other words
+this packaging system does not automatically build OpenVPN or its dependencies for you. On a high level
+the packaging process goes like this:
+
+1. Build OpenVPN dependencies (openssl etc.) with ``vcpkg``
+
+2. Build OpenVPN-GUI
+
+3. Build OpenVPN with ``msbuild``
+
+4. Digitally sign all the binaries. The ``tapctl.exe`` requires elevation, therefore it should be
    digitally signed at least.
 
    If the code signing is performed on Windows, see ``sign-openvpn.bat`` as a
    suggestion.
 
-3. Adjust ``version.md4``. It is important to increment ``PRODUCT_VERSION``
+5. Adjust ``version.md4``. It is important to increment ``PRODUCT_VERSION``
    *and* ``PRODUCT_VERSION_GUID`` on each release. MSI upgrading logic relies
    on this.
 
-4. Open Command Prompt on Windows and ``cd`` to ``openvpn-build\windows-msi``
+6. Open Command Prompt on Windows and ``cd`` to ``openvpn-build\windows-msi``
    folder.
 
-   To transfer the openvpn-build site to a Windows computer, you can copy it,
-   or share it using Samba on the Linux box. On a Windows computer mount the
-   Samba share as a drive (e.g. ``Z:``), since you cannot ``cd`` to a UNC path
-   of form ``\\computer\share\path``.
-
-5. Run ``cscript build.wsf`` to build the packages. The ``build.wsf`` is a
+7. Run ``cscript build.wsf`` to build the packages. The ``build.wsf`` is a
    simple Makefile type building tool developed to avoid Microsoft Visual
    Studio or GNU Make requirements. Refer to ``build.wsf`` for exact usage::
 
@@ -73,7 +84,7 @@ Usage
     cscript build.wsf exe
     sign-exe
 
-6. The MSI packages and EXE installer will be put to ``image`` subfolder.
+8. The MSI packages and EXE installer will be put to ``image`` subfolder.
 
 
 Digital Signing
