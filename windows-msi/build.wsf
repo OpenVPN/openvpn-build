@@ -45,10 +45,12 @@ clean	Cleans intermediate and output files</example>
 
             // Folders
             var
-                rootPath       = ".."
+                rootPath       = "..",
+                depsPath       = BuildPath("..", ".."),
                 buildPath      = "tmp",
                 sourcePath     = "sources",
                 easyRSAPath    = BuildPath(buildPath, "easyrsa-" + ver.define.EASYRSA_VERSION),
+                openVPNDocPath = BuildPath(depsPath, "openvpn", "doc"),
                 outputPath     = "image";
 
             // Platform specific info
@@ -56,32 +58,35 @@ clean	Cleans intermediate and output files</example>
             var platformInfo = {
                 "x86": {
                     "buildPath": BuildPath(buildPath, "x86"),
-                    "openVPNPath": BuildPath(rootPath, "generic", "image-win32", "openvpn"),
+                    "openVPNBinPath": BuildPath(depsPath, "openvpn", "Win32-Output", "Release"),
+                    "openVPNGuiBinPath": BuildPath(depsPath, "openvpn-gui", "build_Win32", "Release"),
+                    "openSSLBinPath": BuildPath(depsPath, "vcpkg", "installed", "x86-windows-ovpn", "tools", "openssl"),
                     "programFilesPath": "ProgramFilesFolder",
                     "openSSLPlat": "",
                     "wixPlat": "x86",
-                    "wixLinkDepenencies": [],
-                    "lzoDll": "liblzo2-2.dll"
+                    "wixLinkDepenencies": []
                 },
 
                 "amd64": {
                     "buildPath": BuildPath(buildPath, "amd64"),
-                    "openVPNPath": BuildPath(rootPath, "generic", "image-win64", "openvpn"),
+                    "openVPNBinPath": BuildPath(depsPath, "openvpn", "x64-Output", "Release"),
+                    "openVPNGuiBinPath": BuildPath(depsPath, "openvpn-gui", "build_x64", "Release"),
+                    "openSSLBinPath": BuildPath(depsPath, "vcpkg", "installed", "x64-windows-ovpn", "tools", "openssl"),
                     "programFilesPath": "ProgramFiles64Folder",
                     "openSSLPlat": "-x64",
                     "wixPlat": "x64",
-                    "wixLinkDepenencies": [],
-                    "lzoDll": "liblzo2-2.dll"
+                    "wixLinkDepenencies": []
                 },
 
                 "arm64": {
                     "buildPath": BuildPath(buildPath, "arm64"),
-                    "openVPNPath": BuildPath(rootPath, "generic", "image-arm64", "openvpn"),
+                    "openVPNGuiBinPath": BuildPath(depsPath, "openvpn-gui", "build_arm64", "Release"),
+                    "openVPNBinPath": BuildPath(depsPath, "openvpn", "ARM64-Output", "Release"),
+                    "openSSLBinPath": BuildPath(depsPath, "vcpkg", "installed", "arm64-windows-ovpn", "tools", "openssl"),
                     "programFilesPath": "ProgramFiles64Folder",
                     "openSSLPlat": "-arm64",
                     "wixPlat": "arm64",
-                    "wixLinkDepenencies": [],
-                    "lzoDll": "lzo2.dll"
+                    "wixLinkDepenencies": []
                 }
             }
 
@@ -164,7 +169,7 @@ clean	Cleans intermediate and output files</example>
                             "-dCONFIG_EXTENSION=\""             + _CMD(ver.define["CONFIG_EXTENSION"            ]) + "\"",
                             "-dPROGRAM_FILES_DIR=\""            + _CMD(p.programFilesPath                        ) + "\"",
                             "-dOPENSSL_PLAT=\""                 + _CMD(p.openSSLPlat                             ) + "\"",
-                            "-dLZO_DLL=\""                      + _CMD(p.lzoDll                                  ) + "\""];
+                            "-dLZO_DLL=\""                      + _CMD("lzo2.dll"                                ) + "\""];
 
                         // WiX compiling
                         b.pushRule(new WiXCompileBuildRule(
@@ -182,29 +187,27 @@ clean	Cleans intermediate and output files</example>
                         b.pushRule(new ConvertTextBuildRule(
                             BuildPath(p.buildPath, "license.txt"), "utf-8", adCRLF,
                             [
-                                BuildPath(p.openVPNPath, "share", "doc", "openvpn", "COPYING"),
-                                BuildPath(p.openVPNPath, "share", "doc", "openvpn", "COPYRIGHT.GPL")
+                                BuildPath(depsPath, "openvpn", "COPYING"),
+                                BuildPath(depsPath, "openvpn", "COPYRIGHT.GPL")
                             ], "utf-8", adLF,
                             []));
                         b.pushRule(new ConvertTextBuildRule(
                             BuildPath(p.buildPath, "client.ovpn"), "utf-8", adCRLF,
-                            [BuildPath(p.openVPNPath, "share", "doc", "openvpn", "sample", "client.ovpn")], "utf-8", adLF,
-                            []));
-                        b.pushRule(new ConvertTextBuildRule(
-                            BuildPath(p.buildPath, "sample.ovpn"), "utf-8", adCRLF,
-                            [BuildPath(p.openVPNPath, "share", "doc", "openvpn", "sample", "sample.ovpn")], "utf-8", adLF,
+                            [BuildPath(depsPath, "openvpn", "sample", "sample-config-files", "client.conf")], "utf-8", adLF,
                             []));
                         b.pushRule(new ConvertTextBuildRule(
                             BuildPath(p.buildPath, "server.ovpn"), "utf-8", adCRLF,
-                            [BuildPath(p.openVPNPath, "share", "doc", "openvpn", "sample", "server.ovpn")], "utf-8", adLF,
+                            [BuildPath(depsPath, "openvpn", "sample", "sample-config-files", "server.conf")], "utf-8", adLF,
                             []));
-
                         // WiX linker flags
                         var wixLinkerFlags = [
                             "-spdb",
                             "-ext WixNetFxExtension",
                             "-b build=\""         + _CMD(buildPath    ) + "\"",
-                            "-b openvpn=\""       + _CMD(p.openVPNPath) + "\"",
+                            "-b openvpndoc=\""    + _CMD(openVPNDocPath) + "\"",
+                            "-b openvpnbin=\""    + _CMD(p.openVPNBinPath) + "\"",
+                            "-b openvpnguibin=\"" + _CMD(p.openVPNGuiBinPath) + "\"",
+                            "-b opensslbin=\""    + _CMD(p.openSSLBinPath) + "\"",
                             "-b easyrsa=\""       + _CMD(easyRSAPath  ) + "\"",
                             "-b openvpnserv2=\""  + _CMD(buildPath    ) + "\""
                         ];
@@ -233,23 +236,23 @@ clean	Cleans intermediate and output files</example>
                                 BuildPath(p.buildPath, "license.txt"),
                                 BuildPath(p.buildPath, "tap-windows6.msm"),
                                 BuildPath(p.buildPath, "wintun.msm"),
-                                BuildPath(p.openVPNPath, "bin", "libcrypto-1_1" + p.openSSLPlat + ".dll"),
-                                BuildPath(p.openVPNPath, "bin", p.lzoDll),
-                                BuildPath(p.openVPNPath, "bin", "libopenvpnmsica.dll"),
-                                BuildPath(p.openVPNPath, "bin", "libpkcs11-helper-1.dll"),
-                                BuildPath(p.openVPNPath, "bin", "libssl-1_1" + p.openSSLPlat + ".dll"),
-                                BuildPath(p.openVPNPath, "bin", "openssl.exe"),
-                                BuildPath(p.openVPNPath, "bin", "openvpn.exe"),
-                                BuildPath(p.openVPNPath, "bin", "openvpn-gui.exe"),
-                                BuildPath(p.openVPNPath, "bin", "openvpnserv.exe"),
-                                BuildPath(p.openVPNPath, "bin", "tapctl.exe"),
+                                BuildPath(p.openVPNBinPath, "libcrypto-1_1" + p.openSSLPlat + ".dll"),
+                                BuildPath(p.openVPNBinPath, "lzo2.dll"),
+                                BuildPath(p.openVPNBinPath, "libopenvpnmsica.dll"),
+                                BuildPath(p.openVPNBinPath, "libpkcs11-helper-1.dll"),
+                                BuildPath(p.openVPNBinPath, "libssl-1_1" + p.openSSLPlat + ".dll"),
+                                BuildPath(p.openSSLBinPath, "openssl.exe"),
+                                BuildPath(p.openVPNBinPath, "openvpn.exe"),
+                                BuildPath(p.openVPNGuiBinPath, "openvpn-gui.exe"),
+                                BuildPath(p.openVPNBinPath, "openvpnserv.exe"),
+                                BuildPath(p.openVPNBinPath, "tapctl.exe"),
                                 BuildPath("vcredist", p.wixPlat, "vcruntime140.dll"),
                                 BuildPath(buildPath, "openvpnserv2.exe"),
                                 BuildPath(buildPath, "README-config.txt"),
                                 BuildPath(buildPath, "Where are my config files.txt"),
                                 BuildPath(buildPath, "README-config-auto.txt"),
                                 BuildPath(buildPath, "INSTALL-win32.txt"),
-                                BuildPath(p.openVPNPath, "share", "doc", "openvpn", "openvpn.8.html"),
+                                BuildPath(openVPNDocPath, "openvpn.8.html"),
                                 BuildPath("bookmarks", "howto.url"),
                                 BuildPath("bookmarks", "support.url"),
                                 BuildPath("bookmarks", "website.url"),
@@ -258,7 +261,6 @@ clean	Cleans intermediate and output files</example>
                                 BuildPath(easyRSAPath, "EasyRSA-Start.bat"),
                                 BuildPath(buildPath, "README-log.txt"),
                                 BuildPath(p.buildPath, "client.ovpn"),
-                                BuildPath(p.buildPath, "sample.ovpn"),
                                 BuildPath(p.buildPath, "server.ovpn")
                             ].concat(p.wixLinkDepenencies),
                             wixLinkerFlags));
@@ -321,29 +323,21 @@ clean	Cleans intermediate and output files</example>
             }
 
             var fso = new ActiveXObject("Scripting.FileSystemObject");
-            var buildArm64 = fso.FolderExists(platformInfo["arm64"].openVPNPath);
-            if (!buildArm64) {
-                WScript.Echo("Directory " + platformInfo["arm64"].openVPNPath + " not found, skip ARM64 build");
-            }
-
+ 
             // Finally, build the target.
             switch (cmd)
             {
                 case "all":
                     b.build(BuildPath(outputPath, ver.define.PRODUCT_NAME + "-" + ver.define.PACKAGE_VERSION + "-x86.msi"    ));
                     b.build(BuildPath(outputPath, ver.define.PRODUCT_NAME + "-" + ver.define.PACKAGE_VERSION + "-amd64.msi"  ));
-                    if (buildArm64) {
-                        b.build(BuildPath(outputPath, ver.define.PRODUCT_NAME + "-" + ver.define.PACKAGE_VERSION + "-arm64.msi"  ));
-                    }
+                    b.build(BuildPath(outputPath, ver.define.PRODUCT_NAME + "-" + ver.define.PACKAGE_VERSION + "-arm64.msi"  ));
                     b.build(BuildPath(outputPath, ver.define.PRODUCT_NAME + "-install-" + ver.define.PACKAGE_VERSION + ".exe"));
                     break;
 
                 case "msi":
                     b.build(BuildPath(outputPath, ver.define.PRODUCT_NAME + "-" + ver.define.PACKAGE_VERSION + "-x86.msi"  ));
                     b.build(BuildPath(outputPath, ver.define.PRODUCT_NAME + "-" + ver.define.PACKAGE_VERSION + "-amd64.msi"));
-                    if (buildArm64) {
-                        b.build(BuildPath(outputPath, ver.define.PRODUCT_NAME + "-" + ver.define.PACKAGE_VERSION + "-arm64.msi"));
-                    }
+                    b.build(BuildPath(outputPath, ver.define.PRODUCT_NAME + "-" + ver.define.PACKAGE_VERSION + "-arm64.msi"));
                     break;
 
                 case "exe":
