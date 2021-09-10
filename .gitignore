@@ -8,3 +8,4 @@ tmp
 *.pfx
 *.cer
 *.crt
+windows-msi/build-and-package-env.ps1
