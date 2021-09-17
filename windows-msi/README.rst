@@ -46,10 +46,6 @@ PFX certificate into the certificate store::
 This command will print out the certificate thumbprint which you'll need later.
 
 Now create a config file, ``build-and-package-env.ps1``, next to ``build-and-package.ps1``::
-
-    # Used internally by build-and-package.sh
-    $openvpn_vagrant_owner = "OpenVPN"
-    $openvpn_vagrant_branch = "master"
     
     # Used by build scripts build-and-package.sh calls
     $Env:CMAKE_TOOLCHAIN_FILE = "${basedir}\vcpkg\scripts\buildsystems\vcpkg.cmake" 
