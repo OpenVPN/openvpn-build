@@ -48,7 +48,6 @@ cd "${basedir}\openvpn"
 ForEach ($bat in "msbuild-x64.bat", "msbuild-x64_x86.bat", "msbuild-x64_arm64.bat") {
     If ((Test-Path $bat) -ne $True) {
 		Copy-Item "${basedir}\openvpn-build\windows-msi\${bat}" .
-		#Invoke-Webrequest -Uri "https://raw.githubusercontent.com/${openvpn_vagrant_owner}/openvpn-vagrant/${openvpn_vagrant_branch}/buildbot-host/buildmaster/${bat}" -Outfile $bat
 	}
 }
 
@@ -58,10 +57,6 @@ ForEach ($bat in "msbuild-x64.bat", "msbuild-x64_x86.bat", "msbuild-x64_arm64.ba
 
 ### Sign binaries
 cd "${basedir}\openvpn-build\windows-msi"
-
-if ((Test-Path "sign-binaries.bat") -ne $True) {
-	Invoke-Webrequest -Uri "https://raw.githubusercontent.com/${openvpn_vagrant_owner}/openvpn-vagrant/${openvpn_vagrant_branch}/buildbot-host/buildmaster/sign-binaries.bat" -Outfile sign-binaries.bat
-}
 
 $Env:SignScript = "sign-openvpn.bat"
 & .\sign-binaries.bat
