@@ -26,22 +26,24 @@ if ((Test-Path "${PSScriptRoot}/build-and-package-env.ps1") -ne $True) {
 # At the end of the build return to the directory we started from
 $cwd = Get-Location
 
-### Build OpenVPN-GUI
+### Ensure that OpenVPN and OpenVPN GUI are using the latest dependencies
+cd "${basedir}\openvpn"
+& git.exe pull
 
+cd "${basedir}\vcpkg"
+& git.exe pull
+& .\bootstrap-vcpkg.bat
+& .\vcpkg.exe upgrade --overlay-ports "${basedir}\openvpn\contrib\vcpkg-ports" --overlay-triplets "${basedir}\openvpn\contrib\vcpkg-triplets" --no-dry-run
+
+
+### Build OpenVPN-GUI
 Copy-Item "${basedir}\openvpn-build\windows-msi\build-openvpn-gui.ps1" "${basedir}\openvpn-gui\"
 cd "${basedir}\openvpn-gui"
 .\build-openvpn-gui.ps1
 
 
-### Update vcpkg dependencies
-cd "${basedir}\vcpkg"
-& git.exe pull
-& .\vcpkg.exe upgrade --overlay-ports "${basedir}\openvpn\contrib\vcpkg-ports" --overlay-triplets "${basedir}\openvpn\contrib\vcpkg-triplets" --no-dry-run
-
-
 ### Build OpenVPN
 cd "${basedir}\openvpn"
-& git.exe pull
 
 ForEach ($bat in "msbuild-x64.bat", "msbuild-x64_x86.bat", "msbuild-x64_arm64.bat") {
     If ((Test-Path $bat) -ne $True) {
