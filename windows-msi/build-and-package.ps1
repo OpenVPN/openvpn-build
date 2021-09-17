@@ -54,8 +54,6 @@ ForEach ($bat in "msbuild-x64.bat", "msbuild-x64_x86.bat", "msbuild-x64_arm64.ba
 & .\msbuild-x64.bat
 & .\msbuild-x64_x86.bat
 & .\msbuild-x64_arm64.bat
-& rst2html.py doc\openvpn.8.rst doc\openvpn.8.html
-
 
 ### Sign binaries
 cd "${basedir}\openvpn-build\windows-msi"
