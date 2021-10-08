@@ -1,0 +1,55 @@
+Source: openvpn
+Section: net
+Priority: optional
+Maintainer: Bernhard Schmidt <berni@debian.org>
+Uploaders: Jörg Frings-Fürst <debian@jff.email>
+Build-Depends:
+ debhelper-compat (= 12),
+ dpkg-dev (>= 1.16.1),
+ liblz4-dev,
+ liblzo2-dev,
+ libp11-kit-dev,
+ libpam0g-dev,
+ libpkcs11-helper1-dev,
+ libssl-dev,
+ libsystemd-dev [linux-any],
+ net-tools [!linux-any],
+ pkg-config,
+ python3-docutils,
+ systemd [linux-any]
+# systemctl from src:docker-systemctl-replacement declaring Provides: systemd
+# only necessary for experimental with the apscud resolver
+# See Bug#959828
+Build-Conflicts: systemctl
+Standards-Version: 4.5.0
+Rules-Requires-Root: no
+Homepage: https://openvpn.net/
+Vcs-Git: https://salsa.debian.org/debian/openvpn.git
+Vcs-Browser: https://salsa.debian.org/debian/openvpn
+
+Package: openvpn
+Architecture: any
+Depends:
+ debconf | debconf-2.0,
+ ${shlibs:Depends},
+ ${misc:Depends},
+ iproute2 [linux-any],
+ net-tools [!linux-any],
+ lsb-base (>= 3.0-6)
+Suggests:
+ openssl,
+ resolvconf,
+ openvpn-systemd-resolved
+Recommends: easy-rsa
+Description: virtual private network daemon
+ OpenVPN is an application to securely tunnel IP networks over a
+ single UDP or TCP port. It can be used to access remote sites, make
+ secure point-to-point connections, enhance wireless security, etc.
+ .
+ OpenVPN uses all of the encryption, authentication, and certification
+ features provided by the OpenSSL library (any cipher, key size, or
+ HMAC digest).
+ .
+ OpenVPN may use static, pre-shared keys or TLS-based dynamic key exchange. It
+ also supports VPNs with dynamic endpoints (DHCP or dial-up clients), tunnels
+ over NAT or connection-oriented stateful firewalls (such as Linux's iptables).
