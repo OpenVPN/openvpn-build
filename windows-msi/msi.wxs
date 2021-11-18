@@ -49,7 +49,7 @@
             SourceFile="artwork\tapctl_create.ico"/>
         <Binary
             Id="libopenvpnmsica.dll"
-            SourceFile="!(bindpath.openvpn)bin\libopenvpnmsica.dll"/>
+            SourceFile="!(bindpath.openvpnbin)libopenvpnmsica.dll"/>
 
         <Property Id="ARPPRODUCTICON" Value="openvpn.ico"/>
         <Property Id="ARPURLINFOABOUT" Value="https://openvpn.net/community/"/>
@@ -729,28 +729,28 @@
                             <File Name="vcruntime140.dll" Source="vcredist\$(sys.BUILDARCH)\vcruntime140.dll"/>
                         </Component>
                         <Component Id="bin.libcrypto_1_1.dll" Guid="{811694A9-DC99-4CFA-BD72-4877F8E32C7C}">
-                            <File Name="libcrypto-1_1$(var.OPENSSL_PLAT).dll" Source="!(bindpath.openvpn)bin\libcrypto-1_1$(var.OPENSSL_PLAT).dll"/>
+                            <File Name="libcrypto-1_1$(var.OPENSSL_PLAT).dll" Source="!(bindpath.openvpnbin)libcrypto-1_1$(var.OPENSSL_PLAT).dll"/>
                         </Component>
                         <Component Id="bin.liblzo2_2.dll" Guid="{A1A057F0-235B-4F55-9A3A-CDA2112648F8}">
-                            <File Name="$(var.LZO_DLL)" Source="!(bindpath.openvpn)bin\$(var.LZO_DLL)"/>
+                            <File Name="$(var.LZO_DLL)" Source="!(bindpath.openvpnbin)$(var.LZO_DLL)"/>
                         </Component>
                         <Component Id="bin.libpkcs11_helper_1.dll" Guid="{62BB5466-934A-41FE-989B-9D0B6BD5151F}">
-                            <File Name="libpkcs11-helper-1.dll" Source="!(bindpath.openvpn)bin\libpkcs11-helper-1.dll"/>
+                            <File Name="libpkcs11-helper-1.dll" Source="!(bindpath.openvpnbin)libpkcs11-helper-1.dll"/>
                         </Component>
                         <Component Id="bin.libssl_1_1.dll" Guid="{34B9FB21-7621-4C6A-8CA0-2C907F6ADDCE}">
-                            <File Name="libssl-1_1$(var.OPENSSL_PLAT).dll" Source="!(bindpath.openvpn)bin\libssl-1_1$(var.OPENSSL_PLAT).dll"/>
+                            <File Name="libssl-1_1$(var.OPENSSL_PLAT).dll" Source="!(bindpath.openvpnbin)libssl-1_1$(var.OPENSSL_PLAT).dll"/>
                         </Component>
                         <Component Id="bin.openssl.exe" Guid="{E8876024-809B-40F1-A13B-A0DACFAA0AF0}">
-                            <File Name="openssl.exe" Source="!(bindpath.openvpn)bin\openssl.exe"/>
+                            <File Name="openssl.exe" Source="!(bindpath.opensslbin)openssl.exe"/>
                         </Component>
                         <Component Id="bin.openvpn.exe" Guid="{4D920FC9-DF3C-4D34-ADE6-3EEEF8AE901A}">
-                            <File Id="bin.openvpn.exe" Name="openvpn.exe" Source="!(bindpath.openvpn)bin\openvpn.exe"/>
+                            <File Id="bin.openvpn.exe" Name="openvpn.exe" Source="!(bindpath.openvpnbin)openvpn.exe"/>
                         </Component>
                         <Component Id="bin.openvpn_gui.exe" Guid="{5A893CD4-EA7E-4887-89D0-15BBE904FE11}">
-                            <File Id="bin.openvpn_gui.exe" Name="openvpn-gui.exe" Source="!(bindpath.openvpn)bin\openvpn-gui.exe"/>
+                            <File Id="bin.openvpn_gui.exe" Name="openvpn-gui.exe" Source="!(bindpath.openvpnguibin)openvpn-gui.exe"/>
                         </Component>
                         <Component Id="bin.openvpnserv.exe" Guid="{43A4F408-9399-4BD7-9978-0ECE4A582929}">
-                            <File Name="openvpnserv.exe" Source="!(bindpath.openvpn)bin\openvpnserv.exe"/>
+                            <File Name="openvpnserv.exe" Source="!(bindpath.openvpnbin)openvpnserv.exe"/>
                             <ServiceControl
                                 Id="OpenVPNServiceInteractive"
                                 Name="OpenVPNServiceInteractive"
@@ -787,7 +787,7 @@
                             </ServiceInstall>
                         </Component>
                         <Component Id="bin.tapctl.exe" Guid="{5A294591-0F71-470F-977B-DD288AB2B437}">
-                            <File Name="tapctl.exe" Source="!(bindpath.openvpn)bin\tapctl.exe" KeyPath="yes"/>
+                            <File Name="tapctl.exe" Source="!(bindpath.openvpnbin)tapctl.exe" KeyPath="yes"/>
                         </Component>
                     </Directory>
 
@@ -819,7 +819,7 @@
                             <File Name="INSTALL-win32.txt" Source="!(bindpath.build)INSTALL-win32.txt"/>
                         </Component>
                         <Component Id="doc.openvpn.8.html" Guid="{81E681BB-B296-44FC-B547-595459E7CE1B}">
-                            <File Name="openvpn.8.html" Source="!(bindpath.openvpn)share\doc\openvpn\openvpn.8.html"/>
+                            <File Name="openvpn.8.html" Source="!(bindpath.openvpndoc)openvpn.8.html"/>
                         </Component>
                     </Directory>
 
@@ -985,9 +985,6 @@
                     <Directory Id="SAMPLECFGDIR" Name="sample-config">
                         <Component Id="samplecfg.client.$(var.CONFIG_EXTENSION)" Guid="{5A762634-C12E-4D34-B9C6-D6C33513FAF8}">
                             <File Name="client.$(var.CONFIG_EXTENSION)" Source="!(bindpath.build)$(var.PRODUCT_PLATFORM)\client.ovpn"/>
-                        </Component>
-                        <Component Id="samplecfg.sample.$(var.CONFIG_EXTENSION)" Guid="{48ECE02F-3E2B-4708-B736-8D36CBCFF509}">
-                            <File Name="sample.$(var.CONFIG_EXTENSION)" Source="!(bindpath.build)$(var.PRODUCT_PLATFORM)\sample.ovpn"/>
                         </Component>
                         <Component Id="samplecfg.server.$(var.CONFIG_EXTENSION)" Guid="{B0B5E776-3C7A-4B86-87BF-6FAFF9F83E34}">
                             <File Name="server.$(var.CONFIG_EXTENSION)" Source="!(bindpath.build)$(var.PRODUCT_PLATFORM)\server.ovpn"/>
@@ -1239,7 +1236,7 @@
                     Root="HKCR"
                     Key="$(var.PRODUCT_NAME)File\shell"
                     Type="string"
-                    Value="open"/>
+                    Value="import"/>
             </Component>
             <Component Id="reg.conf.icon" Guid="{9C61734E-69E5-4638-A400-2AD0517F5AEC}">
                 <RegistryValue
@@ -1268,6 +1265,20 @@
                     Key="$(var.PRODUCT_NAME)File\shell\run\command"
                     Type="string"
                     Value="&quot;[BINDIR]openvpn.exe&quot; &#45;&#45;pause-exit &#45;&#45;config &quot;%1&quot;"/>
+            </Component>
+            <Component Id="reg.conf.import" Guid="{16E0E503-0F36-4833-8D15-45FC7F8896E7}">
+                <RegistryValue
+                    Root="HKCR"
+                    Key="$(var.PRODUCT_NAME)File\shell\import"
+                    Type="string"
+                    Value="Import into $(var.PRODUCT_NAME)-GUI"/>
+            </Component>
+            <Component Id="reg.conf.import.command" Guid="{6C2D364F-FF04-4419-989D-FB007C992757}">
+                <RegistryValue
+                    Root="HKCR"
+                    Key="$(var.PRODUCT_NAME)File\shell\import\command"
+                    Type="string"
+                    Value="&quot;[BINDIR]openvpn-gui.exe&quot; &#45;&#45;command import &quot;%1&quot;"/>
             </Component>
             <Component Id="reg.openvpngui.startup" Guid="{073B129C-665D-4CF6-9E10-91A132C4B4BA}">
                 <RegistryKey
@@ -1487,7 +1498,6 @@
             <ComponentRef Id="reg.priority"/>
             <ComponentRef Id="reg.conf.extension"/>
             <ComponentRef Id="reg.conf.descr"/>
-            <ComponentRef Id="reg.conf.verb.default"/>
             <ComponentRef Id="reg.conf.icon"/>
             <ComponentRef Id="reg.conf.open.command"/>
             <ComponentRef Id="reg.conf.run"/>
@@ -1508,6 +1518,9 @@
                 <ComponentRef Id="shortcut.openvpn_gui.exe"/>
                 <ComponentRef Id="shortcut.openvpn_gui.exe.desktop"/>
                 <ComponentRef Id="reg.disable_save_passwords"/>
+                <ComponentRef Id="reg.conf.verb.default"/>
+                <ComponentRef Id="reg.conf.import"/>
+                <ComponentRef Id="reg.conf.import.command"/>
 
                 <Feature
                     Id="OpenVPN.GUI.OnLogon"
@@ -1562,7 +1575,6 @@
                 <Condition Level="1"><![CDATA[NSIS.OPENVPN.SAMPLECFG.SAMPLE.OVPN OR NSIS.OPENVPN.X86.SAMPLECFG.SAMPLE.OVPN]]></Condition>
                 <ComponentRef Id="shortcut.samplecfg"/>
                 <ComponentRef Id="samplecfg.client.$(var.CONFIG_EXTENSION)"/>
-                <ComponentRef Id="samplecfg.sample.$(var.CONFIG_EXTENSION)"/>
                 <ComponentRef Id="samplecfg.server.$(var.CONFIG_EXTENSION)"/>
             </Feature>
         </Feature>

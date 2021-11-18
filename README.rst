@@ -28,7 +28,7 @@ Directories
     OpenVPN using mingw_w64 (e.g. Linux -> Windows).
 
     The "windows-msi" subdir contains scripts to
-    package OpenVPN for Windows.
+    build and package OpenVPN on Windows for Windows.
 
     The "windows-nsis" subdir contains scripts to
     cross-compile and package OpenVPN for Windows.

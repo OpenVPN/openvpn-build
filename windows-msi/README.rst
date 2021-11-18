@@ -1,12 +1,12 @@
 ﻿OpenVPN MSI Packaging
 =====================
 
-This folder contains scripts and binaries required to package OpenVPN 2.4+ to
-a set of platform-dependent MSI packages and an all-in-one EXE installer.
+This folder contains scripts and binaries required to build and package OpenVPN
+2.5+ and its dependencies to a set of platform-dependent MSI packages and an
+all-in-one EXE installer.
 
-
-Requirements
-------------
+Requirements for building MSI packages
+--------------------------------------
 
 1. `WiX Toolset`_ - tested with 3.11.1
 2. ``unzip.exe`` - tested with UnZip 6.00 of 20 April 2009, by Info-ZIP
@@ -17,35 +17,65 @@ Requirements
 Note: ``unzip.exe``, ``tar.exe``, ``gzip.exe``, and ``bzip2.exe`` must be in
 ``%PATH%``.
 
+Requirements for building OpenVPN and its dependencies
+------------------------------------------------------
 
-Usage
------
+Building and packaging OpenVPN on Windows is a fairly complex process with lots
+of dependencies. If you're starting from scratch it is recommended to use the
+"msibuilder" VM in `openvpn-vagrant <https://github.com/OpenVPN/openvpn-vagrant/>`_.
 
-1. Cross compile OpenVPN using ``openvpn-build/generic`` build system on
-   Linux.
+If using Vagrant and Virtualbox is not an option you should be able to run the
+Vagrant provisioning scripts with suitable parameters on a fresh Windows 10-based system,
+though only Windows Server 2019 is tested.
 
-2. Digitally sign binaries in ``openvpn-build/generic/image-win(32|64)/openvpn/
-   bin`` folder. The ``tapctl.exe`` requires elevation, therefore it should be
-   digitally signed at least.
+In either case you will end up with a directory layout such as this: 
 
-   If the code signing is performed on Windows, see ``sign-openvpn.bat`` as a
-   suggestion.
+- openvpn-build
 
-3. Adjust ``version.md4``. It is important to increment ``PRODUCT_VERSION``
-   *and* ``PRODUCT_VERSION_GUID`` on each release. MSI upgrading logic relies
-   on this.
+- vcpkg (openssl etc.)
 
-4. Open Command Prompt on Windows and ``cd`` to ``openvpn-build\windows-msi``
-   folder.
+- openvpn-gui
 
-   To transfer the openvpn-build site to a Windows computer, you can copy it,
-   or share it using Samba on the Linux box. On a Windows computer mount the
-   Samba share as a drive (e.g. ``Z:``), since you cannot ``cd`` to a UNC path
-   of form ``\\computer\share\path``.
+- openvpn
 
-5. Run ``cscript build.wsf`` to build the packages. The ``build.wsf`` is a
-   simple Makefile type building tool developed to avoid Microsoft Visual
-   Studio or GNU Make requirements. Refer to ``build.wsf`` for exact usage::
+Once the directories are laid out properly you need to add your code-signing
+PFX certificate into the certificate store::
+
+    Import-PfxCertificate -FilePath .\mycert.pfx -CertstoreLocation Cert:\Currentuser\My -Password (ConvertTo-SecureString -String "mypass" -Force -AsPlainText)
+
+This command will print out the certificate thumbprint which you'll need later.
+
+Now create a config file, ``build-and-package-env.ps1``, next to ``build-and-package.ps1``::
+    
+    # Used by build scripts build-and-package.sh calls
+    $Env:CMAKE_TOOLCHAIN_FILE = "${basedir}\vcpkg\scripts\buildsystems\vcpkg.cmake" 
+    $Env:CMAKE = "C:\\Program Files\\CMake\\bin\\cmake.exe"
+    $Env:ManifestCertificateThumbprint = "cert thumbprint" 
+    $Env:ManifestTimestampRFC3161Url = "http://timestamp.digicert.com" 
+
+Building and packaging
+----------------------
+
+First step adjust ``version.m4``. It is important to increment
+``PRODUCT_VERSION`` *and* ``PRODUCT_VERSION_GUID`` on each release. MSI
+upgrading logic relies on this.
+
+To build and package::
+
+    cd openvpn-build\windows-msi
+    .\build-and-package.ps1 -basedir ..\..
+
+If everything was set up correctly you should see three MSI packages in
+``image`` subfolder, each signed and containing signed binaries.
+
+build.wsf
+---------
+
+The ``build.wsf`` is a simple Makefile type building tool used to generate MSI
+packages and EXE installers. It expects OpenVPN and its dependencies to be
+built and in the directory layout described above. It was developed to avoid
+Microsoft Visual Studio or GNU Make requirements. Refer to ``build.wsf`` for
+exact usage::
 
     C:\openvpn-build\windows-msi>cscript build.wsf /?
     Microsoft (R) Windows Script Host Version 5.812
@@ -65,46 +95,33 @@ Usage
     exe     Builds EXE installer only
     clean   Cleans intermediate and output files
 
-   If the code signing is performed on Windows, the following command order is
-   suggested::
+The ``cscript build.wsf exe`` command does not build MSI packages. This is a
+safety feature to prevent accidental rebuild of already signed MSI files,
+should something accidentally touch any of the MSI package source files.
 
-    cscript build.wsf msi
-    sign-msi
-    cscript build.wsf exe
-    sign-exe
-
-6. The MSI packages and EXE installer will be put to ``image`` subfolder.
-
-
-Digital Signing
-~~~~~~~~~~~~~~~
+Digital signing
+---------------
 
 The ``build.wsf`` tool does not support digital signing of MSI and EXE files
-(yet). For official packages, please keep the following guidelines in mind:
+(yet). The ``sign-openvpn.bat`` and ``sign-msi.bat`` scripts handle that part.
 
-- Build MSI packages first: ``cscript build.wsf msi``. Sign them. Build EXE
-  installer next: ``cscript build.wsf exe``. Sign it. This ensures the MSI
-  packages inside EXE installer payload are signed.
+The EXE installer does not ask for elevation. It extracts and launches
+appropriate MSI package unelevated. The UAC elevation is requested only later
+when MSI package actually starts the install process. Therefore, it is vital to
+digitally sign MSI packages.
 
-- The ``cscript build.wsf exe`` does not build MSI packages. This is a safety
-  feature to prevent accidental rebuild of already signed MSI files, should
-  something accidentally touch any of the MSI package source files.
+When signing MSI packages, set a signature description (``/d`` flag with
+``signtool.exe`` utility). The ``msiexec.exe`` saves the MSI package under some
+random name and launches an elevated process to install it. When the signature
+on the MSI package contains no description, Windows displays the MSI filename
+instead on the UAC prompt. Now MSI having a random filename, the UAC prompt
+gets quite confusing. Therefore, we strongly encourage you to set a description
+in the MSI signature accurately describing the package content.
 
-- EXE installer does not ask for elevation. It extracts and launches
-  appropriate MSI package unelevated. The UAC elevation is requested only
-  later when MSI package actually starts the install process. Therefore, it is
-  vital to digitally sign MSI packages. Digital signing of EXE installer is
-  optional, but recommended to decrease the chance Windows SmartScreen will
-  treat our EXE installer as malware on downloads.
+Digital signing of EXE installer is optional, but recommended to decrease the
+chance Windows SmartScreen will treat our EXE installer as malware on
+downloads.
 
-- When signing MSI packages, set a signature description (``/d`` flag with
-  ``signtool.exe`` utility). The ``msiexec.exe`` saves the MSI package under
-  some random name and launches an elevated process to install it. When the
-  signature on the MSI package contains no description, Windows displays the
-  MSI filename instead on the UAC prompt. Now MSI having a random filename,
-  the UAC prompt gets quite confusing. Therefore, we strongly encourage you to
-  set a description in the MSI signature accurately describing the package
-  content.
-
+Signing of ``tapctl.exe`` is mandatory as it requires elevation of privileges.
 
 .. _`WiX Toolset`: http://wixtoolset.org/
