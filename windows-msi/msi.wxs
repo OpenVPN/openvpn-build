@@ -731,9 +731,6 @@
                         <Component Id="bin.libcrypto_1_1.dll" Guid="{811694A9-DC99-4CFA-BD72-4877F8E32C7C}">
                             <File Name="libcrypto-1_1$(var.OPENSSL_PLAT).dll" Source="!(bindpath.openvpnbin)libcrypto-1_1$(var.OPENSSL_PLAT).dll"/>
                         </Component>
-                        <Component Id="bin.liblzo2_2.dll" Guid="{A1A057F0-235B-4F55-9A3A-CDA2112648F8}">
-                            <File Name="$(var.LZO_DLL)" Source="!(bindpath.openvpnbin)$(var.LZO_DLL)"/>
-                        </Component>
                         <Component Id="bin.libpkcs11_helper_1.dll" Guid="{62BB5466-934A-41FE-989B-9D0B6BD5151F}">
                             <File Name="libpkcs11-helper-1.dll" Source="!(bindpath.openvpnbin)libpkcs11-helper-1.dll"/>
                         </Component>
@@ -1479,7 +1476,6 @@
             <ComponentRef Id="license.txt"/>
             <ComponentRef Id="bin.vcruntime140.dll"/>
             <ComponentRef Id="bin.libcrypto_1_1.dll"/>
-            <ComponentRef Id="bin.liblzo2_2.dll"/>
             <ComponentRef Id="bin.libpkcs11_helper_1.dll"/>
             <ComponentRef Id="bin.libssl_1_1.dll"/>
             <ComponentRef Id="bin.openvpn.exe"/>
