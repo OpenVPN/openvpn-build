@@ -168,8 +168,7 @@ clean	Cleans intermediate and output files</example>
                             "-dUPGRADE_CODE=\""                 + _CMD(ver.define["UPGRADE_CODE_" + plat        ]) + "\"",
                             "-dCONFIG_EXTENSION=\""             + _CMD(ver.define["CONFIG_EXTENSION"            ]) + "\"",
                             "-dPROGRAM_FILES_DIR=\""            + _CMD(p.programFilesPath                        ) + "\"",
-                            "-dOPENSSL_PLAT=\""                 + _CMD(p.openSSLPlat                             ) + "\"",
-                            "-dLZO_DLL=\""                      + _CMD("lzo2.dll"                                ) + "\""];
+                            "-dOPENSSL_PLAT=\""                 + _CMD(p.openSSLPlat                             ) + "\""];
 
                         // WiX compiling
                         b.pushRule(new WiXCompileBuildRule(
@@ -237,7 +236,6 @@ clean	Cleans intermediate and output files</example>
                                 BuildPath(p.buildPath, "tap-windows6.msm"),
                                 BuildPath(p.buildPath, "wintun.msm"),
                                 BuildPath(p.openVPNBinPath, "libcrypto-1_1" + p.openSSLPlat + ".dll"),
-                                BuildPath(p.openVPNBinPath, "lzo2.dll"),
                                 BuildPath(p.openVPNBinPath, "libopenvpnmsica.dll"),
                                 BuildPath(p.openVPNBinPath, "libpkcs11-helper-1.dll"),
                                 BuildPath(p.openVPNBinPath, "libssl-1_1" + p.openSSLPlat + ".dll"),
