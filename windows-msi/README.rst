@@ -65,6 +65,11 @@ To build and package::
     cd openvpn-build\windows-msi
     .\build-and-package.ps1 -basedir ..\..
 
+You can also define which OpenSSL vcpkg port to use:
+
+    .\build-and-package.ps1 -basedir ..\.. -openssl openssl
+    .\build-and-package.ps1 -basedir ..\.. -openssl openssl3
+
 If everything was set up correctly you should see three MSI packages in
 ``image`` subfolder, each signed and containing signed binaries.
 
