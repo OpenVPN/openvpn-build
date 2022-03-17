@@ -33,10 +33,10 @@ if ((Test-Path "${PSScriptRoot}/build-and-package-env.ps1") -ne $True) {
 $cwd = Get-Location
 
 ### Ensure that we use latest "contrib" vcpkg ports
-cd "${basedir}\openvpn"
+Set-Location "${basedir}\openvpn"
 & git.exe pull
 
-cd "${basedir}\vcpkg"
+Set-Location "${basedir}\vcpkg"
 & git.exe pull
 & .\bootstrap-vcpkg.bat
 
@@ -51,13 +51,13 @@ ForEach ($arch in $architectures) {
 }
 
 ### Build OpenVPN-GUI
-cd "${basedir}\openvpn-gui"
+Set-Location "${basedir}\openvpn-gui"
 & git.exe pull
 Copy-Item "${basedir}\openvpn-build\windows-msi\build-openvpn-gui.ps1" "${basedir}\openvpn-gui\"
 .\build-openvpn-gui.ps1
 
 ### Build OpenVPN
-cd "${basedir}\openvpn"
+Set-Location "${basedir}\openvpn"
 & git.exe pull
 
 ForEach ($bat in "msbuild-x64.bat", "msbuild-x64_x86.bat", "msbuild-x64_arm64.bat") {
@@ -71,17 +71,17 @@ ForEach ($bat in "msbuild-x64.bat", "msbuild-x64_x86.bat", "msbuild-x64_arm64.ba
 & .\msbuild-x64_arm64.bat
 
 ### Sign binaries
-cd "${basedir}\openvpn-build\windows-msi"
+Set-Location "${basedir}\openvpn-build\windows-msi"
 
 $Env:SignScript = "sign-openvpn.bat"
 & .\sign-binaries.bat
 
 ### Build MSI
-cd "${basedir}\openvpn-build\windows-msi"
+Set-Location "${basedir}\openvpn-build\windows-msi"
 & cscript.exe build.wsf msi
 
 ### Sign MSI
 $Env:SignScript = "sign-msi.bat"
 & .\sign-binaries.bat
 
-cd $cwd
+Set-Location $cwd
