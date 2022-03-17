@@ -43,10 +43,20 @@ Set-Location "${basedir}\vcpkg"
 $architectures = @('x64','x86','arm64')
 ForEach ($arch in $architectures) {
     # openssl:${arch}-windows is required for openvpn-gui builds
-    & .\vcpkg.exe --overlay-ports "${basedir}\openvpn\contrib\vcpkg-ports" --overlay-triplets "${basedir}\openvpn\contrib\vcpkg-triplets" install --triplet "${arch}-windows-ovpn" lz4 lzo $openssl pkcs11-helper tap-windows6 "${openssl}:${arch}-windows"
+    & .\vcpkg.exe `
+        --overlay-ports "${basedir}\openvpn\contrib\vcpkg-ports" `
+        --overlay-ports "${basedir}\openvpn-build\windows-msi\vcpkg-ports" `
+        --overlay-triplets "${basedir}\openvpn\contrib\vcpkg-triplets" `
+        install --triplet "${arch}-windows-ovpn" lz4 lzo $openssl pkcs11-helper tap-windows6 "${openssl}:${arch}-windows"
+
     # Our contrib ports may be more recent that what are available upstream, so
     # ensure that those are taken into account when upgrading
-    & .\vcpkg.exe --overlay-ports "${basedir}\openvpn\contrib\vcpkg-ports" --overlay-triplets  "${basedir}\openvpn\contrib\vcpkg-triplets" upgrade --no-dry-run
+    & .\vcpkg.exe `
+        --overlay-ports "${basedir}\openvpn\contrib\vcpkg-ports" `
+        --overlay-ports "${basedir}\openvpn-build\windows-msi\vcpkg-ports" `
+        --overlay-triplets  "${basedir}\openvpn\contrib\vcpkg-triplets" `
+        upgrade --no-dry-run
+
     & .\vcpkg.exe integrate install
 }
 
