@@ -64,8 +64,14 @@
         <PropertyRef Id="NETFRAMEWORK40FULL"/>
 
         <Property Id="WIN102004" Secure="yes">
-            <DirectorySearch Id="searchSystem" Path="[SystemFolder]" Depth="0">
-                <FileSearch Id="searchFile" Name="advapi32.dll" MinVersion="6.3.19041.0"/>
+            <DirectorySearch Id="searchAdvApiDir" Path="[SystemFolder]" Depth="0">
+                <FileSearch Id="searchAdvApiFile" Name="advapi32.dll" MinVersion="6.3.19041.0"/>
+            </DirectorySearch>
+        </Property>
+
+        <Property Id="NETADAPTERCX21" Secure="yes">
+            <DirectorySearch Id="searchAdvApiDir2" Path="[SystemFolder]" Depth="0">
+                <FileSearch Id="searchAdvApiDir2" Name="advapi32.dll" MinVersion="6.3.20348.0"/>
             </DirectorySearch>
         </Property>
 
@@ -616,7 +622,6 @@
             Value="[PRIORITYREG]"
             Sequence="first">PRIORITYREG AND NOT Installed</SetProperty>
 
-
         <!--
             Folders/Files
         -->
@@ -998,16 +1003,32 @@
                 </Directory>
 
                 <Directory Id="CommonFiles" Name="Common Files">
-                    <Directory Id="OVPNDCO" Name="ovpn-dco">
+                    <Directory Id="OVPNDCOPARENT" Name="ovpn-dco">
                         <Component Id="CMP_ovpn_dco.inf" Guid="4BE20469-2292-4AE2-B953-49AA0DA4165E">
-                            <File Id="ovpndco.inf" Name="ovpn-dco.inf" Source="!(bindpath.ovpndco)\ovpn-dco.inf" KeyPath="yes" />
+                            <RegistryValue Root="HKLM" Key="Software\$(var.PRODUCT_NAME)" Type="string" Name="ovpn-dco" Value="" KeyPath="yes"/>
                         </Component>
-                        <Component Id="CMP_ovpn_dco.cat" Guid="EB59AE6E-191E-4FE1-B414-005217348183">
-                            <File Id="ovpndco.cat" Name="ovpn-dco.cat" Source="!(bindpath.ovpndco)\ovpn-dco.cat" KeyPath="yes" />
-                        </Component>
-                        <Component Id="CMP_ovpn_dco.sys" Guid="0007BFDB-42A9-4F67-BDD9-AB3B797DEF1F">
-                            <File Id="ovpndco.sys" Name="ovpn-dco.sys" Source="!(bindpath.ovpndco)\ovpn-dco.sys" KeyPath="yes" />
-                        </Component>
+                        <Directory Id="NX20" Name="Win10">
+                            <Component Id="CMP_ovpn_dco_nx20.inf" Guid="459CA7BC-939E-438C-B830-B1390F0C05A7">
+                                <File Id="ovpndco.inf" Name="ovpn-dco.inf" Source="!(bindpath.ovpndco)\win10\ovpn-dco.inf" KeyPath="yes" />
+                            </Component>
+                            <Component Id="CMP_ovpn_dco_nx20.cat" Guid="EB59AE6E-191E-4FE1-B414-005217348183">
+                                <File Id="ovpndco_nx20.cat" Name="ovpn-dco.cat" Source="!(bindpath.ovpndco)\win10\ovpn-dco.cat" KeyPath="yes" />
+                            </Component>
+                            <Component Id="CMP_ovpn_dco_nx20.sys" Guid="0007BFDB-42A9-4F67-BDD9-AB3B797DEF1F">
+                                <File Id="ovpndco_nx20.sys" Name="ovpn-dco.sys" Source="!(bindpath.ovpndco)\win10\ovpn-dco.sys" KeyPath="yes" />
+                            </Component>
+                        </Directory>
+                        <Directory Id="NX21" Name="Win11">
+                            <Component Id="CMP_ovpn_dco_nx21.inf" Guid="369D943E-0849-449A-9D70-AFA7AA57B0C7">
+                                <File Id="ovpndco_nx21.inf" Name="ovpn-dco.inf" Source="!(bindpath.ovpndco)\win11\ovpn-dco.inf" KeyPath="yes" />
+                            </Component>
+                            <Component Id="CMP_ovpn_dco_nx21.cat" Guid="9E873D77-8685-4B60-9066-B94D94C0EEEB">
+                                <File Id="ovpndco_nx21.cat" Name="ovpn-dco.cat" Source="!(bindpath.ovpndco)\win11\ovpn-dco.cat" KeyPath="yes" />
+                            </Component>
+                            <Component Id="CMP_ovpn_dco_nx21.sys" Guid="FB24EBB2-8521-4365-90E2-BCB5F011669E">
+                                <File Id="ovpndco_nx21.sys" Name="ovpn-dco.sys" Source="!(bindpath.ovpndco)\win11\ovpn-dco.sys" KeyPath="yes" />
+                            </Component>
+                        </Directory>
                     </Directory>
                 </Directory>
             </Directory>
@@ -1370,6 +1391,9 @@
         <CustomAction Id="OvpnDcoEvaluate"    BinaryKey="libopenvpnmsica.dll" DllEntry="EvaluateDriver" Execute="immediate"/>
         <CustomAction Id="OvpnDcoProcess"     BinaryKey="libopenvpnmsica.dll" DllEntry="ProcessDriver" Execute="deferred" Impersonate="no"/>
 
+        <SetProperty Action="SetOvpnDcoWin10" Id="OVPNDCO" After="CostFinalize" Value="[OVPNDCOPARENT]Win10\" Sequence="execute"><![CDATA[NOT NETADAPTERCX21]]></SetProperty>
+        <SetProperty Action="SetOvpnDcoWin11" Id="OVPNDCO" After="CostFinalize" Value="[OVPNDCOPARENT]Win11\" Sequence="execute"><![CDATA[NETADAPTERCX21]]></SetProperty>
+
         <InstallExecuteSequence>
             <Custom Action="OvpnDcoEvaluate"                 Before="OvpnDcoProcess"/>
             <Custom Action="OvpnDcoProcess"                   After="InstallFiles" />
@@ -1647,16 +1671,31 @@
             <?endif?>
 
             <Feature
-                Id="Drivers.OvpnDco"
+                Id="Drivers.OvpnDco.Nx20"
                 Title="ovpn-dco"
-                Description="OpenVPN Data Channel Offload"
+                Description="OpenVPN Data Channel Offload (NetAdapterCx 2.0)"
                 Level="0"
                 ConfigurableDirectory="PRODUCTDIR"
                 AllowAdvertise="no">
                 <ComponentRef Id="CMP_ovpn_dco.inf"/>
-                <ComponentRef Id="CMP_ovpn_dco.cat"/>
-                <ComponentRef Id="CMP_ovpn_dco.sys"/>
-                <Condition Level="1">WIN102004</Condition>
+                <ComponentRef Id="CMP_ovpn_dco_nx20.inf"/>
+                <ComponentRef Id="CMP_ovpn_dco_nx20.cat"/>
+                <ComponentRef Id="CMP_ovpn_dco_nx20.sys"/>
+                <Condition Level="1">WIN102004 AND NOT NETADAPTERCX21</Condition>
+            </Feature>
+
+            <Feature
+                Id="Drivers.OvpnDco.Nx21"
+                Title="ovpn-dco"
+                Description="OpenVPN Data Channel Offload (NetAdapterCx 2.1+)"
+                Level="0"
+                ConfigurableDirectory="PRODUCTDIR"
+                AllowAdvertise="no">
+                <ComponentRef Id="CMP_ovpn_dco.inf"/>
+                <ComponentRef Id="CMP_ovpn_dco_nx21.inf"/>
+                <ComponentRef Id="CMP_ovpn_dco_nx21.cat"/>
+                <ComponentRef Id="CMP_ovpn_dco_nx21.sys"/>
+                <Condition Level="1">WIN102004 AND NETADAPTERCX21</Condition>
             </Feature>
         </Feature>
 
