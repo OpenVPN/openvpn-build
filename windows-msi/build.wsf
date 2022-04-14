@@ -169,7 +169,8 @@ clean	Cleans intermediate and output files</example>
                         // Extracting ovpn-dco
                         b.pushRule(new ExtractBuildRule(
                             [
-                                BuildPath(p.buildPath, "ovpn-dco", "ovpn-dco.inf")
+                                BuildPath(p.buildPath, "ovpn-dco", "win10", "ovpn-dco.inf"),
+                                BuildPath(p.buildPath, "ovpn-dco", "win11", "ovpn-dco.inf"),
                             ],
                             p.ovpnDcoPath,
                             BuildPath(p.buildPath, "ovpn-dco.timestamp"),
@@ -259,7 +260,8 @@ clean	Cleans intermediate and output files</example>
                                 BuildPath(p.buildPath, "license.txt"),
                                 BuildPath(p.buildPath, "tap-windows6.msm"),
                                 BuildPath(p.buildPath, "wintun.msm"),
-                                BuildPath(p.buildPath, "ovpn-dco", "ovpn-dco.inf"),
+                                BuildPath(p.buildPath, "ovpn-dco", "win10", "ovpn-dco.inf"),
+                                BuildPath(p.buildPath, "ovpn-dco", "win11", "ovpn-dco.inf"),
                                 BuildPath(p.openVPNBinPath, "libcrypto-3" + p.openSSLPlat + ".dll"),
                                 BuildPath(p.openVPNBinPath, "libopenvpnmsica.dll"),
                                 BuildPath(p.openVPNBinPath, "libpkcs11-helper-1.dll"),
