@@ -4,7 +4,6 @@ Priority: optional
 Maintainer: Bernhard Schmidt <berni@debian.org>
 Uploaders: Jörg Frings-Fürst <debian@jff.email>
 Build-Depends:
- debhelper-compat (= 12),
  dpkg-dev (>= 1.16.1),
  liblz4-dev,
  liblzo2-dev,
