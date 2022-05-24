@@ -7,4 +7,4 @@ match-manpage-and-command-help.patch
 systemd.patch
 openvpn-fips-2.4.patch
 OpenSSL3.patch
-CVE-2022-0547.patch
+#CVE-2022-0547.patch
