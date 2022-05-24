@@ -48,7 +48,7 @@ This command will print out the certificate thumbprint which you'll need later.
 Now create a config file, ``build-and-package-env.ps1``, next to ``build-and-package.ps1``::
     
     # Used by build scripts build-and-package.sh calls
-    $Env:CMAKE_TOOLCHAIN_FILE = "${basedir}\vcpkg\scripts\buildsystems\vcpkg.cmake" 
+    $Env:VCPKG_ROOT = "${basedir}\vcpkg" 
     $Env:CMAKE = "C:\\Program Files\\CMake\\bin\\cmake.exe"
     $Env:ManifestCertificateThumbprint = "cert thumbprint" 
     $Env:ManifestTimestampRFC3161Url = "http://timestamp.digicert.com" 
