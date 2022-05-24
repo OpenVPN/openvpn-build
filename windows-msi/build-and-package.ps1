@@ -2,13 +2,13 @@ param(
     # Must be a directory with openvpn, openvpn-gui, vcpkg and
     # openvpn-build side by side
     [string] $basedir,
-    # Version of OpenSSL port to use ("openssl" or "openssl3")
-    [string] $openssl = "openssl3"
+    # Version of OpenSSL port to use ("ossl1.1.1" or "ossl3")
+    [string] $ossl = "ossl3"
     )
 
 ### Preparations
 if(-not($basedir)) {
-    Write-Host "Usage: build-and-package.ps1 -basedir <basedir> [-openssl] <openssl|openssl3>"
+    Write-Host "Usage: build-and-package.ps1 -basedir <basedir> [-openssl] <ossl1.1.1|ossl3>"
     exit 1
 }
 
@@ -39,26 +39,7 @@ Set-Location "${basedir}\openvpn"
 Set-Location "${basedir}\vcpkg"
 & git.exe pull
 & .\bootstrap-vcpkg.bat
-
-$architectures = @('x64','x86','arm64')
-ForEach ($arch in $architectures) {
-    # openssl:${arch}-windows is required for openvpn-gui builds
-    & .\vcpkg.exe `
-        --overlay-ports "${basedir}\openvpn\contrib\vcpkg-ports" `
-        --overlay-ports "${basedir}\openvpn-build\windows-msi\vcpkg-ports" `
-        --overlay-triplets "${basedir}\openvpn\contrib\vcpkg-triplets" `
-        install --triplet "${arch}-windows-ovpn" lz4 lzo $openssl pkcs11-helper tap-windows6 "${openssl}:${arch}-windows"
-
-    # Our contrib ports may be more recent that what are available upstream, so
-    # ensure that those are taken into account when upgrading
-    & .\vcpkg.exe `
-        --overlay-ports "${basedir}\openvpn\contrib\vcpkg-ports" `
-        --overlay-ports "${basedir}\openvpn-build\windows-msi\vcpkg-ports" `
-        --overlay-triplets  "${basedir}\openvpn\contrib\vcpkg-triplets" `
-        upgrade --no-dry-run
-
-    & .\vcpkg.exe integrate install
-}
+& .\vcpkg.exe integrate install
 
 ### Build OpenVPN-GUI
 Set-Location "${basedir}\openvpn-gui"

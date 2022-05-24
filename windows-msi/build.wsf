@@ -59,8 +59,8 @@ clean	Cleans intermediate and output files</example>
                 "x86": {
                     "buildPath": BuildPath(buildPath, "x86"),
                     "openVPNBinPath": BuildPath(depsPath, "openvpn", "Win32-Output", "Release"),
-                    "openVPNGuiBinPath": BuildPath(depsPath, "openvpn-gui", "build_Win32", "Release"),
-                    "openSSLBinPath": BuildPath(depsPath, "vcpkg", "installed", "x86-windows-ovpn", "tools", "openssl"),
+                    "openVPNGuiBinPath": BuildPath(depsPath, "openvpn-gui", "out", "build", "x86-release-ossl3"),
+                    "openSSLBinPath": BuildPath(depsPath, "openvpn", "src", "openvpn", "vcpkg_installed", "x86-windows-ovpn", "x86-windows-ovpn", "tools", "openssl"),
                     "programFilesPath": "ProgramFilesFolder",
                     "openSSLPlat": "",
                     "wixPlat": "x86",
@@ -70,8 +70,8 @@ clean	Cleans intermediate and output files</example>
                 "amd64": {
                     "buildPath": BuildPath(buildPath, "amd64"),
                     "openVPNBinPath": BuildPath(depsPath, "openvpn", "x64-Output", "Release"),
-                    "openVPNGuiBinPath": BuildPath(depsPath, "openvpn-gui", "build_x64", "Release"),
-                    "openSSLBinPath": BuildPath(depsPath, "vcpkg", "installed", "x64-windows-ovpn", "tools", "openssl"),
+                    "openVPNGuiBinPath": BuildPath(depsPath, "openvpn-gui", "out", "build", "x64-release-ossl3"),
+                    "openSSLBinPath": BuildPath(depsPath, "openvpn", "src", "openvpn", "vcpkg_installed", "x64-windows-ovpn", "x64-windows-ovpn", "tools", "openssl"),
                     "programFilesPath": "ProgramFiles64Folder",
                     "openSSLPlat": "-x64",
                     "wixPlat": "x64",
@@ -80,9 +80,9 @@ clean	Cleans intermediate and output files</example>
 
                 "arm64": {
                     "buildPath": BuildPath(buildPath, "arm64"),
-                    "openVPNGuiBinPath": BuildPath(depsPath, "openvpn-gui", "build_arm64", "Release"),
                     "openVPNBinPath": BuildPath(depsPath, "openvpn", "ARM64-Output", "Release"),
-                    "openSSLBinPath": BuildPath(depsPath, "vcpkg", "installed", "arm64-windows-ovpn", "tools", "openssl"),
+                    "openVPNGuiBinPath": BuildPath(depsPath, "openvpn-gui", "out", "build", "arm64-release-ossl3"),
+                    "openSSLBinPath": BuildPath(depsPath, "openvpn", "src", "openvpn", "vcpkg_installed", "arm64-windows-ovpn", "arm64-windows-ovpn", "tools", "openssl"),
                     "programFilesPath": "ProgramFiles64Folder",
                     "openSSLPlat": "-arm64",
                     "wixPlat": "arm64",
