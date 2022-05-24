@@ -29,7 +29,7 @@ override_dh_auto_build:
 	# $(MAKE) -C plugin/down-root/ $(shell dpkg-buildflags --export=configure)
 
 # we may not want to run dh_auto_test
-#override_dh_auto_test:
+override_dh_auto_test:
 
 override_dh_auto_clean:
 	# These two get deleted on "make clean", but come in the tarball
