@@ -1,0 +1,79 @@
+# The name of our workflow
+name: Build
+on: [push, pull_request]
+
+jobs:
+  msvc:
+    env:
+      CMAKE: cmake.exe
+      VCPKG_ROOT: ${{ github.workspace }}\vcpkg
+      OSSL: ossl3
+      VCPKG_OVERLAY_PORTS: ${{ github.workspace }}\openvpn-build\windows-msi\vcpkg-ports
+      WIX: ${{ github.workspace }}\wix\
+
+    name: 'openvpn-build'
+    runs-on: windows-2019
+
+    steps:
+      - name: Checkout openvpn-build
+        uses: actions/checkout@v2
+        with:
+          path: openvpn-build
+
+      - name: Checkout openvpn
+        uses: actions/checkout@v2
+        with:
+          repository: openvpn/openvpn
+          ref: master
+          path: openvpn
+
+      - name: Checkout openvpn-gui
+        uses: actions/checkout@v2
+        with:
+          repository: openvpn/openvpn-gui
+          path: openvpn-gui
+
+      - name: Checkout vcpkg
+        uses: actions/checkout@v2
+        with:
+          repository: microsoft/vcpkg
+          path: vcpkg
+          fetch-depth: 0
+
+      - name: Get latest CMake and ninja
+        uses: lukka/get-cmake@latest
+
+      - name: Install rst2html
+        run: python -m pip install --upgrade pip rst2html
+
+      - name: Setup MSVC prompt
+        uses: ilammy/msvc-dev-cmd@v1
+
+      - name: Install Wix 3.14
+        run: |
+          Invoke-WebRequest -Uri "https://wixdl.blob.core.windows.net/releases/v3.14.0.5722/wix314-binaries.zip" -OutFile wix.zip
+          Expand-Archive -Path .\wix.zip -DestinationPath wix\bin
+
+      - name: Build
+        working-directory: openvpn-build/windows-msi
+        run: |
+          New-Item -Name build-and-package-env.ps1 -ItemType File
+          ./build-and-package.ps1 -basedir ../.. -ossl ossl3 -nosign
+
+      - name: Archive x64 artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: OpenVPN-x64
+          path: ${{ github.workspace }}\openvpn-build\windows-msi\image\*-amd64.msi
+
+      - name: Archive x86 artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: OpenVPN-x86
+          path: ${{ github.workspace }}\openvpn-build\windows-msi\image\*-x86.msi
+
+      - name: Archive arm64 artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: OpenVPN-arm64
+          path: ${{ github.workspace }}\openvpn-build\windows-msi\image\*-arm64.msi
