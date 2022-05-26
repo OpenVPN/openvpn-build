@@ -1,6 +1,10 @@
 # The name of our workflow
 name: Build
-on: [push, pull_request]
+on:
+  push:
+  pull_request:
+  schedule:
+    - cron: '0 2 * * *' # run at 2 AM UTC
 
 jobs:
   msvc:
@@ -15,6 +19,11 @@ jobs:
     runs-on: windows-2019
 
     steps:
+      - name: Get date
+        run: |
+          $date = Get-Date -Format "ddMMyyyy"
+          echo "DATE=${date}" >> $Env:GITHUB_ENV
+    
       - name: Checkout openvpn-build
         uses: actions/checkout@v2
         with:
@@ -63,17 +72,17 @@ jobs:
       - name: Archive x64 artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: OpenVPN-x64
+          name: openvpn-master-x64-${{ env.DATE }}
           path: ${{ github.workspace }}\openvpn-build\windows-msi\image\*-amd64.msi
 
       - name: Archive x86 artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: OpenVPN-x86
+          name: openvpn-master-x86-${{ env.DATE }}
           path: ${{ github.workspace }}\openvpn-build\windows-msi\image\*-x86.msi
 
       - name: Archive arm64 artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: OpenVPN-arm64
+          name: openvpn-master-arm64-${{ env.DATE }}
           path: ${{ github.workspace }}\openvpn-build\windows-msi\image\*-arm64.msi
