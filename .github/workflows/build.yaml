@@ -8,6 +8,10 @@ on:
 
 jobs:
   msvc:
+    strategy:
+      matrix:
+        arch: [x86, amd64, arm64]
+
     env:
       CMAKE: cmake.exe
       VCPKG_ROOT: ${{ github.workspace }}\vcpkg
@@ -23,7 +27,7 @@ jobs:
         run: |
           $date = Get-Date -Format "ddMMyyyy"
           echo "DATE=${date}" >> $Env:GITHUB_ENV
-    
+
       - name: Checkout openvpn-build
         uses: actions/checkout@v2
         with:
@@ -67,22 +71,10 @@ jobs:
         working-directory: openvpn-build/windows-msi
         run: |
           New-Item -Name build-and-package-env.ps1 -ItemType File
-          ./build-and-package.ps1 -basedir ../.. -ossl ossl3 -nosign
+          ./build-and-package.ps1 -basedir ../.. -ossl ossl3 -nosign -arch ${{ matrix.arch }} -nodevprompt
 
-      - name: Archive x64 artifacts
+      - name: Archive artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: openvpn-master-x64-${{ env.DATE }}
-          path: ${{ github.workspace }}\openvpn-build\windows-msi\image\*-amd64.msi
-
-      - name: Archive x86 artifacts
-        uses: actions/upload-artifact@v2
-        with:
-          name: openvpn-master-x86-${{ env.DATE }}
-          path: ${{ github.workspace }}\openvpn-build\windows-msi\image\*-x86.msi
-
-      - name: Archive arm64 artifacts
-        uses: actions/upload-artifact@v2
-        with:
-          name: openvpn-master-arm64-${{ env.DATE }}
-          path: ${{ github.workspace }}\openvpn-build\windows-msi\image\*-arm64.msi
+          name: openvpn-master-${{ matrix.arch }}-${{ env.DATE }}
+          path: ${{ github.workspace }}\openvpn-build\windows-msi\image\*-${{ matrix.arch }}.msi
