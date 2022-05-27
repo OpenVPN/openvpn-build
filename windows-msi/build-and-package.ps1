@@ -3,7 +3,8 @@ param(
     # openvpn-build side by side
     [string] $basedir,
     # Version of OpenSSL port to use ("ossl1.1.1" or "ossl3")
-    [string] $ossl = "ossl1.1.1"
+    [string] $ossl = "ossl1.1.1",
+    [switch] $nosign
     )
 
 ### Preparations
@@ -62,17 +63,24 @@ ForEach ($bat in "msbuild-x64.bat", "msbuild-x64_x86.bat", "msbuild-x64_arm64.ba
 & .\msbuild-x64_arm64.bat
 
 ### Sign binaries
-Set-Location "${basedir}\openvpn-build\windows-msi"
-
-$Env:SignScript = "sign-openvpn.bat"
-& .\sign-binaries.bat
+if (-not $nosign) {
+    Set-Location "${basedir}\openvpn-build\windows-msi"
+    $Env:SignScript = "sign-openvpn.bat"
+    & .\sign-binaries.bat
+} else {
+    Write-Host "Skip signing binaries"
+}
 
 ### Build MSI
 Set-Location "${basedir}\openvpn-build\windows-msi"
 & cscript.exe build.wsf msi
 
 ### Sign MSI
-$Env:SignScript = "sign-msi.bat"
-& .\sign-binaries.bat
+if (-not $nosign) {
+    $Env:SignScript = "sign-msi.bat"
+    & .\sign-binaries.bat
+} else {
+    Write-Host "Skip signing MSI"
+}
 
 Set-Location $cwd
