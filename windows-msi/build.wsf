@@ -102,8 +102,12 @@ clean	Cleans intermediate and output files</example>
             // This prevents accidental building of already signed MSI packages
             // with "exe" target.
             switch (cmd) {
-                case "all": case "clean":
+                case "all":
+                case "clean":
                 case "msi":
+                case "msi-x86":
+                case "msi-amd64":
+                case "msi-arm64":
                     var env = WScript.CreateObject("WScript.Shell").Environment("Process");
 
                     // Downloading openvpnserv2.exe
@@ -335,6 +339,18 @@ clean	Cleans intermediate and output files</example>
                 case "msi":
                     b.build(BuildPath(outputPath, ver.define.PRODUCT_NAME + "-" + ver.define.PACKAGE_VERSION + "-x86.msi"  ));
                     b.build(BuildPath(outputPath, ver.define.PRODUCT_NAME + "-" + ver.define.PACKAGE_VERSION + "-amd64.msi"));
+                    b.build(BuildPath(outputPath, ver.define.PRODUCT_NAME + "-" + ver.define.PACKAGE_VERSION + "-arm64.msi"));
+                    break;
+
+                case "msi-x86":
+                    b.build(BuildPath(outputPath, ver.define.PRODUCT_NAME + "-" + ver.define.PACKAGE_VERSION + "-x86.msi"  ));
+                    break;
+
+                case "msi-amd64":
+                    b.build(BuildPath(outputPath, ver.define.PRODUCT_NAME + "-" + ver.define.PACKAGE_VERSION + "-amd64.msi"));
+                    break;
+
+                case "msi-arm64":
                     b.build(BuildPath(outputPath, ver.define.PRODUCT_NAME + "-" + ver.define.PACKAGE_VERSION + "-arm64.msi"));
                     break;
 
