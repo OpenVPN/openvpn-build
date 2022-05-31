@@ -32,7 +32,7 @@ jobs:
         uses: actions/checkout@v2
         with:
           repository: openvpn/openvpn
-          ref: master
+          ref: dco
           path: openvpn
 
       - name: Checkout openvpn-gui
@@ -82,7 +82,7 @@ jobs:
       - name: Archive artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: openvpn-master-${{ env.DATETIME }}-${{ env.OPENVPN_COMMIT }}-${{ matrix.arch }}
+          name: openvpn-dco-${{ env.DATETIME }}-${{ env.OPENVPN_COMMIT }}-${{ matrix.arch }}
           path: ${{ github.workspace }}\openvpn-build\windows-msi\image\*-${{ matrix.arch }}.msi
 
   upload_msis:
