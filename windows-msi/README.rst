@@ -74,6 +74,12 @@ You can also define which OpenSSL vcpkg port to use:
 If everything was set up correctly you should see three MSI packages in
 ``image`` subfolder, each signed and containing signed binaries.
 
+Cleaning up
+-----------
+
+You can use the cleanup.ps1 script to clean up temporary build files and build artefacts.
+This makes it easier to create clean builds.
+
 build.wsf
 ---------
 
