@@ -3,8 +3,8 @@ name: Build
 on:
   push:
   pull_request:
-  schedule:
-    - cron: '0 2 * * *' # run at 2 AM UTC
+  repository_dispatch:
+    types: [openvpn-commit]
 
 jobs:
   msvc:
@@ -23,11 +23,6 @@ jobs:
     runs-on: windows-2019
 
     steps:
-      - name: Get date
-        run: |
-          $date = Get-Date -Format "ddMMyyyy"
-          echo "DATE=${date}" >> $Env:GITHUB_ENV
-
       - name: Checkout openvpn-build
         uses: actions/checkout@v2
         with:
@@ -73,8 +68,19 @@ jobs:
           New-Item -Name build-and-package-env.ps1 -ItemType File
           ./build-and-package.ps1 -basedir ../.. -ossl ossl3 -nosign -arch ${{ matrix.arch }} -nodevprompt
 
+      - name: Get openvpn commit id
+        working-directory: openvpn
+        run: |
+          $commit = git rev-parse --short HEAD
+          echo "OPENVPN_COMMIT=$commit" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf-8 -Append
+
+      - name: Get datetime
+        run: |
+          $dt = Get-Date -Format "yyyyMMddThhmm"
+          echo "DATETIME=${dt}" >> $Env:GITHUB_ENV
+
       - name: Archive artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: openvpn-master-${{ matrix.arch }}-${{ env.DATE }}
+          name: openvpn-master-${{ env.DATETIME }}-${{ env.OPENVPN_COMMIT }}-${{ matrix.arch }}
           path: ${{ github.workspace }}\openvpn-build\windows-msi\image\*-${{ matrix.arch }}.msi
