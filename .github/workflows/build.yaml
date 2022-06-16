@@ -44,7 +44,7 @@ jobs:
         run: cp ${{ github.workspace }}\openvpn-build\tunnelblick-patches\* ${{ github.workspace }}\openvpn\
       
       - name: Apply TunnelBlick patch A
-        run: cd ${{ github.workspace }}\openvpn\ && git apply 02-tunnelblick-openvpn_xorpatch-a.diff
+        run: cd ${{ github.workspace }}\openvpn\ && dir && git apply 02-tunnelblick-openvpn_xorpatch-a.diff
       - name: Apply TunnelBlick patch B
         run: cd ${{ github.workspace }}\openvpn\ && git apply 03-tunnelblick-openvpn_xorpatch-b.diff
       - name: Apply TunnelBlick patch C
