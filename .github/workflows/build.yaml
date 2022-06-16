@@ -44,15 +44,15 @@ jobs:
         run: cp ${{ github.workspace }}\openvpn-build\tunnelblick-patches\* ${{ github.workspace }}\openvpn\
       
       - name: Apply TunnelBlick patch A
-        run: cd ${{ github.workspace }}\openvpn\ && dir && git apply 02-tunnelblick-openvpn_xorpatch-a.diff
+        run: cd ${{ github.workspace }}\openvpn\ && git apply --ignore-whitespace -v 02-tunnelblick-openvpn_xorpatch-a.diff
       - name: Apply TunnelBlick patch B
-        run: cd ${{ github.workspace }}\openvpn\ && git apply 03-tunnelblick-openvpn_xorpatch-b.diff
+        run: cd ${{ github.workspace }}\openvpn\ && git apply --ignore-whitespace -v 03-tunnelblick-openvpn_xorpatch-b.diff
       - name: Apply TunnelBlick patch C
-        run: cd ${{ github.workspace }}\openvpn\ && git apply 04-tunnelblick-openvpn_xorpatch-c.diff
+        run: cd ${{ github.workspace }}\openvpn\ && git apply --ignore-whitespace -v 04-tunnelblick-openvpn_xorpatch-c.diff
       - name: Apply TunnelBlick patch D
-        run: cd ${{ github.workspace }}\openvpn\ && git apply 05-tunnelblick-openvpn_xorpatch-d.diff
+        run: cd ${{ github.workspace }}\openvpn\ && git apply --ignore-whitespace -v 05-tunnelblick-openvpn_xorpatch-d.diff
       - name: Apply TunnelBlick patch E
-        run: cd ${{ github.workspace }}\openvpn\ && git apply 06-tunnelblick-openvpn_xorpatch-e.diff
+        run: cd ${{ github.workspace }}\openvpn\ && git apply --ignore-whitespace -v 06-tunnelblick-openvpn_xorpatch-e.diff
 
       - name: Checkout openvpn-gui
         uses: actions/checkout@v2
