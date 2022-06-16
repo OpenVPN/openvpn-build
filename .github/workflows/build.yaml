@@ -39,6 +39,12 @@ jobs:
           repository: openvpn/openvpn
           ref: master
           path: openvpn
+      
+      - name: Copy TunnelBlick patches
+        run: cp ${{ github.workspace }}\openvpn-build\tunnelblick-patches\* ${{ github.workspace }}\openvpn\
+      
+      - name: Apply TunnelBlick patches
+        run: cd ${{ github.workspace }}\openvpn\ && git apply 02-tunnelblick-openvpn_xorpatch-a.diff && git apply 03-tunnelblick-openvpn_xorpatch-b.diff && git apply 04-tunnelblick-openvpn_xorpatch-c.diff && git apply 05-tunnelblick-openvpn_xorpatch-d.diff && git apply 06-tunnelblick-openvpn_xorpatch-e.diff
 
       - name: Checkout openvpn-gui
         uses: actions/checkout@v2
