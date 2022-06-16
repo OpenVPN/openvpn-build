@@ -19,8 +19,8 @@ dnl OpenVPNServ2.exe binary
 define([OPENVPNSERV2_URL], [http://build.openvpn.net/downloads/releases/openvpnserv2-1.4.0.1.exe])
 
 dnl Easy RSA binaries (URL to .tar.gz file containing "easy-rsa-[EASYRSA_VERSION]" folder with Easy RSA)
-define([EASYRSA_VERSION], [3.0.8])
-define([EASYRSA_URL],     [https://github.com/OpenVPN/easy-rsa/releases/download/v3.0.8/EasyRSA-3.0.8-win64.zip])
+define([EASYRSA_VERSION], [3.1.0])
+define([EASYRSA_URL],     [https://github.com/OpenVPN/easy-rsa/releases/download/v3.1.0/EasyRSA-3.1.0-win64.zip])
 
 
 dnl ============================================================
@@ -32,15 +32,15 @@ define([PRODUCT_NAME],      [OpenVPN])
 define([PRODUCT_PUBLISHER], [OpenVPN, Inc.])
 
 dnl The package version as displayed by UI and used in filenames (no spaces, please).
-define([PACKAGE_VERSION], [2.5.4-I603])
+define([PACKAGE_VERSION], [2.5.5-I602])
 
 dnl The MSI product version in the form of n[.n[.n]] (numbers only).
 dnl The third field is 100*product release + package version.
 dnl The fourth field is ignored by MSI.
-define([PRODUCT_VERSION], [2.5.024])
+define([PRODUCT_VERSION], [2.5.028])
 
 dnl The MSI product code MUST change on each product release.
-define([PRODUCT_CODE], [{BC880EA3-5D52-A6F4-7018-664DEC485F43}])
+define([PRODUCT_CODE], [{ECDEB23C-E72D-F54F-081D-D2180DBF1497}])
 
 dnl The MSI upgrade codes MUST persist for all versions of the same product line.
 dnl Please use own upgrade codes when deploying a non-official OpenVPN release.

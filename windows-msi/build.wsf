@@ -59,8 +59,8 @@ clean	Cleans intermediate and output files</example>
                 "x86": {
                     "buildPath": BuildPath(buildPath, "x86"),
                     "openVPNBinPath": BuildPath(depsPath, "openvpn", "Win32-Output", "Release"),
-                    "openVPNGuiBinPath": BuildPath(depsPath, "openvpn-gui", "build_Win32", "Release"),
-                    "openSSLBinPath": BuildPath(depsPath, "vcpkg", "installed", "x86-windows-ovpn", "tools", "openssl"),
+                    "openVPNGuiBinPath": BuildPath(depsPath, "openvpn-gui", "out", "build", "x86-release-ossl3"),
+                    "openSSLBinPath": BuildPath(depsPath, "openvpn", "src", "openvpn", "vcpkg_installed", "x86-windows-ovpn", "x86-windows-ovpn", "tools", "openssl"),
                     "programFilesPath": "ProgramFilesFolder",
                     "openSSLPlat": "",
                     "wixPlat": "x86",
@@ -70,8 +70,8 @@ clean	Cleans intermediate and output files</example>
                 "amd64": {
                     "buildPath": BuildPath(buildPath, "amd64"),
                     "openVPNBinPath": BuildPath(depsPath, "openvpn", "x64-Output", "Release"),
-                    "openVPNGuiBinPath": BuildPath(depsPath, "openvpn-gui", "build_x64", "Release"),
-                    "openSSLBinPath": BuildPath(depsPath, "vcpkg", "installed", "x64-windows-ovpn", "tools", "openssl"),
+                    "openVPNGuiBinPath": BuildPath(depsPath, "openvpn-gui", "out", "build", "x64-release-ossl3"),
+                    "openSSLBinPath": BuildPath(depsPath, "openvpn", "src", "openvpn", "vcpkg_installed", "x64-windows-ovpn", "x64-windows-ovpn", "tools", "openssl"),
                     "programFilesPath": "ProgramFiles64Folder",
                     "openSSLPlat": "-x64",
                     "wixPlat": "x64",
@@ -80,9 +80,9 @@ clean	Cleans intermediate and output files</example>
 
                 "arm64": {
                     "buildPath": BuildPath(buildPath, "arm64"),
-                    "openVPNGuiBinPath": BuildPath(depsPath, "openvpn-gui", "build_arm64", "Release"),
                     "openVPNBinPath": BuildPath(depsPath, "openvpn", "ARM64-Output", "Release"),
-                    "openSSLBinPath": BuildPath(depsPath, "vcpkg", "installed", "arm64-windows-ovpn", "tools", "openssl"),
+                    "openVPNGuiBinPath": BuildPath(depsPath, "openvpn-gui", "out", "build", "arm64-release-ossl3"),
+                    "openSSLBinPath": BuildPath(depsPath, "openvpn", "src", "openvpn", "vcpkg_installed", "arm64-windows-ovpn", "arm64-windows-ovpn", "tools", "openssl"),
                     "programFilesPath": "ProgramFiles64Folder",
                     "openSSLPlat": "-arm64",
                     "wixPlat": "arm64",
@@ -102,8 +102,12 @@ clean	Cleans intermediate and output files</example>
             // This prevents accidental building of already signed MSI packages
             // with "exe" target.
             switch (cmd) {
-                case "all": case "clean":
+                case "all":
+                case "clean":
                 case "msi":
+                case "msi-x86":
+                case "msi-amd64":
+                case "msi-arm64":
                     var env = WScript.CreateObject("WScript.Shell").Environment("Process");
 
                     // Downloading openvpnserv2.exe
@@ -168,8 +172,7 @@ clean	Cleans intermediate and output files</example>
                             "-dUPGRADE_CODE=\""                 + _CMD(ver.define["UPGRADE_CODE_" + plat        ]) + "\"",
                             "-dCONFIG_EXTENSION=\""             + _CMD(ver.define["CONFIG_EXTENSION"            ]) + "\"",
                             "-dPROGRAM_FILES_DIR=\""            + _CMD(p.programFilesPath                        ) + "\"",
-                            "-dOPENSSL_PLAT=\""                 + _CMD(p.openSSLPlat                             ) + "\"",
-                            "-dLZO_DLL=\""                      + _CMD("lzo2.dll"                                ) + "\""];
+                            "-dOPENSSL_PLAT=\""                 + _CMD(p.openSSLPlat                             ) + "\""];
 
                         // WiX compiling
                         b.pushRule(new WiXCompileBuildRule(
@@ -236,11 +239,10 @@ clean	Cleans intermediate and output files</example>
                                 BuildPath(p.buildPath, "license.txt"),
                                 BuildPath(p.buildPath, "tap-windows6.msm"),
                                 BuildPath(p.buildPath, "wintun.msm"),
-                                BuildPath(p.openVPNBinPath, "libcrypto-1_1" + p.openSSLPlat + ".dll"),
-                                BuildPath(p.openVPNBinPath, "lzo2.dll"),
+                                BuildPath(p.openVPNBinPath, "libcrypto-3" + p.openSSLPlat + ".dll"),
                                 BuildPath(p.openVPNBinPath, "libopenvpnmsica.dll"),
                                 BuildPath(p.openVPNBinPath, "libpkcs11-helper-1.dll"),
-                                BuildPath(p.openVPNBinPath, "libssl-1_1" + p.openSSLPlat + ".dll"),
+                                BuildPath(p.openVPNBinPath, "libssl-3" + p.openSSLPlat + ".dll"),
                                 BuildPath(p.openSSLBinPath, "openssl.exe"),
                                 BuildPath(p.openVPNBinPath, "openvpn.exe"),
                                 BuildPath(p.openVPNGuiBinPath, "openvpn-gui.exe"),
@@ -337,6 +339,18 @@ clean	Cleans intermediate and output files</example>
                 case "msi":
                     b.build(BuildPath(outputPath, ver.define.PRODUCT_NAME + "-" + ver.define.PACKAGE_VERSION + "-x86.msi"  ));
                     b.build(BuildPath(outputPath, ver.define.PRODUCT_NAME + "-" + ver.define.PACKAGE_VERSION + "-amd64.msi"));
+                    b.build(BuildPath(outputPath, ver.define.PRODUCT_NAME + "-" + ver.define.PACKAGE_VERSION + "-arm64.msi"));
+                    break;
+
+                case "msi-x86":
+                    b.build(BuildPath(outputPath, ver.define.PRODUCT_NAME + "-" + ver.define.PACKAGE_VERSION + "-x86.msi"  ));
+                    break;
+
+                case "msi-amd64":
+                    b.build(BuildPath(outputPath, ver.define.PRODUCT_NAME + "-" + ver.define.PACKAGE_VERSION + "-amd64.msi"));
+                    break;
+
+                case "msi-arm64":
                     b.build(BuildPath(outputPath, ver.define.PRODUCT_NAME + "-" + ver.define.PACKAGE_VERSION + "-arm64.msi"));
                     break;
 
