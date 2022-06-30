@@ -10,10 +10,10 @@ define([PRODUCT_TAP_WIN_COMPONENT_ID], [tap0901])
 define([PRODUCT_TAP_WIN_NAME],         [TAP-Windows])
 
 dnl Wintun binaries
-define([PRODUCT_WINTUN_URL_x86],       [https://www.wintun.net/builds/wintun-x86-0.8.1.msm])
-define([PRODUCT_WINTUN_URL_amd64],     [https://www.wintun.net/builds/wintun-amd64-0.8.1.msm])
+define([PRODUCT_WINTUN_URL_x86],       [https://build.openvpn.net/downloads/releases/wintun-x86-0.8.1.msm])
+define([PRODUCT_WINTUN_URL_amd64],     [https://build.openvpn.net/downloads/releases/wintun-amd64-0.8.1.msm])
 dnl This is only to make build script happy - the file is only downloaded but not used, since there is no arm64 wintun MSM (yet)
-define([PRODUCT_WINTUN_URL_arm64],     [https://www.wintun.net/builds/wintun-amd64-0.8.1.msm])
+define([PRODUCT_WINTUN_URL_arm64],     [https://build.openvpn.net/downloads/releases/wintun-amd64-0.8.1.msm])
 
 dnl OpenVPNServ2.exe binary
 define([OPENVPNSERV2_URL], [http://build.openvpn.net/downloads/releases/openvpnserv2-1.4.0.1.exe])
