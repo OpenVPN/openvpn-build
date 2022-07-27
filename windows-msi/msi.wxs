@@ -69,6 +69,11 @@
         -->
         <Property Id="REINSTALLMODE" Value="amus"/>
 
+        <Binary Id="Service.js" SourceFile="script\Service.js"/>
+
+        <CustomAction Id="CheckOpenVPNServiceStatus" BinaryKey="Service.js" JScriptCall="CheckOpenVPNServiceStatus" />
+        <CustomAction Id="ConfigureOpenVPNService"  BinaryKey="Service.js" JScriptCall="ConfigureOpenVPNService" Execute="deferred" Impersonate="no" />
+
         <!--
             Detect system information
         -->
@@ -78,9 +83,13 @@
         </InstallUISequence>
         <InstallExecuteSequence>
             <Custom Action="FindSystemInfo" After="FindRelatedProducts"/>
+            <Custom Action="CheckOpenVPNServiceStatus" After="ProcessComponents"/>
+            <Custom Action="ConfigureOpenVPNService" After="StartServices">NOT Installed</Custom>
         </InstallExecuteSequence>
         <UI>
             <ProgressText Action="FindSystemInfo">Detecting system information</ProgressText>
+            <ProgressText Action="CheckOpenVPNServiceStatus">Checking status of OpenVPNService</ProgressText>
+            <ProgressText Action="ConfigureOpenVPNService">Configuring OpenVPNService</ProgressText>
         </UI>
 
         <Property Id="TAPWINDOWS6ADAPTERS" Secure="yes"/>
@@ -771,14 +780,14 @@
                                 Id="OpenVPNService"
                                 Name="OpenVPNService"
                                 Stop="both"
-                                Start="install"
                                 Remove="uninstall"/>
                             <ServiceInstall
                                 Id="OpenVPNService"
                                 Name="OpenVPNService"
                                 DisplayName="OpenVPNService"
+                                Description="Responsible for automatic start of OpenVPN instances."
                                 Type="ownProcess"
-                                Start="auto"
+                                Start="disabled"
                                 ErrorControl="normal">
                                 <ServiceDependency Id="Dhcp"/>
                             </ServiceInstall>
@@ -794,7 +803,7 @@
                         </Component>
                         <!-- Move auto-start config files from configuration folder to auto-start configuration folder on update from non-auto-start aware installations. -->
                         <Component Id="config.Where_are_my_config_files.txt" Guid="{2DFEDF05-F41E-4EB0-A90A-DC76A261E444}">
-                            <Condition><![CDATA[OPENVPNSERVICE AND CONFIGDIRREG AND NOT CONFIGAUTODIRREG]]></Condition>
+                            <Condition><![CDATA[CONFIGDIRREG AND NOT CONFIGAUTODIRREG]]></Condition>
                             <File Name="Where are my config files.txt" Source="!(bindpath.build)Where are my config files.txt"/>
                             <CopyFile
                                 Id="config_auto"
@@ -1531,11 +1540,10 @@
             <Feature
                 Id="OpenVPN.Service"
                 Title="$(var.PRODUCT_NAME) Service"
-                Description="Service wrappers"
-                Level="3"
+                Description="Responsible for automatic start of OpenVPN instances"
+                Level="2"
                 ConfigurableDirectory="PRODUCTDIR"
                 AllowAdvertise="no">
-                <Condition Level="1"><![CDATA[NETFRAMEWORK40FULL AND OPENVPNSERVICE AND CONFIGDIRREG AND NOT CONFIGAUTODIRREG]]></Condition>
                 <Condition Level="0"><![CDATA[NOT NETFRAMEWORK40FULL AND NOT Installed]]></Condition>
                 <ComponentRef Id="bin.openvpnserv2.exe"/>
                 <ComponentRef Id="config.Where_are_my_config_files.txt"/>
