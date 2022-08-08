@@ -1118,6 +1118,17 @@
                     </Directory>
 
                     <Directory Id="UtilitiesShortcutFolder" Name="Utilities">
+                        <Component Id="shortcut.bin.tapctl.exe.create.dco" Guid="{383BB8B0-0B7C-46D3-9ED3-3BF9DC4DB798}">
+                            <Shortcut
+                                Id="shortcut.bin.tapctl.exe.create.dco"
+                                Name="Add a new dco-win virtual network adapter"
+                                Target="[BINDIR]tapctl.exe"
+                                Arguments="create --hwid ovpn-dco"
+                                WorkingDirectory="BINDIR"
+                                Icon="tapctl_create.ico"/>
+                            <RemoveFolder Id="shortcut.bin.tapctl.exe.create.dco" On="uninstall"/>
+                            <RegistryValue Root="HKCU" Key="Software\$(var.PRODUCT_NAME)\Shortcuts" Name="bin.tapctl.exe.create.dco" Type="integer" Value="1"/>
+                        </Component>
                         <Component Id="shortcut.bin.tapctl.exe.create.TAPWindows6" Guid="{F31F1774-326F-419F-B74E-29819E161321}">
                             <Shortcut
                                 Id="shortcut.bin.tapctl.exe.create.TAPWindows6"
@@ -1681,6 +1692,7 @@
                 <ComponentRef Id="CMP_ovpn_dco_nx20.inf"/>
                 <ComponentRef Id="CMP_ovpn_dco_nx20.cat"/>
                 <ComponentRef Id="CMP_ovpn_dco_nx20.sys"/>
+                <ComponentRef Id="shortcut.bin.tapctl.exe.create.dco"/>
                 <Condition Level="1">WIN102004 AND NOT NETADAPTERCX21</Condition>
             </Feature>
 
@@ -1695,6 +1707,7 @@
                 <ComponentRef Id="CMP_ovpn_dco_nx21.inf"/>
                 <ComponentRef Id="CMP_ovpn_dco_nx21.cat"/>
                 <ComponentRef Id="CMP_ovpn_dco_nx21.sys"/>
+                <ComponentRef Id="shortcut.bin.tapctl.exe.create.dco"/>
                 <Condition Level="1">WIN102004 AND NETADAPTERCX21</Condition>
             </Feature>
         </Feature>
