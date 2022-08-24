@@ -63,6 +63,18 @@
         <Property Id="EDITOR" Value="notepad.exe"/>
         <PropertyRef Id="NETFRAMEWORK40FULL"/>
 
+        <Property Id="WIN102004" Secure="yes">
+            <DirectorySearch Id="searchAdvApiDir" Path="[SystemFolder]" Depth="0">
+                <FileSearch Id="searchAdvApiFile" Name="advapi32.dll" MinVersion="6.3.19041.0"/>
+            </DirectorySearch>
+        </Property>
+
+        <Property Id="NETADAPTERCX21" Secure="yes">
+            <DirectorySearch Id="searchAdvApiDir2" Path="[SystemFolder]" Depth="0">
+                <FileSearch Id="searchAdvApiDir2" Name="advapi32.dll" MinVersion="6.3.20348.0"/>
+            </DirectorySearch>
+        </Property>
+
         <!--
             Overwrite all files regardless of versions on install
             See https://docs.microsoft.com/en-us/windows/win32/msi/reinstallmode
@@ -96,6 +108,8 @@
         <Property Id="ACTIVETAPWINDOWS6ADAPTERS" Secure="yes"/>
         <Property Id="WINTUNADAPTERS" Secure="yes"/>
         <Property Id="ACTIVEWINTUNADAPTERS" Secure="yes"/>
+        <Property Id="OVPNDCOADAPTERS" Secure="yes"/>
+        <Property Id="ACTIVEOVPNDCOADAPTERS" Secure="yes"/>
 
 
         <!--
@@ -617,7 +631,6 @@
             Value="[PRIORITYREG]"
             Sequence="first">PRIORITYREG AND NOT Installed</SetProperty>
 
-
         <!--
             Folders/Files
         -->
@@ -997,6 +1010,42 @@
                         </Component>
                     </Directory>
                 </Directory>
+
+                <Directory Id="CommonFiles" Name="Common Files">
+                    <Directory Id="OVPNDCOPARENT" Name="ovpn-dco">
+                        <Component Id="CMP_ovpn_dco.inf" Guid="4BE20469-2292-4AE2-B953-49AA0DA4165E">
+                            <RegistryValue Root="HKLM" Key="Software\$(var.PRODUCT_NAME)" Type="string" Name="ovpn-dco" Value="" KeyPath="yes"/>
+                        </Component>
+                        <Directory Id="NX20" Name="Win10">
+                            <Component Id="CMP_ovpn_dco_nx20.inf" Guid="459CA7BC-939E-438C-B830-B1390F0C05A7">
+                                <Condition>NOT NETADAPTERCX21</Condition>
+                                <File Id="ovpndco.inf" Name="ovpn-dco.inf" Source="!(bindpath.ovpndco)\win10\ovpn-dco.inf" KeyPath="yes" />
+                            </Component>
+                            <Component Id="CMP_ovpn_dco_nx20.cat" Guid="EB59AE6E-191E-4FE1-B414-005217348183">
+                                <Condition>NOT NETADAPTERCX21</Condition>
+                                <File Id="ovpndco_nx20.cat" Name="ovpn-dco.cat" Source="!(bindpath.ovpndco)\win10\ovpn-dco.cat" KeyPath="yes" />
+                            </Component>
+                            <Component Id="CMP_ovpn_dco_nx20.sys" Guid="0007BFDB-42A9-4F67-BDD9-AB3B797DEF1F">
+                                <Condition>NOT NETADAPTERCX21</Condition>
+                                <File Id="ovpndco_nx20.sys" Name="ovpn-dco.sys" Source="!(bindpath.ovpndco)\win10\ovpn-dco.sys" KeyPath="yes" />
+                            </Component>
+                        </Directory>
+                        <Directory Id="NX21" Name="Win11">
+                            <Component Id="CMP_ovpn_dco_nx21.inf" Guid="369D943E-0849-449A-9D70-AFA7AA57B0C7">
+                                <Condition>NETADAPTERCX21</Condition>
+                                <File Id="ovpndco_nx21.inf" Name="ovpn-dco.inf" Source="!(bindpath.ovpndco)\win11\ovpn-dco.inf" KeyPath="yes" />
+                            </Component>
+                            <Component Id="CMP_ovpn_dco_nx21.cat" Guid="9E873D77-8685-4B60-9066-B94D94C0EEEB">
+                                <Condition>NETADAPTERCX21</Condition>
+                                <File Id="ovpndco_nx21.cat" Name="ovpn-dco.cat" Source="!(bindpath.ovpndco)\win11\ovpn-dco.cat" KeyPath="yes" />
+                            </Component>
+                            <Component Id="CMP_ovpn_dco_nx21.sys" Guid="FB24EBB2-8521-4365-90E2-BCB5F011669E">
+                                <Condition>NETADAPTERCX21</Condition>
+                                <File Id="ovpndco_nx21.sys" Name="ovpn-dco.sys" Source="!(bindpath.ovpndco)\win11\ovpn-dco.sys" KeyPath="yes" />
+                            </Component>
+                        </Directory>
+                    </Directory>
+                </Directory>
             </Directory>
 
             <Directory Id="ProgramMenuFolder">
@@ -1084,6 +1133,17 @@
                     </Directory>
 
                     <Directory Id="UtilitiesShortcutFolder" Name="Utilities">
+                        <Component Id="shortcut.bin.tapctl.exe.create.dco" Guid="{383BB8B0-0B7C-46D3-9ED3-3BF9DC4DB798}">
+                            <Shortcut
+                                Id="shortcut.bin.tapctl.exe.create.dco"
+                                Name="Add a new dco-win virtual network adapter"
+                                Target="[BINDIR]tapctl.exe"
+                                Arguments="create --hwid ovpn-dco"
+                                WorkingDirectory="BINDIR"
+                                Icon="tapctl_create.ico"/>
+                            <RemoveFolder Id="shortcut.bin.tapctl.exe.create.dco" On="uninstall"/>
+                            <RegistryValue Root="HKCU" Key="Software\$(var.PRODUCT_NAME)\Shortcuts" Name="bin.tapctl.exe.create.dco" Type="integer" Value="1"/>
+                        </Component>
                         <Component Id="shortcut.bin.tapctl.exe.create.TAPWindows6" Guid="{F31F1774-326F-419F-B74E-29819E161321}">
                             <Shortcut
                                 Id="shortcut.bin.tapctl.exe.create.TAPWindows6"
@@ -1335,6 +1395,9 @@
             <ProgressText Action="$(var.PRODUCT_TAP_WIN_COMPONENT_ID)_Process">Processing TAP-Windows6 driver</ProgressText>
             <ProgressText Action="EvaluateWintun">Evaluating Wintun driver</ProgressText>
             <ProgressText Action="ProcessWintun">Processing Wintun driver</ProgressText>
+            <ProgressText Action="OvpnDcoEvaluate">Evaluating ovpn-dco driver</ProgressText>
+            <ProgressText Action="OvpnDcoProcess">Processing ovpn-dco driver</ProgressText>
+            <ProgressText Action="CheckAndScheduleReboot">Checking if reboot is required</ProgressText>
         </UI>
 
 
@@ -1350,7 +1413,16 @@
         <CustomAction Id="InstallTUNTAPAdaptersRollback"   BinaryKey="libopenvpnmsica.dll" DllEntry="ProcessDeferredAction" Execute="rollback" Impersonate="no"/>
         <CustomAction Id="CheckAndScheduleReboot"          BinaryKey="libopenvpnmsica.dll" DllEntry="CheckAndScheduleReboot"/>
 
+        <!-- ovpn-dco driver -->
+        <CustomAction Id="OvpnDcoEvaluate"    BinaryKey="libopenvpnmsica.dll" DllEntry="EvaluateDriver" Execute="immediate"/>
+        <CustomAction Id="OvpnDcoProcess"     BinaryKey="libopenvpnmsica.dll" DllEntry="ProcessDriver" Execute="deferred" Impersonate="no"/>
+
+        <SetProperty Action="SetOvpnDcoWin10" Id="OVPNDCO" After="CostFinalize" Value="[OVPNDCOPARENT]Win10\" Sequence="execute"><![CDATA[NOT NETADAPTERCX21]]></SetProperty>
+        <SetProperty Action="SetOvpnDcoWin11" Id="OVPNDCO" After="CostFinalize" Value="[OVPNDCOPARENT]Win11\" Sequence="execute"><![CDATA[NETADAPTERCX21]]></SetProperty>
+
         <InstallExecuteSequence>
+            <Custom Action="OvpnDcoEvaluate"                 Before="OvpnDcoProcess"/>
+            <Custom Action="OvpnDcoProcess"                   After="InstallFiles" />
             <Custom Action="EvaluateTUNTAPAdapters"           After="ProcessComponents"/>
             <Custom Action="UninstallTUNTAPAdapters"          After="DeleteServices"/>
             <Custom Action="UninstallTUNTAPAdaptersCommit"    After="UninstallTUNTAPAdapters"/>
@@ -1370,7 +1442,6 @@
             <ProgressText
                 Action="InstallTUNTAPAdapters"
                 Template="[1]: [2] [3] [4]">Creating TUN/TAP adapters</ProgressText>
-
             <Error Id="2550">OpenVPNMSICA: [2]</Error>
             <Error Id="2551">OpenVPNMSICA: [2]  Error [3]: [4]</Error>
         </UI>
@@ -1441,6 +1512,14 @@
                     <Data Column="Component_" >reg11F81A5FFB49D87B59FD3777E57FF853.C28309D9_1954_4F2D_A7D1_228850092460</Data>
                 </Row>
             <?endif?>
+
+            <Row>
+                <Data Column="Adapter"    >ovpndco</Data>
+                <Data Column="DisplayName">ovpn-dco|$(var.PRODUCT_NAME) Data Channel Offload</Data>
+                <Data Column="HardwareId" >ovpn-dco</Data>
+                <Data Column="Condition"  ><![CDATA[NOT OVPNDCOADAPTERS]]></Data>
+                <Data Column="Component_" >CMP_ovpn_dco.inf</Data>
+            </Row>
         </CustomTable>
 
 
@@ -1591,6 +1670,24 @@
             ConfigurableDirectory="PRODUCTDIR"
             AllowAdvertise="no"
             Display="expand">
+
+            <Feature
+                Id="Drivers.OvpnDco"
+                Title="Data Channel Offload"
+                Description="The new network driver which implements data channel of the OpenVPN protocol in Windows kernel."
+                Level="0"
+                ConfigurableDirectory="PRODUCTDIR"
+                AllowAdvertise="no">
+                <ComponentRef Id="CMP_ovpn_dco.inf"/>
+                <ComponentRef Id="CMP_ovpn_dco_nx20.inf"/>
+                <ComponentRef Id="CMP_ovpn_dco_nx20.cat"/>
+                <ComponentRef Id="CMP_ovpn_dco_nx20.sys"/>
+                <ComponentRef Id="CMP_ovpn_dco_nx21.inf"/>
+                <ComponentRef Id="CMP_ovpn_dco_nx21.cat"/>
+                <ComponentRef Id="CMP_ovpn_dco_nx21.sys"/>
+                <ComponentRef Id="shortcut.bin.tapctl.exe.create.dco"/>
+                <Condition Level="1">WIN102004</Condition>
+            </Feature>
 
             <Feature
                 Id="Drivers.TAPWindows6"

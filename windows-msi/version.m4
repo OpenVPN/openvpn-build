@@ -15,6 +15,11 @@ define([PRODUCT_WINTUN_URL_amd64],     [https://build.openvpn.net/downloads/rele
 dnl This is only to make build script happy - the file is only downloaded but not used, since there is no arm64 wintun MSM (yet)
 define([PRODUCT_WINTUN_URL_arm64],     [https://build.openvpn.net/downloads/releases/wintun-amd64-0.8.1.msm])
 
+dnl ovpn-dco binaries
+define([PRODUCT_OVPN_DCO_URL_x86],     [https://github.com/OpenVPN/ovpn-dco-win/releases/download/0.7.6/ovpn-dco-win-0.7.6-x86.zip])
+define([PRODUCT_OVPN_DCO_URL_amd64],   [https://github.com/OpenVPN/ovpn-dco-win/releases/download/0.7.6/ovpn-dco-win-0.7.6-amd64.zip])
+define([PRODUCT_OVPN_DCO_URL_arm64],   [https://github.com/OpenVPN/ovpn-dco-win/releases/download/0.7.6/ovpn-dco-win-0.7.6-arm64.zip])
+
 dnl OpenVPNServ2.exe binary
 define([OPENVPNSERV2_URL], [http://build.openvpn.net/downloads/releases/openvpnserv2-1.4.0.1.exe])
 
@@ -32,15 +37,15 @@ define([PRODUCT_NAME],      [OpenVPN])
 define([PRODUCT_PUBLISHER], [OpenVPN, Inc.])
 
 dnl The package version as displayed by UI and used in filenames (no spaces, please).
-define([PACKAGE_VERSION], [2.5.5-I602])
+define([PACKAGE_VERSION], [2.6git])
 
 dnl The MSI product version in the form of n[.n[.n]] (numbers only).
 dnl The third field is 100*product release + package version.
 dnl The fourth field is ignored by MSI.
-define([PRODUCT_VERSION], [2.5.028])
+define([PRODUCT_VERSION], [2.6.0])
 
 dnl The MSI product code MUST change on each product release.
-define([PRODUCT_CODE], [{ECDEB23C-E72D-F54F-081D-D2180DBF1497}])
+define([PRODUCT_CODE], [{9122FCB2-2BB5-4115-8C0F-05D9B5EFE8D6}])
 
 dnl The MSI upgrade codes MUST persist for all versions of the same product line.
 dnl Please use own upgrade codes when deploying a non-official OpenVPN release.

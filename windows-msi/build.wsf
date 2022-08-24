@@ -64,7 +64,8 @@ clean	Cleans intermediate and output files</example>
                     "programFilesPath": "ProgramFilesFolder",
                     "openSSLPlat": "",
                     "wixPlat": "x86",
-                    "wixLinkDepenencies": []
+                    "wixLinkDepenencies": [],
+                    "ovpnDcoPath": BuildPath(buildPath, "x86", "ovpn-dco")
                 },
 
                 "amd64": {
@@ -75,7 +76,8 @@ clean	Cleans intermediate and output files</example>
                     "programFilesPath": "ProgramFiles64Folder",
                     "openSSLPlat": "-x64",
                     "wixPlat": "x64",
-                    "wixLinkDepenencies": []
+                    "wixLinkDepenencies": [],
+                    "ovpnDcoPath": BuildPath(buildPath, "amd64", "ovpn-dco")
                 },
 
                 "arm64": {
@@ -86,7 +88,8 @@ clean	Cleans intermediate and output files</example>
                     "programFilesPath": "ProgramFiles64Folder",
                     "openSSLPlat": "-arm64",
                     "wixPlat": "arm64",
-                    "wixLinkDepenencies": []
+                    "wixLinkDepenencies": [],
+                    "ovpnDcoPath": BuildPath(buildPath, "arm64", "ovpn-dco")
                 }
             }
 
@@ -157,6 +160,23 @@ clean	Cleans intermediate and output files</example>
                             ver.define["PRODUCT_WINTUN_URL_" + plat],
                             ["version.m4"]));
 
+                        // Downloading ovpn-dco
+                        b.pushRule(new DownloadBuildRule(
+                            BuildPath(p.buildPath, "ovpn-dco.zip"),
+                            ver.define["PRODUCT_OVPN_DCO_URL_" + plat],
+                            ["version.m4"]));
+
+                        // Extracting ovpn-dco
+                        b.pushRule(new ExtractBuildRule(
+                            [
+                                BuildPath(p.buildPath, "ovpn-dco", "win10", "ovpn-dco.inf"),
+                                BuildPath(p.buildPath, "ovpn-dco", "win11", "ovpn-dco.inf"),
+                            ],
+                            p.ovpnDcoPath,
+                            BuildPath(p.buildPath, "ovpn-dco.timestamp"),
+                            BuildPath(p.buildPath, "ovpn-dco.zip"),
+                            []));
+
                         // WiX compiler flags
                         var wixCompilerFlags = [
                             "-ext WixNetFxExtension",
@@ -212,7 +232,8 @@ clean	Cleans intermediate and output files</example>
                             "-b openvpnguibin=\"" + _CMD(p.openVPNGuiBinPath) + "\"",
                             "-b opensslbin=\""    + _CMD(p.openSSLBinPath) + "\"",
                             "-b easyrsa=\""       + _CMD(easyRSAPath  ) + "\"",
-                            "-b openvpnserv2=\""  + _CMD(buildPath    ) + "\""
+                            "-b openvpnserv2=\""  + _CMD(buildPath    ) + "\"",
+                            "-b ovpndco=\""       + _CMD(p.ovpnDcoPath) + "\""
                         ];
 
                         // WiX linking
@@ -239,6 +260,8 @@ clean	Cleans intermediate and output files</example>
                                 BuildPath(p.buildPath, "license.txt"),
                                 BuildPath(p.buildPath, "tap-windows6.msm"),
                                 BuildPath(p.buildPath, "wintun.msm"),
+                                BuildPath(p.buildPath, "ovpn-dco", "win10", "ovpn-dco.inf"),
+                                BuildPath(p.buildPath, "ovpn-dco", "win11", "ovpn-dco.inf"),
                                 BuildPath(p.openVPNBinPath, "libcrypto-3" + p.openSSLPlat + ".dll"),
                                 BuildPath(p.openVPNBinPath, "libopenvpnmsica.dll"),
                                 BuildPath(p.openVPNBinPath, "libpkcs11-helper-1.dll"),
