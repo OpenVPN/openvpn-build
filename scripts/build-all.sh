@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -eux
+
 # This is required or Quilt will not find the patches
 export QUILT_PATCHES=debian/patches
 
@@ -30,7 +32,12 @@ cat $VARIANTS_FILE|grep -v "^#"|while read LINE; do
         echo "OpenVPN $PROGRAM_VERSION for $OS $OSRELEASE $ARCH has been built already"
     else
         cd $SOURCES_DIR
-        sbuild --verbose --arch=${ARCH} --dist=${OSRELEASE} openvpn_${PROGRAM_VERSION_CLEAN}-${OSRELEASE}${PACKAGE_VERSION}.dsc && cp openvpn_${PROGRAM_VERSION_CLEAN}-${OSRELEASE}${PACKAGE_VERSION}_${ARCH}.deb ${TARGET_DIR}/
+        sbuild --verbose --no-run-lintian \
+               --build-dir=$(pwd) \
+               --arch=${ARCH} --dist=${OSRELEASE} \
+               openvpn_${PROGRAM_VERSION_CLEAN}-${OSRELEASE}${PACKAGE_VERSION}.dsc
+	cp openvpn_${PROGRAM_VERSION_CLEAN}-${OSRELEASE}${PACKAGE_VERSION}_${ARCH}.deb \
+           ${TARGET_DIR}/
         cd $OLD_DIR
     fi
 
