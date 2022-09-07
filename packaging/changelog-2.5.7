@@ -1,0 +1,28 @@
+openvpn (2.5.7-debian0) stable; urgency=medium
+
+  * Preparing release 2.5.7 (Gert Doering, a0f9a3e9)
+  * Fix client-pending-auth error message to say ERROR instead of SUCCESS (Arne Schwabe, 5288c578)
+  * Translate OpenSSL 3.0 digest names to OpenSSL 1.1 digest names (Arne Schwabe, b158125f)
+  * cipher-negotiation.rst missing from doc/Makefile.am (Jan Mikkelsen, 1294064e)
+  * Add message when decoding PKCS12 file fails. (Arne Schwabe, 1f54811e)
+  * Remove dependency on BF-CBC existance from test_ncp (Arne Schwabe, 263436fd)
+  * Fix allowing/showing unsupported ciphers and digests (Arne Schwabe, 36909391)
+  * Add --with-openssl-engine autoconf option (auto|yes|no) (Arne Schwabe, c5d61b34)
+  * Add macos OpenSSL 3.0 and ASAN builds (Arne Schwabe, dea69409)
+  * Add ubuntu 22.04 to Github Actions (Arne Schwabe, 0fb03c8c)
+  * Allow loading of non default providers (Arne Schwabe, aef0e595)
+  * Refactor early initialisation and uninitialisation into methods (Arne Schwabe, 3f25bf7f)
+  * Fix M_ERRNO behavior on Windows (Lev Stipakov, 4e5b1401)
+  * vcpkg: switch to manifest (Lev Stipakov, 55cfc0b9)
+  * Add insecure tls-cert-profile options (Arne Schwabe, 7b1b1005)
+  * vcpkg-ports/pkcs11-helper: bump to release 1.29 (Marc Becker, f89b0783)
+  * auth-pam.c: add missing include limits.h (Antonio Quartulli, 70b6c69c)
+  * t_net.sh: delete dummy iface using iproute command (Antonio Quartulli, c3f4419c)
+  * networking_iproute2: don't pass M_WARN to openvpn_execve_check() (Antonio Quartulli, 113b6c41)
+  * vcpkg-ports: remove openssl port (Lev Stipakov, aa6f15dd)
+  * tapctl: Resolve MSVC C4996 warnings (Simon Rozman, 64547d55)
+  * msvc: adjust build options to harden binaries (Lev Stipakov, 4bf8f114)
+  * networking: use OPENVPN_ETH_ALEN instead of ETH_ALEN (Antonio Quartulli, 445cc852)
+  * vcpkg-ports\pkcs11-helper: shorten patch filename (Lev Stipakov, 6aba9e88)
+
+ -- Samuli Seppänen <samuli@openvpn.net>  Tue, 24 May 2022 11:48:54 +0300
