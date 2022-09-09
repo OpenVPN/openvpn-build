@@ -208,7 +208,7 @@ build_dep() {
 			--libdir=/lib \
 			${EXTRA_OPENSSL_CONFIG} \
 			|| die "Configure openssl"
-		[ -n "${BUILD_FOR_WINDOWS}" ] && perl util/mkdef.pl crypto ssl NT update
+		[ -n "${BUILD_FOR_WINDOWS}" ]
 		[ -z "${OPENSSL_SKIP_DEPEND}" ] && ${MAKE} depend
 		${MAKE}
 		${MAKE} install \
