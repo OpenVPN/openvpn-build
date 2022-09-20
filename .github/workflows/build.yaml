@@ -62,6 +62,17 @@ jobs:
           Invoke-WebRequest -Uri "https://wixdl.blob.core.windows.net/releases/v3.14.0.5722/wix314-binaries.zip" -OutFile wix.zip
           Expand-Archive -Path .\wix.zip -DestinationPath wix\bin
 
+      - name: Bump version
+        working-directory: openvpn-build/windows-msi
+        run: |
+          $NewProductCode = (New-Guid).ToString().ToUpper()
+          $BuildVersion = 10000 + [int]$env:GITHUB_RUN_NUMBER
+          $NewProductVersion = "2.6.$BuildVersion"
+          echo $NewProductCode $NewProductVersion
+          $version_m4 = (Get-Content version.m4)
+          $version_m4 -replace '^define\(\[PRODUCT_CODE\], \[\{(?<ProductCode>.*)\}]\)', "define([PRODUCT_CODE], [{${NewProductCode}}])" `
+            -replace '^define\(\[PRODUCT_VERSION\], \[(.*?)\]\)', "define([PRODUCT_VERSION], [${NewProductVersion}])" | Out-File -Encoding ASCII version.m4
+
       - name: Build
         working-directory: openvpn-build/windows-msi
         run: |
