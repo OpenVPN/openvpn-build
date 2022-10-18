@@ -808,6 +808,15 @@
                         <Component Id="bin.tapctl.exe" Guid="{5A294591-0F71-470F-977B-DD288AB2B437}">
                             <File Name="tapctl.exe" Source="!(bindpath.openvpnbin)tapctl.exe" KeyPath="yes"/>
                         </Component>
+                        <Component Id="bin.libopenvpn_plap.dll" Guid="{E20EDCF2-7717-4069-8633-8D35695CD299}">
+                            <File Id="bin.libopenvpn_plap.dll" Name="libopenvpn_plap.dll" Source="!(bindpath.openvpnguibin)libopenvpn_plap.dll"/>
+                        </Component>
+                        <Component Id="bin.openvpn_plap_install.reg" Guid="{3801F308-5C5D-4604-8290-736CB61677A9}">
+                            <File Id="bin.openvpn_plap_install.reg" Name="openvpn-plap-install.reg" Source="!(bindpath.openvpngui)\plap\openvpn-plap-install.reg"/>
+                        </Component>
+                        <Component Id="bin.openvpn_plap_uninstall.reg" Guid="{89CF3E0E-562A-4BF3-8700-96E8F13909C8}">
+                            <File Id="bin.openvpn_plap_uninstall.reg" Name="openvpn-plap-uninstall.reg" Source="!(bindpath.openvpngui)\plap\openvpn-plap-uninstall.reg"/>
+                        </Component>
                     </Directory>
 
                     <Directory Id="CONFIGDIR" Name="config">
@@ -1357,6 +1366,32 @@
                         Value="[BINDIR]openvpn-gui.exe"/>
                 </RegistryKey>
             </Component>
+            <Component Id="reg.openvpn.plap" Guid="{5359602A-A15C-43AD-B77D-2F23B05475B0}">
+                <RegistryKey
+                    Root="HKLM"
+                    Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Authentication\PLAP Providers\{4fbb8b67-cf02-4982-a7a8-3dd06a2c2ebd}">
+                    <RegistryValue
+                        Type="string"
+                        Value="OpenVPNProvider"/>
+                </RegistryKey>
+               <RegistryKey
+                    Root="HKCR"
+                    Key="CLSID\{4fbb8b67-cf02-4982-a7a8-3dd06a2c2ebd}">
+                    <RegistryValue
+                        Type="string"
+                        Value="OpenVPNProvider"/>
+                    <RegistryKey
+                        Key="InprocServer32">
+                        <RegistryValue
+                            Type="string"
+                            Value="[BINDIR]libopenvpn_plap.dll"/>
+                        <RegistryValue
+                            Name="ThreadingModel"
+                            Type="string"
+                            Value="Apartment"/>
+                    </RegistryKey>
+                </RegistryKey>
+            </Component>
         </DirectoryRef>
 
 
@@ -1625,9 +1660,21 @@
                 AllowAdvertise="no">
                 <Condition Level="0"><![CDATA[NOT NETFRAMEWORK40FULL AND NOT Installed]]></Condition>
                 <ComponentRef Id="bin.openvpnserv2.exe"/>
+                <ComponentRef Id="bin.libopenvpn_plap.dll"/>
+                <ComponentRef Id="bin.openvpn_plap_install.reg"/>
+                <ComponentRef Id="bin.openvpn_plap_uninstall.reg"/>
                 <ComponentRef Id="config.Where_are_my_config_files.txt"/>
                 <ComponentRef Id="config_auto.README.txt"/>
                 <ComponentRef Id="reg.autostart_config_dir"/>
+
+                <Feature
+                    Id="OpenVPN.PLAP.Register"
+                    Title="Enable OpenVPN Pre-Logon Access Provider"
+                    Description="Allows user to provide VPN credentials and connect before logging on."
+                    Level="3"
+                    AllowAdvertise="no">
+                    <ComponentRef Id="reg.openvpn.plap"/>
+                </Feature>
             </Feature>
 
             <Feature
