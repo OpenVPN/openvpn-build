@@ -56,9 +56,10 @@ Now create a config file, ``build-and-package-env.ps1``, next to ``build-and-pac
 Building and packaging
 ----------------------
 
-First step adjust ``version.m4``. It is important to increment
-``PRODUCT_VERSION`` *and* ``PRODUCT_VERSION_GUID`` on each release. MSI
-upgrading logic relies on this.
+First adjust ``version.m4``. It is important to increment
+``PRODUCT_VERSION`` *and* ``PRODUCT_CODE`` on each release. MSI
+upgrading logic relies on this. You can use ``bump-version.ps1``
+script for this purpose.
 
 To build and package::
 
