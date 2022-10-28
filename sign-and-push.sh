@@ -7,16 +7,20 @@
 # push the files to the secondary webserver (primary requires special 
 # treatment).
 
+set -ux
+
+: ${GPG_OPTS:=}
+
 usage() {
     echo "Usage: sign-and-push.sh <release-directory>"
     exit 1
 }
 
-SIGN_DIR="${1}/sources"
-
-if [ "$SIGN_DIR" = "" ]; then
+if [ -z "${1:-}" ]; then
     usage
 fi
+
+SIGN_DIR="${1}/sources"
 
 test -d "${SIGN_DIR}"
 if [ $? -ne 0 ]; then
@@ -29,7 +33,7 @@ MATCH="\.(exe|tar.gz|tar.xz|zip|msi|msm)$"
 
 . ./vars
 
-if [ "$GPG_KEY_ID" = "" ]; then
+if [ "${GPG_KEY_ID:-}" = "" ]; then
 
     echo "ERROR: please define ID of the GPG key you wish to use!"
     exit 1
