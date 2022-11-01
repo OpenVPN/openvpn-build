@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -eux
+
 . ./config/base.conf
 
 # Determine the release and build numbers
@@ -38,7 +40,9 @@ cat $VARIANTS_FILE|grep -v "^#"|while read LINE; do
 
         # Make sure the correct patch series is used
         PATCHESDIR="debian/patches"
-        cp -a $PATCHESDIR/$PATCH_SERIES $PATCHESDIR/series
+        if [ $PATCH_SERIES != "series" ]; then
+            cp -a $PATCHESDIR/$PATCH_SERIES $PATCHESDIR/series
+        fi
 
         # Generate changelog from the template using sed with regular expression
         # capture groups. The purpose is twofold:
