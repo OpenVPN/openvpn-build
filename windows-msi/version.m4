@@ -23,9 +23,14 @@ define([PRODUCT_OVPN_DCO_URL_arm64],   [https://github.com/OpenVPN/ovpn-dco-win/
 dnl OpenVPNServ2.exe binary
 define([OPENVPNSERV2_URL], [http://build.openvpn.net/downloads/releases/openvpnserv2-1.4.0.1.exe])
 
-dnl Easy RSA binaries (URL to .tar.gz file containing "easy-rsa-[EASYRSA_VERSION]" folder with Easy RSA)
-define([EASYRSA_VERSION], [3.1.0])
-define([EASYRSA_URL],     [https://github.com/OpenVPN/easy-rsa/releases/download/v3.1.0/EasyRSA-3.1.0-win64.zip])
+dnl Easy-RSA binaries:
+dnl URL to .tar.gz file containing "easy-rsa-[EASYRSA_VERSION]" folder with Easy-RSA.
+dnl The OpenSSL binaries, which come with Easy-RSA, are not used by Openvpn-build.
+dnl The only binaries which Openvpn-build uses from Easy-RSA, are the *nix style
+dnl (32bit only) binaries for Windows, from easy-rsa/distro/windows/bin.
+dnl Further details: easy-rsa/distro/windows/Licensing/mksh-Win32.txt
+define([EASYRSA_VERSION], [3.1.1])
+define([EASYRSA_URL],     [https://github.com/OpenVPN/easy-rsa/releases/download/v3.1.1/EasyRSA-3.1.1-win64.zip])
 
 
 dnl ============================================================
