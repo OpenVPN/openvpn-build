@@ -103,6 +103,7 @@ jobs:
   run_tclient_tests:
     name: Run t_client tests on AWS
     needs: msvc
+    concurrency: aws_tclient_tests
     runs-on: ubuntu-latest
     if: ${{ github.repository == 'openvpn/openvpn-build' && github.event_name != 'pull_request' }}
     env:
