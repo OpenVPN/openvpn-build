@@ -167,7 +167,9 @@ jobs:
 
       - name: Flatter and rename artifacts
         working-directory: msi
-        run: find -name '*.msi' -printf "%p\n" | while read f; do mv $f $(dirname $f).msi; rm -rf $(dirname $f); done
+        run: |
+          find -name '*.msi' -printf "%p\n" | while read f; do mv $f $(dirname $f).msi; rm -rf $(dirname $f); done
+          rm -rf t_client_openvpn_logs
 
       - name: Knock ports on remote
         run: knock -d 500 ${{ secrets.MSI_UPLOAD_REMOTE_HOST }} ${{ secrets.MSI_UPLOAD_REMOTE_KNOCK_SEQUENCE }} ; sleep 1
