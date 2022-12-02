@@ -14,6 +14,7 @@ install_build_deps() {
     if [ $? -eq 0 ]; then
         sbuild-apt $SUITE-$ARCH apt-get install $SYSTEMD_BUILD_DEPS $DOCUTILS_BUILD_DEPS
     fi
+    sbuild-apt $SUITE-$ARCH apt-get install libcap-ng-dev
 }
 
 # Cycle through all the variants

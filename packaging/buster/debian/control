@@ -7,6 +7,7 @@ Build-Depends:
  debhelper (>= 11),
  dpkg-dev (>= 1.16.1),
  iproute2 [linux-any],
+ libcap-ng-dev [linux-any],
  liblz4-dev,
  liblzo2-dev,
  libpam0g-dev,

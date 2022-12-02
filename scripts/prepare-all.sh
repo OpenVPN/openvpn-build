@@ -32,8 +32,7 @@ cat $VARIANTS_FILE|grep -v "^#"|while read LINE; do
         test -d "$DIR" || mkdir "$DIR"
         cd $DIR
         rm -rf openvpn*
-        wget $BASEURL/openvpn-$PROGRAM_VERSION.tar.gz
-        mv openvpn-$PROGRAM_VERSION.tar.gz openvpn_$PROGRAM_VERSION_CLEAN.orig.tar.gz
+        curl -o openvpn_$PROGRAM_VERSION_CLEAN.orig.tar.gz $BASEURL/openvpn-$PROGRAM_VERSION.tar.gz
         tar -zxf openvpn_$PROGRAM_VERSION_CLEAN.orig.tar.gz
         cd openvpn-$PROGRAM_VERSION
         cp -a $BASEDIR/packaging/$OSRELEASE/debian .
