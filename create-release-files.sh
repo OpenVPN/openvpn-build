@@ -1,8 +1,11 @@
-#!/bin/sh
+#!/bin/bash
 #
 # create-release-files.sh
 
 . ./vars
+
+set -eux
+set -o pipefail
 
 # Setting the language is needed for Debian changelog generation
 LANG=en_us.UTF-8
@@ -10,7 +13,7 @@ CWD=`pwd`
 
 # Remove old release directory to prevent various warnigs and errors
 if ! [ "$BASEDIR" = "" ]; then
-    rm -ri "$BASEDIR"
+    [ ! -d "$BASEDIR" ] || rm -ri "$BASEDIR"
     mkdir "$BASEDIR"
 else
     echo "ERROR: \$BASEDIR not defined in vars!"
@@ -39,8 +42,8 @@ cd "$BASEDIR"
 
 # Generate OpenVPN tarballs
 cd openvpn
-git checkout -b$OPENVPN_CURRENT_TAG $OPENVPN_CURRENT_TAG
-git pull --rebase origin $OPENVPN_CURRENT_TAG
+git checkout -B "$OPENVPN_CURRENT_TAG" "$OPENVPN_CURRENT_TAG"
+git pull --rebase origin "$OPENVPN_CURRENT_TAG"
 
 echo "Creating OpenVPN source packages"
 autoreconf -vi > /dev/null 2>&1
@@ -51,27 +54,29 @@ make dist-xz > /dev/null
 
 
 # Generate changelog for Trac
-git shortlog $OPENVPN_PREVIOUS_TAG...$OPENVPN_CURRENT_TAG > "$BASEDIR/changelog/openvpn-$OPENVPN_CURRENT_VERSION-changelog"
+git shortlog "$OPENVPN_PREVIOUS_TAG...refs/tags/$OPENVPN_CURRENT_TAG" \
+    > "$BASEDIR/changelog/openvpn-$OPENVPN_CURRENT_VERSION-changelog"
 
 # Create changelog for Debian packages
 DEBIAN_CHANGELOG="$BASEDIR/changelog/openvpn-$OPENVPN_CURRENT_VERSION-changelog-debian"
 DEBIAN_DATE=`date +'%a, %-d %b %Y %X %z'`
 echo "openvpn (${OPENVPN_CURRENT_VERSION}-debian0) stable; urgency=medium" > $DEBIAN_CHANGELOG
 echo >> $DEBIAN_CHANGELOG
-git log --pretty=short --abbrev-commit --format="  * %s (%an, %h)" $OPENVPN_PREVIOUS_TAG...$OPENVPN_CURRENT_TAG >> $DEBIAN_CHANGELOG
+git log --pretty=short --abbrev-commit --format="  * %s (%an, %h)" \
+    "$OPENVPN_PREVIOUS_TAG...refs/tags/$OPENVPN_CURRENT_TAG" >> "$DEBIAN_CHANGELOG"
 echo >> $DEBIAN_CHANGELOG
 echo " -- $GIT_AUTHOR  $DEBIAN_DATE" >> $DEBIAN_CHANGELOG
 
 # Copy the man-page and tarballs
 cp -v doc/openvpn.8.html "$BASEDIR/man/"
-cp -v openvpn-$OPENVPN_VERSION* "$SOURCES"
+cp -v openvpn-"$OPENVPN_CURRENT_VERSION"* "$SOURCES"
 
 cd "$BASEDIR"
 
 # Generate OpenVPN-GUI tarball from the correct tag/branch
 cd openvpn-gui
-git checkout -b$OPENVPN_GUI_BRANCH $OPENVPN_GUI_BRANCH
-git pull --rebase origin $OPENVPN_GUI_BRANCH
+git checkout -B "$OPENVPN_GUI_BRANCH" "$OPENVPN_GUI_BRANCH"
+git pull --rebase origin "$OPENVPN_GUI_BRANCH"
 
 # Update minor version in configure.ac
 sed -E -i s/"define\(\[_GUI_VERSION_MINOR\], \[([[:digit:]]+)\]\)"/"define\(\[_GUI_VERSION_MINOR\], \[$OPENVPN_GUI_CURRENT_MIN_VERSION\]\)"/1 configure.ac
