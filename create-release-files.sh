@@ -25,17 +25,17 @@ cd "$BASEDIR"
 # Generate release and changelog directories
 for DIR in sources changelog man; do
     if ! [ -d "$DIR" ]; then
-        mkdir -v $DIR
+        mkdir -v "$DIR"
     fi
 done
 
 # Clone Git repositories if necessary
 if ! [ -d "openvpn" ]; then
-    git clone $OPENVPN_REPO
+    git clone "$OPENVPN_REPO"
 fi
 
 if ! [ -d "openvpn-gui" ]; then
-    git clone $OPENVPN_GUI_REPO
+    git clone "$OPENVPN_GUI_REPO"
 fi
 
 cd "$BASEDIR"
