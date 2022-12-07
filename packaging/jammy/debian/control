@@ -7,6 +7,7 @@ Uploaders: Jörg Frings-Fürst <debian@jff.email>
 Build-Depends:
  debhelper (>= 12),
  dpkg-dev (>= 1.16.1),
+ libcap-ng-dev [linux-any],
  liblz4-dev,
  liblzo2-dev,
  libp11-kit-dev,

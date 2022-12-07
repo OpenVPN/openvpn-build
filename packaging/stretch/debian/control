@@ -2,7 +2,7 @@ Source: openvpn
 Section: net
 Priority: optional
 Maintainer: Alberto Gonzalez Iniesta <agi@inittab.org>
-Build-Depends: debhelper (>= 7.0.50~), libssl1.0-dev, liblzo2-dev, libpam0g-dev, libpkcs11-helper1-dev, pkg-config, dpkg-dev (>= 1.16.1), iproute2 [linux-any], net-tools [!linux-any], dh-systemd (>= 1.5), libsystemd-dev [linux-any], systemd [linux-any], liblz4-dev
+Build-Depends: debhelper (>= 7.0.50~), libssl1.0-dev, liblzo2-dev, libpam0g-dev, libpkcs11-helper1-dev, libcap-ng-dev [linux-any], pkg-config, dpkg-dev (>= 1.16.1), iproute2 [linux-any], net-tools [!linux-any], dh-systemd (>= 1.5), libsystemd-dev [linux-any], systemd [linux-any], liblz4-dev
 Standards-Version: 3.9.8
 Homepage: http://www.openvpn.net/
 Vcs-Git: git://anonscm.debian.org/collab-maint/openvpn.git
