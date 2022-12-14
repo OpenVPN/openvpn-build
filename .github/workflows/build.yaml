@@ -24,7 +24,7 @@ jobs:
       WIX: ${{ github.workspace }}\wix\
 
     name: 'openvpn-build'
-    runs-on: windows-2019
+    runs-on: windows-latest
 
     steps:
       - name: Checkout openvpn-build
