@@ -1,11 +1,8 @@
 OpenVPN project buildsystems
 #####################################################
-.. image:: https://travis-ci.org/OpenVPN/openvpn-build.svg?branch=master
-  :target: https://travis-ci.org/OpenVPN/openvpn-build
-  :alt: TravisCI status
-.. image:: https://ci.appveyor.com/api/projects/status/github/OpenVPN/openvpn-build?branch=master&svg=true
-  :target: https://ci.appveyor.com/project/mattock/openvpn-build
-  :alt: AppVeyor status
+.. image:: https://github.com/OpenVPN/openvpn-build/actions/workflows/build.yaml/badge.svg
+  :target: https://https://github.com/OpenVPN/openvpn-build/actions
+  :alt: GitHub Actions status
 
 About
 **************************************************
