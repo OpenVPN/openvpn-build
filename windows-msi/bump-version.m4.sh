@@ -10,11 +10,8 @@ PACKAGE_VERSION=`echo $PRODUCT_FULL_VERSION|cut -d "." -f 3|sed s/^0*//g`
 
 # Get current product code
 PRODUCT_CODE=`grep -E 'define\(\[PRODUCT_CODE' version.m4|cut -d " " -f 2|tr -d '[{}])'`
-PRODUCT_CODE_FIRST_SECTION=`echo $PRODUCT_CODE|cut -d "-" -f 1-4`
-
 # Create new product code
-PRODUCT_CODE_LAST_SECTION_NEW=`openssl rand -hex 8|tr -s '[:lower:]' '[:upper:]'`
-PRODUCT_CODE_NEW="${PRODUCT_CODE_FIRST_SECTION}-${PRODUCT_CODE_LAST_SECTION_NEW}"
+PRODUCT_CODE_NEW=`uuidgen |tr -s '[:lower:]' '[:upper:]'`
 
 # Increment product version
 PACKAGE_VERSION_NEW=$(expr $PACKAGE_VERSION + 1)
