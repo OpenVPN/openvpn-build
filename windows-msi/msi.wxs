@@ -82,6 +82,10 @@
         <Property Id="REINSTALLMODE" Value="amus"/>
 
         <Binary Id="Service.js" SourceFile="script\Service.js"/>
+        <Binary Id="PlapReg.js" SourceFile="script\PlapReg.js"/>
+
+        <CustomAction Id="GetInstallDir" BinaryKey="PlapReg.js" JScriptCall="GetInstallDir" />
+        <CustomAction Id="UpdatePlapReg" BinaryKey="PlapReg.js" JScriptCall="UpdatePlapReg" Execute="deferred" Impersonate="no" />
 
         <CustomAction Id="CheckOpenVPNServiceStatus" BinaryKey="Service.js" JScriptCall="CheckOpenVPNServiceStatus" />
         <CustomAction Id="ConfigureOpenVPNService"  BinaryKey="Service.js" JScriptCall="ConfigureOpenVPNService" Execute="deferred" Impersonate="no" />
@@ -97,6 +101,8 @@
             <Custom Action="FindSystemInfo" After="FindRelatedProducts"/>
             <Custom Action="CheckOpenVPNServiceStatus" After="ProcessComponents"/>
             <Custom Action="ConfigureOpenVPNService" After="StartServices">NOT Installed</Custom>
+            <Custom Action="GetInstallDir" After="FindRelatedProducts"/>
+            <Custom Action="UpdatePlapReg" After="InstallFiles"/>
         </InstallExecuteSequence>
         <UI>
             <ProgressText Action="FindSystemInfo">Detecting system information</ProgressText>
@@ -760,7 +766,7 @@
                             <File Name="libssl-3$(var.OPENSSL_PLAT).dll" Source="!(bindpath.openvpnbin)libssl-3$(var.OPENSSL_PLAT).dll"/>
                         </Component>
                         <Component Id="bin.openssl.exe" Guid="{E8876024-809B-40F1-A13B-A0DACFAA0AF0}">
-                            <File Name="openssl.exe" Source="!(bindpath.opensslbin)openssl.exe"/>
+                            <File Name="openssl.exe" Source="!(bindpath.openssltools)openssl.exe"/>
                         </Component>
                         <Component Id="bin.openvpn.exe" Guid="{4D920FC9-DF3C-4D34-ADE6-3EEEF8AE901A}">
                             <File Id="bin.openvpn.exe" Name="openvpn.exe" Source="!(bindpath.openvpnbin)openvpn.exe"/>
@@ -1017,6 +1023,14 @@
                         <Component Id="samplecfg.server.$(var.CONFIG_EXTENSION)" Guid="{B0B5E776-3C7A-4B86-87BF-6FAFF9F83E34}">
                             <File Name="server.$(var.CONFIG_EXTENSION)" Source="!(bindpath.build)$(var.PRODUCT_PLATFORM)\server.ovpn"/>
                         </Component>
+                    </Directory>
+
+                    <Directory Id="SSL" Name="ssl">
+                        <Directory Id="MODULES" Name="modules">
+                            <Component Id="bin.ssl.legacy.dll" Guid="{3C444F3B-3963-4065-AB41-A1DF4F50F5E9}">
+                                <File Name="legacy.dll" Source="!(bindpath.opensslbin)legacy.dll"/>
+                            </Component>
+                        </Directory>
                     </Directory>
                 </Directory>
 
@@ -1601,6 +1615,7 @@
             <ComponentRef Id="bin.libcrypto_3.dll"/>
             <ComponentRef Id="bin.libpkcs11_helper_1.dll"/>
             <ComponentRef Id="bin.libssl_3.dll"/>
+            <ComponentRef Id="bin.ssl.legacy.dll"/>
             <ComponentRef Id="bin.openvpn.exe"/>
             <ComponentRef Id="bin.openvpnserv.exe"/>
             <ComponentRef Id="bin.tapctl.exe"/>
@@ -1774,6 +1789,7 @@
             <ComponentRef Id="bin.openssl.exe"/>
             <ComponentRef Id="bin.libcrypto_3.dll"/>
             <ComponentRef Id="bin.libssl_3.dll"/>
+            <ComponentRef Id="bin.ssl.legacy.dll"/>
 
             <Feature
                 Id="EasyRSA"
