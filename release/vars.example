@@ -1,0 +1,41 @@
+# Basic settings
+BASEDIR="`pwd`/release"
+SOURCES="$BASEDIR/sources"
+OPENVPN_REPO="${OPENVPN_REPO:-https://github.com/OpenVPN/openvpn.git}"
+OPENVPN_GUI_REPO="${OPENVPN_GUI_REPO:-https://github.com/OpenVPN/openvpn-gui.git}"
+
+# Scripts and executables
+#
+# Fedora 29 does not have "gpg", only "gpg2". Your mileage may vary.
+GPG="gpg2"
+OVPN_MAN2HTML="`pwd`/ovpn-man2html.awk"
+SIGN_AND_PUSH="`pwd`/sign-and-push.sh"
+
+# Webservers and/or buckets we use
+PRIMARY_WEBSERVER="swupdate.openvpn.org"
+PRIMARY_WEBSERVER_BASEURL="https://swupdate.openvpn.org/community/releases"
+SECONDARY_WEBSERVER="build.openvpn.in"
+SECONDARY_WEBSERVER_PATH="/var/www/html/downloads/releases"
+SECONDARY_WEBSERVER_BASEURL="http://build.openvpn.net/downloads/releases"
+
+GPG_KEY_ID="F132B1CBAF131CAE"
+
+# Verify signatures using a clean keyring: this ensures that verification 
+# process is a close as possible to the way we have documented it.
+# This also helps catch various problems with expired subkeys and public
+# keys.
+GPG_OPTS="--no-default-keyring --keyring ~/.gnupg.clean/pubring.kbx"
+
+GIT_AUTHOR="Samuli Seppänen <samuli@openvpn.net>"
+
+OPENVPN_PREVIOUS_VERSION="${OPENVPN_PREVIOUS_VERSION:-2.4.6}"
+OPENVPN_CURRENT_VERSION="${OPENVPN_CURRENT_VERSION:-2.4.7}"
+OPENVPN_CURRENT_TAG="v$OPENVPN_CURRENT_VERSION"
+OPENVPN_PREVIOUS_TAG="v$OPENVPN_PREVIOUS_VERSION"
+
+OPENVPN_GUI_CURRENT_MAJ_VERSION="11"
+OPENVPN_GUI_CURRENT_MIN_VERSION="11"
+OPENVPN_GUI_CURRENT_FULL_VERSION="$OPENVPN_GUI_CURRENT_MAJ_VERSION.$OPENVPN_GUI_CURRENT_MIN_VERSION.0.0"
+OPENVPN_GUI_BRANCH="master"
+
+INSTALLER_VERSION="I601"
