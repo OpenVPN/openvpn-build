@@ -1,0 +1,53 @@
+Description: correct tspelling errors
+Author: Jörg Frings-Fürst <debian@jff.email>
+Last-Update: 2018-07-29
+---
+This patch header follows DEP-3: http://dep.debian.net/deps/dep3/
+Index: trunk/src/openvpn/buffer.c
+===================================================================
+--- trunk.orig/src/openvpn/buffer.c
++++ trunk/src/openvpn/buffer.c
+@@ -44,7 +44,7 @@ array_mult_safe(const size_t m1, const s
+     unsigned long long res = (unsigned long long)m1 * (unsigned long long)m2 + (unsigned long long)extra;
+     if (unlikely(m1 > limit) || unlikely(m2 > limit) || unlikely(extra > limit) || unlikely(res > (unsigned long long)limit))
+     {
+-        msg(M_FATAL, "attemped allocation of excessively large array");
++        msg(M_FATAL, "attempted allocation of excessively large array");
+     }
+     return (size_t) res;
+ }
+Index: trunk/src/openvpn/options.c
+===================================================================
+--- trunk.orig/src/openvpn/options.c
++++ trunk/src/openvpn/options.c
+@@ -448,7 +448,7 @@ static const char usage_message[] =
+     "                  user/pass via environment, if method='via-file', pass\n"
+     "                  user/pass via temporary file.\n"
+     "--auth-gen-token  [lifetime] Generate a random authentication token which is pushed\n"
+-    "                  to each client, replacing the password.  Usefull when\n"
++    "                  to each client, replacing the password.  Useful when\n"
+     "                  OTP based two-factor auth mechanisms are in use and\n"
+     "                  --reneg-* options are enabled. Optionally a lifetime in seconds\n"
+     "                  for generated tokens can be set.\n"
+Index: trunk/doc/openvpn.8
+===================================================================
+--- trunk.orig/doc/openvpn.8
++++ trunk/doc/openvpn.8
+@@ -2181,7 +2181,7 @@ that
+ is parsed on the command line even though
+ the daemonization point occurs later.  If one of the
+ .B \-\-log
+-options is present, it will supercede syslog
++options is present, it will supersede syslog
+ redirection.
+ 
+ The optional
+@@ -2292,7 +2292,7 @@ If
+ already exists it will be truncated.
+ This option takes effect
+ immediately when it is parsed in the command line
+-and will supercede syslog output if
++and will supersede syslog output if
+ .B \-\-daemon
+ or
+ .B \-\-inetd

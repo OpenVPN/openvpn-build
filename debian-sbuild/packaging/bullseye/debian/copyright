@@ -1,0 +1,320 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: OpenVPN
+Upstream-Contact: OpenVPN Solutions LLC <info@openvpn.net>
+Source: https://openvpn.net/
+
+Files: *
+Copyright: 2002-2019 OpenVPN Inc <sales@openvpn.net>
+License: GPL-2 with OpenSSL exception
+
+Files: aclocal.m4
+       compile
+       config.guess
+       config.sub
+       configure
+       depcomp
+       ltmain.sh
+       missing
+       m4/libtool.m4
+       m4/ltversion.m4
+Copyright: 1994-2015 Free Software Foundation, Inc.
+License: GPL-2+
+
+Files: */Makefile.*
+Copyright: 1994-2015 Free Software Foundation, Inc.
+           2002-2018 OpenVPN Inc <sales@openvpn.net>
+           2006-2012 Alon Bar-Lev <alon.barlev@gmail.com>
+License: GPL-2
+
+Files: src/openvpn/crypto.*
+       src/openvpn/crypto_*.*
+       src/openvpn/pkcs11_*.*
+       src/openvpn/ssl*
+       src/openvpn/tls_*
+       src/openvpn/openssl_compat.h
+       tests/unit_tests/openvpn/*
+Copyright: 2010-2018 Fox Crypto B.V. <openvpn@fox-it.com>
+License: GPL-2
+
+Files: build/ltrc.inc
+       build/msvc/msvc-generate/Makefile.mak
+Copyright: 2008-2012 Alon Bar-Lev <alon.barlev@gmail.com>
+License: GPL-2
+
+Files: build/msvc/msvc-generate/msvc-generate.js
+Copyright: 2008-2012 Alon Bar-Lev <alon.barlev@gmail.com>
+License: BSD-3
+
+Files: sample/sample-plugins/log/log_v3.c
+       src/compat/compat-basename.c
+       src/compat/compat-daemon.c
+       src/compat/compat-dirname.c
+       src/compat/compat-inet_ntop.c
+       src/compat/compat-inet_pton.c
+       src/compat/compat.h
+       src/openvpn/console.c
+       src/openvpn/console.h
+       src/openvpn/console_builtin.c
+       src/openvpn/console_systemd.c
+       src/openvpn/misc.c
+       src/openvpn/options.c
+       src/openvpn/ssl.c
+       src/plugins/down-root/down-root.c
+Copyright: 2010-2016 David Sommerseth <davids@redhat.com>
+License: GPL-2
+
+Files: src/compat/compat-lz4.c
+       src/compat/compat-lz4.h
+Copyright: 2011-2016 Yann Collet
+License: BSD-2
+
+Files: src/openvpn/base64.c
+       src/openvpn/base64.h
+Copyright: 1995 -2001 Kungliga Tekniska Högskolan
+License: BSD-3
+
+Files: include/openvpn-msg.h
+       src/openvpnserv/common.c
+       src/openvpnserv/service.h
+       src/openvpnserv/interactive.c
+Copyright: 2011-2018 Heiko Hund <heiko.hund@sophos.com>
+License: GPL-2
+
+Files: src/openvpn/block_dns.c
+Copyright: 2002-2018 OpenVPN Inc <sales@openvpn.net>
+           2015-2016  <iam@valdikss.org.ru>
+           2016 Selva Nair <selva.nair@gmail.com>
+License: GPL-2
+
+Files: src/openvpn/block_dns.h
+       src/openvpnserv/validate.h
+       src/openvpnserv/validate.c
+Copyright: 2016 Selva Nair <selva.nair@gmail.com>
+License: GPL-2
+
+Files: src/openvpn/comp-lz4.c
+       src/openvpn/comp-lz4.h
+Copyright: 2002-2018 OpenVPN Inc <sales@openvpn.net>
+           2013-2018 Gert Doering <gert@greenie.muc.de>
+License: GPL-2
+
+Files: src/openvpn/cryptoapi.c
+Copyright: 2004      Peter 'Luna' Runestig <peter@runestig.com>
+License: BSD-3
+
+Files: src/openvpn/ntlm.c
+Copyright: 2004      William Preston
+License: GPL-2
+
+Files: src/openvpn/ssl_mbedtls.c
+Copyright: 2002-2018 OpenVPN Inc <sales@openvpn.net>
+           2010-2018 Fox Crypto B.V. <openvpn@fox-it.com>
+           2006-2010 Brainspark B.V.
+License: GPL-2
+
+Files: src/openvpn/ssl_mbedtls.h
+Copyright: 2002-2018 OpenVPN Inc <sales@openvpn.net>
+           2010-2018 Fox Crypto B.V. <openvpn@fox-it.com>
+License: GPL-2
+
+Files: src/openvpnserv/service.c
+Copyright: 1993-2000 Microsoft Corporation
+           2013      Heiko Hund <heiko.hund@sophos.com>
+License: other
+
+Files: sample/sample-keys/gen-sample-keys.sh
+Copyright: 2014      Steffan Karger <steffan@karger.me>
+License: GPL-2
+
+Files: m4/pkg.m4
+Copyright: 2004      Scott James Remnant <scott@netsplit.com>.
+License: GPL-2+
+
+Files: install-sh
+Copyright: 1994      X Consortium
+License: MIT
+
+Files: tests/t_cltsrv.sh
+Copyright: 2005-2008  Matthias Andree
+License: GPL-2+
+
+Files: tests/t_lpback.sh
+Copyright: 2005       Matthias Andree
+           2014       Steffan Karger
+License: GPL-2+
+
+Files: debian/*
+Copyright: 2002-2017 Alberto Gonzalez Iniesta <agi@inittab.org>
+           2017-2020 Bernhard Schmidt <berni@debian.org>
+           2017-2020 Jörg Frings-Fürst <debian@jff.email>
+License: GPL-3+
+
+License: BSD-2
+ Redistribution and use in source and binary forms, with or without
+ modification, are permitted provided that the following conditions are
+ met:
+ .
+     * Redistributions of source code must retain the above copyright
+ notice, this list of conditions and the following disclaimer.
+ .
+     * Redistributions in binary form must reproduce the above
+ copyright notice, this list of conditions and the following disclaimer
+ in the documentation and/or other materials provided with the
+ distribution.
+ .
+ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ 
+License: BSD-3
+ All rights reserved.
+ .
+ Redistribution and use in source and binary forms, with or without 
+ modification, are permitted provided that the following conditions are met:
+ .
+ 1. Redistributions of source code must retain the above copyright notice, 
+    this list of conditions and the following disclaimer.
+ .
+ 2. Redistributions in binary form must reproduce the above copyright notice, 
+    this list of conditions and the following disclaimer in the documentation 
+    and/or other materials provided with the distribution.
+ .
+ 3. Neither the name of the copyright holder nor the names of its contributors
+    may be used to endorse or promote products derived from this software 
+    without specific prior written permission.
+ .
+ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
+ AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
+ IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE 
+ ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE 
+ LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
+ CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
+ SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
+ INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
+ CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+ POSSIBILITY OF SUCH DAMAGE.
+
+License: GPL-2
+ This program is free software; you can redistribute it
+ and/or modify it under the terms of the GNU General Public
+ License as published by the Free Software Foundation version
+ 2 of the License.
+ .
+ This program is distributed in the hope that it will be
+ useful, but WITHOUT ANY WARRANTY; without even the implied
+ warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+ PURPOSE.  See the GNU General Public License for more
+ details.
+ .
+ You should have received a copy of the GNU General Public
+ License along with this package; if not, write to the Free
+ Software Foundation, Inc., 51 Franklin St, Fifth Floor,
+ Boston, MA  02110-1301 USA
+ .
+ On Debian systems, the full text of the GNU General Public
+ License version 2 can be found in the file
+ `/usr/share/common-licenses/GPL-2'.
+
+License: GPL-2 with OpenSSL exception
+ This program is free software; you can redistribute it and/or
+ modify it under the terms of the GNU General Public License as
+ published by the Free Software Foundation; either version 2 of the
+ License.
+ .
+ This program is distributed in the hope that it will be useful, but
+ is provided AS IS, WITHOUT ANY WARRANTY; without even the implied
+ warranty of MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, and
+ NON-INFRINGEMENT.  See the GNU General Public License for more details.
+ .
+ You should have received a copy of the GNU General Public License
+ along with this program. If not, see <http://www.gnu.org/licenses/>.
+ .
+ The complete text of the GNU General Public License
+ can be found in /usr/share/common-licenses/GPL-2 file.
+ .
+ In addition, as a special exception, the copyright holders give
+ permission to link the code of portions of this program with the
+ OpenSSL library under certain conditions as described in each
+ individual source file, and distribute linked combinations
+ including the two.
+ You must obey the GNU General Public License in all respects
+ for all of the code used other than OpenSSL.  If you modify
+ file(s) with this exception, you may extend this exception to your
+ version of the file(s), but you are not obligated to do so.  If you
+ do not wish to do so, delete this exception statement from your
+ version.  If you delete this exception statement from all source
+ files in the program, then also delete it here.
+
+License: GPL-2+
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 2 of the License, or
+ (at your option) any later version.
+ .
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ GNU General Public License for more details.
+ .
+ You should have received a copy of the GNU General Public License
+ along with this program. If not, see <http://www.gnu.org/licenses/>.
+ .
+ The complete text of the GNU General Public License
+ can be found in /usr/share/common-licenses/GPL-2 file.
+
+License: GPL-3+
+ This program is free software; you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation; either version 3 of the License, or
+ (at your option) any later version.
+ .
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+ .
+ You should have received a copy of the GNU General Public License
+ along with this program. If not, see <http://www.gnu.org/licenses/>
+ .
+ On Debian systems, the complete text of the GNU General
+ Public License version 3 can be found in "/usr/share/common-licenses/GPL-3".
+
+License: MIT
+ All rights reserved.  No part of this source code may be reproduced,
+ stored in a retrieval system, or transmitted, in any form or by any
+ means, electronic, mechanical, photocopying, recording or otherwise,
+ except as stated in the end-user licence agreement, without the prior
+ permission of the copyright owners.
+ .
+ Permission to use, copy, modify, and distribute this software and its
+ documentation for any purpose and without fee is hereby granted, provided
+ that the above copyright notice appear in all copies and that both that
+ copyright notice and this permission notice appear in supporting
+ documentation, and that the name of OSF, UI or X/Open not be used in 
+ advertising or publicity pertaining to distribution of the software 
+ without specific, written prior permission.  OSF, UI and X/Open make 
+ no representations about the suitability of this software for any purpose.  
+ It is provided "as is" without express or implied warranty.
+ .
+ OSF, UI and X/Open DISCLAIM ALL WARRANTIES WITH REGARD TO THIS SOFTWARE, 
+ INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS, IN NO 
+ EVENT SHALL OSF, UI or X/Open BE LIABLE FOR ANY SPECIAL, INDIRECT OR 
+ CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF 
+ USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR 
+ OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR 
+ PERFORMANCE OF THIS SOFTWARE.
+
+License: other
+ THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
+ ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED
+ TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
+ PARTICULAR PURPOSE.

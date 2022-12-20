@@ -1,0 +1,1994 @@
+openvpn (2.4_rc1-debian0) stable; urgency=medium
+
+  * Preparing OpenVPN v2.4_rc1 release (David Sommerseth, e739d7f)
+  * Refuse to daemonize when running from systemd (Christian Hesse, 7660bba)
+  * Use systemd service manager notification (Christian Hesse, c593189)
+  * Mention that OpenVPN 2.4 requires Windows Vista or higher (Samuli Seppänen, 1c587a1)
+  * reload CRL only if file was modified (Antonio Quartulli, ce91c18)
+  * Do not restart dns client service as a part of --register-dns processing (Selva Nair, fb56058)
+  * Force 'def1' method when --redirect-gateway is done through service (Selva Nair, 788e5e4)
+  * When parsing '--setenv opt xx ..' make sure a third parameter is present (Selva Nair, 9977953)
+  * Introduce and use secure_memzero() to erase secrets (Steffan Karger, 009521a)
+  * Map restart signals from event loop to SIGTERM during exit-notification wait (Selva Nair, f25a021)
+  * Fix windows path in Changes.rst (Gert Doering, 6c6456f)
+  * update year in copyright message (Christian Hesse, 7f7d6b2)
+  * Clean up format_hex_ex() (Steffan Karger, 2940401)
+  * Unconditionally enable TLS_AGGREGATE_ACK (Steffan Karger, 7182578)
+  * tls_process: don't set variable that's never read (Steffan Karger, 06c5446)
+
+ -- Samuli Seppänen <samuli@openvpn.net>  Fri, 2 Dec 2016 07:30:00 +0000
+
+openvpn (2.4_beta2-debian0) stable; urgency=medium
+
+  * Preparing OpenVPN v2.4_beta2 release (David Sommerseth, 9bc2be7)
+  * Set IPv6 DNS servers using interactive service (Selva Nair, c098016)
+  * Refactor data channel key generation API (Steffan Karger, e2ffdb7)
+  * Poor man's NCP for non-NCP peers (Steffan Karger, 6e5ad2f)
+  * Document the --auth-token option (David Sommerseth, f8a367f)
+  * generate_key_expansion: make assumption explicit, use C99 features (Steffan Karger, 48d4141)
+  * Change cmocka remote to use https in stead of git protocol (Steffan Karger, da94114)
+  * --tls-crypt fixes (Steffan Karger, 418d2d9)
+  * Handle DNS6 option on Android (Arne Schwabe, 39b7d4d)
+  * Handle --dhcp-option DNS6 on Windows using netsh (Selva Nair, 786e06a)
+  * Stub implementation of "--dhcp-option DNS6 <v6addr>" (Gert Doering, 94bfc25)
+  * Do not set ipv6 address if '--ip-win32 manual' is used (Selva Nair, d6ad8ca)
+  * Remove remaining traces of compat-stdbool.h (Gert Doering, e5fc56a)
+  * Fix various compiler warnings (Arne Schwabe, 3212d0c)
+  * Remove compat-stdbool.h. (Arne Schwabe, 35be7e0)
+  * Fix warning that RAND_bytes is undeclared (Arne Schwabe, 6ede22c)
+  * multi_process_float: revert part of c14c4a9e (Steffan Karger, c593885)
+  * Document that tls-crypt also supports inline (Arne Schwabe, 8025a62)
+  * Changes.rst: Fixing wrong formatting (David Sommerseth, 237fd7f)
+
+ -- Samuli Seppänen <samuli@openvpn.net>  Fri, 25 Nov 2016 07:30:00 +0000
+
+openvpn (2.4_alpha2-debian0) stable; urgency=medium
+
+  * Preparing for release v2.4_alpha2 (ChangeLog, version.m4) (Gert Doering, d600b2c)
+  * Fix use-after-free bug in prepare_push_reply() (Steffan Karger, 83fdae3)
+  * Update .mailmap to unify and clean up odd names and e-mail addresses (David Sommerseth, a47d349)
+  * Preparing for release v2.4_alpha1 (ChangeLog, version.m4) (Gert Doering, a6479b4)
+  * Windows: do_ifconfig() after open_tun() (Heiko Hund, 5334952)
+  * Remove tun-ipv6 Option. Instead assume that IPv6 is always supported. (Arne Schwabe, 86e2fa5)
+  * Move memcmp_constant_time() to crypto.h (David Sommerseth, b891e57)
+  * Check --ncp-ciphers list on startup (Steffan Karger, dc4fa3c)
+  * Change the hold command to communicate the time that OpenVPN would wait to the UI. (Arne Schwabe, 396d30c)
+  * Use separate list for per-client push options (Lev Stipakov, 88c4b9d)
+  * systemd: Do not mask usernames when querying for it via systemd-ask-password (David Sommerseth, 8ba3e25)
+  * Re-implement the systemd support using the new query user API (David Sommerseth, 3280d8c)
+  * Rework the user input interface to make it more modular (David Sommerseth, 430ce8b)
+  * Enable TCP non-linear packet ID (Arne Schwabe, 55755e6)
+  * Enable -D_XPG4_2 for compilation on Solaris (Gert Doering, 4e2038e)
+  * Revert "Enable -D_SVR4_2 for compilation on Solaris" (Gert Doering, e25d03a)
+  * Fix duplicate PUSH_REPLY options (Steffan Karger, 974ec19)
+  * Exclude peer-id from pulled options digest (Lev Stipakov, 3cf51f6)
+  * Enable -D_SVR4_2 for compilation on Solaris (Gert Doering, 6eaa70e)
+  * Fix --multihome for IPv6 on 64bit BSD systems. (Gert Doering, 3fb246e)
+  * add POSTINIT_CMD_suf to t_client.sh and sample config (Gert Doering, bae1ad7)
+  * Update cipher-related man page text (Steffan Karger, 5a1daf5)
+  * make t_client robust against sudoers misconfiguration (Gert Doering, 8ca29af)
+  * Automatically cache expected IPs for t_client.sh on the first run (Samuli Seppänen, df0b00c)
+  * Make sure options->ciphername and options->authname are always defined (Steffan Karger, 348c416)
+  * enable "--disable-crypto" build configuration for travis (Ilya Shipitsin, 0c72e29)
+  * Fix t_client runs on OpenSolaris (Gert Doering, 38f98fd)
+  * Fix win32 building with C99 mode (Gert Doering, 6cd7e08)
+  * Incorporate the Debian typo fixes where appropriate and make show_opt default message clearer (Arne Schwabe, c42fcbf)
+  * Support for disabled peer-id (Lev Stipakov, e8e1377)
+  * Prefer RECVDSTADDR to PKTINFO for IPv4 in OS X since it actually works (unlike PKTINFO) (Arne Schwabe, e7303ac)
+  * Add SHA256 fingerprint support (Steffan Karger, af1e4d2)
+  * Fix ENABLE_CRYPTO_OPENSSL set to YES even with --disable-crypto set (Arne Schwabe, d13a40a)
+  * t_client.sh: Improve detection if the OpenVPN process did start during tests (David Sommerseth, 3712322)
+  * t_client.sh: Add support for Kerberos/ksu (David Sommerseth, 6b25b99)
+  * Show compile-time variant for --multihome in --version output. (Gert Doering, d7c15ff)
+  * Fix IP_PKTINFO related compilation failure on NetBSD 7.0 (Gert Doering, 7efa60d)
+  * skip t_lpback.sh and t_cltsrv.sh if openvpn configured --disable-crypto (Ilya Shipitsin, a85ba0e)
+  * t_client.sh: Make OpenVPN write PID file to avoid various sudo issues (David Sommerseth, e0926eb)
+  * initial travis-ci support (Ilya Shipitsin, 3689912)
+  * cleanup: remove code duplication in msg_test() (Steffan Karger, d7ce876)
+  * Do not abort t_client run if OpenVPN instance does not start. (Gert Doering, a7b02f7)
+  * Drop gnu89/c89 support, switch to c99 (Steffan Karger, 058f0ef)
+  * Fix --mssfix when using NCP (Steffan Karger, cbc3c5a)
+  * Fix client connection instant timeout (David Sommerseth, 4db0629)
+  * Bind to local socket before dropping privileges (James Yonan, b3e9758)
+  * Use AES ciphers in our sample configuration files and add a few modern 2.4 examples (Arne Schwabe, bde1b90)
+  * Fix unittests for out-of-source builds (Steffan Karger, ee4f37c)
+  * Revert "Drop recursively routed packets" (David Sommerseth, 8cba9ff)
+  * Fix problems with NCP and --inetd. (Gert Doering, d90249f)
+  * Drop recursively routed packets (Lev Stipakov, e9d64bc)
+  * Discourage using 64-bit block ciphers (Steffan Karger, c94b3ff)
+  * Avoid format specifier %zu for Windows compatibility (Selva Nair, d1bd37f)
+  * Fix '--cipher none --cipher' crash (Steffan Karger, dea8917)
+  * Allow ncp-disable and ncp-ciphers to be specified in ccd files (Steffan Karger, 834f602)
+  * Add server-side support for cipher negotiation (Steffan Karger, a17aa98)
+  * Add options to restrict cipher negotiation (Steffan Karger, d728ebe)
+  * Update android documentation to match source code (Arne Schwabe, 49817bf)
+  * Add client-side support for cipher negotiation (Steffan Karger, 9789436)
+  * Deprecate the automatic part of openvpnserv.exe in favor of openvpnserv2.exe (Samuli Seppänen, 6dd307c)
+  * Promptly close the netcmd_semaphore handle after use (Selva Nair, 6aa4c90)
+  * Exponentially back off on repeated connect retries (Selva Nair, 5d429ef)
+  * Remove NOP function and callers (David Sommerseth, 365506d)
+  * Remove http-proxy-retry and socks-proxy-retry. (Arne Schwabe, 2011b83)
+  * Return process id of openvpn from interactive service to client (Selva Nair, e4c9bbe)
+  * Fix management-external-cert option parsing error (Selva Nair, d023fb6)
+  * Clarify which Windows versions require which TUN/TAP driver (Samuli Seppänen, 3f0edd8)
+  * Use an up-to-date easy-rsa URL on the man-page (Samuli Seppänen, d16ea8b)
+  * Mention tap-windows6 in INSTALL file (Samuli Seppänen, ac341e6)
+  * Add documentation for http-proxy-user-pass option (Arne Schwabe, ec0c1dc)
+  * Added directive to specify HTTP proxy credentials in config. (James Yonan, c9a35a2)
+  * mbedtls: don't set debug threshold if compiled without MBEDTLS_DEBUG_C (Steffan Karger, b63f986)
+  * Remove http-proxy-timeout, socks timeout and set default of server-poll-timeout to 120s (Arne Schwabe, f2134b7)
+  * Complete push-peer-info documentation and allow IV_PLAT_VER for other platforms than Windows if the client UI supplies it. (Arne Schwabe, 960524a)
+  * Change --enable-pedantic to use -std=c99 and not -ansi (C90). (Gert Doering, d16072c)
+  * Upgrade bundled compat-lz4 to upstream release r131. (Gert Doering, 46e4b66)
+  * cleanup: remove alloc_buffers argument from multi_top_init() (Steffan Karger, d927181)
+  * Don't limit max incoming message size based on c2->frame (Steffan Karger, 3c1b19e)
+  * Ignore SIGUSR1/SIGHUP during exit notification (Selva Nair, 63b3e00)
+  * Add an option to filter options received from server (Selva Nair, 7f74c27)
+  * Make block-outside-dns work with persist-tun (Selva Nair, 451d217)
+  * Set WFP engine handle to NULL in win_wfp_uninit() (Selva Nair, 895d75c)
+  * Fix the comparison of pull options hash on restart (Selva Nair, 1899393)
+  * Another fix related to unit test framework (David Sommerseth, 41ab12f)
+  * Clarify the fact that build instructions in README are for release tarballs (Samuli Seppänen, fdc24f1)
+  * Plug memory leak in mbedTLS backend (Ivo Manca, cd538f2)
+  * Only build and run cmocka unit tests if its submodule is initialized (David Sommerseth, 45f6e79)
+  * Update contrib/pull-resolv-conf/client.up for no DOMAIN (Jeffrey Cutter, 4a506b9)
+  * Add link to bug tracker (Leon Klingele, ac2309b)
+  * Add a test for auth-pam searchandreplace (Jens Neuhalfen, 4507bb6)
+  * Add unit testing support via cmocka (Jens Neuhalfen, 40cb4cf)
+  * Fix handling of out of memory error in interactive service (Selva Nair, 600dd9a)
+  * Update CONTRIBUTING.rst to allow GitHub PRs for code review purposes (Samuli Seppänen, 698f0da)
+  * Push an IPv6 CIDR mask used by the server, not the pool's size (Josh Cepek, 0d8a4ff)
+  * Implement push-remove option to selectively remove pushed options. (Gert Doering, 970312f)
+  * Add support for register-dns through interactive service (Selva Nair, 3e42a55)
+  * Make error non-fatal while deleting address using netsh (Selva Nair, e3420d5)
+  * Add CHACHA20-POLY1305 ciphersuite IANA name translations. (Dorian Harmans, e7ec6a3)
+  * Fixed port-share bug with DoS potential (James Yonan, 007738e)
+  * Prevent integration test timeout bc. of sudo (Jens Neuhalfen, f40f10e)
+  * Remove trailing newline from verify callback error messages (Steffan Karger, d54a248)
+  * Fix library order in -lmbedtls test. (Gert Doering, 1ae17b7)
+  * mbedtls: improve error reporting in tls verify callback (Steffan Karger, 524999a)
+  * mbedtls: check that private key and certificate match on start (Steffan Karger, 5c4acf3)
+  * configure.ac: link to all mbed TLS libs during library detection (Steffan Karger, e860059)
+  * ignore the local config file t_client.rc in git (Jens Neuhalfen, 645071a)
+  * Rename files with 'polarssl' in the name to 'mbedtls' (Steffan Karger, 74586c6)
+  * Migrate to mbed TLS 2.x (Steffan Karger, 86d8cd6)
+  * Implemented x509-track for PolarSSL. (Steffan Karger, fab49d1)
+  * PolarSSL x509_get_sha1_hash now returns correct SHA1 fingerprint. (Steffan Karger, dd2fbc2)
+  * Fix "implicit declaration" compiler warning (Lev Stipakov, 4e37af9)
+  * Fix buffer size parameter for exported keying material. (Daniel Kubec, 13a882a)
+  * Fix buffer overflow by user supplied data (Jens Neuhalfen, 7c0ecd1)
+  * Support reading the challenge-response from console (Selva Nair, 9b0f1df)
+  * Further restrict default cipher list (Steffan Karger, a44eac2)
+  * Make intent of utun device name validation clear (Jens Neuhalfen, 6be0f00)
+  * fixup: change init_key_type() param name in declaration too (Steffan Karger, 0f99269)
+  * Ensure input read using systemd-ask-password is null terminated (Selva Nair, d09fbf9)
+  * Implement inlining of crl files (Arne Schwabe, 7a7a79f)
+  * Extended x509-track for OpenSSL to report SHA1 fingerprint. (James Yonan, f6608a1)
+  * Added flags parameter to format_hex_ex. (James Yonan, 0a6a801)
+  * Replace MSG_TEST() macro for static inline msg_test() (Steffan Karger, bbde0a7)
+  * Fix memory leak in argv_extract_cmd_name() (Steffan Karger, be16d5f)
+  * Fix potential null-pointer dereference (Steffan Karger, b064b81)
+  * Add support for block-outside-dns through the interactive service (Selva Nair, 2282b1b)
+  * Refactor and move the block-outside-dns code to a new file (block_dns.[ch]) (Selva Nair, 6a33a34)
+  * Only include aead encrypt/decrypt functions if AEAD modes are supported (Steffan Karger, 71d8906)
+  * hardening: add safe FD_SET() wrapper openvpn_fd_set() (Steffan Karger, e0b3fd4)
+  * Make AEAD modes work with OpenSSL 1.0.1-1.0.1c (Steffan Karger, 13de010)
+  * Use appropriate buffer size for WideCharToMultiByte output in interactive.c (Selva Nair, 3654d95)
+  * Fix interactive service ignoring stop command if openvpn is running (Selva Nair, 239d099)
+  * Handle localized Administrators group name in windows (Selva Nair, 6370f70)
+  * Add lz4 support to MSVC. (Fish, 6a4edc7)
+  * Fix openserv/validate.o linking issues on mingw. (Gert Doering, 9b91870)
+  * Fix OCSP_check.sh (Steffan Karger, ab0f846)
+  * Send stdout and stderr of OpenVPN started by interactive service to NUL (Selva Nair, 852f1e4)
+  * Update --block-outside-dns to work on Windows Vista (ValdikSS, 2367691)
+  * Restrict options/configs for startup through interactive service (Selva Nair, f3c8a04)
+  * Clean up get_tls_handhake_key() (Steffan Karger, 463ea2b)
+  * Minor AEAD patch cleanup (Steffan Karger, b3560c9)
+  * Add preliminary server-side support for negotiable crypto parameters (Steffan Karger, 3a5a46c)
+  * Add cipher name translation for OpenSSL. (Steffan Karger, 44dc5d3)
+  * Add AEAD cipher support (GCM) (Steffan Karger, 66407e1)
+  * Correctly report TCP connection timeout on windows. (Leonardo Basilio, 5f5229e)
+  * Report Windows bitness (Lev Stipakov, 15f78ac)
+  * Create separate function for replay check (Steffan Karger, de4cbd6)
+  * Change openvpn_encrypt() to append to work buffer only (Steffan Karger, a070f75)
+  * Move packet_id into crypto_options (Steffan Karger, 3ebc31f)
+  * Move key_ctx_bi into crypto_options (Steffan Karger, 8b1a00c)
+  * Move crypto_options into key_state and stop using context in SSL-mode. (Steffan Karger, 2d9c6d2)
+  * Remove reuse of key_type during init of data channel auth and tls-auth (Steffan Karger, e7d78e4)
+  * Allow NULL argument in cipher_ctx_get_cipher_kt() (Steffan Karger, 70fbc5b)
+  * interactive service v3 (Heiko Hund, a24dd2e)
+  * Fix undefined signed shift overflow (Michael McConville, d4d5d92)
+  * configure.ac: fix polarssl autodetection (Steffan Karger, 417fe4a)
+  * configure.ac: simplify crypto library configuration (Steffan Karger, 31b0beb)
+  * Clarify --block-outside-dns documentation (ValdikSS, cc4761f)
+  * Clarify mssfix documentation (ValdikSS, 6515915)
+  * Fix build with libressl (Niels Ole Salscheider, 9dfc230)
+  * socks.c: fix check on get_user_pass() return value(s) (Steffan Karger, 982ab23)
+  * Ignore stamp-h2 we generate during build process (Arne Schwabe, 36f3a47)
+  * polarssl: remove now redundant 128-bit blowfish key override (Steffan Karger, 52012d6)
+  * polarssl: use wrappers to access md_info_t member functions (Steffan Karger, 072fdcd)
+  * Update manpage: OpenSSL might also need /dev/urandom inside chroot (Steffan Karger, 0609eb4)
+  * polarssl: optimize polar_ok() for non-errors (Steffan Karger, 3a39bf7)
+  * polarssl: actually use polarssl debug logging (Steffan Karger, aa416be)
+  * Fix assert when comp is called with unknown algorithm, always call comp init method (Arne Schwabe, 67b3de9)
+  * Implement the compression V2 data format for stub and lz4. (Arne Schwabe, a75bb2e)
+  * Fix regression in setups without a client certificate (Steffan Karger, 868d9d0)
+  * Detecting and logging Windows versions (Lev Stipakov, cdc65ea)
+  * Make certificate expiry warning patch (091edd8e299686) work on OpenSSL 1.0.1 and earlier. (Jan Just Keijser, 0e591a2)
+  * Use bob.example.com and alice.example.com to improve clarity of documentation (Phillip Smith, 0f73199)
+  * cleanup: get rid of httpdigest.c type warnings (Steffan Karger, 0385cd4)
+  * Make assert_failed() print the failed condition (Steffan Karger, 9b36bd4)
+  * Disable certificate notBefore/notAfter sanity check on OpenSSL < 1.0.2 (Steffan Karger, 644f2cd)
+  * Warn user if their certificate has expired (Steffan Karger, 091edd8)
+  * Pass adapter index to up/down scripts (Lev Stipakov, 9dff2c1)
+  * Add Windows DNS Leak fix using WFP ('block-outside-dns') (ValdikSS, 38c8565)
+  * Use adapter index for add/delete_route_ipv6 (Lev Stipakov, 6417a6f)
+  * Detect config lines that are too long and give a warning/error (Arne Schwabe, 4baec3e)
+  * Fix isatty() check for good. (Gert Doering, 015fe71)
+  * Also remove second instance of enable-password-save in the man page (Arne Schwabe, 80442ae)
+  * Reflect enable-password-save change in documentation (Arne Schwabe, 1e9c1f0)
+  * Remove --enable-password-save option (Arne Schwabe, 9ffd00e)
+  * put virtual IPv6 addresses into env (Heiko Hund, a8f8b92)
+  * Unbreak read username password from management (Selva Nair, cdd69bb)
+  * Support duplicate x509 field values in environment (Steffan Karger, 13b585e)
+  * Fix openssl builds with custom-built library: specify most-dependent first (Steffan Karger, 09f2670)
+  * Un-break compilation on *BSD (Gert Doering, 4a82a9a)
+  * extend management interface command "state" (Heiko Hund, 2191c47)
+  * Fix rand_bytes return value checking (Steffan Karger, 5a73356)
+  * openssl: properly check return value of RAND_bytes() (Steffan Karger, 756602e)
+  * Avoid partial authentication state when using --disabled in CCD configs (David Sommerseth, 6c2d790)
+  * remove unused gc_arena in FreeBSD close_tun() (Gert Doering, cef5744)
+  * remove nonsense const specifier in nonfatal() return value (Steffan Karger, f544e38)
+  * Fix memory leak in add_option() by simplifying get_ipv6_addr (Steffan Karger, 4f19cd1)
+  * Fix FreeBSD-specific mishandling of gc arena pointer in create_arbitrary_remote() (Gert Doering, b33e135)
+  * Fix info.af == AF_UNSPEC case for server with --mtu-disc (Gert Doering, ed5d0fe)
+  * polarssl: require >= 1.3.8 (Steffan Karger, 9d3b7ce)
+  * Notify clients about server's exit/restart (Lev Stipakov, 8dd9ff8)
+  * Handle ctrl-C and ctrl-break events on Windows (Selva Nair, 87f1be6)
+  * polarssl: don't use deprecated functions anymore (Steffan Karger, 67a67e3)
+  * Adjust server-ipv6 documentation (Christos Trochalakis, e60849a)
+  * polarssl: also allocate PKCS#11 certificate object on demand (Steffan Karger, 9571010)
+  * Support for username-only auth file. (Michal Ludvig, 6e9373c)
+  * Do not hard-code windows systemroot in env_block (Selva Nair, 7546cba)
+  * Use adapter index instead of name for windows IPv6 interface config (Lev Stipakov, efeaf94)
+  * Add macro to ensure we exit on fatal errors (Steffan Karger, 9aebc37)
+  * Fix (potential) memory leak in init_route_list() (Steffan Karger, 3671bd1)
+  * polarssl: add --verify-client-cert optional support (Steffan Karger, f107c62)
+  * Author: Jan Just Keijser <janjust@nikhef.nl> (Jan Just Keijser, b8cdb21)
+  * Fix termination when windows suspends/sleeps (Selva Nair, ea66a2b)
+  * polarssl: fix --client-cert-not-required (Steffan Karger, 444a93e)
+  * Replace variable length array with malloc (Lev Stipakov, 41e4b67)
+  * openssl: remove usage of OPENSSL_malloc() from show_available_curves (Steffan Karger, 470eb8b)
+  * Fix memory leak in auth-pam plugin (Steffan Karger, cfc13b3)
+  * Generate openvpn-plugin.h for MSVC build (Lev Stipakov, dd8d351)
+  * hardening: add insurance to exit on a failed ASSERT() (Steffan Karger, e8a9e32)
+  * Start Changes.rst that lists changes in 2.4.0 (Arne Schwabe, c345ffb)
+  * Do not set the buffer size by default but rely on the operation system default. (Arne Schwabe, f0b64e5)
+  * Fix privilege drop if first connection attempt fails (Lukasz Kutyla, 825b327)
+  * Refine float logging (Lev Stipakov, 5203d80)
+  * Fix commit c67acea173dc9ee37220f5b9ff14ede081181992 (Arne Schwabe, cba3398)
+  * Fix compilation with --disable-server (Lev Stipakov, 8929a39)
+  * Send push reply right after async auth complete (Lev Stipakov, 0d1a75b)
+  * Remove support for snappy compression. (Gert Doering, 9403e3f)
+  * Fix "White space before end tags can break the config parser" (janjust, c67acea)
+  * Add CONTRIBUTING.rst (Samuli Seppänen, 0c1d922)
+  * Update expiry date in management event loop (Thomas Veerman, b51a024)
+  * Fix compilation error with --disable-crypto (Lev Stipakov, b05a453)
+  * Fix --mtu-disc option with IPv6 transport (Julien Muchembled, 2bed089)
+  * Fast recovery when host is in unreachable network (Lev Stipakov, 99daa6b)
+  * sample-plugin: TLS Keying Material Exporter [RFC-5705] demonstration plug-in (Daniel Kubec, f7ef752)
+  * Added document for TLS Keying Material Exporters [RFC-5705] (Daniel Kubec, 84604e0)
+  * Added support for TLS Keying Material Exporters [RFC-5705] (Daniel Kubec, 685e486)
+  * openssl: be less verbose about cipher translation errors (Steffan Karger, 7246ccf)
+  * polarssl: Improve PolarSSL logging (Steffan Karger, d17d362)
+  * Continuation of MSVS fixes (Lev Stipakov, b0fe941)
+  * polarssl: add easy logging for PolarSSL errors (Steffan Karger, 6ef5df1)
+  * This fixes MSVS 2013 compilation. (Lev Stipakov, 123092a)
+  * get_default_gateway_ipv6(): Win32 implementation using GetBestRoute2() (Gert Doering, 5fcd493)
+  * Add custom check for inet_pton()/inet_ntop() on MinGW/WIN32 (Gert Doering, f96baab)
+  * Check return value of ms_error_text() (Steffan Karger, 5584b73)
+  * Replace strdup() calls for string_alloc() calls (Steffan Karger, ddc7692)
+  * Repair test_local_addr() on WIN32 (Gert Doering, c40f088)
+  * Replace unaligned 16bit access to TCP MSS value with bytewise access (Gert Doering, 2e2a341)
+  * Log serial number of revoked certificate (Boris Lytochkin, 767e4c5)
+  * Fix IPv6 host routes to LAN gateway on OpenSolaris (Gert Doering, fa5697f)
+  * get_default_gateway_ipv6(): *BSD / MacOS / Solaris PF_ROUTE implementation (Gert Doering, 2ff366f)
+  * Implement '--redirect-gateway ipv6' (Gert Doering, d227929)
+  * Do not install a host route for the VPN on Android (Arne Schwabe, 1ff39cf)
+  * Implement handling of overlapping IPv6 routes with IPv6 remote VPN server address (Gert Doering, 3ddb564)
+  * get_default_gateway_ipv6(): Linux / Netlink implementation. (Gert Doering, 3128abc)
+  * Make client delay less before sending PUSH_REQUEST (Gert Doering, afb93fa)
+  * Remove #ifdefs for client nat support. (Arne Schwabe, 8db23a5)
+  * Use pseudo gw as default gw on Android as a workaround for not being able to read /proc/net/route (Arne Schwabe, 429f056)
+  * Extend network-change command to allow reprotecting on the same network (for short connection losses) (Arne Schwabe, d967ec2)
+  * Fix loglevel of protect socket message (Arne Schwabe, acd487d)
+  * Don't redirect the gateway on Android even if requested (Arne Schwabe, ad80d67)
+  * Add support for requesting the fd again to rebind to the next interface. (Arne Schwabe, 3000397)
+  * Remove unused function h_errno_msg (Arne Schwabe, 1d11134)
+  * Create basic infrastructure for IPv6 default gateway handling / redirection. (Gert Doering, d8a8656)
+  * Add route_ipv6_gateway* data structures for rgi6 support. (Gert Doering, c0da18c)
+  * refactor struct route_ipv6_list, bring in line with struct route_list again (Gert Doering, 0ad7385)
+  * refactor struct route_ipv6, bring in line with struct route_ipv4 again (Gert Doering, c3ef2d2)
+  * Show extra-certs in current parameters, fix clang warning and logic error in preresolve (Arne Schwabe, 291c227)
+  * Un-break --auth-user-pass on windows (Gert Doering, 0ffd744)
+  * Fix overflow check in openvpn_decrypt() (Steffan Karger, cc377de)
+  * Fix build on OpenSolaris (non-gmake) (Gert Doering, 710c439)
+  * Fix out-of-tree builds; openvpn-plugin.h should be in AC_CONFIG_HEADERS (Steffan Karger, 0a51c4f)
+  * Provide OpenVPN runtime version information to plug-ins (David Sommerseth, 6a40276)
+  * Provide compile time OpenVPN version information to plug-ins (David Sommerseth, 9de35d4)
+  * Fix commit e473b7c if an inline file happens to have a line break exactly at buffer limit (Arne Schwabe, d40cbf0)
+  * reintroduce md5_digest wrapper struct to fix gcc warnings (Steffan Karger, 2dd6501)
+  * options: fix option check for "plugin" (Daniel Hahler, 82acf21)
+  * Fix using management interface to get passwords. (Steffan Karger, d4fbe28)
+  * Document --daemon changes and consequences (--askpass, --auth-nocache). (Gert Doering, b6ec7fb)
+  * Fix --askpass not allowing for password input via stdin (James Geboski, 4e1e3ba)
+  * Produce a meaningful error message if --daemon gets in the way of asking for passwords. (Gert Doering, 079e5b9)
+  * fix regression: query password before becoming daemon (Steffan Karger, 315f6fb)
+  * Make __func__ work with Visual Studio too (Steffan Karger, 9884e20)
+  * Increase control channel packet size for faster handshakes (Steffan Karger, fc91d4b)
+  * Report missing end-tags of inline files as errors (Arne Schwabe, 68eecf7)
+  * Del ipv6 addr on close of linux tun interface (Holger Kummert, e5f71d6)
+  * Fail if options have extra parameters [v2] (Jonathan K. Bullard, 3d6a4cd)
+  * write pid file immediately after daemonizing (Steffan Karger, 659eae7)
+  * Fix FreeBSD ifconfig for topology subnet tunnels. (Gert Doering, 60fd44e)
+  * Improve documentation in --script-security section of the man-page (Samuli Seppänen, 001384e)
+  * Move res_init() call to inner openvpn_getaddrinfo() loop (Gert Doering, 288a819)
+  * Fix --redirect-private in --dev tap mode. (Guy Yur, 1e2b229)
+  * Use EAI_AGAIN instead of EAI_SYSTEM for openvpn_getaddrinfo(). (Gert Doering, 8ceb961)
+  * Use configure.ac hack to apply serial_test AM option only if supported. (Gert Doering, c615835)
+  * On signal reception, return EAI_SYSTEM from openvpn_getaddrinfo(). (Gert Doering, 5f6c01e)
+  * cert_data: fix memory leak (Yegor Yefremov, 7d30696)
+  * Revert "Enforce "serial-tests" behaviour for tests/Makefile" (Gert Doering, 859f6aa)
+  * Enforce "serial-tests" behaviour for tests/Makefile (Gert Doering, fc03ca9)
+  * slightly enhance documentation about --cipher (Gert Doering, 0fe2498)
+  * Call daemon() before initializing crypto library (Steffan Karger, da9b292)
+  * Disallow usage of --server-poll-timeout in --secret key mode. (Gert Doering, 6478c1f)
+  * Clarify --capath option in manpage (Steffan Karger, f4684ff)
+  * Correct note about DNS randomization in openvpn.8 (Gert Doering, 0322510)
+  * Fix null pointer dereference in options.c (Jonathan K. Bullard, 025d611)
+  * assume res_init() is always there. (Gert Doering, 403dc43)
+  * Re-read auth-user-pass file on (re)connect if required (Steffan Karger, ac1cb5b)
+  * repair --dev null breakage caused by db950be85d37 (Gert Doering, 970c4bd)
+  * cleanup: remove md5 helper functions (Steffan Karger, 827de23)
+  * include ifconfig_ environment variables in --up-restart env set (Jan Just Keijser, db950be)
+  * Updated manpage for --rport and --lport (Robert Fischer, d3eacb2)
+  * Use OPENVPN_ETH_P_* so that <netinet/if_ether.h> is unecessary (Felix Janda, ddb1f20)
+  * Properly escape dashes on the man-page (Samuli Seppänen, 2d32160)
+  * polarssl: disable 1/n-1 record splitting (Steffan Karger, d0f26fb)
+  * Improve --tls-cipher and --show-tls man page description (Steffan Karger, 5f66f90)
+  * polarssl: remove code duplication in key_state_write_plaintext{, _const}() (Steffan Karger, 23b6ba6)
+  * Add note about file permissions and --crl-verify to manpage. (Gert Doering, d55be0f)
+  * Remove size limit for files inlined in config (Steffan Karger, e473b7c)
+  * explain effect of --topology subnet on --ifconfig (Gert Doering, 3a84073)
+  * Print helpful error message on --mktun/--rmtun if not available. (Gert Doering, 4ad2b65)
+  * Fix leftover 'if (false) ;' statements (Gert Doering, 0e3f894)
+  * Remove unneeded parameter 'first_time' from possibly_become_daemon() (Steffan Karger, 857c04e)
+  * Mac OS X Keychain management client (Vasily Kulikov, 39e3d33)
+  * Remove count_netmask_bits(), convert users to use netmask_to_netbits2() (Gert Doering, ec2fbf3)
+  * Fix incorrect use of get_ipv6_addr() for iroute options. (Gert Doering, e8562d5)
+  * Change float log message to include common name, if available. (Steffan Karger, bacd640)
+  * Fix mssfix default value in connection_list context (Lev Stipakov, d384a95)
+  * Allow for CN/username of 64 characters (fixes off-by-one) (Steffan Karger, ecd934b)
+  * polarssl: make sure to always null-terminate the cn (Steffan Karger, 63559e1)
+  * Get rid of old OpenSSL workarounds. (Steffan Karger, 48e5e42)
+  * Document the default for tls-cipher. (Arne Schwabe, 77f464b)
+  * Remove unused function sock_addr_set (Arne Schwabe, a6ef6c7)
+  * Fix frame size calculation for non-CBC modes. (Steffan Karger, 669f898)
+  * Use tls-auth in sample config files (Steffan Karger, 513eef4)
+  * Print remote IPv4 address on a dual-stack v6 socket in IPv4 format (Gert Doering, 0b1a68f)
+  * New approach to handle peer-id related changes to link-mtu. (Gert Doering, 9e0963c)
+  * Disable SSL compression (Steffan Karger, 5d52337)
+  * Fix mismatch of fprintf format specifier and argument type (Jonathan K. Bullard, 251c17a)
+  * Fix NULL dereferencing (Lev Stipakov, 2350d70)
+  * Account for peer-id in frame size calculation (Steffan Karger, f95010a)
+  * Disallow lameduck's float to an address taken by another client (Lev Stipakov, 0c0c178)
+  * Add option to disable Diffie Hellman key exchange by setting '--dh none' (Steffan Karger, bd9aa06)
+  * openssl: use crypto_msg(), get rid of openssl-specific code in error.c (Steffan Karger, 98ea2ec)
+  * Remove ENABLE_SSL define (and --disable-ssl configure option) (Steffan Karger, ec828db)
+  * openssl: add more descriptive message for 'no shared cipher' error (Steffan Karger, c3e1809)
+  * openssl: add crypto_msg(), to easily log openssl errors (Steffan Karger, e795d6b)
+  * Default gateway can't be determined on illumos/Solaris platforms (Alexander Pyhalov, 01bfdf3)
+  * Set tls-version-max to 1.1 if cryptoapicert is used (Steffan Karger, 04dcb96)
+  * Make 'provider' option to --show-pkcs11-ids optional where p11-kit is present (David Woodhouse, 7c1d614)
+  * pkcs11: Load p11-kit-proxy.so module by default (David Woodhouse, 3c6d322)
+  * plugins, down-root: Code style clean-up (David Sommerseth, e2e9a69)
+  * sockets: Remove the limitation of --tcp-nodelay to be server-only (David Sommerseth, 706283d)
+  * plugin, down-root: Fix compiler warnings (David Sommerseth, 7dd51f6)
+  * Prevent memory drain for long lasting floating sessions (Lev Stipakov, 09cf2ec)
+  * Add the peer-id to the output of the status command (Lev Stipakov, 1b95419)
+  * Update doxygen (a bit) (Steffan Karger, b08c25d)
+  * Remove possibility of using --tls-auth with non OpenVPN Static key files (Arne Schwabe, 8a95f62)
+  * down-root: Improve error messages (David Sommerseth, b0f2c52)
+  * down-root plugin: Replaced system() calls with execve() (David Sommerseth, f87b1be)
+  * Really fix '--cipher none' regression (Steffan Karger, 98156e9)
+  * Include systemd units in the source tarball (make dist) (Mike Gilbert, 6ece60c)
+  * autotools: Fix wrong ./configure help screen default values (David Sommerseth, 104360b)
+  * Drop too-short control channel packets instead of asserting out. (Steffan Karger, c5590a6)
+  * Peer-id patch v7 (Lev Stipakov, 65eedc3)
+  * systemd: Reworked the systemd unit file to handle server and client configs better (David Sommerseth, 3341a98)
+  * polarssl: fix unreachable code (Yegor Yefremov, 98c5de7)
+  * Fix to --shaper documentation on the man-page (Samuli Seppänen, 245831b)
+  * socket: remove duplicate expression (Yegor Yefremov, d0ce829)
+  * Fix windows build on older mingw versions. (Gert Doering, 188a651)
+  * fix warnings on Windows (Heiko Hund, a2466d9)
+  * Fix compilation on Windows (Heiko Hund, 78b8fc7)
+  * Modernize sample keys and sample configs (Steffan Karger, 13b2313)
+  * Add --tls-version-max (Steffan Karger, 6cb15b9)
+  * Fix assertion error when using --cipher none (Steffan Karger, 4e93e6d)
+  * Remove unused variables from ssl_verify_openssl.c extract_x509_extension() (Steffan Karger, 86fe018)
+  * Fix regression with password protected private keys (polarssl) (Steffan Karger, 4b9eaa1)
+  * Fix "code=995" bug with windows NDIS6 tap driver. (TDivine, 7aa1783)
+  * Ensure that client-connect files are always deleted (Samuel Thibault, 7da9d40)
+  * extract_x509_extension(): hide status message during normal operation. (Andris Kalnozols, ed5a400)
+  * Implement on-link route adding for iproute2 (Philipp Hagemeister, baa195b)
+  * Add documentation for PERSIST_TUN_ACTION (Android specific) (Arne Schwabe, 5ca1d70)
+  * systemd: Use systemd functions to consider systemd availability (David Sommerseth, f33ee6b)
+  * ocsp_check - double check if ocsp didn't report any errors in execution (Hubert Kario, 51390f4)
+  * ocsp_check - signature verification and cert staus results are separate (Hubert Kario, e0c9e84)
+  * Add systemd unit file for OpenVPN (David Sommerseth, 8a4566c)
+  * Fix compiler warnings in ssl_polarssl.c. (Steffan Karger, 9048d50)
+  * Fix clang warning in options.c (Steffan Karger, 555b54c)
+  * Fix some unintialized variable warnings (Steffan Karger, 5ead2ae)
+  * Remove quadratic complexity from openvpn_base64_decode() (Jann Horn, 25e1ec7)
+  * Clean up the pipe closing in openvpn_popen() (David Sommerseth, df8ebb2)
+  * Don't try to use systemd-ask-password if it is not available (David Sommerseth, 5548068)
+  * Don't let openvpn_popen() keep zombies around (David Sommerseth, d886d46)
+  * Add configure check for the path to systemd-ask-password (Mike Gilbert, ba79c71)
+  * Fix typo in cipher_kt_mode_{cbc, ofb_cfb}() doxygen. (Steffan Karger, 38cd1ed)
+  * Remove deprecated --max-routes option from manual (Arne Schwabe, 095d6ad)
+  * Always enable http-proxy and socks-proxy (Arne Schwabe, a4b8f65)
+  * Add topology in sample server configuration file (Philipp Hagemeister, c277757)
+  * Fix server routes not working in topology subnet with --server [v3] (Arne Schwabe, 4cc6a25)
+  * Define dummy SSL_OP_NO_TICKET flag if not present in OpenSSL. (Steffan Karger, 97bd862)
+  * Don't exit daemon if opening or parsing the CRL fails. (Steffan Karger, d860ee4)
+  * Do not upcase x509-username-field for mixed-case arguments. (Andris Kalnozols, f4e0ad8)
+  * Remove ENABLE_BUFFER_LIST (Arne Schwabe, 0c21b2d)
+  * Call init script helpers with explicit path (./) (Gert Doering, cf31d5f)
+  * Fix t_lpback.sh platform-dependent failures (Gert Doering, bbae238)
+  * Don't issue warning for 'translate to self' tls-ciphers (Steffan Karger, 29ed605)
+  * Extend t_lpback tests to test all ciphers reported by --show-ciphers (Steffan Karger, b2bff9f)
+  * Improve --show-ciphers to show if a cipher can be used in static key mode (Steffan Karger, d344820)
+  * Add proper check for crypto modes (CBC or OFB/CFB) (Steffan Karger, a4b27b6)
+  * Rename ALLOW_NON_CBC_CIPHERS to ENABLE_OFB_CFB_MODE, and add to configure. (Steffan Karger, c353af2)
+  * Make t_client.sh work on AIX. (Gert Doering, a637016)
+  * implement adding/deleting routes on AIX, for IPv4 and IPv6 (Gert Doering, b4b92ae)
+  * Add tap driver initialization and ifconfig for AIX. (Gert Doering, 7e1e7b4)
+  * Recognize AIX, define TARGET_AIX (Gert Doering, 42f13dc)
+  * cleanup: remove #if 0'ed function initiate_untrusted_session() from ssl.c. (Steffan Karger, e6b5755)
+  * Fix socket-flag/TCP_NODELAY on Mac OS X (James Bekkema, 3717076)
+  * Fix some typos in the man page. (Andris Kalnozols, b443772)
+  * Update README.polarssl (Steffan Karger, 96b9538)
+  * Fix bug that incorrectly refuses oid representation eku's in polar builds (Steffan Karger, e238b80)
+  * configure.ac: fix SSL_OP_NO_TICKET check (Steffan Karger, d048347)
+  * Improve error reporting on file access to --client-config-dir and --ccd-exclusive (David Sommerseth, 4978dad)
+  * Drop incoming fe80:: packets silently now. (Gert Doering, 70f1864)
+  * refine assertion to allow other modes than CBC (Heiko Hund, be46a2c)
+  * Fix --disable-ssl builds, were broken by cleanup in 63dc03d. (Steffan Karger, d0154a3)
+  * Add (default disabled) --enable-werror option to configure (Steffan Karger, 51194ff)
+  * Remove unused variable 'proxy' from socket_restart_pause() (Steffan Karger, 55af8e9)
+  * Remove dependency on manage.h from ssl_verify.h (Steffan Karger, 3ba6b9f)
+  * Move #include "ssl_verify.h" from ssl.h to the source files that need it. (Steffan Karger, 63dc03d)
+  * Fix ssl.c, ssl_verify_* includes (Steffan Karger, 67bdede)
+  * Use generic openvpn_x509_cert_t in ssl_verify_polarssl.c (Steffan Karger, a87c0a9)
+  * Fix merge error in a6c573d, the ssl ctx is now abstracted. (Steffan Karger, efb304c)
+  * Merge get_default_gateway() implementation for all 4+1 BSD variants. (Gert Doering, cab6305)
+  * Remove unneeded defines (were needed for pre-0.9.7 OpenSSL). (Steffan Karger, 0c56325)
+  * Remove unneeded wrapper functions in crypto_openssl.c (Steffan Karger, 9fbd056)
+  * Remove function without effect (cipher_ok() always returned true). (Steffan Karger, bb669e5)
+  * Use SSL_MODE_RELEASE_BUFFERS if available (Cristian Rodriguez, a6c573d)
+  * Fixed some compile issues with show_library_versions() (James Yonan, 5b17803)
+  * Define PATH_SEPARATOR for MSVC builds. (James Yonan, e583cae)
+  * Conditionalize calls to print_default_gateway on !ENABLE_SMALL (Gert Doering, c29e08a)
+  * Fix is_ipv6 in case of tap interface. (Dmitrij Tejblum, db037c2)
+  * Fix build system to accept non-system crypto library locations for plugins. (Steffan Karger, ea31bc6)
+  * More IPv6-related updates to the openvpn man page. (Gert Doering, 2a97e69)
+  * Make serial env exporting consistent amongst OpenSSL and PolarSSL builds. (Steffan Karger, f80a52b)
+  * Fix OCSP_check.sh to also use decimal for stdout verification. (Steffan Karger, 6ea78cb)
+  * Change signedness of hash in x509_get_sha1_hash(), fixes compiler warning. (Steffan Karger, d4309c2)
+  * Rewrite manpage section about --multihome (Gert Doering, abe18c6)
+  * Repair --multihome on FreeBSD for IPv4 sockets. (Gert Doering, 661d914)
+  * Fix man page and OSCP script: tls_serial_{n} is decimal (Arne Schwabe, 959d607)
+  * Add an elliptic curve testing cert chain to the sample keys (Steffan Karger, cdbd56c)
+  * Add support for elliptic curve diffie-hellmann key exchange (ECDH) (Steffan Karger, 609e813)
+  * Minor t_client.sh cleanups (Gert Doering, 1e3a178)
+  * Use native strtoull() with MSVC 2013. (James Yonan, 6b8e2f4)
+  * Update openvpn-plugin.h for PolarSSL 1.3. (Steffan Karger, cc1cee7)
+  * Improve error reporting during key/cert loading with PolarSSL. (Steffan Karger, 5e0112d)
+  * Upgrade to PolarSSL 1.3 (Steffan Karger, 03df3a9)
+  * Add SSL library version reporting. (Gert Doering, 1ec984b)
+  * IPv6 address/route delete fix for Win8 (Gert Doering, 4b4fac9)
+  * Fix SOCKSv5 method selection (Yawning Angel, 2903eba)
+  * Fix typo in sample build script to use LDFLAGS (kangsterizer, a95358a)
+  * Work around Solaris getaddrinfo() returing ai_protocol=0 (Arne Schwabe, 891636c)
+  * fix route struct name (Heiko Hund, 60b40a5)
+  * configure.ac: use CPPFLAGS for SSL_OP_NO_TICKET check (Steffan Karger, e38f554)
+  * Fix crash when using --inetd. (Gert Doering, 1ba6f42)
+  * Fix assert when using port-share (Arne Schwabe, f1da227)
+  * Clean up of socket code. (Arne Schwabe, 7dbe04d)
+  * configure.ac: check for SSL_OP_NO_TICKET flag in OpenSSL (Steffan Karger, e9b088b)
+  * Disable unsupported TLS cipher modes by default, cleans --show-tls output. (Steffan Karger, f8c4e88)
+  * Add openssl-specific common cipher list names to ssl.c. (Steffan Karger, 0146fd0)
+  * Bump minimum OpenSSL version to 0.9.8 (Steffan Karger, 69a6b0c)
+  * Add gateway and device to android control messages (Arne Schwabe, 05660e7)
+  * Don't show the connection profile store in options->ce if there is a connection_list defined. (Arne Schwabe, 98e24cc)
+  * Fix for server selecting address family (Arne Schwabe, 4518480)
+  * Introduce an option to resolve dns names in advance for --remote, --local and --http-proxy (Arne Schwabe, e719a05)
+  * Adjusted autotools files to build more cleanly on newer autoconf/automake versions (David Sommerseth, fb69bfd)
+  * Implement an easy parsable log output that allows access to flags of the log message (Arne Schwabe, 8f7d5e6)
+  * Workaround broken Android 4.4 VpnService API for persist-tun mode (Arne Schwabe, c058cbf)
+  * Move the initialization of the environment to the top so c2.es is initialized (Arne Schwabe, ac1c2f2)
+  * Fix connecting to localhost on Android (Arne Schwabe, 5118787)
+  * Set SSL_OP_NO_TICKET flag in SSL context for OpenSSL builds, to disable TLS stateless session resumption. (James Yonan, 25f4d4b)
+  * Fix warning for max-routes: do not quit when parsing an old configuration. Format the message to be more like the other deprecated options (Arne Schwabe, 4affd9c)
+  * Introduce safety check for http proxy options (Arne Schwabe, 087b510)
+  * grow route lists dynamically (Heiko Hund, d008529)
+  * Fix "." in description of utun. (Thomas Veerman, 66ff10e)
+  * Add "test-driver" and "compile" to .gitignore (Gert Doering, c9dbc51)
+  * convert struct signal_info element (Heiko Hund, 9853b14)
+  * make sure sa_family_t is defined (Heiko Hund, 87b468d)
+  * Replace copied structure elements with including <net/route.h> (Gert Doering, 615fb9e)
+  * Rename 'struct route' to 'struct route_ipv4' (Gert Doering, b57e005)
+  * Fix compiler warnings in ssl_polarssl.c (Steffan Karger, 860d4d0)
+  * Remove unused variables from ssl_verify_polarssl.c's x509_get_serial() (Steffan Karger, 7a85a6f)
+  * Fix compiler warning for unused result of write() (Steffan Karger, 3173787)
+  * Document issue with --chroot, /dev/urandom and PolarSSL. (Gert Doering, b238a1f)
+  * Cleanup ir6->netbits handling. (Gert Doering, 432ca2b)
+  * remove some 'unused variable' warnings (Gert Doering, 672943f)
+  * Reduce IV_OPENVPN_GUI_VERSION= to IV_GUI_VER= (Gert Doering, 7efaca7)
+  * Make code and documentation for --remote-random-hostname consistent. (Gert Doering, 7de8f3f)
+  * Fix spurious ignoring of pushed config options (trac#349). (Jens Wagner, 1aac9a0)
+  * Document "lz4" argument to "compress" config option. (Gert Doering, 64e4079)
+  * Provide LZ4 sources in src/compat/ and use if no system lz4 library found. (Gert Doering, 4308f23)
+  * Implement LZ4 compression. (Gert Doering, 40efb63)
+  * Disable export ciphers by default for OpenSSL builds. (Steffan Karger, 56ab210)
+  * Make tls_ctx_restrict_ciphers accept NULL as char *cipher_list. (Steffan Karger, e83313a)
+  * Update IPv6 related readme files (Arne Schwabe, 69e03f4)
+  * Remove OpenSSL tmp_rsa_callback. Removes support for ephemeral RSA in TLS. (Steffan Karger, 813aa55)
+  * If --tls-cipher is supplied, make --show-tls parse the list. (Steffan Karger, cb03dca)
+  * Update TLSv1 error messages to SSLv23 to reflect changes from commit 4b67f98 (Steffan Karger, 441be9f)
+  * Also update TLSv1_method() calls in support code to SSLv23_method() calls. (Steffan Karger, dd3e319)
+  * Add warning for using connection block variables after connection blocks (Arne Schwabe, cd6555e)
+  * Fix file checks when --chroot is being used (David Sommerseth, b77bffe)
+  * pkcs11: use generic evp key instead of rsa (Alon Bar-Lev, 6575ad4)
+  * Support non-ASCII characters in Windows tmp path (Heiko Hund, 925b8a4)
+  * Fix IPv6_V6ONLY logic. (Gert Doering, 451de0a)
+  * Implement listing on IPv4/IPv6 dual socket on all platform (Arne Schwabe, 8832c6c)
+  * Move ASSERT so external-key with OpenSSL works again (Arne Schwabe, 68793f4)
+  * Implement dual stack client support for OpenVPN (Arne Schwabe, 23d61c5)
+  * When resolving fails print the error message from socket layer (Arne Schwabe, aa162d4)
+  * change the type of 'remote' to addrinfo*, and rename to 'remote_list'. (Arne Schwabe, 6c5db19)
+  * Remove the ip-remote-hint option. (Arne Schwabe, bb9026a)
+  * Change proto_remote() function to return a constant string (Arne Schwabe, 34136dd)
+  * Split link_socket_init_phase1 and link_socket_init_phase2 into smaller more managable/readable functions. No functional changes (Arne Schwabe, 48f1d41)
+  * Fix assertion when SIGUSR1 is received while getaddrinfo is successful (Arne Schwabe, 282788a)
+  * t_client.sh: ignore fields from "ip -6 route show" output that distort results. (Gert Doering, 8c19087)
+  * Fix two instances of asserting AF_INET (Arne Schwabe, 500c16f)
+  * Split the PROTO_UDP_xx options into AF_INET/AF_INET6 and PROTO_TCP/PROTO_UDP part. (Arne Schwabe, 30077d1)
+  * Simplify print_sockaddr_ex function, merge duplicate ipv4/ipv6 logic. (Arne Schwabe, d3310d2)
+  * Fix compile error in ssl_openssl introduced by polar external-management patch (Arne Schwabe, 20fe556)
+  * external_pkcs1_sign: Support non-RSA_SIG_RAW hash_ids (Joachim Schipper, 32f07c8)
+  * --management-external-key for PolarSSL (Joachim Schipper, 38ace48)
+  * Refactor tls_ctx_use_external_private_key() (Joachim Schipper, c3b2d48)
+  * Change the type of all ports in openvpn to const char* and let getaddrinfo resolve the port together with the hostname. (Arne Schwabe, 076fd3e)
+  * Remove duplicate cipher entries from TLS translation table. (Max Muster, e85d875)
+  * Fix slow memory drain on each client renegotiation. (Gert Doering, 4368147)
+  * Fix IPv6 examples in t_client.rc-sample (Gert Doering, bbc3a64)
+  * t_client.sh: Add prepare/cleanup possibilties for each test case (David Sommerseth, 8fedf86)
+  * t_client.sh: Write errors to stderr and document requirements (David Sommerseth, ebcd754)
+  * t_client.sh: Check for fping/fping6 availability (David Sommerseth, f0892e6)
+  * Document authfile for socks server (Davide Brini, e0a7471)
+  * tls_ctx_load_ca: Improve certificate error messages (Klee Dienes, 9927cdb)
+  * Fix argument type warning introduced by http extra proxy header patch. (Gert Doering, 16e24da)
+  * Add reporting of UI version to basic push-peer-info set. (Arne Schwabe, f3a2cd2)
+  * Implement custom HTTP header for http-proxy, and always send user-agent: (Arne Schwabe, d0cb816)
+  * Require a 1.2.x PolarSSL version (Josh Cepek, 7fc9245)
+  * Require polarssl >= 1.2.10 for polarssl-builds, which fixes CVE-2013-5915. (Steffan Karger, 92d21e3)
+  * Support non-ASCII TAP adapter names on Windows (Heiko Hund, f2e4008)
+  * Fix configure interaction with static OpenSSL libraries (Peter Sagerson, 30e358e)
+  * Allow use of NetBeans without saving nbproject/ directory. (Jesse Glick, 550fe1a)
+  * Correct error text when no Windows TAP device is present (Josh Cepek, 2d34628)
+  * Always load intermediate certificates from a PKCS#12 file (Heikki Hannikainen, 6481f87)
+  * Add a note what setenv opt does for OpenVPN < 2.3.3 (Arne Schwabe, 39dad37)
+  * Add support to ignore specific options. (Arne Schwabe, b685a1e)
+  * MSVC fixes (James Yonan, 46e0212)
+  * Added "setenv opt" directive prefix.  If present, and if the directive that follows is recognized, it will be processed as if the "setenv opt" prefix was absent.  If present and if the directive that follows is not recognized, the directive will be ignored rather than cause a fatal error. (James Yonan, 2a92fba)
+  * TLS version negotiation (James Yonan, 4b67f98)
+  * autoconf: Fix typo (David Sommerseth, 8065cd1)
+  * plugin: Extend the plug-in v3 API to identify the SSL implementation used (David Sommerseth, 587df08)
+  * Remove the --disable-eurephia configure option (David Sommerseth, e3d3886)
+  * man page: Update man page about the tls_digest_{n} environment variable (David Sommerseth, ace54e9)
+  * Add support of utun devices under Mac OS X (Arne Schwabe, fbc04be)
+  * PATCHv3 Remove unused variables or put them to the defines they are being used in (Arne Schwabe, d0c4c44)
+  * Improve documentation and help text for --route-ipv6. (Gert Doering, a1010a8)
+  * Add support for client-cert-not-required for PolarSSL. (Tamas TEVESZ, a781d67)
+  * Do not pass struct tls_session* as void* in key_state_ssl_init(). (Steffan Karger, b97e2c3)
+  * Fix another #ifdef/#if P2MP_SERVER (Arne Schwabe, 0a48ae3)
+  * Move checking of script file access into set_user_script (Arne Schwabe, e55681a)
+  * Move settings of user script into set_user_script function (Arne Schwabe, 9b6a502)
+  * Fix #ifdefs for P2MP_SERVER (Arne Schwabe, 1eb9a12)
+  * Provide more accurate warning message (Davide Brini, 3600996)
+  * Only print script warnings when a script is used. Remove stray mention of script-security system. (Arne Schwabe, 8476edb)
+  * Fix problem with UDP tunneling due to mishandled pktinfo structures. (Gert Doering, 8c431f9)
+  * Make push-peer-info visible in "normal" per-instance environment. (Gert Doering, a8be737)
+  * Always push basic set of peer info values to server. (James Yonan, 598e03f)
+  * make 'explicit-exit-notify' pullable again (Jan Just Keijser, 49f7149)
+  * Fix usage of 'compression ...' from global config. (Gert Doering, 1690f29)
+  * Added support for the Snappy compression algorithm (James Yonan, 38d96bd)
+  * Fix Windows script execution when called from script hooks (Josh Cepek, a19e35a)
+  * Fix NULL-pointer crash in route_list_add_vpn_gateway(). (Gert Doering, eb95f36)
+  * Use constrain_int() instead of MIN()+syshead.c compat definition - v2. (Gert Doering, bd25aa6)
+  * Fix segfault when enabling pf plug-ins (svimik, 31e5f34)
+  * Fix proto tcp6 for server & non-P2MP modes (Josh Cepek, d0ccb98)
+  * Document the Android implementation in OpenVPN (Arne Schwabe, 733050d)
+  * Emulate persist-tun on Android (Arne Schwabe, bd14d55)
+  * Android platform specific changes. (Arne Schwabe, a55b3cd)
+  * Add ability to send/receive file descriptors via management interface (Arne Schwabe, ad2df7b)
+  * Allow routes to be set before opening tun, similar to ifconfig before opening tun (Arne Schwabe, 94e6a2d)
+  * Improve the git revision tracking (David Sommerseth, fb62104)
+  * Fixed usage of stale define USE_SSL to ENABLE_SSL (Steffan Karger, 1d561d4)
+  * Print "Virtual IPv6 Address" on management interface queries [v4] (Gert Doering, b5df9fa)
+  * Print client id only if compiled with man agent support. Otherwise print an empty string. (Arne Schwabe, 01cfa61)
+  * Add the client id (CID) to the output of the status command (Arne Schwabe, 662ce6a)
+  * Fixed tls-cipher translation bug in openssl-build (Steffan Karger, 0bcde52)
+  * Fix directly connected routes for "topology subnet" on Solaris. (Gert Doering, 792e895)
+  * Add MIN() compatibility macro (Gert Doering, 15ca5c2)
+  * Use constant time memcmp when comparing HMACs in openvpn_decrypt. (Steffan Karger, 11d2134)
+  * Fixed autoconf script to properly detect missing pkcs11 with polarssl. (Steffan Karger, 9a3f670)
+  * Switch to IANA names for TLS ciphers. (Steffan Karger, 3b23b18)
+  * Config compatibility patch. Added translate_cipher_name. (Steffan Karger, f499b92)
+  * Improve verify_callback messages (Steffan Karger, d572959)
+  * Improve PolarSSL key_state_read_{cipher, plain}text messages (Steffan Karger, 0219f11)
+  * PolarSSL-1.2 support (Steffan Karger, 4a56d19)
+  * (updated) [PATCH] Warn when using verb levels >=7 without debug (Josh Cepek, 58fbb80)
+  * Fix parameter listing in non-debug builds at verb 4 (Josh Cepek, 6c61d0d)
+  * Permit pool size of /64.../112 for ifconfig-ipv6-pool (Gert Doering, 704d927)
+  * Repair "tcp server queue overflow" brokenness, more <stdbool.h> fallout. (Gert Doering, 0eb3985)
+  * Remove unused function no_tap_ifconfig (Arne Schwabe, dc63e06)
+  * Move static prototype definition from header into c file (Arne Schwabe, 46d402f)
+  * Remove unused function xor (Arne Schwabe, 462b6d5)
+  * add new option for X.509 name verification (Heiko Hund, 9f0fc74)
+  * make --tls-remote compatible with pre 2.3 configs (Heiko Hund, ad532bb)
+  * reintroduce --no-name-remapping option (Heiko Hund, 26b0433)
+  * Fix corner case in NTLM authentication (trac #172) (Christian Niessner, f8ac53b)
+  * fix build with automake 1.13(.1) (Christian Hesse, d86d577)
+  * Ignore UTF-8 byte order mark (Heiko Hund, 6e6f55f)
+  * Cleaned up and updated INSTALL (Samuli Seppänen, 607a678)
+  * Updated README (Samuli Seppänen, 7e0d16a)
+  * Added cross-compilation information INSTALL-win32.txt (Samuli Seppänen, 168780d)
+  * Removed ChangeLog.IPv6 (Samuli Seppänen, a93ed2e)
+  * Enable TCP_NODELAY configuration on FreeBSD. (Matthias Andree, 3e86f68)
+  * man page patch for missing options (Jan Just Keijser, d94873f)
+  * Remove dead code path and putenv functionality (Arne Schwabe, 4d0fb44)
+  * Update README.IPv6 to match what is in 2.3.0 (Gert Doering, c2f4c19)
+  * close more file descriptors on exec (Heiko Hund, 09ee419)
+  * Fix client crash on double PUSH_REPLY. (Gert Doering, 1978db4)
+  * Fix parameter type for IP_TOS setsockopt on non-Linux systems. (Gert Doering, d39f31d)
+  * Fix option inconsistency warnings about "proto" and "tun-ipv6" (Gert Doering, 3b860cf)
+  * Implement --mssfix handling for IPv6 packets. (Gert Doering, f0e8997)
+  * Fix the proto is used inconsistently warning (Arne Schwabe, 38727e0)
+  * Remove dnsflags_to_socktype, it is not used anywhere (Arne Schwabe, 740137f)
+  * The get_default_gateway() function uses warn() instead of msg() (David Sommerseth, b3f19cc)
+  * Avoid recursion in virtual_output_callback_func() (David Sommerseth, b2b6617)
+  * Properly require --key even if defined(MANAGMENT_EXTERNAL_KEY) (Arne Schwabe, feca090)
+  * Fix typo in ./configure message (Joachim Schipper, 038f0ac)
+  * doc/management-notes.txt: fix typo (Joachim Schipper, 5dfdb7c)
+  * Error message if max-routes used incorrectly (Arne Schwabe, f83ccec)
+  * Fix --show-pkcs11-ids (Bug #239) (Adriaan de Jong, 5fd3e56)
+  * Reset the version.m4 version for the master branch (David Sommerseth, f42dd5f)
+  * Fix double-free issue in pf_destroy_context() (David Sommerseth, 1f300fe)
+  * Remove the support for using system() when executing external programs or scripts (David Sommerseth, 0563473)
+  * Support UTF-8 --client-config-dir (Heiko Hund, 9885f57)
+  * Fix display of plugin hook types (Heiko Hund, ae303d4)
+  * Make git ignore some more files (David Sommerseth, 295f86e)
+  * Options parsing demands unnecessary configuration if PKCS11 is used (Arne Schwabe, 70a0733)
+  * Fixed a bug where PolarSSL gave an error when using an inline file tag. (Adriaan de Jong, 2ebbe4c)
+  * Fix v3 plugins to support returning values back to OpenVPN. (Kenneth Rose, e92255f)
+  * Document man agent-external-key (Arne Schwabe, 75b6f4b)
+
+ -- Samuli Seppänen <samuli@openvpn.net>  Mon, 24 Oct 2016 12:30:00 +0000
+
+openvpn (2.3.12-debian0) stable; urgency=medium
+
+  * Preparing release of v2.3.12 (David Sommerseth, 8990b21)
+  * Revert "Drop recursively routed packets" (David Sommerseth, 2bf9954)
+  * Drop recursively routed packets (Lev Stipakov, 122469f)
+  * Discourage using 64-bit block ciphers (Steffan Karger, 610fdbb)
+  * Fix '--cipher none --cipher' crash (Steffan Karger, d1c08ab)
+  * Promptly close the netcmd_semaphore handle after use (Selva Nair, 13f3526)
+  * Remove NOP function and callers (David Sommerseth, 735c90c)
+  * Move ASSERT so external-key with OpenSSL works again (Arne Schwabe, 5f3d28b)
+  * Complete push-peer-info documentation and allow IV_PLAT_VER for other platforms than Windows if the client UI supplies it. (Arne Schwabe, 769bbd6)
+  * Don't limit max incoming message size based on c2->frame (Steffan Karger, 358f513)
+  * Ignore SIGUSR1/SIGHUP during exit notification (Selva Nair, 859c9f4)
+  * Another fix related to unit test framework (David Sommerseth, b76acd7)
+  * Make block-outside-dns work with persist-tun (Selva Nair, 1aa9d28)
+  * Clarify the fact that build instructions in README are for release tarballs (Samuli Seppänen, 2a9434f)
+  * Plug memory leak in mbedTLS backend (Ivo Manca, 8b3b74a)
+  * Only build and run cmocka unit tests if its submodule is initialized (David Sommerseth, 987910e)
+  * Update contrib/pull-resolv-conf/client.up for no DOMAIN (Jeffrey Cutter, 7a22be4)
+  * Add link to bug tracker (Leon Klingele, 19eecc6)
+  * Add a test for auth-pam searchandreplace (Jens Neuhalfen, 0b8e0f5)
+  * Add unit testing support via cmocka (Jens Neuhalfen, 1739c10)
+  * Update CONTRIBUTING.rst to allow GitHub PRs for code review purposes (Samuli Seppänen, 85f6a2b)
+  * Push an IPv6 CIDR mask used by the server, not the pool's size (Josh Cepek, b8c4684)
+  * Make error non-fatal while deleting address using netsh (Selva Nair, d368abb)
+  * Add CHACHA20-POLY1305 ciphersuite IANA name translations. (Dorian Harmans, 1cccceb)
+  * Fix polarssl / mbedtls builds (Steffan Karger, 629baad)
+
+ -- Samuli Seppänen <samuli@openvpn.net>  Tue, 23 Aug 2016 14:30:00 +0000
+
+openvpn (2.3.11-debian0) stable; urgency=medium
+
+  * Preparing for release v2.3.11 (ChangeLog, version.m4) (Gert Doering, 6d83573)
+  * Improve LZO, PAM and OpenSSL documentation (Samuli Seppänen, 7369420)
+  * Fixed port-share bug with DoS potential (James Yonan, 9030fd4)
+  * Fix buffer overflow by user supplied data (Jens Neuhalfen, b15d511)
+  * Various Changes.rst fixes (Steffan Karger, fab3856)
+  * Support reading the challenge-response from console (Selva Nair, 6f31a83)
+  * Restrict default TLS cipher list (Steffan Karger, 8a399cd)
+  * Make intent of utun device name validation clear (Jens Neuhalfen, b582af4)
+  * Ensure input read using systemd-ask-password is null terminated (Selva Nair, 17b22f9)
+  * Replace MSG_TEST() macro for static inline msg_test() (Steffan Karger, 68a8c3a)
+  * Fix memory leak in argv_extract_cmd_name() (Steffan Karger, f8da749)
+  * hardening: add safe FD_SET() wrapper openvpn_fd_set() (Steffan Karger, 1746908)
+  * Report Windows bitness (Lev Stipakov, 6a8e946)
+  * Fix OCSP_check.sh (Steffan Karger, 22f399f)
+  * Update --block-outside-dns to work on Windows Vista (ValdikSS, 0209faf)
+  * Correctly report TCP connection timeout on windows. (Leonardo Basilio, 7107fef)
+  * Fix undefined signed shift overflow (Michael McConville, d9eeaab)
+  * Clarify --block-outside-dns documentation (ValdikSS, 6aef2d0)
+  * Clarify mssfix documentation (ValdikSS, e1dc8d2)
+  * Fix build with libressl (Niels Ole Salscheider, 4bb0d8d)
+  * socks.c: fix check on get_user_pass() return value(s) (Steffan Karger, 8a64911)
+  * Update manpage: OpenSSL might also need /dev/urandom inside chroot (Steffan Karger, 9453885)
+  * polarssl: improve logging (Steffan Karger, a9226fb)
+  * openssl: improve logging (Steffan Karger, 8e95e20)
+
+ -- Samuli Seppänen <samuli@openvpn.net>  Tue, 10 May 2016 06:15:00 +0000
+
+openvpn (2.3.10-debian0) stable; urgency=low
+
+  * Preparing for release v2.3.10 (ChangeLog, version.m4) (Gert Doering, 0828429)
+  * Fix regression in setups without a client certificate (Steffan Karger, f4bf11d)
+  * Repair IPv6 netsh calls if Win XP is detected (Lev Stipakov, 84eb66b)
+  * Make certificate expiry warning patch (091edd8e299686) work on OpenSSL 1.0.1 and e$
+  * Use bob.example.com and alice.example.com to improve clarity of documentation (Phi$
+  * cleanup: get rid of httpdigest.c type warnings (Steffan Karger, f4fd75f)
+  * Make assert_failed() print the failed condition (Steffan Karger, 87e555a)
+  * Warn user if their certificate has expired (Steffan Karger, dfd940b)
+  * Prepare for v2.3.10 release, list PolarSSL 1.2 to 1.3 upgrade (Gert Doering, 6eec6$
+  * Upgrade OpenVPN 2.3 to PolarSSL 1.3 (Steffan Karger, a40b230)
+  * polarssl: fix unreachable code (Yegor Yefremov, 2b9b3e5)
+  * Remove unused variables from ssl_verify_polarssl.c's x509_get_serial() (Steffan Ka$
+
+ -- Samuli Seppänen <samuli@openvpn.net>  Wed, 4 Jan 2016 12:00:00 +0000
+
+openvpn (2.3.9-debian0) stable; urgency=low
+
+  * Preparing for release v2.3.9 (ChangeLog, version.m4) (Gert Doering, 57000ac)
+  * Updates to Changes.rst (Samuli Seppänen, 3b1fa7f)
+  * Fix VS2013 compilation (Lev Stipakov, 723c7c3)
+  * Make "block-outside-dns" option platform agnostic (Fish, 367067f)
+  * Pass adapter index to up/down scripts (Lev Stipakov, 9fe2ac8)
+  * Add Windows DNS Leak fix using WFP ('block-outside-dns') (ValdikSS, dd628d2)
+  * Use adapter index for add/delete_route_ipv6 (Lev Stipakov, ca8cead)
+  * Detect config lines that are too long and give a warning/error (Arne Schwabe, 305c16c)
+  * Fix isatty() check for good. (Gert Doering, db55abd)
+  * Also remove second instance of enable-password-save in the man page (Arne Schwabe, 0a9f866)
+  * Reflect enable-password-save change in documentation (Arne Schwabe, fbf3763)
+  * Remove --enable-password-save option (Arne Schwabe, 747ae0c)
+  * put virtual IPv6 addresses into env (Heiko Hund, 0369e57)
+  * Unbreak read username password from management (Selva Nair, 9557196)
+  * Fix rand_bytes return value checking (Steffan Karger, 2a15e74)
+  * openssl: properly check return value of RAND_bytes() (Steffan Karger, ee71426)
+  * Avoid partial authentication state when using --disabled in CCD configs (David Sommerseth, 4b0a6f8)
+  * remove unused gc_arena in FreeBSD close_tun() (Gert Doering, 5731a57)
+  * Fix memory leak in add_option() by simplifying get_ipv6_addr (Steffan Karger, 7e61899)
+  * Fix FreeBSD-specific mishandling of gc arena pointer in create_arbitrary_remote() (Gert Doering, 66a3460)
+  * Support for username-only auth file. (Michal Ludvig, 76b82f0)
+  * Client-side part for server restart notification (Lev Stipakov, 983f018)
+  * Handle ctrl-C and ctrl-break events on Windows (Selva Nair, 29f883f)
+  * Adjust server-ipv6 documentation (Christos Trochalakis, 68cc5e7)
+  * Do not hard-code windows systemroot in env_block (Selva Nair, 9f87007)
+  * Use adapter index instead of name for windows IPv6 interface config (Lev Stipakov, e2afbdb)
+  * Fix possible heap overflow on read accessing getaddrinfo() result. (Gert Doering, cdbadd0)
+  * Add macro to ensure we exit on fatal errors (Steffan Karger, 3254099)
+  * Fix unintialized variable in plugin_vlog() (Steffan Karger, acc7469)
+  * Fix termination when windows suspends/sleeps (Selva Nair, 0d4ba25)
+  * Fix (potential) memory leak in init_route_list() (Steffan Karger, b155655)
+  * Fix memory leak in auth-pam plugin (Steffan Karger, 6a5e978)
+  * hardening: add insurance to exit on a failed ASSERT() (Steffan Karger, d03dd06)
+  * Do not set the buffer size by default but rely on the operation system default. (Arne Schwabe, c72dbb8)
+  * Fix privilege drop if first connection attempt fails (Lukasz Kutyla, 6c6280a)
+  * Fix commit a3160fc1bd7368395745b9cee6e40fb819f5564c (Arne Schwabe, f417db6)
+  * Fix "White space before end tags can break the config parser" (janjust, a3160fc)
+  * Add CONTRIBUTING.rst (Samuli Seppänen, 6c45f8c)
+  * Increase control channel packet size for faster handshakes (Steffan Karger, 29b65ff)
+  * Check return value of ms_error_text() (Steffan Karger, ad71fe5)
+  * Replace strdup() calls for string_alloc() calls (Steffan Karger, 6d4920e)
+  * Repair test_local_addr() on WIN32 (Gert Doering, 6028766)
+  * Replace unaligned 16bit access to TCP MSS value with bytewise access (Gert Doering, 9a2ab2f)
+  * Log serial number of revoked certificate (Boris Lytochkin, 1e4a3ba)
+  * Show extra-certs in current parameters. (Arne Schwabe, d7ab314)
+  * Un-break --auth-user-pass on windows (Gert Doering, 0a1bb0f)
+
+ -- Samuli Seppänen <samuli@openvpn.net>  Wed, 16 Dec 2015 12:00:00 +0000
+
+openvpn (2.3.4-5) unstable; urgency=high
+
+  * Apply upstream patch that fixes possible DoS by authenticated
+    clients. CVE-2014-8104
+  * Patch sample certs since they were expired and made the package
+    build fail. (Closes: #770835)
+
+ -- Alberto Gonzalez Iniesta <agi@inittab.org>  Mon, 01 Dec 2014 16:10:37 +0100
+
+openvpn (2.3.4-4) unstable; urgency=medium
+
+  * Use dh-systemd in order to enable the service unit.
+    (Closes: #768411)
+  * Add comment on /etc/default/openvpn file about options
+    not supported on systemd. (Closes: #768384)
+
+ -- Alberto Gonzalez Iniesta <agi@inittab.org>  Fri, 07 Nov 2014 13:59:54 +0100
+
+openvpn (2.3.4-3) unstable; urgency=medium
+
+  * Apply patch by Samuel Thibault to clean up temporary files.
+    (Closes: #764651). Thanks Samuel!
+
+ -- Alberto Gonzalez Iniesta <agi@inittab.org>  Mon, 13 Oct 2014 18:24:03 +0200
+
+openvpn (2.3.4-2) unstable; urgency=medium
+
+  * openvpn.service. Remove ExecStop, add ExecReload.
+    Fixes reload of openvpn service. (Closes: #763411)
+
+ -- Alberto Gonzalez Iniesta <agi@inittab.org>  Tue, 30 Sep 2014 13:05:45 +0200
+
+openvpn (2.3.4-1) unstable; urgency=medium
+
+  * Upload to unstable.
+  * New upstream release. (Closes: #752568)
+  * Add Turkish debconf translation. (Closes: #759879)
+  * Replace openvpn-systemd-helper with a systemd generator.
+    Thanks Ondřej Surý, Ansgar Burchardt and postgresql-common for
+    the ideas, help and inspiration.
+  * Bumped Standards-Version to 3.9.5
+  * debian/control: Add Vcs-*
+
+ -- Alberto Gonzalez Iniesta <agi@inittab.org>  Tue, 02 Sep 2014 12:06:06 +0200
+
+openvpn (2.3.3-1) experimental; urgency=medium
+
+  * Install tmpfiles.d configuration to create /run/openvpn in
+    systemd. Properly fixing #741938.
+  * Add reload to openvpn@.service. (Closes: #747840)
+  * New upstream release
+  * New openvpn.service to override LSB script when running systemd.
+    (Closes: #700888)
+  * Apply patch from upstream's BTS to improve systemd detection.
+    (Closes: #747265)
+
+ -- Alberto Gonzalez Iniesta <agi@inittab.org>  Mon, 17 Mar 2014 19:40:12 +0100
+
+openvpn (2.3.2-9) unstable; urgency=medium
+
+  * Create /run/openvpn in init script even if no VPN is
+    autostarted by it. (Closes: #741938)
+  * Fix systemd detection based on /run/systemd/system.
+
+ -- Alberto Gonzalez Iniesta <agi@inittab.org>  Mon, 17 Mar 2014 15:40:02 +0100
+
+openvpn (2.3.2-8) unstable; urgency=medium
+
+  * Add support for systemd. (Closes: #700888)
+    Add openvpn@.service and --enable-systemd to ./configure.
+
+ -- Alberto Gonzalez Iniesta <agi@inittab.org>  Fri, 14 Mar 2014 12:59:57 +0100
+
+openvpn (2.3.2-7) unstable; urgency=low
+
+  * Fix postinst when no *.pid files exist in /run/sendsigs.omit.d/.
+    (Closes: #730679)
+
+ -- Alberto Gonzalez Iniesta <agi@inittab.org>  Thu, 28 Nov 2013 13:05:31 +0100
+
+openvpn (2.3.2-6) unstable; urgency=low
+
+  * Move PID and status files to openvpn subdir in /run.
+    (Closes: #614036). Thanks Stephen Gildea for the patch and Simon Deziel
+    for the upgrade path.
+  * Add --enable-x509-alt-username option to ./configure
+
+ -- Alberto Gonzalez Iniesta <agi@inittab.org>  Wed, 27 Nov 2013 13:58:33 +0100
+
+openvpn (2.3.2-5) unstable; urgency=low
+
+  * Patch init script to fix race conditions on restarts.
+    (Closes: #716794). Thanks Simon Deziel for the patch.
+  * Improve update-resolv-conf script. Thanks Thomas Hood
+    for the patch. (Closes: #721082)
+
+ -- Alberto Gonzalez Iniesta <agi@inittab.org>  Mon, 15 Jul 2013 16:10:59 +0200
+
+openvpn (2.3.2-4) unstable; urgency=low
+
+  * Fix depends on iproute to iproute2.
+
+ -- Alberto Gonzalez Iniesta <agi@inittab.org>  Fri, 21 Jun 2013 11:17:52 +0200
+
+openvpn (2.3.2-3) unstable; urgency=low
+
+  * Add iproute2 support on linux archs.
+  * Add versioned Build-Depends on dpkg-dev since --export=configure
+    is used. (Closes: #697560)
+
+ -- Alberto Gonzalez Iniesta <agi@inittab.org>  Thu, 20 Jun 2013 13:23:24 +0200
+
+openvpn (2.3.2-2) unstable; urgency=low
+
+  * Add pkg-config to Build-Depends while waiting for libpkcs11-helper1-dev's
+    maintainter to decide if he includes pkg-config as a Depends.
+    Thanks Roland Stigge for finding out. (Closes: #711076)
+
+ -- Alberto Gonzalez Iniesta <agi@inittab.org>  Wed, 05 Jun 2013 16:39:27 +0200
+
+openvpn (2.3.2-1) unstable; urgency=low
+
+  * New upstream version.
+    Less messages about script security (Closes: #573129)
+  * Add --enable-pkcs11 to configure to avoid losing PKCS11.
+    Thanks Jaak Pruulmann-Vengerfeldt for noticing before the
+    upload! (Closes: #710085)
+
+ -- Alberto Gonzalez Iniesta <agi@inittab.org>  Mon, 03 Jun 2013 18:48:44 +0200
+
+openvpn (2.3.1-2) unstable; urgency=low
+
+  * Add net-tools to Build-Depends. (Closes: #709108)
+
+ -- Alberto Gonzalez Iniesta <agi@inittab.org>  Tue, 21 May 2013 12:31:39 +0200
+
+openvpn (2.3.1-1) unstable; urgency=low
+
+  * New upstream version. Fixes use of non-constant-time memcmp in HMAC
+    comparison. CVE-2013-2061 (Closes: #707329)
+
+ -- Alberto Gonzalez Iniesta <agi@inittab.org>  Fri, 17 May 2013 11:54:31 +0200
+
+openvpn (2.3.0-1) experimental; urgency=low
+
+  * New upstream release
+  * Add easy-rsa to Recommends
+
+ -- Alberto Gonzalez Iniesta <agi@inittab.org>  Mon, 12 Nov 2012 16:56:47 +0100
+
+openvpn (2.3~rc1-1) experimental; urgency=low
+
+  * Upload to experimental
+  * New upstream release with reworked build system
+
+ -- Alberto Gonzalez Iniesta <agi@inittab.org>  Mon, 05 Nov 2012 16:31:15 +0100
+
+openvpn (2.2.1-8) unstable; urgency=low
+
+  * Enable "PIE" and "BINDOW" hardening flags.
+
+ -- Alberto Gonzalez Iniesta <agi@inittab.org>  Fri, 23 Mar 2012 10:40:39 +0100
+
+openvpn (2.2.1-7) unstable; urgency=low
+
+  * Add dpkg-buildflags call on plugins built too.
+    Thanks Simon Ruderich for finding out, the nice patch and
+    clarification. (Closes: #655130)
+
+ -- Alberto Gonzalez Iniesta <agi@inittab.org>  Fri, 16 Mar 2012 10:49:28 +0100
+
+openvpn (2.2.1-6) unstable; urgency=low
+
+  * /run transition: Replaced usage of /dev/.udev with /run/udev,
+    when checking for the usage of udev. Depend on initscripts
+    (>= 2.88dsf-13.3) to guarantee the existence of /run/udev
+    in case udev is being used. (Closes: #644321)
+    Patch by Pieter du Preez.
+
+ -- Alberto Gonzalez Iniesta <agi@inittab.org>  Fri, 09 Mar 2012 13:44:50 +0100
+
+openvpn (2.2.1-5) unstable; urgency=low
+
+  * Avoid sending ICMP redirects when using tun devices and "subnet"
+    topology. Thanks Simon Deziel for testing and the patch.
+    (Closes: #656241)
+    The init.d script will set all.send_redirects=0 when using "dev tun"
+    and "topology subnet". More info in README.Debian.
+  * Several manpage fixes
+
+ -- Alberto Gonzalez Iniesta <agi@inittab.org>  Thu, 23 Feb 2012 17:25:54 +0100
+
+openvpn (2.2.1-4) unstable; urgency=low
+
+  * Use dpkg-buildflags to fill CFLAGS in ./configure. (Closes: #655130)
+  * debian/rules: Moved to dh.
+  * debian/rules: Changed DEB_BUILD_ARCH_OS with DEB_HOST_ARCH_OS.
+  * Removed quilt Build-Depends.
+  * debian/openvpn.default: Clarify what "vpn name" refers to.
+    (Closes: #657610)
+
+ -- Alberto Gonzalez Iniesta <agi@inittab.org>  Wed, 08 Feb 2012 16:31:32 +0100
+
+openvpn (2.2.1-3) unstable; urgency=low
+
+  * The iproute fiasco release.
+  * Remove --enable-iproute2 dependency since it's only available in Linux.
+    Write that in the changelog so I don't forget _again_ why iproute is not
+    set... (Closes: #652702)
+
+ -- Alberto Gonzalez Iniesta <agi@inittab.org>  Tue, 20 Dec 2011 13:06:05 +0100
+
+openvpn (2.2.1-2) unstable; urgency=low
+
+  * debian/rules: Force path to 'ip' command so that it's set correctly even
+    if not present (in the buildd). (Closes: #652702)
+  * Fix OMIT_SENDSIGS logic on init.d script. (Closes: #652703)
+
+ -- Alberto Gonzalez Iniesta <agi@inittab.org>  Tue, 20 Dec 2011 07:21:07 +0100
+
+openvpn (2.2.1-1) unstable; urgency=low
+
+  * New upstream release
+  * Added OMIT_SENDSIGS option in init.d script to let openvpn run after
+    sendsigs on system reboot or shutdown. (Closes: #636864)
+  * Configure with --enable-iproute2.
+  * Change path to route on kFreeBSD. (Closes: #646221) Thanks Robert Millan.
+
+
+ -- Alberto Gonzalez Iniesta <agi@inittab.org>  Tue, 13 Dec 2011 11:04:22 +0100
+
+openvpn (2.2.0-2) unstable; urgency=low
+
+  * Upload to unstable
+  * debian/control: added Homepage field
+  * Added debian/watch file
+  * debian/patches: Added descriptions/authors/etc. to patches
+
+ -- Alberto Gonzalez Iniesta <agi@inittab.org>  Wed, 15 Jun 2011 12:28:15 +0200
+
+openvpn (2.2.0-1) experimental; urgency=low
+
+  * New upstream release (Closes: #625281)
+  * Removed Depends on open(ssl|vpn)-blacklist, since 
+    debian_openssl_vulnkeys.patch is no longer used.
+    Removed templates referring it too.
+  * Removed manpage_dash_escaping.patch, applied upstream
+  * Removed attemping_typo, applied upstream
+  * Removed counter_type_for_bytes.patch, applied upstream
+  * Removed eurephia.patch, applied upstream
+  * Updated JuanJo's & Gert's IPv6 patches
+  * Removed versioned Depends on libssl (Closes: #623503)
+  * Improved kFreeBSD support. Thanks Gonéri Le Bouder for the patch
+    (Closes: #626062)
+  * Updated Dutch debconf templates. (Closes: #625526)
+
+ -- Alberto Gonzalez Iniesta <agi@inittab.org>  Tue, 10 May 2011 16:17:00 +0200
+
+openvpn (2.1.3-5) experimental; urgency=low
+
+  * Upload to experimental.
+  * Add ipv6 payload patch by Gert Doering. (Closes: #604071)
+
+ -- Alberto Gonzalez Iniesta <agi@inittab.org>  Tue, 22 Mar 2011 10:57:18 +0100
+
+openvpn (2.1.3-4) unstable; urgency=low
+
+  * Updated JuanJo's IPv6 patch. Now really fixes use from xinetd.
+    Thanks JuanJo & Christian Weinberger for testing it (Closes: #574164)
+  * Removed debian_openssl_vulnkeys.patch since we're Etch + 2 now.
+    (Closes: #484105, #487994)
+
+ -- Alberto Gonzalez Iniesta <agi@inittab.org>  Tue, 22 Mar 2011 10:04:21 +0100
+
+openvpn (2.1.3-3) unstable; urgency=low
+
+  * Updated JuanJo's IPv6 patch.
+    Fixes use from xinetd (Closes: #574164)
+  * Patched update-resolv-conf to support multiple DNS search domains.
+    Thanks Jeremy Zawodny and Dave Walker for the patch.
+    (Closes: #617740)
+  * Added a note about bridge-utils helpers in README.Debian.
+    Thanks Sven Hoexter. (Closes: #599192)
+  * Updated Danish debconf templates. (Closes: #608425)
+
+ -- Alberto Gonzalez Iniesta <agi@inittab.org>  Fri, 11 Mar 2011 13:08:12 +0100
+
+openvpn (2.1.3-2) unstable; urgency=low
+
+  * Applied upstream patch to solve random routes added when using
+    'remote_host'. (Closes: #600166)
+
+ -- Alberto Gonzalez Iniesta <agi@inittab.org>  Thu, 21 Oct 2010 12:21:33 +0200
+
+openvpn (2.1.3-1) unstable; urgency=low
+
+  * New upstream release (Closes: #595684)
+  * Fixed multiple building in a row (Closes: #592086)
+  * Added handling of newer DEB_BUILD_OPTIONS.
+    Thanks Lionel Elie Mamane for the patch. (Closes: #592098)
+  * Updated IPv6 patch from JuanJo Ciarlante.
+    Fixes --multihome option. (Closes: #562099)
+
+ -- Alberto Gonzalez Iniesta <agi@inittab.org>  Wed, 29 Sep 2010 13:07:37 +0200
+
+openvpn (2.1.0-3) unstable; urgency=low
+
+  * The 'happy birthday to me' release
+  * Fixed client hang when server does not push anything. (Closes: #587414)
+    Thanks Thierry Carrez for the heads up.
+  * Document possible problems when using 'chroot' option
+
+ -- Alberto Gonzalez Iniesta <agi@inittab.org>  Fri, 09 Jul 2010 12:22:09 +0200
+
+openvpn (2.1.0-2) unstable; urgency=low
+
+  * Patched ssl.[ch] to fix integer overflow. (Closes: #576827)
+    Thanks David Sommerseth for the patch.
+  * Fixed manpage typo. (Closes: #576823)
+  * Bloat the init.d script with more dependencies required by the
+    new init systems. Sucky. (Closes: #568647, #553338)
+  * Reworded README.Debian (Closes: #550164)
+  * Switch to dpkg-source 3.0 (quilt) format
+
+ -- Alberto Gonzalez Iniesta <agi@inittab.org>  Sat, 10 Apr 2010 17:26:42 +0200
+
+openvpn (2.1.0-1) unstable; urgency=low
+
+  * New upstream release
+  * init.d script: added soft-restart to the options output. (Closes: #558174)
+  * debian/control: Promoted net-tools from Recommends to Depends.
+    (Closes: #557906)
+
+ -- Alberto Gonzalez Iniesta <agi@inittab.org>  Fri, 11 Dec 2009 12:08:50 +0100
+
+openvpn (2.1~rc22-1) unstable; urgency=low
+
+  * New upstream release
+  * Added a note on LDAP+TLS problems in README.Debian
+
+ -- Alberto Gonzalez Iniesta <agi@inittab.org>  Fri, 04 Dec 2009 16:33:02 +0100
+
+openvpn (2.1~rc21-2) unstable; urgency=low
+
+  * debian/patches: Added eurephia.patch to support eurephia plug-in.
+  * debian/patches: updated openvpn over ipv6 support to v0.4.10
+
+ -- Alberto Gonzalez Iniesta <agi@inittab.org>  Thu, 19 Nov 2009 18:00:27 +0100
+
+openvpn (2.1~rc21-1) unstable; urgency=low
+
+  * New upstream release
+
+ -- Alberto Gonzalez Iniesta <agi@inittab.org>  Thu, 12 Nov 2009 12:19:26 +0100
+
+openvpn (2.1~rc20-3) unstable; urgency=low
+
+  * Updated debian_openssl_vulnkeys.patch to fix false vulnerable
+    key detection. (Closes: #483139).
+    Thanks a lot Kees Cook and Jamie Strandboge for working on this!
+
+ -- Alberto Gonzalez Iniesta <agi@inittab.org>  Wed, 04 Nov 2009 17:18:03 +0100
+
+openvpn (2.1~rc20-2) unstable; urgency=low
+
+  * init.d script: Added X-Interactive header. (Closes: #549424)
+  * patches/jjo-ipv6-support.patch: Added ipv6 support. (Closes: #307846)
+    Patch from JuanJo Ciarlante.
+
+ -- Alberto Gonzalez Iniesta <agi@inittab.org>  Tue, 06 Oct 2009 13:04:07 +0200
+
+openvpn (2.1~rc20-1) unstable; urgency=low
+
+  * New upstream version.
+    - Fixes redirect-gateway option parsing. (Closes: #541450)
+  * Changed init.d Provides from 'vpn' to 'openvpn'. (Closes: #497563)
+
+ -- Alberto Gonzalez Iniesta <agi@inittab.org>  Fri, 02 Oct 2009 17:24:38 +0200
+
+openvpn (2.1~rc19-2) unstable; urgency=low
+
+  * Fixed init.d script to depend on $remote_fs and $syslog (Closes: #539764)
+  * Added debian/README.source
+  * Bumped Standards-Version to 3.8.3
+
+ -- Alberto Gonzalez Iniesta <agi@inittab.org>  Sun, 30 Aug 2009 20:20:11 +0200
+
+openvpn (2.1~rc19-1) unstable; urgency=low
+
+  * New upstream version
+    - Removed remote_env.patch, applied upstream
+    - trusted_ip is exported again. (Closes: #524979)
+  * Bumped Standards-Version to 3.8.2
+
+ -- Alberto Gonzalez Iniesta <agi@inittab.org>  Tue, 21 Jul 2009 17:00:56 +0200
+
+openvpn (2.1~rc15-1) unstable; urgency=low
+
+  * New upstream version (Closes: #515575)
+  * remote_env.patch: patched options.c to fix remote* enviroment vars.
+  * openvpn-pkcs11warn.patch: warn on deprecated pkcs11 options.
+    Thanks A LOT to Florian Kulzer for the README.Debian text & patch!
+    (Closes: #475353)
+  * Removed lladdr-is-not-ip.patch, since it was included upstream.
+  * init.d script: Use start-stop-daemon to avoid failure on start when
+    a PID file is not deleted. (Closes: #445061)
+  * init.d script: Added 'status' action. Thanks Thierry Carrez for
+    the patch. (Closes: #498493)
+  * Updated debian/copyright: Point to GPL-2
+  * Updated debian/control: Added ${misc:Depends}
+  * Bumped Standards-Version to 3.8.1
+  * Moved to debhelper compat 7.
+
+ -- Alberto Gonzalez Iniesta <agi@inittab.org>  Thu, 30 Apr 2009 12:35:05 +0200
+
+openvpn (2.1~rc11-1) unstable; urgency=low
+
+  * New upstream version
+    - Fixes TLS negotiation problems (Closes: #496649)
+  * Patched options.c, socket.c and socket.h to correctly check
+    for MAC addresses on lladdr parm. (Closes: #496141)
+    Thanks hoverhell@gmail.com for the patch.
+  * init.d script: exit with 0 status when trying to start
+    an already running VPN. (Closes: #499247)
+
+ -- Alberto Gonzalez Iniesta <agi@inittab.org>  Wed, 17 Sep 2008 13:43:22 +0200
+
+openvpn (2.1~rc10-1) unstable; urgency=low
+
+  * New upstream version.
+    - Fixed calls to external commands with arguments.
+      (Closes: #495964, #496314, #497411)
+
+ -- Alberto Gonzalez Iniesta <agi@inittab.org>  Thu, 11 Sep 2008 16:58:37 +0200
+
+openvpn (2.1~rc9-3) unstable; urgency=low
+
+  * debian/rules: run ./configure with path to 'route', for
+    those build daemons without 'route'. (Closes: #495082)
+  * Created NEWS.Debian with info on new option script-security.
+    (Closes: #494998)
+
+ -- Alberto Gonzalez Iniesta <agi@inittab.org>  Sat, 16 Aug 2008 13:34:24 +0200
+
+openvpn (2.1~rc9-2) unstable; urgency=low
+
+  * debian/rules: run ./configure with path to ifconfig, for
+    those build daemons without ifconfig. (Closes: #494918)
+
+ -- Alberto Gonzalez Iniesta <agi@inittab.org>  Wed, 13 Aug 2008 13:37:01 +0200
+
+openvpn (2.1~rc9-1) unstable; urgency=high
+
+  * New upstream version.
+  * Urgency high since it fixes a security bug in versions
+    2.1-beta14 to 2.1-rc8. CVE-2008-3459. (Closes: #493488)
+  * Added sample-scripts/ to examples directory.
+  * Thanks Tristan Hill for rewritten debian_openssl_vulnkeys.patch
+
+ -- Alberto Gonzalez Iniesta <agi@inittab.org>  Mon, 11 Aug 2008 19:40:11 +0200
+
+openvpn (2.1~rc8-1) unstable; urgency=low
+
+  * New upstream version
+  * Added Build-dep on libpkcs11-helper1 to re-enable PKCS#11
+    support. Sorry for the delay Florian :) (Closes: #475353)
+
+ -- Alberto Gonzalez Iniesta <agi@inittab.org>  Wed, 23 Jul 2008 10:38:13 +0200
+
+openvpn (2.1~rc7-6) unstable; urgency=low
+
+  * debian/control: Add Recommends on net-tools. (Closes: #469522)
+  * init.d script: clean up. (Closes: #486678)
+  * init.d script: Added soft-restart option to send SIGUSR1 to running
+    VPNs. (Closes: #414252)
+  * Added bash_completion for init.d script. (Closes: #394289)
+  * Removed obsolete templates and its associated code. (Closes: #459531)
+  * Removed stop before upgrade question, always restar after the upgrade
+    not in between. (Closes: #371148)
+  * New patch to correct spelling error in socket.c. (Closes: #487957)
+  * Added OPTARGS to init.d script and /etc/default/openvpn so that
+    Stanislav Maslovski does not have to edit this on every upgrade :)
+    (Closes: #488675)
+
+ -- Alberto Gonzalez Iniesta <agi@inittab.org>  Tue, 24 Jun 2008 15:46:15 +0200
+
+openvpn (2.1~rc7-5) unstable; urgency=low
+
+  * init.d script: Set default exit code to 0 when undefined.
+    (Closes: #486441)
+
+ -- Alberto Gonzalez Iniesta <agi@inittab.org>  Mon, 16 Jun 2008 16:59:02 +0200
+
+openvpn (2.1~rc7-4) unstable; urgency=low
+
+  * The 'Miriam helped me move to quilt' release
+  * Moved all the patches to debian/patches
+  * debian/control: Added Build-Dep on quilt
+  * Applied patch by Jamie Strandboge to fix openssl-vulnkey
+    extra passphrase prompts. Thanks Jamie.
+    (Closes: #483020, #483500, #486129)
+  * Updated Portuguese debconf templates. (Closes: #484007)
+
+  [ Martin Pitt ]
+  * Added note on Out Of Memory issues. (Closes: #484113)
+  * Avoid asking about the tun device creation if using udev.
+    (Closes: #484111)
+  * Reworked init.d script to use LSB functions. (Closes: #484110)
+
+ -- Alberto Gonzalez Iniesta <agi@inittab.org>  Sat, 14 Jun 2008 19:00:40 +0200
+
+openvpn (2.1~rc7-3) unstable; urgency=low
+
+  * The 'Thanks the transtalors' release
+  * Updated Japanese debconf templates. (Closes: #483848)
+  * Updated Russian debconf templates. (Closes: #483693)
+  * Updated Brazilian Portuguese debconf templates. (Closes: #483686)
+  * Updated German debconf templates. (Closes: #483610)
+  * Updated French debconf templates. (Closes: #483104)
+  * Updated Spanish debconf templates. (Closes: #482939)
+  * Updated Italian debconf templates. (Closes: #482809)
+  * Updated Finnish debconf templates. (Closes: #482763)
+  * Updated Swedish debconf templates. (Closes: #482677)
+  * Updated Vietnamese debconf templates. (Closes: #482640)
+  * Updated Galician debconf templates. (Closes: #482461)
+  * Updated Czech debconf templates. (Closes: #482430)
+  * Updated Basque debconf templates. (Closes: #482398)
+  * Updated path to openssl-vulnkey. (Closes: #483723)
+
+ -- Alberto Gonzalez Iniesta <agi@inittab.org>  Sun, 01 Jun 2008 21:11:17 +0200
+
+openvpn (2.1~rc7-2) unstable; urgency=high
+
+  * init.c: Warn of use of known vulnerable weak SSL/TLS
+    and shared secret keys caused by Debian openssl bug.
+    Patch taken from Ubuntu. CVE-2008-0166
+  * debian/(templates|postinst): Add warning on vulnerable 
+    secrect/key files.
+  * debian/control: Add dependencies on openssl-blacklist and
+    openvpn-blacklist. Bumped dependency on libssl version.
+
+ -- Alberto Gonzalez Iniesta <agi@inittab.org>  Fri, 16 May 2008 00:45:23 +0200
+
+openvpn (2.1~rc7-1) unstable; urgency=low
+
+  * New upstream release (Closes: #464181)
+    - Slashes in X509 common name allowed (Closes: #452274)
+  * init.d script: Removed /dev/null stdin redirection, so passphrases
+    can be typed in. (Closes: #454371)
+  * Set FD_CLOEXEC in socket initialization BEFORE running the 'up script'
+    Thanks a lot Julien Cristau for finding this out and sending the
+    patch (Closes: #367716)
+  * Added multiple VPN configuration in /e/n/interfaces.
+    Thanks Sam Couter for the patch (Closes: #472924)
+  * Bumped Standards-Version to 3.7.3
+  * Debconf templates and debian/control reviewed by the debian-l10n-
+    english team as part of the Smith review project. (Closes: #462048)
+  * Updated Vietnamese debconf templates. (Closes: #465535)
+  * Updated German debconf templates. (Closes: #465317)
+  * Updated Brazilian Portuguese debconf templates. (Closes: #465440)
+  * Updated Japanese debconf templates. (Closes: #462736)
+  * Updated Portuguese debconf templates. (Closes: #462795)
+  * Updated Swedish debconf templates. (Closes: #462979)
+  * Updated Galician debconf templates. (Closes: #462990)
+  * Updated Spanish debconf templates. (Closes: #463047)
+  * Updated French debconf templates. (Closes: #463636)
+  * Updated Italian debconf templates. (Closes: #463703)
+  * Updated Finnish debconf templates. (Closes: #463952)
+  * Updated Czech debconf templates. (Closes: #464221)
+  * Updated Russian debconf templates. (Closes: #464666)
+  * Updated Norwegian Bokmål debconf templates. (Closes: #462811)
+
+ -- Alberto Gonzalez Iniesta <agi@inittab.org>  Sat, 02 Feb 2008 22:41:31 +0100
+
+openvpn (2.1~rc4-2) unstable; urgency=low
+
+  * Upload to unstable. New upstream fixes:
+     - Bug with: Assertion failed at multi.c. (Closes: #411633)
+     - Hangs with tcp clients goin down with new option:
+       --connect-timeout. (Closes: #296834)
+  * Use rm -f to remove PIDFILE, in case rm wants to ask.
+    (Closes: #429932)
+  * Updated Vietnamese debconf templates. (Closes: #427048)
+    Thanks Clytie Siddall.
+  * Added note on resolvconf use with openvpn. (Closes: #451319)
+
+ -- Alberto Gonzalez Iniesta <agi@inittab.org>  Sat, 08 Dec 2007 21:58:05 +0100
+
+openvpn (2.1~rc4-1) experimental; urgency=low
+
+  * New upstream release
+
+ -- Alberto Gonzalez Iniesta <agi@inittab.org>  Mon, 22 Oct 2007 20:59:46 +0200
+
+openvpn (2.1~rc2-1) experimental; urgency=low
+
+  * Just forward-push the Debian patches to the new version,
+    and upload to experimental (with permission of the maintainer).
+
+ -- Andreas Barth <aba@not.so.argh.org>  Thu, 19 Apr 2007 18:23:59 +0200
+
+openvpn (2.0.9-8) unstable; urgency=low
+
+  * Install /etc/openvpn/update-resolv-conf with correct permissions
+
+ -- Alberto Gonzalez Iniesta <agi@inittab.org>  Sat, 19 May 2007 18:12:12 +0200
+
+openvpn (2.0.9-7) unstable; urgency=low
+
+  * Added script to update resolv.conf with server's settings.
+    The script is located in the /etc/openvpn/ directory.
+    Thanks a lot Christof Lauber for the script.
+    Added resolvconf to Suggests.
+  * Added LSB section to the init.d script.
+
+ -- Alberto Gonzalez Iniesta <agi@inittab.org>  Sat, 19 May 2007 17:48:23 +0200
+
+openvpn (2.0.9-6) unstable; urgency=low
+
+  * Fixed init.d script to avoid running multiple instances of the
+    same VPN. Thanks Keith Kyzivat for pushing me into looking
+    again into this issue. (Closes: #326080)
+  * Included patch to README.Debian from Peter Rabbitson describing
+    /etc/network/interfaces integration. (Closes: #413732)
+  * Also included joeyh's suggestion on the previous subject.
+    (Closes: 419797)
+  * Avoid restarting a vpn instead of reloading it due to wrong 
+    detection of 'user' option in init.d script. Thanks Josip Rodin.
+    (Closes: 403503)
+  * Added Russian debconf translation. (Closes: #414088)
+    Thanks Yuriy Talakan.
+  * Built against liblzo2 instead of liblzo. (Closes: #423366)
+
+ -- Alberto Gonzalez Iniesta <agi@inittab.org>  Tue, 15 May 2007 23:53:26 +0200
+
+openvpn (2.0.9-5) unstable; urgency=low
+
+  * Added Galician debconf translation. (Closes: #412492)
+    Thanks Jacobo Tarrio
+
+ -- Alberto Gonzalez Iniesta <agi@inittab.org>  Wed, 28 Feb 2007 00:36:14 +0100
+
+openvpn (2.0.9-4) unstable; urgency=low
+
+  * Updated Swedish debconf translation. (Closes: #407851)
+    Thanks Andreas Henriksson
+
+ -- Alberto Gonzalez Iniesta <agi@inittab.org>  Sun, 21 Jan 2007 22:24:58 +0100
+
+openvpn (2.0.9-3) unstable; urgency=low
+
+  * Fixed type in Portuguese debconf translation.
+  * debian/templates. Changed default value for init.d change
+    question to false. (Closes: #403317)
+
+ -- Alberto Gonzalez Iniesta <agi@inittab.org>  Fri, 22 Dec 2006 19:36:05 +0100
+
+openvpn (2.0.9-2) unstable; urgency=low
+
+  * Updated Spanish debconf translation. (Closes: #393796)
+  * Updated German debconf translation. (Closes: #397019)
+  * Updated Japanese debconf translation. (Closes: #392627)
+  * Added Italian debconf translation. (Closes: #398050)
+  * Added Portuguese debconf translation. (Closes: #400685)
+
+ -- Alberto Gonzalez Iniesta <agi@inittab.org>  Fri,  8 Dec 2006 12:28:34 +0100
+
+openvpn (2.0.9-1) unstable; urgency=low
+
+  * New upstream release. No changes in *NIX source code.
+    Updating to avoid 'New upstream, blah, blah'.
+  * debian/control: Fixed spelling error in description
+    (Closes: #390242)
+  * debian/copyright: Updated project's homepage and author's
+    email address. (Closes: #388466)
+  * debian/copyright: Updated the FSF address.
+  * Updated Dutch debconf translation. (Closes: #389982, 379802)
+    Thanks Kurt De Bree
+  * Updated Czech debconf translation. (Closes: #384755)
+    Thanks Miroslav Kure
+
+ -- Alberto Gonzalez Iniesta <agi@inittab.org>  Tue, 10 Oct 2006 12:17:57 +0200
+
+openvpn (2.0.7-1) unstable; urgency=low
+
+  * The 'Translators, translators, translators' release.
+  * New upstream version.
+  * Added Dutch debconf translation. (Closes: #370073)
+    Thanks Kurt De Bree
+  * Updated Danish debconf translation. (Closes: #369772, #376704)
+    Thanks Claus Hindsgaul
+  * Updated French debconf translation. (Closes: #373191)
+    Thanks Michel Grentzinger
+
+ -- Alberto Gonzalez Iniesta <agi@inittab.org>  Sat, 22 Jul 2006 20:44:52 +0200
+
+openvpn (2.0.6-2) unstable; urgency=low
+
+  * The "Mañana" Release.
+  * debian/control: Added Suggests: openssl (Closes: #368256)
+  * debian/postinst: Run the init.d script with 'start' when doing
+    a fresh install or stop2upgrade=true. (Closes: #366085, #338956)
+  * Updated Czech debconf translation (Closes: #333989)
+    Thanks Miroslav Kure.
+  * Bumped Standards-Version to 3.7.2.0, no change. 
+  * debian/rules: Avoid compressing 'pkitool' (Closes: #354478)
+  * debian/templates: Corrected typo on init scripts order change.
+    (Closes: #351664)
+  * Updated German debconf translation (Closes: #345853)
+    Thanks Erik Schanze.
+
+ -- Alberto Gonzalez Iniesta <agi@inittab.org>  Mon, 22 May 2006 03:08:10 +0200
+
+openvpn (2.0.6-1) unstable; urgency=high
+
+  * New upstream release. Urgency high due to security fix.
+    - Disallow "setenv" to be pushed to clients from the server.
+      (Closes: #360559)
+
+ -- Alberto Gonzalez Iniesta <agi@inittab.org>  Wed,  5 Apr 2006 12:17:26 +0200
+
+openvpn (2.0.5-1) unstable; urgency=high
+
+  * New upstream release. Urgency high due to security issues.
+      - DoS vulnerability on the server in TCP mode.
+        (CVE-2005-3409) (Closes: #337334)
+      - Format string vulnerability in the foreign_option
+        function in options.c could potentially allow a malicious
+        or compromised server to execute arbitrary code on the
+        client.  (CVE-2005-3393) (Closes: #336751)
+
+ -- Alberto Gonzalez Iniesta <agi@inittab.org>  Mon,  7 Nov 2005 10:13:55 +0100
+
+openvpn (2.0.2-2) unstable; urgency=low
+
+  * debian/control: fix Depends on debconf. (Closes: #332056)
+  * Bumped Standards-Version to 3.6.2.0, no change.
+  * Updated Danish debconf translation. (Closes: #326907)
+  * Updated French debconf translation. (Closes: #328076)
+  * Added Swedish debconf translation. (Closes: #332785)
+
+ -- Alberto Gonzalez Iniesta <agi@inittab.org>  Sun,  9 Oct 2005 18:42:34 +0200
+
+openvpn (2.0.2-1) unstable; urgency=low
+
+  * The [VAC] upload. Thanks Vorbis Gdynia for the free internet access :)
+  * New upstream release (Closes: #323594)
+  * Fixed use of backslash in username authentication. (Closes: #309787)
+  * Fixes several DoS vulnerabilities: CAN-2005-2531 CAN-2005-2532 
+    CAN-2005-2533 CAN-2005-2534. (Closes: #324167)
+  * Changed group option from 'nobody' to 'nogroup' in all the 
+    *example* files... (Closes: #317987)
+  * Included openvpn-plugin.h to allow building third party plugins.
+    (Closes: #316139)
+  * Stop openvpn's daemon later to allow some services stopping later to use
+    it. Added debconf template to ask permission to make the change
+    on older installations. (Closes: #312371)
+  * Workaround to fix proper daemonize when 'log' option is used.
+    (Closes: #309944) Thanks Jason Lunz for the patch.
+  * Modified output of init.d script to make it more friendly when
+    passphrase for a tunnel certificate is asked.
+    Thanks Pavel Vávra for the patch.
+
+ -- Alberto Gonzalez Iniesta <agi@inittab.org>  Sun, 28 Aug 2005 13:05:49 +0200
+
+openvpn (2.0-4) unstable; urgency=low
+
+  * The 'It was about time I could make a new upload' release
+  * Rewrote some debconf templates (Closes: #316694).
+    Thanks Clytie Siddall for the corrections.
+  * Included Vietnamese debconf translation. (Closes: #316695)
+  * debian/rules: exclude openssl.cnf from being compress.
+    (Closes: #315764)
+
+ -- Alberto Gonzalez Iniesta <agi@inittab.org>  Wed,  6 Jul 2005 09:22:16 +0200
+
+openvpn (2.0-3) unstable; urgency=low
+
+  * postinst: call 'restart' when 'cond-restart' fails due to user
+    not upgrading the init.d script. (Closes: #308926)
+
+ -- Alberto Gonzalez Iniesta <agi@inittab.org>  Sat, 28 May 2005 12:52:16 +0200
+
+openvpn (2.0-2) unstable; urgency=low
+
+  * Added '-f' to rm when deleting the status file. This eliminates
+    the need to test if it exists and saves the init.d script from
+    failing.  (Closes: #306588)
+  * Modified pam plugin to load libpam.so.0 instead of libpam.so.
+    (Closes: #306335)
+
+ -- Alberto Gonzalez Iniesta <agi@inittab.org>  Wed,  4 May 2005 15:02:45 +0200
+
+openvpn (2.0-1) unstable; urgency=low
+
+  * The 'This-is-the-real-2.0' release
+  * New upstream version.
+  * openvpn.8: s/--/\\-\\-/g a.k.a escaped dashes to make it possible
+    to search for options with UTF charsets. (Closes: #296133)
+  * Improved init.d script output.  (Closes: #297997)
+    Thanks Thomas Hood for the patch.
+  * debian/control. Rewrote Description: field.
+    Now it's more useful and complete. (Closes: #304895)
+  * init.d script: 
+     - Fixed restarting of multiple VPNs
+     - Fixed TAB converted to spaces.
+     - Remove status file on VPN stop
+     - Respect 'status' option if given in the config file
+     - New /etc/default/openvpn configuration file that allows
+       control on which VPNs are automatically started and also
+       controls status file refresh interval
+     Thanks Philipp A. Hartmann for the nice patch. (Closes: #294332)
+   * init.d script: Added cond-restart to only restart VPNs in use.
+     postint: Call init.d script with cond-restart instead of restart.
+     (Closes: #280464)
+   * init.d script: change order of --config and --cd to permit
+     nested 'configs'. (Closes: #299082)
+
+ -- Alberto Gonzalez Iniesta <agi@inittab.org>  Mon, 18 Apr 2005 09:07:05 +0200
+
+openvpn (1.99+2.rc20-1) unstable; urgency=low
+
+  * New upstream release
+
+ -- Alberto Gonzalez Iniesta <agi@inittab.org>  Mon,  4 Apr 2005 23:05:23 +0200
+
+openvpn (1.99+2.rc18-1) unstable; urgency=low
+
+  * New upstream release (Closes: #301949)
+
+ -- Alberto Gonzalez Iniesta <agi@inittab.org>  Tue, 29 Mar 2005 12:56:42 +0200
+
+openvpn (1.99+2.rc16-1) unstable; urgency=low
+
+  * New upstream release
+
+ -- Alberto Gonzalez Iniesta <agi@inittab.org>  Sun, 20 Feb 2005 20:24:25 +0100
+
+openvpn (1.99+2.rc12-1) unstable; urgency=low
+
+  * New upstream release
+
+ -- Alberto Gonzalez Iniesta <agi@inittab.org>  Sun,  6 Feb 2005 11:49:44 +0100
+
+openvpn (1.99+2.rc11-2) unstable; urgency=low
+
+  * Added --enable-password-save to configure call to allow 
+    --askpass and --auth-user-pass passwords to be read from a file.
+
+ -- Alberto Gonzalez Iniesta <agi@inittab.org>  Thu,  3 Feb 2005 18:19:28 +0100
+
+openvpn (1.99+2.rc11-1) unstable; urgency=low
+
+  * New upstream release
+  * Added --status line to init.d script (Closes: #293144)
+
+ -- Alberto Gonzalez Iniesta <agi@inittab.org>  Thu,  3 Feb 2005 09:28:06 +0100
+
+openvpn (1.99+2.rc10-1) unstable; urgency=low
+
+  * New upstream release
+  * Updated pt_BR debconf translation (Closes: #292079)
+
+ -- Alberto Gonzalez Iniesta <agi@inittab.org>  Fri, 28 Jan 2005 14:44:42 +0100
+
+openvpn (1.99+2.rc6-1) unstable; urgency=low
+
+  * The 'Three Wise Men' release.
+  * New upstream release.
+  * Update README.Debian with comments on changed string remapping.
+    Thanks ron@debian.org for noting this first. (Closes: #288669)
+
+ -- Alberto Gonzalez Iniesta <agi@inittab.org>  Wed,  5 Jan 2005 19:03:11 +0100
+
+openvpn (1.99+2.beta19-1) unstable; urgency=low
+
+  * New upstream release.
+  * Updated README.Debian with info on plugins.
+
+ -- Alberto Gonzalez Iniesta <agi@inittab.org>  Sun,  5 Dec 2004 11:57:03 +0100
+
+openvpn (1.99+2.beta18-2) unstable; urgency=low
+
+  * Built and installed plugins. Thanks Michael Renner for noticing.
+    (Closes: #284224)
+  * Added Build-Depends on libpam0g-dev, required by auth-pam plugin.
+
+ -- Alberto Gonzalez Iniesta <agi@inittab.org>  Sun,  5 Dec 2004 10:19:45 +0100
+
+openvpn (1.99+2.beta18-1) unstable; urgency=low
+
+  * New upstream release. Corrects --mssfix behaviour (Closes: #280893)
+  * Included Czech debconf translation. (Closes: #282995)
+
+ -- Alberto Gonzalez Iniesta <agi@inittab.org>  Mon, 29 Nov 2004 10:56:07 +0100
+
+openvpn (1.99+2.beta17-2) unstable; urgency=low
+
+  * Updated (German|Danish|French|Japanese) debconf translations.
+    (Closes: #281235, #282095, #282216, #282881)
+
+ -- Alberto Gonzalez Iniesta <agi@inittab.org>  Wed, 24 Nov 2004 08:15:29 +0100
+
+openvpn (1.99+2.beta17-1) unstable; urgency=low
+
+  * New upstream version. Includes fix for the --key-method 1 bug.
+  * WARNING: This version changes the default port (5000 previously)
+    to 1194 (assigned by INANA). This will affect you if you don't
+    have a 'port' option specified in your configuration files.
+    Added a debconf note about it.
+  * Updated es.po.
+
+ -- Alberto Gonzalez Iniesta <agi@inittab.org>  Fri, 12 Nov 2004 15:32:56 +0100
+
+openvpn (1.99+2.beta16-2) unstable; urgency=low
+
+  * Patched ssl.c to fix bug in --key-method 1, that prevented 
+    OpenVPN 2.x from working with 1.x using that method.
+    Thanks James for the prompt answer & patch.
+    Thanks weasel for finding it out.
+
+ -- Alberto Gonzalez Iniesta <agi@inittab.org>  Mon,  8 Nov 2004 11:59:12 +0100
+
+openvpn (1.99+2.beta16-1) unstable; urgency=low
+
+  * New upstream releases. Fixes the "Assertion failed at crypto.c"
+    (Closes: #265632, #270005)
+
+ -- Alberto Gonzalez Iniesta <agi@inittab.org>  Sun,  7 Nov 2004 17:46:09 +0100
+
+openvpn (1.99+2.beta15-5) unstable; urgency=low
+
+  * Updated README.Debian with clearer 2.x vs 1.x interoperability
+    instructions.
+
+ -- Alberto Gonzalez Iniesta <agi@inittab.org>  Sun,  7 Nov 2004 10:26:03 +0100
+
+openvpn (1.99+2.beta15-4) unstable; urgency=low
+
+  * Put if-{up,down}.d scripts back in place, this time they work.
+    Just remember to quote shell vars when checking if they are empty.
+    [ -n "$VAR" ] -> Good     [ -n $VAR ] -> BAD
+    Note to self, don't trust people's patches even if they are DD.
+
+ -- Alberto Gonzalez Iniesta <agi@inittab.org>  Thu,  4 Nov 2004 08:33:45 +0100
+
+openvpn (1.99+2.beta15-3) unstable; urgency=low
+
+  * Removed if-{up,down}.d scripts until I get to know how they work.
+
+ -- Alberto Gonzalez Iniesta <agi@inittab.org>  Wed,  3 Nov 2004 20:58:41 +0100
+
+openvpn (1.99+2.beta15-2) unstable; urgency=low
+
+  * Corrected names of if-{up,down}.d scripts. Duh!
+
+ -- Alberto Gonzalez Iniesta <agi@inittab.org>  Wed,  3 Nov 2004 10:21:52 +0100
+
+openvpn (1.99+2.beta15-1) unstable; urgency=low
+
+  * New upstream release.
+  * Renamed package to 1.99 to make it clearer that we're using
+    version 2.0 and not 1.6. Some people rather talk about this on IRC
+    and not tell the maintainer directly.
+  * Added Brazilian Portuguese debconf templates. (Closes: #279351)
+  * Modified init.d script so that specifying a daemon option in a
+    VPN configuration won't make it fail. 
+    Thanks Christoph Biedl for the patch. (Closes: #278302)
+  * Added scripts to allow specifying 'openvpn name' in
+    /etc/network/interfaces to have the tunnel created and destroyed with
+    the device it runs over. Thanks Joachim Breitner for the patch.
+    (Closes: #273481)
+  * Modified init.d script so that multiple VPNs can be started or stopped
+    with a single command. (See README.Debian)
+
+ -- Alberto Gonzalez Iniesta <agi@inittab.org>  Tue,  2 Nov 2004 12:49:41 +0100
+
+openvpn (1.6.0+2.beta14-1) unstable; urgency=low
+
+  * New upstream release.
+
+ -- Alberto Gonzalez Iniesta <agi@inittab.org>  Wed, 20 Oct 2004 09:13:09 +0200
+
+openvpn (1.6.0+2.beta12-1) unstable; urgency=low
+
+  * New upstream release.
+  * Added comments about compatibility issues between openvpn 2.x and 1.x
+    to README.Debian (Closes: #276799)
+  * Changed maintainer email address.
+
+ -- Alberto Gonzalez Iniesta <agi@inittab.org>  Mon, 18 Oct 2004 09:01:23 +0200
+
+openvpn (1.6.0+2.beta11-1) unstable; urgency=low
+
+  * New upstream release. (Closes: #269631)
+  * I decided to get OpenVPN 2 into sid, and hopefully into Sarge since
+    the current beta works pretty well and adds important features I don't
+    want missing in Sarge.
+  * Updated README.Debian
+
+ -- Alberto Gonzalez Iniesta <agi@agi.as>  Fri, 15 Oct 2004 11:52:58 +0200
+
+openvpn (1.6.0-5) unstable; urgency=low
+
+  * Added German and Japanese debconf templates.
+    (Closes: #266927, #270477)
+
+ -- Alberto Gonzalez Iniesta <agi@agi.as>  Fri, 10 Sep 2004 08:31:54 +0200
+
+openvpn (1.6.0-4) unstable; urgency=low
+
+  * Updated French and Danish debconf templates
+    (Closes: #254064, #256053)
+
+ -- Alberto Gonzalez Iniesta <agi@agi.as>  Mon, 28 Jun 2004 09:51:44 +0200
+
+openvpn (1.6.0-3) unstable; urgency=low
+
+  * Included Catalan debconf templates. (Closes: #248750)
+    Thanks Aleix Badia i Bosch.
+  * Added debconf question on whether the daemon should be stopped at
+    the begining of and upgrade or not. Thus being more reliable on
+    remote upgrades. (Closes: #250558)
+
+ -- Alberto Gonzalez Iniesta <agi@agi.as>  Thu, 10 Jun 2004 15:59:39 +0200
+
+openvpn (1.6.0-2) unstable; urgency=low
+
+  * Recover init.d modification suggested by Kai Henningsen to get
+    different syslog names for each VPN. How the fuck did that get lost?
+
+ -- Alberto Gonzalez Iniesta <agi@agi.as>  Fri, 28 May 2004 16:51:04 +0200
+
+openvpn (1.6.0-1) unstable; urgency=low
+
+  * New upstream release
+
+ -- Alberto Gonzalez Iniesta <agi@agi.as>  Mon, 10 May 2004 08:59:37 +0200
+
+openvpn (1.5.0-3) unstable; urgency=low
+
+  * Included Danish debconf template. Thanks Claus Hindsgau.
+    (Closes: #234944)
+
+ -- Alberto Gonzalez Iniesta <agi@agi.as>  Tue,  9 Mar 2004 16:36:33 +0100
+
+openvpn (1.5.0-2) unstable; urgency=low
+
+  * Modified init.d script to permit different syslog names for each
+    VPN. Thanks Kai Henningsen for the tip. (Closes: #227376)
+  * Moved 'verify-cn' script to /usr to make weasel happier ;)
+    (Closes: #221995)
+  * Moved to gettext-based debconf templated. Added French translation.
+    Thanks Michel Grentzinger for the patches.
+    (Closes: #219015, #219016)
+  * Fixed spanish translation that was a complete mess.
+    (Closes: Fri-Sun)
+
+ -- Alberto Gonzalez Iniesta <agi@agi.as>  Thu, 15 Jan 2004 18:08:24 +0100
+
+openvpn (1.5.0-1) unstable; urgency=low
+
+  * New upstream release
+  * Moved to debhelper compatibility 4. Created debian/compat.
+
+ -- Alberto Gonzalez Iniesta <agi@agi.as>  Sat, 22 Nov 2003 18:18:50 +0100
+
+openvpn (1.4.3-3) unstable; urgency=low
+
+  * Added quotes around $2 in dpkg --compare-versions (config and postinst)
+    and check if $2 actually has a value.
+    This way it won't fail if $2 is not set. Duh! (Closes: #214848)
+
+ -- Alberto Gonzalez Iniesta <agi@agi.as>  Thu,  9 Oct 2003 11:01:31 +0200
+
+openvpn (1.4.3-2) unstable; urgency=low
+
+  * Moved initscripts sequence number to S16 from S20. This will make
+    openvpn start earlier and be ready for other services. (Closes: #209225)
+  * Added Depends: on debconf, it's used in the maintainer's scripts now.
+  * Added debconf template to ask for the creation of the TUN/TAP device 
+    node. (Closes: #211198)
+
+ -- Alberto Gonzalez Iniesta <agi@agi.as>  Thu,  2 Oct 2003 21:39:46 +0200
+
+openvpn (1.4.3-1) unstable; urgency=low
+
+  * New upstream release
+  * Bumped Standards-Version to 3.6.1.0, no change. 
+  * Patched init.d script to support single vpn stop/start/restart.
+    Thanks to Richard Mueller and Norbert Tretkowski (Closes: #204100)
+
+ -- Alberto Gonzalez Iniesta <agi@agi.as>  Tue, 30 Sep 2003 20:04:37 +0200
+
+openvpn (1.4.1.4-1) unstable; urgency=low
+
+  * New upstream release. Backed out --dev-name patch,
+    modified --dev to offer equivalent functionality
+    (Closes: #194910)
+  * Updated README.Debian. Thanks to John R. Shearer
+
+ -- Alberto Gonzalez Iniesta <agi@agi.as>  Tue, 17 Jun 2003 11:08:17 +0200
+
+openvpn (1.4.1-1) unstable; urgency=low
+
+  * New upstream release
+
+ -- Alberto Gonzalez Iniesta <agi@agi.as>  Fri, 16 May 2003 17:14:41 +0200
+
+openvpn (1.4.0-2) unstable; urgency=low
+
+  * Patch from James Yonan to use 2.2.x TUN interface if 2.4.x fails.
+    (Closes: #182020)
+
+ -- Alberto Gonzalez Iniesta <agi@agi.as>  Sun, 11 May 2003 10:24:51 +0200
+
+openvpn (1.4.0-1) unstable; urgency=low
+
+  * New upstream release (Closes: #179551)
+  * Re-enabled liblzo support. LZO's author made an exception in LZO's 
+    license that permits OpenVPN to use LZO and OpenSSL. See copyright
+    file.
+
+ -- Alberto Gonzalez Iniesta <agi@agi.as>  Thu,  8 May 2003 09:21:53 +0200
+
+openvpn (1.3.2-3) unstable; urgency=low
+
+  * Removed executable permissions from generated secret files.
+    (Closes: #178849)
+
+ -- Alberto Gonzalez Iniesta <agi@agi.as>  Thu,  6 Feb 2003 10:04:11 +0100
+
+openvpn (1.3.2-2) unstable; urgency=low
+
+  * Disabled liblzo1 support to fix license issues with Openssl. 
+    (Closes: #177497)
+  * Bumped Standards-Version to 3.5.8, no change. 
+
+ -- Alberto Gonzalez Iniesta <agi@agi.as>  Mon, 20 Jan 2003 16:09:16 +0100
+
+openvpn (1.3.2-1) unstable; urgency=low
+
+  * New upstream release
+
+ -- Alberto Gonzalez Iniesta <agi@agi.as>  Mon, 28 Oct 2002 14:22:10 +0100
+
+openvpn (1.3.0-2) unstable; urgency=low
+
+  * Modified init.d script so it's not dependent on bash. (Closes: #161525)
+
+ -- Alberto Gonzalez Iniesta <agi@agi.as>  Sat, 21 Sep 2002 12:23:46 +0200
+
+openvpn (1.3.0-1) unstable; urgency=low
+
+  * New upstream release
+
+ -- Alberto Gonzalez Iniesta <agi@agi.as>  Wed, 10 Jul 2002 12:50:50 +0200
+
+openvpn (1.2.1-1) unstable; urgency=low
+
+  * New upstream release
+  * Added init.d script
+
+ -- Alberto Gonzalez Iniesta <agi@agi.as>  Fri, 21 Jun 2002 14:05:42 +0200
+
+openvpn (1.2.0-2) unstable; urgency=low
+
+  * Modified configure(.ac) pthread library handling to work with GCC 3.0.
+    Thanks to Lamont Jones for the patch. (Closes: #148120)
+
+ -- Alberto Gonzalez Iniesta <agi@agi.as>  Sat, 25 May 2002 11:41:59 +0200
+
+openvpn (1.2.0-1) unstable; urgency=low
+
+  * Initial Release. (Closes: #140463)
+
+ -- Alberto Gonzalez Iniesta <agi@agi.as>  Thu, 23 May 2002 11:00:37 +0200
+

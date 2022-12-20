@@ -1,0 +1,22 @@
+From a88d8ba3e81ca34fc2675805a273cd85875c8973 Mon Sep 17 00:00:00 2001
+From: Arne Schwabe <arne@rfc2549.org>
+Date: Wed, 4 Jan 2017 19:18:46 +0100
+Subject: [PATCH] Change command help to match man page and implementation
+
+---
+ src/openvpn/options.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+Index: openvpn/src/openvpn/options.c
+===================================================================
+--- openvpn.orig/src/openvpn/options.c	2017-06-22 13:17:12.806680520 +0200
++++ openvpn/src/openvpn/options.c	2017-06-22 13:17:12.802680492 +0200
+@@ -197,7 +197,7 @@
+     "                  is established.  Multiple routes can be specified.\n"
+     "                  netmask default: 255.255.255.255\n"
+     "                  gateway default: taken from --route-gateway or --ifconfig\n"
+-    "                  Specify default by leaving blank or setting to \"nil\".\n"
++    "                  Specify default by leaving blank or setting to \"default\".\n"
+     "--route-ipv6 network/bits [gateway] [metric] :\n"
+     "                  Add IPv6 route to routing table after connection\n"
+     "                  is established.  Multiple routes can be specified.\n"

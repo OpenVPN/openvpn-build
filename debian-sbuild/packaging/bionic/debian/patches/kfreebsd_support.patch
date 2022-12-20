@@ -1,0 +1,141 @@
+Description: Improve kFreeBSD support
+Author: Gonéri Le Bouder <goneri@rulezlan.org>
+Bug-Debian: http://bugs.debian.org/626062
+Index: openvpn/src/openvpn/route.c
+===================================================================
+--- openvpn.orig/src/openvpn/route.c	2017-06-22 13:17:05.754630908 +0200
++++ openvpn/src/openvpn/route.c	2017-06-22 13:17:05.750630880 +0200
+@@ -1689,7 +1689,7 @@
+     argv_msg(D_ROUTE, &argv);
+     status = openvpn_execve_check(&argv, es, 0, "ERROR: Solaris route add command failed");
+ 
+-#elif defined(TARGET_FREEBSD)
++#elif defined(TARGET_FREEBSD) || defined(__FreeBSD_kernel__)
+ 
+     argv_printf(&argv, "%s add",
+                 ROUTE_PATH);
+@@ -1875,7 +1875,7 @@
+     network = print_in6_addr( r6->network, 0, &gc);
+     gateway = print_in6_addr( r6->gateway, 0, &gc);
+ 
+-#if defined(TARGET_DARWIN)    \
++#if defined(TARGET_DARWIN) || defined(__FreeBSD_kernel__)    \
+     || defined(TARGET_FREEBSD) || defined(TARGET_DRAGONFLY)    \
+     || defined(TARGET_OPENBSD) || defined(TARGET_NETBSD)
+ 
+@@ -2043,7 +2043,7 @@
+     argv_msg(D_ROUTE, &argv);
+     status = openvpn_execve_check(&argv, es, 0, "ERROR: Solaris route add -inet6 command failed");
+ 
+-#elif defined(TARGET_FREEBSD) || defined(TARGET_DRAGONFLY)
++#elif defined(TARGET_FREEBSD) || defined(TARGET_DRAGONFLY) || defined(__FreeBSD_kernel__)
+ 
+     argv_printf(&argv, "%s add -inet6 %s/%d",
+                 ROUTE_PATH,
+@@ -2227,7 +2227,7 @@
+     argv_msg(D_ROUTE, &argv);
+     openvpn_execve_check(&argv, es, 0, "ERROR: Solaris route delete command failed");
+ 
+-#elif defined(TARGET_FREEBSD)
++#elif defined(TARGET_FREEBSD) || defined(__FreeBSD_kernel__)
+ 
+     argv_printf(&argv, "%s delete -net %s %s %s",
+                 ROUTE_PATH,
+@@ -2334,7 +2334,7 @@
+     network = print_in6_addr( r6->network, 0, &gc);
+     gateway = print_in6_addr( r6->gateway, 0, &gc);
+ 
+-#if defined(TARGET_DARWIN)    \
++#if defined(TARGET_DARWIN) || defined(__FreeBSD_kernel__)    \
+     || defined(TARGET_FREEBSD) || defined(TARGET_DRAGONFLY)    \
+     || defined(TARGET_OPENBSD) || defined(TARGET_NETBSD)
+ 
+@@ -2469,7 +2469,7 @@
+     argv_msg(D_ROUTE, &argv);
+     openvpn_execve_check(&argv, es, 0, "ERROR: Solaris route delete -inet6 command failed");
+ 
+-#elif defined(TARGET_FREEBSD) || defined(TARGET_DRAGONFLY)
++#elif defined(TARGET_FREEBSD) || defined(TARGET_DRAGONFLY) || defined(__FreeBSD_kernel__)
+ 
+     argv_printf(&argv, "%s delete -inet6 %s/%d",
+                 ROUTE_PATH,
+@@ -3514,7 +3514,8 @@
+ 
+ #elif defined(TARGET_DARWIN) || defined(TARGET_SOLARIS)    \
+     || defined(TARGET_FREEBSD) || defined(TARGET_DRAGONFLY)    \
+-    || defined(TARGET_OPENBSD) || defined(TARGET_NETBSD)
++    || defined(TARGET_OPENBSD) || defined(TARGET_NETBSD)    \
++    || defined(__FreeBSD_kernel__)
+ 
+ #include <sys/types.h>
+ #include <sys/socket.h>
+Index: openvpn/src/openvpn/tun.c
+===================================================================
+--- openvpn.orig/src/openvpn/tun.c	2017-06-22 13:17:05.754630908 +0200
++++ openvpn/src/openvpn/tun.c	2017-06-22 13:17:05.750630880 +0200
+@@ -843,7 +843,7 @@
+ #endif /* if defined(_WIN32) || defined(TARGET_DARWIN) || defined(TARGET_NETBSD) || defined(TARGET_OPENBSD) */
+ 
+ #if defined(TARGET_FREEBSD) || defined(TARGET_DRAGONFLY)  \
+-    || defined(TARGET_OPENBSD)
++    || defined(TARGET_OPENBSD) || defined(__FreeBSD_kernel__)
+ /* we can't use true subnet mode on tun on all platforms, as that
+  * conflicts with IPv6 (wants to use ND then, which we don't do),
+  * but the OSes want "a remote address that is different from ours"
+@@ -1412,7 +1412,7 @@
+             add_route_connected_v6_net(tt, es);
+         }
+ 
+-#elif defined(TARGET_FREEBSD) || defined(TARGET_DRAGONFLY)
++#elif defined(TARGET_FREEBSD) || defined(TARGET_DRAGONFLY) || defined(__FreeBSD_kernel__)
+ 
+         in_addr_t remote_end;           /* for "virtual" subnet topology */
+ 
+@@ -2770,7 +2770,7 @@
+     }
+ }
+ 
+-#elif defined(TARGET_FREEBSD)
++#elif defined(TARGET_FREEBSD)||defined(__FreeBSD_kernel__)
+ 
+ static inline int
+ freebsd_modify_read_write_return(int len)
+Index: openvpn/src/openvpn/lladdr.c
+===================================================================
+--- openvpn.orig/src/openvpn/lladdr.c	2017-06-22 13:17:05.754630908 +0200
++++ openvpn/src/openvpn/lladdr.c	2017-06-22 13:17:05.750630880 +0200
+@@ -50,7 +50,7 @@
+                 "%s %s lladdr %s",
+                 IFCONFIG_PATH,
+                 ifname, lladdr);
+-#elif defined(TARGET_FREEBSD)
++#elif defined(TARGET_FREEBSD) || defined(__FreeBSD_kernel__)
+     argv_printf(&argv,
+                 "%s %s ether %s",
+                 IFCONFIG_PATH,
+Index: openvpn/src/openvpn/syshead.h
+===================================================================
+--- openvpn.orig/src/openvpn/syshead.h	2017-06-22 13:17:05.754630908 +0200
++++ openvpn/src/openvpn/syshead.h	2017-06-22 13:17:05.750630880 +0200
+@@ -297,7 +297,7 @@
+ 
+ #endif /* TARGET_OPENBSD */
+ 
+-#ifdef TARGET_FREEBSD
++#if defined(TARGET_FREEBSD) || defined(__FreeBSD_kernel__)
+ 
+ #ifdef HAVE_SYS_UIO_H
+ #include <sys/uio.h>
+Index: openvpn/src/openvpn/ssl.c
+===================================================================
+--- openvpn.orig/src/openvpn/ssl.c	2017-06-22 13:17:05.754630908 +0200
++++ openvpn/src/openvpn/ssl.c	2017-06-22 13:17:05.750630880 +0200
+@@ -2269,7 +2269,7 @@
+         buf_printf(&out, "IV_PLAT=mac\n");
+ #elif defined(TARGET_NETBSD)
+         buf_printf(&out, "IV_PLAT=netbsd\n");
+-#elif defined(TARGET_FREEBSD)
++#elif defined(TARGET_FREEBSD) || defined(__FreeBSD_kernel__)
+         buf_printf(&out, "IV_PLAT=freebsd\n");
+ #elif defined(TARGET_ANDROID)
+         buf_printf(&out, "IV_PLAT=android\n");
