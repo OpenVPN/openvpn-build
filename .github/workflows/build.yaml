@@ -18,7 +18,7 @@ jobs:
 
     env:
       CMAKE: cmake.exe
-      VCPKG_ROOT: ${{ github.workspace }}\vcpkg
+      VCPKG_ROOT: ${{ github.workspace }}\openvpn-build\src\vcpkg
       OSSL: ossl3
       VCPKG_OVERLAY_PORTS: ${{ github.workspace }}\openvpn-build\windows-msi\vcpkg-ports
       WIX: ${{ github.workspace }}\wix\
@@ -32,25 +32,9 @@ jobs:
         with:
           path: openvpn-build
 
-      - name: Checkout openvpn
-        uses: actions/checkout@v2
-        with:
-          repository: openvpn/openvpn
-          ref: master
-          path: openvpn
-
-      - name: Checkout openvpn-gui
-        uses: actions/checkout@v2
-        with:
-          repository: openvpn/openvpn-gui
-          path: openvpn-gui
-
-      - name: Checkout vcpkg
-        uses: actions/checkout@v2
-        with:
-          repository: microsoft/vcpkg
-          path: vcpkg
-          fetch-depth: 0
+      - name: Checkout submodules (by branch)
+        working-directory: openvpn-build
+        run: git submodule update --init --remote --recursive
 
       - name: Get latest CMake and ninja
         uses: lukka/get-cmake@latest
@@ -81,10 +65,10 @@ jobs:
         working-directory: openvpn-build/windows-msi
         run: |
           New-Item -Name build-and-package-env.ps1 -ItemType File
-          ./build-and-package.ps1 -basedir ../.. -ossl ossl3 -nosign -arch ${{ matrix.arch }} -nodevprompt
+          ./build-and-package.ps1 -topdir .. -ossl ossl3 -nosign -arch ${{ matrix.arch }} -nodevprompt
 
       - name: Get openvpn commit id
-        working-directory: openvpn
+        working-directory: openvpn-build/src/openvpn
         run: |
           $commit = git rev-parse --short HEAD
           echo "OPENVPN_COMMIT=$commit" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf-8 -Append
