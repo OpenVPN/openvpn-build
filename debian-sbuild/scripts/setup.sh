@@ -2,9 +2,15 @@
 #
 # Basic setup for sbuild_wrapper
 
-# Read the configuration file
+set -eux
+set -o pipefail
+
+SCRIPT_DIR="$(dirname $(readlink -e "${BASH_SOURCE[0]}"))"
+TOP_DIR="$SCRIPT_DIR/../.."
+pushd "$TOP_DIR/debian-sbuild/"
+
 . ./config/base.conf
 
-test -d "$BASEDIR/output"        || mkdir "$BASEDIR/output"
+test -d "$DEBIAN_OUTPUT_DIR"     || mkdir "$DEBIAN_OUTPUT_DIR"
 test -d "$BASEDIR/chroots"       || mkdir "$BASEDIR/chroots"
 test -d "$BASEDIR/build"         || mkdir "$BASEDIR/build"

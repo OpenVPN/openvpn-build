@@ -3,6 +3,11 @@
 # A small script to ease creation of sbuild schroots.
 
 set -eux
+set -o pipefail
+
+SCRIPT_DIR="$(dirname $(readlink -e "${BASH_SOURCE[0]}"))"
+TOP_DIR="$SCRIPT_DIR/../.."
+pushd "$TOP_DIR/debian-sbuild/"
 
 # Read the configuration file
 . ./config/base.conf

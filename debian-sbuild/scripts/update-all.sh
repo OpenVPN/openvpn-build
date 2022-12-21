@@ -1,6 +1,13 @@
-#!/bin/sh
+#!/bin/bash
 #
 # A convenience wrapper used to update packages on schroots.
+
+set -eux
+set -o pipefail
+
+SCRIPT_DIR="$(dirname $(readlink -e "${BASH_SOURCE[0]}"))"
+TOP_DIR="$SCRIPT_DIR/../.."
+pushd "$TOP_DIR/debian-sbuild/"
 
 . ./config/base.conf
 
