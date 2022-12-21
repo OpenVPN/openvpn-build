@@ -1,7 +1,6 @@
 param(
-    # Must be a directory with openvpn, openvpn-gui, vcpkg and
-    # openvpn-build side by side
-    [string] $basedir,
+    # Must be top directory of openvpn-build checkout
+    [string] $topdir = "${PSScriptRoot}/..",
     # Version of OpenSSL port to use ("ossl1.1.1" or "ossl3")
     [string] $ossl = "ossl3",
     [string] $arch = "all",
@@ -10,8 +9,8 @@ param(
     )
 
 ### Preparations
-if(-not($basedir)) {
-    Write-Host "Usage: build-and-package.ps1 -basedir <basedir> [-openssl] <ossl1.1.1|ossl3> [-arch] <all|x86|amd64|arm64> [-nosign] [-nodevprompt]"
+if(-not($topdir)) {
+    Write-Host "Usage: build-and-package.ps1 [-topdir <topdir>] [-openssl <ossl1.1.1|ossl3>] [-arch <all|x86|amd64|arm64>] [-nosign] [-nodevprompt]"
     exit 1
 }
 
@@ -30,7 +29,7 @@ if (-Not($nosign) -And $arch -ne "all")
 }
 
 # Convert relative path to absolute to prevent breakages below
-$basedir = (Resolve-Path -Path $basedir)
+$basedir = (Resolve-Path -Path $topdir)
 
 $basedir_exists = Test-Path $basedir
 
@@ -49,18 +48,12 @@ if ((Test-Path "${PSScriptRoot}/build-and-package-env.ps1") -ne $True) {
 # At the end of the build return to the directory we started from
 $cwd = Get-Location
 
-### Ensure that we use latest "contrib" vcpkg ports
-Set-Location "${basedir}\openvpn"
-& git.exe pull
-
-Set-Location "${basedir}\vcpkg"
-& git.exe pull
+Set-Location "${basedir}\src\vcpkg"
 & .\bootstrap-vcpkg.bat
 & .\vcpkg.exe integrate install
 
 ### Build OpenVPN-GUI
-Set-Location "${basedir}\openvpn-gui"
-& git.exe pull
+Set-Location "${basedir}\src\openvpn-gui"
 
 $gui_arch = @()
 switch ($arch)
@@ -91,8 +84,7 @@ $gui_arch | ForEach-Object  {
 }
 
 ### Build OpenVPN
-Set-Location "${basedir}\openvpn"
-& git.exe pull
+Set-Location "${basedir}\src\openvpn"
 
 if (($arch -eq "all") -Or ($arch -eq "amd64")) {
     if (-not($nodevprompt))
@@ -120,7 +112,7 @@ if (($arch -eq "all") -Or ($arch -eq "arm64")) {
 
 ### Sign binaries
 if (-not $nosign) {
-    Set-Location "${basedir}\openvpn-build\windows-msi"
+    Set-Location "${basedir}\windows-msi"
     $Env:SignScript = "sign-openvpn.bat"
     & .\sign-binaries.bat
 } else {
@@ -128,7 +120,7 @@ if (-not $nosign) {
 }
 
 ### Build MSI
-Set-Location "${basedir}\openvpn-build\windows-msi"
+Set-Location "${basedir}\windows-msi"
 
 switch ($arch)
 {

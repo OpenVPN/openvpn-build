@@ -46,7 +46,7 @@ clean	Cleans intermediate and output files</example>
             // Folders
             var
                 rootPath       = "..",
-                depsPath       = BuildPath("..", ".."),
+                depsPath       = BuildPath("..", "src"),
                 buildPath      = "tmp",
                 sourcePath     = "sources",
                 easyRSAPath    = BuildPath(buildPath, "easyrsa-" + ver.define.EASYRSA_VERSION),
