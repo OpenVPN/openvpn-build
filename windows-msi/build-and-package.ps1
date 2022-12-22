@@ -4,13 +4,12 @@ param(
     # Version of OpenSSL port to use ("ossl1.1.1" or "ossl3")
     [string] $ossl = "ossl3",
     [string] $arch = "all",
-    [switch] $nosign,
-    [switch] $nodevprompt
+    [switch] $nosign
     )
 
 ### Preparations
 if(-not($topdir)) {
-    Write-Host "Usage: build-and-package.ps1 [-topdir <topdir>] [-openssl <ossl1.1.1|ossl3>] [-arch <all|x86|amd64|arm64>] [-nosign] [-nodevprompt]"
+    Write-Host "Usage: build-and-package.ps1 [-topdir <topdir>] [-ossl <ossl1.1.1|ossl3>] [-arch <all|x86|amd64|arm64>] [-nosign]"
     exit 1
 }
 
@@ -87,26 +86,14 @@ $gui_arch | ForEach-Object  {
 Set-Location "${basedir}\src\openvpn"
 
 if (($arch -eq "all") -Or ($arch -eq "amd64")) {
-    if (-not($nodevprompt))
-    {
-        & "C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\VC\Auxiliary\Build\vcvarsall.bat" x64
-    }
     msbuild "openvpn.sln" /p:Configuration="Release" /p:Platform="x64" /maxcpucount /t:Build
 }
 
 if (($arch -eq "all") -Or ($arch -eq "x86")) {
-    if (-not($nodevprompt))
-    {
-        & "C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\VC\Auxiliary\Build\vcvarsall.bat" x64_x86
-    }
     msbuild "openvpn.sln" /p:Configuration="Release" /p:Platform="Win32" /maxcpucount /t:Build
 }
 
 if (($arch -eq "all") -Or ($arch -eq "arm64")) {
-    if (-not($nodevprompt))
-    {
-        & "C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\VC\Auxiliary\Build\vcvarsall.bat" x64_arm64
-    }
     msbuild "openvpn.sln" /p:Configuration="Release" /p:Platform="ARM64" /maxcpucount /t:Build
 }
 

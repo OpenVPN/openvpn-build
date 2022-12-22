@@ -64,8 +64,7 @@ jobs:
       - name: Build
         working-directory: openvpn-build/windows-msi
         run: |
-          New-Item -Name build-and-package-env.ps1 -ItemType File
-          ./build-and-package.ps1 -topdir .. -ossl ossl3 -nosign -arch ${{ matrix.arch }} -nodevprompt
+          ./build-and-package.ps1 -topdir .. -ossl ossl3 -nosign -arch ${{ matrix.arch }}
 
       - name: Get openvpn commit id
         working-directory: openvpn-build/src/openvpn
