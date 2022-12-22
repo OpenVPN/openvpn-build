@@ -4,12 +4,12 @@ param(
     # Version of OpenSSL port to use ("ossl1.1.1" or "ossl3")
     [string] $ossl = "ossl3",
     [string] $arch = "all",
-    [switch] $nosign
+    [switch] $sign
     )
 
 ### Preparations
 if(-not($topdir)) {
-    Write-Host "Usage: build-and-package.ps1 [-topdir <topdir>] [-ossl <ossl1.1.1|ossl3>] [-arch <all|x86|amd64|arm64>] [-nosign]"
+    Write-Host "Usage: build-and-package.ps1 [-topdir <topdir>] [-ossl <ossl1.1.1|ossl3>] [-arch <all|x86|amd64|arm64>] [-sign]"
     exit 1
 }
 
@@ -21,9 +21,9 @@ if (-Not($allowed_arch.Contains($arch)))
 }
 
 # at the moment signing script doesn't support per-architecture signing
-if (-Not($nosign) -And $arch -ne "all")
+if ($sign -And $arch -ne "all")
 {
-    Write-Host "-arch must be 'all' or omitted when -nosign is not specified"
+    Write-Host "-arch must be 'all' or omitted when -sign is specified"
     exit 1
 }
 
@@ -43,6 +43,10 @@ if ((Test-Path "${PSScriptRoot}/build-and-package-env.ps1") -ne $True) {
 }
 
 . "${PSScriptRoot}/build-and-package-env.ps1"
+if ($sign -And -not($Env:ManifestCertificateThumbprint)) {
+    Write-Host "ERROR: signing requested but Env:ManifestCertificateThumbprint not set"
+    exit 1
+}
 
 # At the end of the build return to the directory we started from
 $cwd = Get-Location
@@ -98,7 +102,7 @@ if (($arch -eq "all") -Or ($arch -eq "arm64")) {
 }
 
 ### Sign binaries
-if (-not $nosign) {
+if ($sign) {
     Set-Location "${basedir}\windows-msi"
     $Env:SignScript = "sign-openvpn.bat"
     & .\sign-binaries.bat
@@ -130,7 +134,7 @@ switch ($arch)
 }
 
 ### Sign MSI
-if (-not $nosign) {
+if ($sign) {
     $Env:SignScript = "sign-msi.bat"
     & .\sign-binaries.bat
 } else {
