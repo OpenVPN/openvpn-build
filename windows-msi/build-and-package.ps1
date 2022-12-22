@@ -37,12 +37,20 @@ if ($basedir_exists -ne $True) {
     exit 1
 }
 
+# sane defaults
+$Env:VCPKG_ROOT = "${basedir}\src\vcpkg"
+$Env:VCPKG_OVERLAY_PORTS = "${basedir}\windows-msi\vcpkg-ports"
+$Env:CMAKE = "C:\\Program Files\\CMake\\bin\\cmake.exe"
+$Env:ManifestTimestampRFC3161Url = "http://timestamp.digicert.com"
+# required by the signing scripts
+$Env:OSSL = ${ossl}
+
 if ((Test-Path "${PSScriptRoot}/build-and-package-env.ps1") -ne $True) {
-    Write-Host "ERROR: configuration file (build-and-package-env.ps1) is missing"
-    exit 1
+    Write-Host "WARNING: configuration file (build-and-package-env.ps1) is missing"
+} else {
+    . "${PSScriptRoot}/build-and-package-env.ps1"
 }
 
-. "${PSScriptRoot}/build-and-package-env.ps1"
 if ($sign -And -not($Env:ManifestCertificateThumbprint)) {
     Write-Host "ERROR: signing requested but Env:ManifestCertificateThumbprint not set"
     exit 1
@@ -51,7 +59,7 @@ if ($sign -And -not($Env:ManifestCertificateThumbprint)) {
 # At the end of the build return to the directory we started from
 $cwd = Get-Location
 
-Set-Location "${basedir}\src\vcpkg"
+Set-Location "$Env:VCPKG_ROOT"
 & .\bootstrap-vcpkg.bat
 & .\vcpkg.exe integrate install
 

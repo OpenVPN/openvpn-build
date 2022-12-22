@@ -18,9 +18,6 @@ jobs:
 
     env:
       CMAKE: cmake.exe
-      VCPKG_ROOT: ${{ github.workspace }}\openvpn-build\src\vcpkg
-      OSSL: ossl3
-      VCPKG_OVERLAY_PORTS: ${{ github.workspace }}\openvpn-build\windows-msi\vcpkg-ports
       WIX: ${{ github.workspace }}\wix\
 
     name: 'openvpn-build'
