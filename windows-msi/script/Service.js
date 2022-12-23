@@ -43,19 +43,20 @@ function ConfigureOpenVPNService() {
         return;
 
     var startMode = "";
-    var started = false;
+    var needsStart = false;
     var val = Session.Property("CustomActionData");
     if (val == "") {
         // this likely means new install
-        startMode = "demand";
+        startMode = "auto";
+        needsStart = true;
     } else {
         arr = val.split(",");
         startMode = arr[0];
-        started = arr[1] == "true";
+        needsStart = arr[1] == "true";
     }
     var wsh = new ActiveXObject("WScript.Shell");
     wsh.Run("sc config " + _serviceName + " start= " + startMode, 0, true);
-    if (started) {
+    if (needsStart) {
         wsh.Run("sc start " + _serviceName, 0, true);
     }
 }
