@@ -1,0 +1,148 @@
+openvpn (2.5.1-debian0) stable; urgency=medium
+
+  * Preparing release 2.5.1 (Gert Doering, f186691b)
+  * Quote the domain name argument passed to the wmic command (Selva Nair, 2c8ef6fd)
+  * Explain structver usage in sample defer plugin. (Greg Cox, 1f61f3f7)
+  * More explicit versioning compatibility in sample-plugins/defer/simple.c (Greg Cox, ae5ca3eb)
+  * Update openvpn_plugin_func_v2 to _v3 in sample-plugins/defer/simple.c (Greg Cox, 11aa1288)
+  * Documentation fixes around openvpn_plugin_func_v3 in openvpn-plugin.h.in (Greg Cox, c6013abe)
+  * Fix naming error in sample-plugins/defer/simple.c (Greg Cox, fe8739da)
+  * clean up / rewrite sample-plugins/defer/simple.c (Gert Doering, 436a4cdd)
+  * Make OPENVPN_PLUGIN_ENABLE_PF failures FATAL (Gert Doering, cbbdcd4f)
+  * Document common uses of 'echo' directive, re-enable logging for 'echo'. (Gert Doering, 4008ce02)
+  * Fix tls-auth mismatch OCC message when tls-cryptv2 is used. (Arne Schwabe, e1bcf8a4)
+  * Man page sections corrections (Richard Bonhomme, 9e2f1bf7)
+  * Skip DHCP renew with Wintun adapter (Domagoj Pensa, b8f4ca32)
+  * Remove 1 second delay before running netsh (Domagoj Pensa, e7641f9b)
+  * Clarify --block-ipv6 intent and direction. (Gert Doering, 490203e6)
+  * Zero initialise msghdr prior to calling sendmesg (Arne Schwabe, a65d39bf)
+  * Fix too early argv freeing when registering DNS (Domagoj Pensa, 2f2df474)
+  * Fix line number reporting on config file errors after <inline> segments (Gert Doering, 97af8b31)
+  * Fix port-share option with TLS-Crypt v2 (Arne Schwabe, c27f97dc)
+  * tls-crypt-v2: also preload tls-crypt-v2 keys (if --persist-key) (Steffan Karger, bac760f8)
+  * tls-crypt-v2: fix server memory leak (Steffan Karger, 06e76955)
+  * Remove auth_user_pass.wait_for_push variable (Arne Schwabe, 570f0564)
+  * Fix auth-token not being updated if auth-nocache is set (Arne Schwabe, 95e18372)
+  * build: Fix missing install of man page in certain environments (David Sommerseth, bbac1542)
+  * Change travis build scripts to use https when fetching prerequisites. (Gert Doering, d3dd620b)
+
+ -- Samuli Seppänen <samuli@openvpn.net> Wed, 24 Feb 2021 10:18:51 +0200
+
+openvpn (2.5.0-debian0) stable; urgency=medium
+
+  * Preparing release 2.5.0 (Gert Doering, a73072d8)
+
+ -- Samuli Seppänen <samuli@openvpn.net>  Wed, 28 Oct 2020 7:35:00 +0000
+
+openvpn (2.5_rc3-debian0) stable; urgency=medium
+
+  * Preparing release 2.5_rc3 (Gert Doering, 781825d9)
+  * Avoid passing NULL to argv_printf_cat() in temp_file error case. (Gert Doering, 20965a18)
+  * Add function for common env setting of verify user/pass calls (Arne Schwabe, 09aad8b4)
+  * networking_iproute2: fix memory leak in net_iface_mtu_set() (Steffan Karger, a9c82254)
+  * Allow 'none' cipher being specified in --data-ciphers (Arne Schwabe, f308251a)
+  * Fix redirecting of IPv4 default gateway if connecting over IPv6. (Gert Doering, 7b4f5309)
+  * Added 'route_ipv6_metric_NN' environment variable for IPv6 route metric. (Jan Seeger, 956c5af1)
+  * Speedup TCP remote hosts connections (Vladislav Grishenko, d08b66f3)
+  * Selectively reformat too long lines (Vladislav Grishenko, c055e286)
+  * compat/lz4: Update to v1.9.2 (David Sommerseth, 156db76f)
+  * Improve error msg when all TAP adapters are in use 'or disabled' (Richard Bonhomme, 25e31452)
+
+ -- Samuli Seppänen <samuli@openvpn.net>  Wed, 30 Sep 2020 10:00:00 +0000
+
+openvpn (2.5_rc2-debian0) stable; urgency=medium
+
+  * Preparing release 2.5_rc2 (Gert Doering, 9f96c34a)
+  * Fix update_time() and openvpn_gettimeofday() coexistence (Vladislav Grishenko, 51ee3574)
+  * Alias ADAPTER_DOMAIN_SUFFIX to DOMAIN (Lev Stipakov, 2062876f)
+  * Improve documentation of --username-as-common-name (Selva Nair, f9f5b4a3)
+  * Set DNS Domain using iservice (Selva Nair, 7d7bb0c9)
+  * openvpnmsica: Simplify find_adapters() to void return (Simon Rozman via Openvpn-devel, 29e61986)
+  * netsh: Delete WINS servers on TUN close (Simon Rozman via Openvpn-devel, b77fc712)
+  * netsh: Clear existing IPv6 DNS servers before configuring new ones (Simon Rozman via Openvpn-devel, 77c62003)
+  * netsh: Specify interfaces by index rather than name (Simon Rozman via Openvpn-devel, 42234304)
+
+ -- Samuli Seppänen <samuli@openvpn.net>  Wed, 30 Sep 2020 10:00:00 +0000
+
+openvpn (2.5_rc1-debian0) stable; urgency=medium
+
+  * Fix Debian bug #959464 on Debian 10 ("Buster")
+  * Preparing release 2.5_rc1 (Gert Doering, 9fbd9aef)
+  * Fix combination of --dev tap and --topology subnet across multiple platforms. (Gert Doering, a5964e34)
+  * Add demo plugin that excercises "CLIENT_CONNECT" and "CLIENT_CONNECT_V2" paths (Gert Doering, 44e9f393)
+  * If IPv6 pool specification sets pool start to ::0 address, increment. (Gert Doering, 611382c1)
+  * Fix fatal error at switching remotes (#629) (Vladislav Grishenko, 6554025a)
+  * build: Fix make distclean/distcheck (David Sommerseth, 55f4fe3a)
+  * sample-plugins: Partially autotoolize the sample-plugins build (David Sommerseth, 72d89d99)
+  * Fix netbits setting (in TAP mode) for IPv6 on Windows. (Gert Doering, 85995256)
+  * Allow --dhcp-option in config file when windows-driver is wintun (Selva Nair, 9fe13491)
+  * man: Improve --remote entry (David Sommerseth, d1a7d83f)
+  * socks.c: fix alen for DOMAIN type addresses, bump up buffer sizes (Gert Doering, c7f0d7b9)
+  * msvc: better support for 32bit architecture (Lev Stipakov, 2f0be578)
+  * Fix --show-gateway for IPv6 on NetBSD/i386. (Gert Doering, 9a695902)
+  * Handle NULL returns from calloc() in sample plugins. (Gert Doering, 5382bdbf)
+  * man: Add missing --server-ipv6 (David Sommerseth, a4c03b46)
+  * Fix description of --client-disconnect calling convention in manpage. (Gert Doering, 79910a3d)
+  * Replace 'echo -n' with 'printf' in tests/t_lpback.sh (Gert Doering, d17eb65d)
+  * Add a remark on dropping privileges when --mlock is used (Selva Nair, be68b361)
+  * Fix handling of 'route remote_host' for IPv6 transport case. (Gert Doering, 78c50eba)
+
+ -- Samuli Seppänen <samuli@openvpn.net>  Mon, 21 Sep 2020 9:00:00 +0000
+
+openvpn (2.5_beta4-debian0) stable; urgency=medium
+
+  * Preparing release 2.5_beta4 (Gert Doering, 28ade886)
+  * Fix best gateway selection over netlink (Vladislav Grishenko, 7a9fefb6)
+  * Fix TUNSETGROUP compatibility with very old Linux systems. (Gert Doering, 43e70c78)
+  * Fix error detection / abort in --inetd corner case. (Gert Doering, 05050e7d)
+  * Document that --push-remove is generally more suitable than --push-reset (Gert Doering, cdeef20b)
+  * openvpnmsica: make adapter renaming non-fatal (Lev Stipakov, 567e277f)
+  * In tap.c use DiInstallDevice to install the driver on a new adapter (Selva Nair, 87b43ded)
+
+ -- Samuli Seppänen <samuli@openvpn.net>  Fri, 11 Sep 2020 5:00:00 +0000
+
+openvpn (2.5_beta3-debian0) stable; urgency=medium
+
+  * Preparing release 2.5_beta3 (Gert Doering, 7ee347f7)
+  * Fix client NCP OCC fallback when server and client cipher are identical (Arne Schwabe, ea3c0ecc)
+
+ -- Samuli Seppänen <samuli@openvpn.net>  Tue, 1 Sep 2020 7:45:00 +0000
+
+openvpn (2.5_beta2-debian0) stable; urgency=medium
+
+  * Preparing release 2.5_beta2 (Gert Doering, 5ec42591)
+  * Workaround FreeBSD 12+ race condition on tun/tap open with IPv6. (Gert Doering, 6dac3342)
+  * Fixes a bug in management_callback_send_cc_message, should be strlen instead of sizeof (Eric Thorpe, 6e1fccaa)
+  * Fix client's poor man NCP fallback (Arne Schwabe, a6188340)
+  * tun.c: enable using wintun driver under SYSTEM (Lev Stipakov, f4761dd1)
+  * Improve the documentation for --dhcp-option (Selva Nair, 64f0b1c0)
+  * Changes.rst: fix mistyped option names (Magnus Kroken, edc02b3b)
+  * doc: fix typos in cipher-negotiation.rst (Magnus Kroken, 47648682)
+  * Fix stack overflow in OpenSolaris NEXTADDR() (Gert Doering, 7b9dd9b0)
+
+ -- Samuli Seppänen <samuli@openvpn.net>  Tue, 12 Aug 2020 14:55:00 +0000
+
+openvpn (2.5_beta1-debian0) stable; urgency=medium
+
+  * Preparing release v2.4.9 (ChangeLog, version.m4, Changes.rst) (Gert Doering, 9b0dafca)
+  * Fix illegal client float (CVE-2020-11810) (Lev Stipakov, f7b318f8)
+  * Fix broken async push with NCP is used (Lev Stipakov, 9bb285e3)
+  * Allow unicode search string in --cryptoapicert option (Selva Nair, 5f8a9df1)
+  * Skip expired certificates in Windows certificate store (Selva Nair, 4658b3b6)
+  * Fix possible access of uninitialized pipe handles (Selva Nair, df5ea7f1)
+  * Fix possibly uninitialized return value in GetOpenvpnSettings() (Selva Nair, 1d9e0be2)
+  * Fix OpenSSL 1.1.1 not using auto elliptic curve selection (Arne Schwabe, 5ee76a8f)
+  * OpenSSL: Fix --crl-verify not loading multiple CRLs in one file (Maxim Plotnikov, ed925c0a)
+  * When auth-user-pass file has no password query the management interface (if available). (Selva Nair, 2fe84732)
+  * Move querying username/password from management interface to a function (Selva Nair, 908eae5c)
+  * Fix OpenSSL error stack handling of tls_ctx_add_extra_certs (Arne Schwabe, 15bc476f)
+  * Fetch OpenSSL versions via source/old links (Arne Schwabe, 22df79bb)
+  * mbedTLS: Make sure TLS session survives move (Tom van Leeuwen, 0efbd8e9)
+  * docs: Add reference to X509_LOOKUP_hash_dir(3) (WGH, 33395693)
+  * Fix OpenSSL private key passphrase notices (Santtu Lakkala, 7d19b2bb)
+  * Fix building with --enable-async-push in FreeBSD (Lev Stipakov, 8484f37a)
+  * Swap the order of checks for validating interactive service user (Selva Nair, 69bbfbdf)
+  * socks: use the right function when printing struct openvpn_sockaddr (Antonio Quartulli, 0ba4f916)
+  * Fix broken fragmentation logic when using NCP (Lev Stipakov, 3bd91cd0)
+
+ -- Samuli Seppänen <samuli@openvpn.net>  Tue, 12 Aug 2020 14:55:00 +0000

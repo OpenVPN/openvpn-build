@@ -1,0 +1,20 @@
+openvpn (2.5.8-debian0) stable; urgency=medium
+
+  * Preparing release 2.5.8 (Gert Doering, 0357ceb8)
+  * Do not copy auth_token username to itself (Selva Nair, cd50cf02)
+  * Purge auth-token as well while purging passwords (Selva Nair, 3d792ae9)
+  * Ensure --auth-nocache is handled during renegotiation (Selva Nair, 5ad4b4b3)
+  * Fix OpenVPN querying user/password if auth-token with user expires (Arne Schwabe, af546d79)
+  * msvc: add branch name and commit hash to version output (Lev Stipakov, 8cbfd57e)
+  * Change command help to match man page and implementation (Arne Schwabe, 997df07a)
+  * t_client.sh: do not require fping6 (Frank Lichtenheld, 64cac790)
+  * t_client: Allow to force FAIL on prerequisite fails (Frank Lichtenheld, 26b04fce)
+  * Allow a few levels of recursion in virtual_output_callback() (Selva Nair, 468f53ae)
+  * Fix auth-token usage with management-def-auth (Selva Nair, 5b178f59)
+  * Do not skip ERROR:/SUCCESS: response from management interface (Selva Nair, e3c397b0)
+  * tls-crypt-v2: bail out if the client key is too small (Antonio Quartulli, ce24bec7)
+  * Update the replay-window backtrack log message (Martin Janů, 70897fd1)
+  * Allow running a default configuration with TLS libraries without BF-CBC (Arne Schwabe, cf5864f5)
+  * Remove useless empty line from CR_RESPONSE message (Arne Schwabe, 400da027)
+
+ -- Frank Lichtenheld <frank.lichtenheld@openvpn.net>  Fri, 28 Oct 2022 10:40:52 +0200

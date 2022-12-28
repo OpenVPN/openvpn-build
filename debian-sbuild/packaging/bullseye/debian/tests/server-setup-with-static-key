@@ -1,0 +1,63 @@
+#!/bin/bash
+
+# ----------------------------------------------
+# Test an OpenVPN server setup with a static key
+# ----------------------------------------------
+
+set -e
+
+CONFIG_DIR=/etc/openvpn
+STATIC_KEY=static.key
+DEVICE=tun0
+IP_SERVER=10.9.8.1
+IP_CLIENT=10.9.8.2
+LOG_FILE=$AUTOPKGTEST_TMP/openvpn.log
+
+# Print information message to stdout
+info() {
+  echo "[I] $1"
+}
+
+info "Generate the static key inside the config directory"
+cd $CONFIG_DIR
+openvpn --genkey --secret $STATIC_KEY
+
+info "Create the config file"
+cat << EOF > $CONFIG_DIR/$DEVICE.conf
+dev $DEVICE
+ifconfig $IP_SERVER $IP_CLIENT
+secret $CONFIG_DIR/$STATIC_KEY
+EOF
+
+info "Start an OpenVPN process in background and redirect its output to a file"
+openvpn --config $CONFIG_DIR/$DEVICE.conf --verb 6 > $LOG_FILE &
+
+info "Give some time to start the process, check if the TUN device is opened"
+count=1
+until [ -f $LOG_FILE ] && cat $LOG_FILE | grep "TUN/TAP device $DEVICE opened"; do
+  [ $count -gt 9 ] && exit 5
+  count=$(expr $count + 1)
+  sleep 1
+done
+
+info "Check if the $DEVICE was created and if the state is UNKNOWN at this point"
+ip address show $DEVICE | grep 'state UNKNOWN'
+
+info "Check if OpenVPN is listening on port 1194 (default port)"
+ss -lnptu | grep -E '([0-9]{1,3}\.){3}[0-9]{1,3}:1194.*users:\(\(\"openvpn\"'
+
+info "Check if the $STATIC_KEY is used by OpenVPN"
+cat $LOG_FILE | grep "shared_secret_file = '$CONFIG_DIR/$STATIC_KEY'"
+
+info "Check if the $DEVICE is linked"
+cat $LOG_FILE | grep "net_iface_up: set $DEVICE up"
+
+info "Check if the specified IP addresses were configured"
+cat $LOG_FILE | grep "net_addr_ptp_v4_add: $IP_SERVER peer $IP_CLIENT dev tun0"
+
+# Clean up: kill tha OpenVPN process, remove the $DEVICE created and $STATIC_KEY
+cleanup() {
+  pkill openvpn
+  rm $CONFIG_DIR/$STATIC_KEY
+}
+trap cleanup INT TERM EXIT

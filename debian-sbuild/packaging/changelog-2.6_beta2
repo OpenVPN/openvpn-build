@@ -1,0 +1,27 @@
+openvpn (2.6_beta2-debian0) stable; urgency=medium
+
+  * Preparing release 2.6_beta2 (Gert Doering, 566c0791)
+  * Introduce dco_get_peer_stats API and Windows implementation (Lev Stipakov, 73cab722)
+  * management: add timer to output BYTECOUNT (Lev Stipakov, 59a96c3e)
+  * vcpkg-ports/pkcs11-helper: support loader flags (Marc Becker, 0b18e23b)
+  * special handling for PKCS11 providers on win32 (Marc Becker, 38993a11)
+  * use new pkcs11-helper interface to add providers (Marc Becker, 0236518c)
+  * unify code path for adding PKCS#11 providers (Marc Becker, bcceded9)
+  * Fix message for too long tls-crypt-v2 metadata (Max Fillinger, f8e576eb)
+  * dco: cleanup FreeBSD dco_do_read() (Kristof Provost, 67e78461)
+  * Rename dco_get_peer_stats to dco_get_peer_stats_multi (Lev Stipakov, f45a8d80)
+  * Read the peer deletion reason from the kernel (Kristof Provost, 3186566e)
+  * dco: Update counters when a client disconnects (Kristof Provost, f05c7a8a)
+  * Set DCO_NOT_INSTALLED also for keys not in the get_key_scan range (Arne Schwabe, 5c26918f)
+  * Trigger a USR1 if dco_update_keys fails (Arne Schwabe, 238ac178)
+  * Improve debug logging of DCO swap key message and Linux dco_new_peer (Arne Schwabe, 8910b5b6)
+  * Read DCO traffic stats from the kernel (Kristof Provost, 7695a55b)
+  * Ignore connection attempts while server is shutting down (Arne Schwabe, f8bfe1a5)
+  * Correct tls-crypt-v2 metadata length in man page (Max Fillinger, acc7ecc2)
+  * Disable DCO when TLS mode is not used (Arne Schwabe, 9b277f42)
+  * Fix unit test of test_pkt on little endian Linux (Arne Schwabe, 9c923ef3)
+  * ChangeLog: Fix encoding (Frank Lichtenheld, d4f105c7)
+  * disable DCO if --secret is specified (Antonio Quartulli, 952a33a8)
+  * Fix connection cookie not including address and fix endianness in test (Arne Schwabe, 3e63dc9b)
+
+ -- Frank Lichtenheld <frank.lichtenheld@openvpn.net>  Thu, 15 Dec 2022 14:22:32 +0100

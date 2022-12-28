@@ -1,0 +1,16 @@
+openvpn (2.4.6-debian0) stable; urgency=medium
+
+  * preparing release v2.4.6 (ChangeLog, version.m4, Changes.rst) (Gert Doering, b3a7f452)
+  * Fix potential double-free() in Interactive Service (CVE-2018-9336) (Gert Doering, da242af8)
+  * manpage: improve description of --status and --status-version (Gert van Dijk, 5213573f)
+  * Avoid overflow in wakeup time computation (Selva Nair, 6d16c87d)
+  * Check for more data in control channel (Steffan Karger, 8f15fa94)
+  * Management: warn about password only when the option is in use (Selva Nair, 0533bd71)
+  * Make return code external tls key match docs (Joost Rijneveld, 1f342aad)
+  * Add missing #ifdef SSL_OP_NO_TLSv1_1/2 (Simon Matter, 88abb911)
+  * Delete the IPv6 route to the "connected" network on tun close (Selva Nair, 716fdb24)
+  * Correct version in ChangeLog - should be 2.4.5, was mistyped as 2.4.4 (Gert Doering, 161afbeb)
+  * management: Warn if TCP port is used without password (David Sommerseth, ab218bef)
+
+ -- Samuli Seppänen <samuli@openvpn.net>  Tue, 24 Apr 2018 08:00:00 +0000
+

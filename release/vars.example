@@ -1,0 +1,41 @@
+# Webservers and/or buckets we use
+PRIMARY_WEBSERVER="swupdate.openvpn.org"
+PRIMARY_WEBSERVER_BASEURL="https://$PRIMARY_WEBSERVER/community/releases"
+SECONDARY_WEBSERVER="build.openvpn.in"
+SECONDARY_WEBSERVER_PATH="/var/www/downloads/releases"
+SECONDARY_WEBSERVER_BASEURL="https://build.openvpn.net/downloads/releases"
+
+# Committing/tagging/signing
+GPG="gpg"
+GPG_KEY_ID="F554A3687412CFFEBDEFE0A312F5F7B42F2B01E7"
+# Verify signatures using a clean keyring: this ensures that verification
+# process is a close as possible to the way we have documented it.
+# This also helps catch various problems with expired subkeys and public
+# keys.
+GPG_OPTS="--no-default-keyring --keyring ~/.gnupg-security@openvpn.net/pubring.kbx"
+GIT_AUTHOR="Frank Lichtenheld <frank.lichtenheld@openvpn.net>"
+
+# Version numbers
+OPENVPN_PREVIOUS_VERSION="${OPENVPN_PREVIOUS_VERSION:-2.6_beta1}"
+OPENVPN_CURRENT_VERSION="${OPENVPN_CURRENT_VERSION:-2.6_beta2}"
+OPENVPN_CURRENT_TAG="v$OPENVPN_CURRENT_VERSION"
+OPENVPN_PREVIOUS_TAG="v$OPENVPN_PREVIOUS_VERSION"
+
+OPENVPN_GUI_CURRENT_MAJ_VERSION="11"
+OPENVPN_GUI_CURRENT_MIN_VERSION="33"
+OPENVPN_GUI_CURRENT_FULL_VERSION="$OPENVPN_GUI_CURRENT_MAJ_VERSION.$OPENVPN_GUI_CURRENT_MIN_VERSION.0.0"
+OPENVPN_GUI_BRANCH="master"
+
+INSTALLER_VERSION="I001"
+# Debian packaging scripts do not allow underscores (e.g "2.4_alpha2")
+DEBIAN_UPSTREAM_VERSION=`echo $OPENVPN_CURRENT_VERSION|sed s/"_"/"-"/g`
+DEBIAN_PACKAGE_VERSION="0"
+
+BUILD_VERSION="${OPENVPN_CURRENT_VERSION}-${INSTALLER_VERSION}"
+
+# Directory layout
+OUTPUT="$TOP_DIR/output/$BUILD_VERSION"
+OPENVPN="$TOP_DIR/src/openvpn"
+OPENVPN_GUI="$TOP_DIR/src/openvpn-gui"
+DEBIAN="$TOP_DIR/debian-sbuild"
+MSI="$TOP_DIR/windows-msi"

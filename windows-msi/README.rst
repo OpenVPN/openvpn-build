@@ -28,7 +28,7 @@ If using Vagrant and Virtualbox is not an option you should be able to run the
 Vagrant provisioning scripts with suitable parameters on a fresh Windows 10-based system,
 though only Windows Server 2019 is tested.
 
-In either case you will end up with a directory layout such as this: 
+In either case you will end up with a directory layout such as this:
 
 - openvpn-build
 
@@ -38,22 +38,23 @@ In either case you will end up with a directory layout such as this:
 
 - openvpn
 
-Once the directories are laid out properly you need to add your code-signing
+
+Signing
+-------
+
+If you want to do code signing, you need to add your code-signing
 PFX certificate into the certificate store::
 
     Import-PfxCertificate -FilePath .\mycert.pfx -CertstoreLocation Cert:\Currentuser\My -Password (ConvertTo-SecureString -String "mypass" -Force -AsPlainText)
 
-This command will print out the certificate thumbprint which you'll need later.
+This command will print out the certificate thumbprint which you'll need to tell to
+the build scripts. To do this, create a config file, ``build-and-package-env.ps1``,
+next to ``build-and-package.ps1``::
 
-Now create a config file, ``build-and-package-env.ps1``, next to ``build-and-package.ps1``::
-    
-    # Used by build scripts build-and-package.sh calls
-    $Env:VCPKG_ROOT = "${basedir}\vcpkg" 
-    $Env:VCPKG_OVERLAY_PORTS="${basedir}\openvpn-build\windows-msi\vcpkg-ports"
-    $Env:CMAKE = "C:\\Program Files\\CMake\\bin\\cmake.exe"
-    $Env:ManifestCertificateThumbprint = "cert thumbprint" 
-    $Env:ManifestTimestampRFC3161Url = "http://timestamp.digicert.com" 
-    $Env:OSSL=${ossl}
+    $Env:ManifestCertificateThumbprint = "cert thumbprint"
+
+This is not required unless you call ``build-and-package.ps1`` with the ``-sign``
+option.
 
 Building and packaging
 ----------------------
@@ -66,12 +67,12 @@ script for this purpose.
 To build and package::
 
     cd openvpn-build\windows-msi
-    .\build-and-package.ps1 -basedir ..\..
+    .\build-and-package.ps1
 
 You can also define which OpenSSL vcpkg port to use:
 
-    .\build-and-package.ps1 -basedir ..\.. -openssl openssl
-    .\build-and-package.ps1 -basedir ..\.. -openssl openssl3
+    .\build-and-package.ps1 -ossl ossl1.1.1
+    .\build-and-package.ps1 -ossl ossl3
 
 If everything was set up correctly you should see three MSI packages in
 ``image`` subfolder, each signed and containing signed binaries.
@@ -79,11 +80,14 @@ If everything was set up correctly you should see three MSI packages in
 Cleaning up
 -----------
 
-You can use the cleanup.ps1 script to clean up temporary build files and build artefacts.
+You can use the ``cleanup.ps1`` script to clean up temporary build files and build artefacts.
 This makes it easier to create clean builds.
 
 build.wsf
 ---------
+
+Note: The following explains details of the packaging process wrapped by the
+``build-and-package.ps1`` script described above.
 
 The ``build.wsf`` is a simple Makefile type building tool used to generate MSI
 packages and EXE installers. It expects OpenVPN and its dependencies to be
@@ -94,15 +98,15 @@ exact usage::
     C:\openvpn-build\windows-msi>cscript build.wsf /?
     Microsoft (R) Windows Script Host Version 5.812
     Copyright (C) Microsoft Corporation. All rights reserved.
-    
+
     Packages OpenVPN for Windows.
     Usage: build.wsf [<command>] [/a]
-    
+
     Options:
-    
+
     <command> : Command to execute (default: "all")
     a         : Builds all targets even if output is newer than input
-    
+
     Commands:
     all     Builds MSI packages and EXE installer
     msi     Builds MSI packages only

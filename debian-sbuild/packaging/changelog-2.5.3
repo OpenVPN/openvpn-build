@@ -1,0 +1,21 @@
+openvpn (2.5.3-debian0) stable; urgency=medium
+
+  * Preparing release 2.5.3 (Gert Doering, ecaf88f8)
+  * contrib/vcpkg-ports: add openssl port with --no-autoload-config option set (CVE-2121-3606) (Lev Stipakov, 92535b6a)
+  * crypto_openssl.c: disable explicit initialization on Windows (CVE-2121-3606) (Lev Stipakov, 447cfb4f)
+  * Apply the connect-retry backoff to only one side of a connection (Selva Nair, d8dee82f)
+  * Fix build with mbedtls w/o SSL renegotiation support (Max Fillinger, ad4f8e37)
+  * Implement auth-token-user (Arne Schwabe, d38d6111)
+  * GitHub actions: add MSVC build (Lev Stipakov, 1ca147bd)
+  * Add github actions (Arne Schwabe, d48ee62c)
+  * vcpkg-ports: restore trailing whitespaces in .patch files (Lev Stipakov, 1601f79b)
+  * Improve documentation of AUTH_PENDING related directives (Selva Nair, d6ec7547)
+  * contrib/vcpkg-ports: add pkcs11-helper port (Lev Stipakov, 73fbeed4)
+  * msvc: standalone building (Lev Stipakov, 206d9665)
+  * Update copyrights (David Sommerseth, eaf447d7)
+  * msvc: add ARM64 configuration (Lev Stipakov, 90770576)
+  * Fix SIGSEGV (NULL deref) receiving push "echo" (Matthias Andree, d6e21bed)
+  * openvpnmsica: properly schedule reboot in the end of installation (Lev Stipakov, 3ea57e0c)
+  * Add missing free_key_ctx for auth_token (Arne Schwabe, 6471fd2a)
+
+ -- Samuli Seppänen <samuli@openvpn.net>  Thu, 17 Jun 2021 12:16:04 +0300

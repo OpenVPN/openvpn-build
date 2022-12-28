@@ -1,0 +1,5 @@
+The sbuild_wrapper project is released under BSD license. For details refer to 
+the LICENSE.BSD file.
+
+The Debian packaging files under "packaging" subdirectory are licensed under the 
+GPLv2 license. For details refer to the LICENSE.GPL file.

@@ -1,0 +1,6 @@
+Tests: server-setup-with-ca
+Depends: openvpn, easy-rsa
+Restrictions: needs-root, isolation-machine
+
+Tests: server-setup-with-static-key
+Restrictions: needs-root, isolation-machine
