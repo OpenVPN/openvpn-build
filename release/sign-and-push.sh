@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 # sign-and-push.sh
 #
@@ -7,23 +7,21 @@
 # push the files to the secondary webserver (primary requires special 
 # treatment).
 
-set -ux
+set -eux
+# some tests depend on it not enabled
+#set -o pipefail
+
+SCRIPT_DIR="$(dirname $(readlink -e "${BASH_SOURCE[0]}"))"
+TOP_DIR="$SCRIPT_DIR/.."
+pushd "$TOP_DIR"
+
+. "$SCRIPT_DIR/vars"
 
 : ${GPG_OPTS:=}
 
-usage() {
-    echo "Usage: sign-and-push.sh <release-directory>"
-    exit 1
-}
+SIGN_DIR="${OUTPUT}/upload"
 
-if [ -z "${1:-}" ]; then
-    usage
-fi
-
-SIGN_DIR="${1}/sources"
-
-test -d "${SIGN_DIR}"
-if [ $? -ne 0 ]; then
+if [ ! -d "${SIGN_DIR}" ]; then
     echo "ERROR: ${SIGN_DIR} is not a directory!"
     exit 1
 fi
@@ -31,15 +29,12 @@ fi
 # Sign only files that match this pattern
 MATCH="\.(exe|tar.gz|tar.xz|zip|msi|msm)$"
 
-. ./vars
-
 if [ "${GPG_KEY_ID:-}" = "" ]; then
 
     echo "ERROR: please define ID of the GPG key you wish to use!"
     exit 1
 else
-    $GPG $GPG_OPTS --list-keys $GPG_KEY_ID > /dev/null
-    if [ $? -ne 0 ]; then
+    if ! $GPG $GPG_OPTS --list-keys $GPG_KEY_ID > /dev/null; then
         echo "ERROR: GPG key $1 not found!"
         exit 1
     fi
@@ -70,8 +65,7 @@ ls|grep -E "${MATCH}"|while read FILE; do
         $GPG $GPG_OPTS -a --default-key $GPG_KEY_ID --output $SIGFILE --detach-sig $FILE
     fi
 
-    $GPG $GPG_OPTS -v --verify ${SIGFILE} 2>&1 |grep -iE '(bad|expired)'
-    if [ $? -ne 0 ]; then
+    if ! $GPG $GPG_OPTS -v --verify ${SIGFILE} 2>&1 |grep -iE '(bad|expired)'; then
         echo "Good signature: ${SIGFILE}"
         echo "Copying files to ${SECONDARY_WEBSERVER}"
         chmod 644 $FILE $SIGFILE # ensure sane permissions
