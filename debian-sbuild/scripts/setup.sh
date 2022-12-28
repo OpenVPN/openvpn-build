@@ -11,6 +11,6 @@ pushd "$TOP_DIR/debian-sbuild/"
 
 . ./config/base.conf
 
-test -d "$DEBIAN_OUTPUT_DIR"     || mkdir "$DEBIAN_OUTPUT_DIR"
+test -d "$DEBIAN_OUTPUT_DIR"     || mkdir -p "$DEBIAN_OUTPUT_DIR"
 test -d "$BASEDIR/chroots"       || mkdir "$BASEDIR/chroots"
 test -d "$BASEDIR/build"         || mkdir "$BASEDIR/build"
