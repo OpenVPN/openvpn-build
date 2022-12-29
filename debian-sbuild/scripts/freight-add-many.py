@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 #
 # -*- coding: utf-8 -*-
 #
@@ -11,26 +11,26 @@ from subprocess import call
 
 def Usage():
     """Show usage information"""
-    print
-    print "Usage: python freight-add-many.py [options]"
-    print
-    print "Options:"
-    print "  -p pattern     | --pattern=pattern     Filename pattern to match"
-    print "  -c config      | --config=config       Freight configuration file to use"
-    print "  -d directory   | --directory=directory Directory with the packages, defaults to \".\""
-    print "  -s             | --simulate            Only show the command that would run"
-    print "  -h             | --help                Show this help"
-    print
-    print "Examples:"
-    print
-    print "  ./freight-add-many.py -p 2.3.12 -c /etc/freight-openvpn_stable.conf -d ~/output"
-    print "  ./freight-add-many.py -p 2.4-alpha2 -c /etc/freight-openvpn_testing.conf -d ~/output"
-    print
-    print "If freight complains about GPG an ioctls you've likely hit freight bug #72. In that case"
-    print "run this command before running freight-add-many.py:"
-    print
-    print "  export GPG_TTY=$(tty)"
-    print
+    print()
+    print("Usage: python freight-add-many.py [options]")
+    print()
+    print("Options:")
+    print("  -p pattern     | --pattern=pattern     Filename pattern to match")
+    print("  -c config      | --config=config       Freight configuration file to use")
+    print("  -d directory   | --directory=directory Directory with the packages, defaults to \".\"")
+    print("  -s             | --simulate            Only show the command that would run")
+    print("  -h             | --help                Show this help")
+    print()
+    print("Examples:")
+    print()
+    print("  ./freight-add-many.py -p 2.3.12 -c /etc/freight-openvpn_stable.conf -d ~/output")
+    print("  ./freight-add-many.py -p 2.4-alpha2 -c /etc/freight-openvpn_testing.conf -d ~/output")
+    print()
+    print("If freight complains about GPG an ioctls you've likely hit freight bug #72. In that case")
+    print("run this command before running freight-add-many.py:")
+    print()
+    print("  export GPG_TTY=$(tty)")
+    print()
 
     sys.exit(1)
 
@@ -69,16 +69,16 @@ def main():
 
     try:
         f = open(config, 'r')
-        print "NOTICE: freight config: %s" % (config)
+        print("NOTICE: freight config: %s" % (config))
         f.close()
     except:
-        print "ERROR: failed to openvpn config %s" % (config)
+        print("ERROR: failed to openvpn config %s" % (config))
         sys.exit(1)
 
     if os.path.isdir(directory):
-        print "NOTICE: packages in %s" % (directory)
+        print("NOTICE: packages in %s" % (directory))
     else:
-        print "ERROR: %s is not a directory!" % (directory)
+        print("ERROR: %s is not a directory!" % (directory))
         sys.exit(1)
 
     # Main loop: add packages to the repository
@@ -92,7 +92,7 @@ def main():
             freight_add_call = ['freight-add','-c', config, source, target]
 
             if simulate:
-                print "NOTICE: would run %s" % (' '.join(freight_add_call))
+                print("NOTICE: would run %s" % (' '.join(freight_add_call)))
             else:
                 call(freight_add_call)
 
@@ -101,9 +101,9 @@ def main():
     freight_cache_call_str=' '.join(freight_cache_call)
 
     if simulate:
-        print "NOTICE: would run %s" % (freight_cache_call_str)
+        print("NOTICE: would run %s" % (freight_cache_call_str))
     else:
-        print "NOTICE: running %s" % (freight_cache_call_str)
+        print("NOTICE: running %s" % (freight_cache_call_str))
         call(freight_cache_call)
 
     sys.exit(0)
