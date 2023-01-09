@@ -1,0 +1,54 @@
+#!/bin/sh
+# Copyright 2004 Alberto Gonzalez Iniesta <agi@agi.as>
+# Licensed under the GNU General Public License, version 2.  See the file
+# /usr/share/common-licenses/GPL or <http://www.gnu.org/copyleft/gpl.txt>.
+#
+
+set -e
+test $DEBIAN_SCRIPT_DEBUG && set -v -x
+
+#
+# POSIX-compliant shell function
+# to check for the existence of a command
+# Return 0 if found
+#
+pathfind() {
+    OLDIFS="$IFS"
+    IFS=:
+    for p in $PATH; do
+        if [ -x "$p/$*" ]; then
+            IFS="$OLDIFS"
+            return 0
+        fi
+    done
+    IFS="$OLDIFS"
+    return 1
+}
+
+
+stop_vpn () {
+    if [ -x "/etc/init.d/openvpn" ]; then
+	pathfind invoke-rc.d
+	if [ $? = 0 ]; then
+	    invoke-rc.d openvpn stop
+	else
+	    /etc/init.d/openvpn stop
+	fi
+    fi
+}
+
+
+case "$1" in
+  upgrade)
+    # don't stop the vpn, it will be restarted after the upgrade
+    true
+  ;;
+  *)
+    stop_vpn
+  ;;
+esac
+
+#DEBHELPER#
+
+exit 0
+# vim:set ai et sts=2 sw=2 tw=0:

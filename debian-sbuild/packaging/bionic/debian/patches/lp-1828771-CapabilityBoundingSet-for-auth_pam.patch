@@ -1,0 +1,49 @@
+From a564781cfd9912d0f755394d1fa610706d93e707 Mon Sep 17 00:00:00 2001
+From: Christian Ehrhardt <christian.ehrhardt@canonical.com>
+Date: Wed, 29 Aug 2018 16:27:14 +0200
+Subject: [PATCH] systemd: extend CapabilityBoundingSet for auth_pam
+
+Auth_pam will require audit writes or the connection will be rejected
+as the plugin fails to initialize like:
+  openvpn[1111]: sudo: unable to send audit message
+  openvpn[1111]: sudo: pam_open_session: System error
+  openvpn[1111]: sudo: policy plugin failed session initialization
+
+See links from https://community.openvpn.net/openvpn/ticket/918 for
+more.
+
+auth_pam is a common use case and capabilties for it should be allowed
+by the .service file.
+
+Fixes: #918
+
+Signed-off-by: Christian Ehrhardt <christian.ehrhardt@canonical.com>
+Acked-by: David Sommerseth <davids@openvpn.net>
+Message-Id: <20180829142715.417-2-christian.ehrhardt@canonical.com>
+URL: https://www.mail-archive.com/openvpn-devel@lists.sourceforge.net/msg17432.html
+Signed-off-by: Gert Doering <gert@greenie.muc.de>
+
+Origin: upstream, https://github.com/OpenVPN/openvpn/commit/a564781cfd9912d0f755394d1fa610706d93e707
+Bug-Ubuntu: https://bugs.launchpad.net/bugs/1828771
+Last-Update: 2019-05-14
+
+---
+ distro/systemd/openvpn-server@.service.in | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/distro/systemd/openvpn-server@.service.in b/distro/systemd/openvpn-server@.service.in
+index a8366a04..d1cc72cb 100644
+--- a/distro/systemd/openvpn-server@.service.in
++++ b/distro/systemd/openvpn-server@.service.in
+@@ -11,7 +11,7 @@ Type=notify
+ PrivateTmp=true
+ WorkingDirectory=/etc/openvpn/server
+ ExecStart=@sbindir@/openvpn --status %t/openvpn-server/status-%i.log --status-version 2 --suppress-timestamps --config %i.conf
+-CapabilityBoundingSet=CAP_IPC_LOCK CAP_NET_ADMIN CAP_NET_BIND_SERVICE CAP_NET_RAW CAP_SETGID CAP_SETUID CAP_SYS_CHROOT CAP_DAC_OVERRIDE
++CapabilityBoundingSet=CAP_IPC_LOCK CAP_NET_ADMIN CAP_NET_BIND_SERVICE CAP_NET_RAW CAP_SETGID CAP_SETUID CAP_SYS_CHROOT CAP_DAC_OVERRIDE CAP_AUDIT_WRITE
+ LimitNPROC=10
+ DeviceAllow=/dev/null rw
+ DeviceAllow=/dev/net/tun rw
+-- 
+2.21.0
+

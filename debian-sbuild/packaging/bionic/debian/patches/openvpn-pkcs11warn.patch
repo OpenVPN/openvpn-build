@@ -1,0 +1,28 @@
+Description: Warn users about deprecated pkcs11 options
+Author: Florian Kulzer <florian.kulzer+debian@icfo.es>
+Bug-Debian: http://bugs.debian.org/475353
+Index: openvpn/src/openvpn/options.c
+===================================================================
+--- openvpn.orig/src/openvpn/options.c	2017-06-22 13:16:58.862582114 +0200
++++ openvpn/src/openvpn/options.c	2017-06-22 13:16:58.862582114 +0200
+@@ -6818,6 +6818,20 @@
+         options->port_share_port = p[2];
+         options->port_share_journal_dir = p[3];
+     }
++  else if (streq (p[0], "pkcs11-id-type") ||
++           streq (p[0], "pkcs11-sign-mode") ||
++           streq (p[0], "pkcs11-slot") ||
++           streq (p[0], "pkcs11-slot-type") ||
++           streq (p[0], "show-pkcs11-objects") ||
++           streq (p[0], "show-pkcs11-slots"))
++    {
++      if (file)
++	msg (msglevel, "You are using an obsolete parameter in %s:%d: %s (%s).\nPlease see /usr/share/doc/openvpn/NEWS.Debian.gz for details.",
++             file, line, p[0], PACKAGE_VERSION);
++      else
++	msg (msglevel, "You are using an obsolete parameter: --%s (%s).\nPlease see /usr/share/doc/openvpn/NEWS.Debian.gz for details.",
++             p[0], PACKAGE_VERSION);
++    }
+ #endif
+     else if (streq(p[0], "client-to-client") && !p[1])
+     {

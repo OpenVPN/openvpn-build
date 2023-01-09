@@ -1,0 +1,18 @@
+openvpn (2.5.4-debian0) stable; urgency=medium
+
+  * Preparing release 2.5.4 (Gert Doering, 3f7a85b9)
+  * GitHub Actions: remove Ubuntu 16.04 environment (Lev Stipakov, 9f9cb07e)
+  * networking: add networking API net_addr_ll_set() and use it on Linux (Antonio Quartulli, e2fded0f)
+  * Add building man page on Windows (Lev Stipakov, 35c8281e)
+  * configure: search also for rst2{man, html}.py (Antonio Quartulli, 55f83c94)
+  * route.c: pass the right parameter to IN6_IS_ADDR_UNSPECIFIED (Antonio Quartulli, 47778133)
+  * Minor doc correction: tls-crypt-v2 key generation (Selva Nair, 96083a91)
+  * Fix argv leaks in add_route() and add_route_ipv6() (David Korczynski, 5e88f131)
+  * man: Clarify IV_HWADDR (David Sommerseth, 6204dc7c)
+  * Update Fox e-mail address in copyright notices (Max Fillinger, 12146fbe)
+  * doc: Use generic rules for man/html generation (David Sommerseth, 18211f1b)
+  * Move examples into openvpn-examples(5) man page (Arne Schwabe, 11fe49e3)
+  * Fix console prompts with redirected log (Lev Stipakov, 86b247a4)
+  * Add error reporting to get_console_input_win32(). (Gert Doering, b6012d80)
+
+ -- Samuli Seppänen <samuli@openvpn.net>  Tue, 5 Oct 2021 08:57:09 +0300
