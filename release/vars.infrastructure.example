@@ -1,0 +1,18 @@
+# for SSH access
+DEBIAN_SBUILD_BUILDHOST=community-release-build
+WINDOWS_MSI_BUILDHOST=community-release-win-ossl3
+# openvpn-build checkout
+DEBIAN_SBUILD_WORKDIR=/srv/build/openvpn-build
+WINDOWS_MSI_WORKDIR=C:/buildbot/msbuild/openvpn-build
+
+# need "internal" repos since we do only want to publish
+# official tags once the release build was successful
+INTERNAL_GIT_REPO_OPENVPN_RO=git://buildbot-host.openvpn.in/openvpn
+INTERNAL_GIT_REPO_BUILD_RO=https://github.com/OpenVPN/openvpn-build.git
+INTERNAL_GIT_REPO_BUILD_RW=git@github.com:OpenVPN/openvpn.git
+
+HSM_USER=cuuser
+HSM_PASSWORD=${HSM_PASSWORD:-secret}
+HSM_IP=${HSM_IP:-127.0.0.1}
+HSM_PRIV_KEY_HANDLE=1
+HSM_PUB_KEY_HANDLE=2
