@@ -70,6 +70,13 @@ function MigrateConfigs(src, dst) {
 
     try {
         fso.MoveFile(src + "\\*.ovpn", dst);
+        var ts = fso.CreateTextFile(src + "\\Where are my configs files.txt");
+        ts.WriteLine("The OpenVPNService has switched to a separate configuration directory.");
+        ts.WriteLine("");
+        ts.WriteLine("The update process detected that you were using OpenVPNService");
+        ts.WriteLine("to start your connections, and moved all your config");
+        ts.WriteLine("files from config to the config-auto directory.");
+        ts.Close();
     }
     catch (err) {
         // something wrong, but this is not super critical
