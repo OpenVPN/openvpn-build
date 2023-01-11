@@ -828,6 +828,7 @@
                     <Directory Id="CONFIGDIR" Name="config">
                         <Component Id="config.README.txt" Guid="{9C3B43AF-1399-4E6A-92CA-D7BA3B6BCC3C}">
                             <File Id="config.README.txt" Name="README.txt" Source="!(bindpath.build)README-config.txt"/>
+                            <RemoveFile Id="config.migrate.cleanup" Property="CONFIGDIR" Name="Where are my configs files.txt" On="uninstall"/>
                         </Component>
                     </Directory>
 
