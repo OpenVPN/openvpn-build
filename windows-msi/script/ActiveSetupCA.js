@@ -24,9 +24,19 @@
  */
 function EvaluateActiveSetup()
 {
-    var
-        productCode = Session.Property("ProductCode"),
-        version;
+    if (Session.EvaluateCondition("UPGRADINGPRODUCTCODE") == 1) {
+        // this means upgrade removes an app - no need to do anything
+        return 1;
+    }
+
+    // we use SimpleProductName (like OpenVPN) which is persistent across upgrades as productCode.
+    // otherwise on upgrade we get a different product code and "uninstall" entry for the old version
+    // could be executed after "install" entry for the new version, which will break "Run on log on"
+    //
+    // ">" prefix makes sure that our action runs last, otherwise "uninstall" action with key "{<guid>}"
+    // from previous version will run after us and undo our HKCU change
+    var productCode = ">" + Session.Property("SimpleProductName") + "_UserSetup";
+    var version;
 
     // Read the current component version from registry. Default to "0".
     try {
