@@ -69,7 +69,7 @@ ls|grep -E "${MATCH}"|while read FILE; do
         echo "Good signature: ${SIGFILE}"
         echo "Copying files to ${SECONDARY_WEBSERVER}"
         chmod 644 $FILE $SIGFILE # ensure sane permissions
-        scp $FILE $SIGFILE $SECONDARY_WEBSERVER:$SECONDARY_WEBSERVER_PATH/
+        scp -p $FILE $SIGFILE $SECONDARY_WEBSERVER:$SECONDARY_WEBSERVER_PATH/
     fi
 done
 
