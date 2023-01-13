@@ -828,17 +828,7 @@
                     <Directory Id="CONFIGDIR" Name="config">
                         <Component Id="config.README.txt" Guid="{9C3B43AF-1399-4E6A-92CA-D7BA3B6BCC3C}">
                             <File Id="config.README.txt" Name="README.txt" Source="!(bindpath.build)README-config.txt"/>
-                        </Component>
-                        <!-- Move auto-start config files from configuration folder to auto-start configuration folder on update from non-auto-start aware installations. -->
-                        <Component Id="config.Where_are_my_config_files.txt" Guid="{2DFEDF05-F41E-4EB0-A90A-DC76A261E444}">
-                            <Condition><![CDATA[CONFIGDIRREG AND NOT CONFIGAUTODIRREG]]></Condition>
-                            <File Name="Where are my config files.txt" Source="!(bindpath.build)Where are my config files.txt"/>
-                            <CopyFile
-                                Id="config_auto"
-                                SourceProperty="CONFIGDIRREG"
-                                SourceName="*"
-                                DestinationProperty="CONFIGAUTODIR"
-                                Delete="yes"/>
+                            <RemoveFile Id="config.migrate.cleanup" Property="CONFIGDIR" Name="Where are my configs files.txt" On="uninstall"/>
                         </Component>
                     </Directory>
 
@@ -1678,7 +1668,6 @@
                 <ComponentRef Id="bin.libopenvpn_plap.dll"/>
                 <ComponentRef Id="bin.openvpn_plap_install.reg"/>
                 <ComponentRef Id="bin.openvpn_plap_uninstall.reg"/>
-                <ComponentRef Id="config.Where_are_my_config_files.txt"/>
                 <ComponentRef Id="config_auto.README.txt"/>
                 <ComponentRef Id="reg.autostart_config_dir"/>
 

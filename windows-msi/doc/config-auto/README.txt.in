@@ -5,4 +5,8 @@ that should be automatically started at boot up.
 When @PRODUCT_NAME@Service is started, a separate @PRODUCT_NAME@
 process will be instantiated for each configuration file.
 
-@PRODUCT_NAME@ GUI does not scan this directory.
+@PRODUCT_NAME@ GUI scans this directory and its subdirectories for
+configuration files and lists them under the "Persistent Profiles"
+menu unless that feature is turned off. If @PRODUCT_NAME@ PLAP dll
+is registered, these configurations are also accessible from the login
+screen for "Start Before Logon".
