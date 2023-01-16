@@ -65,8 +65,9 @@ jobs:
 
       - name: Install Wix 3.14
         run: |
-          Invoke-WebRequest -Uri "https://wixdl.blob.core.windows.net/releases/v3.14.0.5722/wix314-binaries.zip" -OutFile wix.zip
-          Expand-Archive -Path .\wix.zip -DestinationPath wix\bin
+          Invoke-WebRequest -Uri "https://build.openvpn.net/downloads/temp/wix314-toolset.zip" -OutFile wix.zip
+          Expand-Archive -Path .\wix.zip -DestinationPath wix
+          Move-Item '.\wix\WiX Toolset v3.14\bin' .\wix
 
       - name: Build
         working-directory: openvpn-build/windows-msi
