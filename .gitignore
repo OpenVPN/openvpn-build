@@ -1,5 +1,6 @@
 *.tmp
 image*
+output
 sources
 tools
 tmp
@@ -8,4 +9,5 @@ tmp
 *.pfx
 *.cer
 *.crt
+release/vars.infrastructure
 windows-msi/build-and-package-env.ps1
