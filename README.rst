@@ -1,7 +1,7 @@
 OpenVPN project buildsystems
 #####################################################
 .. image:: https://github.com/OpenVPN/openvpn-build/actions/workflows/build.yaml/badge.svg
-  :target: https://https://github.com/OpenVPN/openvpn-build/actions
+  :target: https://github.com/OpenVPN/openvpn-build/actions
   :alt: GitHub Actions status
 
 About
@@ -21,11 +21,22 @@ About
 Directories
 **************************************************
 
-    The "generic" subdir contains scripts to cross-compile
-    OpenVPN using mingw_w64 (e.g. Linux -> Windows).
-
     The "windows-msi" subdir contains scripts to
     build and package OpenVPN on Windows for Windows.
+
+    The "release" subdir contains scripts to prepare
+    the source tarballs and tag the git repositories.
+    It also has scripts to orchestrate the other parts
+    of the build.
+
+    The "debian-sbuild" subdir contains scripts to build
+    Debian packages for all supported distributions.
+
+    The following two sub directories were used in the
+    past but are currently unmaintained:
+
+    The "generic" subdir contains scripts to cross-compile
+    OpenVPN using mingw_w64 (e.g. Linux -> Windows).
 
     The "windows-nsis" subdir contains scripts to
     cross-compile and package OpenVPN for Windows.
