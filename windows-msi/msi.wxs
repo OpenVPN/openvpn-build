@@ -1514,7 +1514,7 @@
                 <Data Column="DisplayName">ovpn-dco|$(var.PRODUCT_NAME) Data Channel Offload</Data>
                 <Data Column="HardwareId" >ovpn-dco</Data>
                 <Data Column="Condition"  ><![CDATA[NOT OVPNDCOADAPTERS]]></Data>
-                <Data Column="Component_" >CMP_ovpn_dco.inf.1057B5BE_89F7_469C_A3FD_D6662CD1D229</Data>
+                <Data Column="Component_" >shortcut.bin.tapctl.exe.create.dco</Data>
             </Row>
         </CustomTable>
 
