@@ -22,7 +22,7 @@ pushd "$TOP_DIR"
 . "$SCRIPT_DIR/vars.infrastructure"
 
 #TODO: make idempotent, check whether password is required
-#ssh $WINDOWS_MSI_BUILDHOST "\"C:\Program Files\Amazon\CloudHSM\configure.exe\" -a $HSM_IP && net.exe start AWSCloudHSMClient"
+ssh $WINDOWS_MSI_BUILDHOST "\"C:\Program Files\Amazon\CloudHSM\configure.exe\" -a $HSM_IP && net.exe start AWSCloudHSMClient"
 ssh $WINDOWS_MSI_BUILDHOST "env n3fips_password=${HSM_USER:-cuuser}:$HSM_PASSWORD \"C:\Program Files\Amazon\CloudHSM\import_key.exe\" -from HSM -privateKeyHandle $HSM_PRIV_KEY_HANDLE -publicKeyHandle $HSM_PUB_KEY_HANDLE"
 ssh $WINDOWS_MSI_BUILDHOST "env n3fips_password=${HSM_USER:-cuuser}:$HSM_PASSWORD certutil -f -csp \"Cavium Key Storage Provider\" -user -repairstore my $WINDOWS_SIGNING_KEY_FP"
 ssh $WINDOWS_MSI_BUILDHOST git -C "$WINDOWS_MSI_WORKDIR" submodule update --init
