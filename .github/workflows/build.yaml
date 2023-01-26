@@ -33,6 +33,12 @@ jobs:
         working-directory: openvpn-build
         run: git submodule update --init --remote --recursive
 
+      - name: vcpkg pre-download
+        working-directory: openvpn-build/src/vcpkg
+        run: |
+          New-Item -ItemType "directory" -Path ".\downloads"
+          Invoke-WebRequest -Uri "https://build.openvpn.net/downloads/temp/strawberry-perl-5.32.1.1-32bit.zip" -OutFile ".\downloads\strawberry-perl-5.32.1.1-32bit.zip"
+
       - name: Get latest CMake and ninja
         uses: lukka/get-cmake@latest
 
