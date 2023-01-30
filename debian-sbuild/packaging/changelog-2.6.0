@@ -1,0 +1,17 @@
+openvpn (2.6.0-debian0) stable; urgency=medium
+
+  * preparing release 2.6.0 (Gert Doering, b9994664)
+  * dco_linux: update license for ovpn_dco_linux.h (Antonio Quartulli, b6785038)
+  * openvpnmsica: fix adapters discovery logic for DCO (Lev Stipakov, f4904e2e)
+  * openvpnmsica: remove unused declarations (Lev Stipakov, 5ddc7102)
+  * Fix one more 'existing route may get deleted' case (Selva Nair, f30b1c90)
+  * Cleanup route error and debug logging on Windows (Selva Nair, 638082f3)
+  * Warn when pkcs11-id or pkcs11-id-management options are ignored (Selva Nair, f42b38a6)
+  * openvpnmsica: remove dco installer custom actions (Lev Stipakov, 640c4d82)
+  * Workaround: make ovpn-dco more reliable (Arne Schwabe, 74a7cf9b)
+  * Don't clear capability bounding set on capng_change_id (Timo Rothenpieler, 99a098e1)
+  * Repair special-casing of EEXIST for Linux/SITNL route install (Gert Doering, eb85961e)
+  * Define and use macros for route addition status code (Selva Nair, 39dd79d8)
+  * Fix OVPN_DEL_PEER_REASON_TRANSPORT_DISCONNECT breakage on FreeBSD+DCO (Gert Doering, 480ad2a8)
+
+ -- Frank Lichtenheld <frank.lichtenheld@openvpn.net>  Wed, 25 Jan 2023 11:00:58 +0100

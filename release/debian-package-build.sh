@@ -31,7 +31,7 @@ ssh "$DEBIAN_SBUILD_BUILDHOST" sudo git -C "$DEBIAN_SBUILD_WORKDIR" remote add -
 ssh "$DEBIAN_SBUILD_BUILDHOST" sudo git -C "$DEBIAN_SBUILD_WORKDIR" checkout --recurse-submodules -f "OpenVPN-$BUILD_VERSION"
 ssh "$DEBIAN_SBUILD_BUILDHOST" "cd $DEBIAN_SBUILD_WORKDIR/debian-sbuild && sudo ./scripts/setup_chroots.sh"
 #TODO: make idempotent
-#ssh "$DEBIAN_SBUILD_BUILDHOST" "cd $DEBIAN_SBUILD_WORKDIR/debian-sbuild && sudo ./scripts/prepare-all.sh"
+ssh "$DEBIAN_SBUILD_BUILDHOST" "cd $DEBIAN_SBUILD_WORKDIR/debian-sbuild && sudo ./scripts/prepare-all.sh"
 ssh "$DEBIAN_SBUILD_BUILDHOST" "cd $DEBIAN_SBUILD_WORKDIR/debian-sbuild && sudo ./scripts/build-all.sh"
 
 # upload and publish Debian packages

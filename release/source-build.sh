@@ -30,7 +30,7 @@ git -C $TOP_DIR/src/openvpn-gui push "$INTERNAL_GIT_REPO_GUI_RW" \
 # make sure git knows we pushed this
 git -C $TOP_DIR/src/openvpn-gui remote update
 #TODO: make idempotent
-#$SCRIPT_DIR/create-release-files.sh
+$SCRIPT_DIR/create-release-files.sh
 read -p "Upload tarballs to $SECONDARY_WEBSERVER?"
 # uploads tarballs, required by some build steps
 $SCRIPT_DIR/sign-and-push.sh
