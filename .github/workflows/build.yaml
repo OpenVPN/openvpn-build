@@ -44,6 +44,7 @@ jobs:
         uses: actions/checkout@v2
         with:
           repository: openvpn/openvpn-gui
+          ref: v11.33.0.0
           path: openvpn-gui
 
       - name: Checkout vcpkg
