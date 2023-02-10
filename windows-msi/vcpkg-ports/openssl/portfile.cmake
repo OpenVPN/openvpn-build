@@ -3,11 +3,13 @@ if(EXISTS "${CURRENT_INSTALLED_DIR}/include/openssl/ssl.h")
 endif()
 
 set(OPENSSL_VERSION 1.1.1t)
-vcpkg_download_distfile(
-    ARCHIVE
-    URLS "https://www.openssl.org/source/openssl-${OPENSSL_VERSION}.tar.gz" "https://www.openssl.org/source/old/1.1.1/openssl-${OPENSSL_VERSION}.tar.gz"
-    FILENAME "openssl-${OPENSSL_VERSION}.tar.gz"
-    SHA512 628676c9c3bc1cf46083d64f61943079f97f0eefd0264042e40a85dbbd988f271bfe01cd1135d22cc3f67a298f1d078041f8f2e97b0da0d93fe172da573da18c
+vcpkg_from_github(
+    OUT_SOURCE_PATH SOURCE_PATH
+    REPO openssl/openssl
+    REF "OpenSSL_1_1_1t"
+    SHA512 f28a323fd78be0b16ae6db9a8f163e64c74410e12ddd1a9836dfdda34c264112184f4e22583c84b6fa56716e5aaac9cb860cb183bd3d0cb064091eea1e21815e
+    PATCHES
+        windows/umul128-arm64.patch # Fixed upstream in https://github.com/openssl/openssl/pull/20244
 )
 
 vcpkg_find_acquire_program(PERL)
