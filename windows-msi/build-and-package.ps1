@@ -44,6 +44,14 @@ if ((Test-Path "${PSScriptRoot}/build-and-package-env.ps1") -ne $True) {
     exit 1
 }
 
+# sane defaults
+$Env:VCPKG_ROOT = "${basedir}\vcpkg"
+$Env:VCPKG_OVERLAY_PORTS = "${basedir}\openvpn-build\windows-msi\vcpkg-ports"
+$Env:CMAKE = "C:\\Program Files\\CMake\\bin\\cmake.exe"
+$Env:ManifestTimestampRFC3161Url = "http://timestamp.digicert.com"
+# required by the signing scripts
+$Env:OSSL = ${ossl}
+
 . "${PSScriptRoot}/build-and-package-env.ps1"
 
 # At the end of the build return to the directory we started from
