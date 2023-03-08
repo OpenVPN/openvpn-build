@@ -9,6 +9,7 @@ Build-Depends:
  libcap-ng-dev [linux-any],
  liblz4-dev,
  liblzo2-dev,
+ libnl-genl-3-dev [linux-any],
  libp11-kit-dev,
  libpam0g-dev,
  libpkcs11-helper1-dev,

@@ -33,6 +33,9 @@ ssh $WINDOWS_MSI_BUILDHOST git -C "$WINDOWS_MSI_WORKDIR" tag -d "OpenVPN-$BUILD_
 ssh $WINDOWS_MSI_BUILDHOST git -C "$WINDOWS_MSI_WORKDIR" remote add -f --tags internal "$INTERNAL_GIT_REPO_BUILD_RO"
 ssh $WINDOWS_MSI_BUILDHOST git -C "$WINDOWS_MSI_WORKDIR" checkout --recurse-submodules -f "OpenVPN-$BUILD_VERSION"
 ssh $WINDOWS_MSI_BUILDHOST "cd $WINDOWS_MSI_WORKDIR/windows-msi && echo \$Env:ManifestCertificateThumbprint = \"$WINDOWS_SIGNING_KEY_FP\" >build-and-package-env.ps1"
+if [ -n "${VCPKG_CACHE:-}" ]; then
+   ssh $WINDOWS_MSI_BUILDHOST "cd $WINDOWS_MSI_WORKDIR/windows-msi && echo \$Env:VCPKG_BINARY_SOURCES = \"$VCPKG_CACHE\" >>build-and-package-env.ps1"
+fi
 ssh $WINDOWS_MSI_BUILDHOST "cd $WINDOWS_MSI_WORKDIR/windows-msi && \"C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Auxiliary\Build\vcvarsall.bat\" x64 && env n3fips_password=${HSM_USER:-cuuser}:$HSM_PASSWORD powershell ./build-and-package.ps1 -sign"
 
 mkdir -p "$OUTPUT/upload/"
