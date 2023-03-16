@@ -25,13 +25,16 @@ jobs:
 
     steps:
       - name: Checkout openvpn-build
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           path: openvpn-build
 
+      # FIXME: need to support latest vcpkg (openssl[tools])
       - name: Checkout submodules (by branch)
         working-directory: openvpn-build
-        run: git submodule update --init --remote --recursive
+        run: |
+          git submodule update --init --remote --recursive
+          git submodule update src/vcpkg
 
       - name: vcpkg pre-download
         working-directory: openvpn-build/src/vcpkg
