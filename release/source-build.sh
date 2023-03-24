@@ -24,7 +24,7 @@ pushd "$TOP_DIR"
 $SCRIPT_DIR/version-and-tags.sh
 read -p "push OpenVPN-$BUILD_VERSION in openvpn-gui?"
 git -C $TOP_DIR/src/openvpn-gui push "$INTERNAL_GIT_REPO_GUI_RW" \
-    master \
+    HEAD:master \
     "v$OPENVPN_GUI_CURRENT_FULL_VERSION" \
     "OpenVPN-$BUILD_VERSION"
 # make sure git knows we pushed this
