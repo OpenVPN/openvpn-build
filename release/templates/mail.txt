@@ -1,0 +1,27 @@
+To: openvpn-devel@lists.sourceforge.net, openvpn-users@lists.sourceforge.net, openvpn-announce@lists.sourceforge.net
+Subject: OpenVPN @OPENVPN_CURRENT_VERSION@ released
+
+The OpenVPN community project team is proud to release OpenVPN @OPENVPN_CURRENT_VERSION@.
+
+@ANNOUNCEMENT@
+
+More details can be found in the Changes document:
+
+<https://github.com/OpenVPN/openvpn/blob/release/2.6/Changes.rst>
+
+(The Changes document also contains a section with work-arounds for
+common problems encountered when using OpenVPN with OpenSSL 3)
+
+Source code and Windows installers can be downloaded from our download page:
+
+<https://openvpn.net/community-downloads/>
+
+Debian and Ubuntu packages are available in the official apt repositories:
+
+<https://community.openvpn.net/openvpn/wiki/OpenvpnSoftwareRepos>
+
+On Red Hat derivatives we recommend using the Fedora Copr repository.
+
+<https://copr.fedorainfracloud.org/coprs/dsommers/openvpn-release/>
+
+Kind regards,

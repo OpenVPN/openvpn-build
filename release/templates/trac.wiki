@@ -1,0 +1,13 @@
+== OpenVPN @OPENVPN_CURRENT_VERSION@ -- Released @TODAY@ ==
+The OpenVPN community project team is proud to release OpenVPN @OPENVPN_CURRENT_VERSION@.
+
+For details see [https://github.com/OpenVPN/openvpn/blob/v@OPENVPN_CURRENT_VERSION@/Changes.rst Changes.rst]
+
+@ANNOUNCEMENT@
+
+||**Windows 64-bit MSI installer**||[https://swupdate.openvpn.org/community/releases/OpenVPN-@OPENVPN_CURRENT_VERSION@-@OPENVPN_INSTALLER_VERSION@-amd64.msi.asc GnuPG Signature]||[https://swupdate.openvpn.org/community/releases/OpenVPN-@OPENVPN_CURRENT_VERSION@-@OPENVPN_INSTALLER_VERSION@-amd64.msi OpenVPN-@OPENVPN_CURRENT_VERSION@-@OPENVPN_INSTALLER_VERSION@-amd64.msi]||
+||**Windows ARM64 MSI installer**||[https://swupdate.openvpn.org/community/releases/OpenVPN-@OPENVPN_CURRENT_VERSION@-@OPENVPN_INSTALLER_VERSION@-arm64.msi.asc GnuPG Signature]||[https://swupdate.openvpn.org/community/releases/OpenVPN-@OPENVPN_CURRENT_VERSION@-@OPENVPN_INSTALLER_VERSION@-arm64.msi OpenVPN-@OPENVPN_CURRENT_VERSION@-@OPENVPN_INSTALLER_VERSION@-arm64.msi]||
+||**Windows 32-bit MSI installer**||[https://swupdate.openvpn.org/community/releases/OpenVPN-@OPENVPN_CURRENT_VERSION@-@OPENVPN_INSTALLER_VERSION@-x86.msi.asc GnuPG Signature]||[https://swupdate.openvpn.org/community/releases/OpenVPN-@OPENVPN_CURRENT_VERSION@-@OPENVPN_INSTALLER_VERSION@-x86.msi OpenVPN-@OPENVPN_CURRENT_VERSION@-@OPENVPN_INSTALLER_VERSION@-x86.msi]||
+||**Source archive file**||[https://swupdate.openvpn.org/community/releases/openvpn-@OPENVPN_CURRENT_VERSION@.tar.gz.asc GnuPG Signature]||[https://swupdate.openvpn.org/community/releases/openvpn-@OPENVPN_CURRENT_VERSION@.tar.gz openvpn-@OPENVPN_CURRENT_VERSION@.tar.gz]||
+
+
