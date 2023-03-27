@@ -67,7 +67,7 @@ pushd "$MSI"
 sed -E -i s/"define\(\[PACKAGE_VERSION\], \[(.+)\]\)"/"define\(\[PACKAGE_VERSION\], \[$BUILD_VERSION\]\)"/1 version.m4
 # if version.m4 was already updated, assume everything is fine as is
 if ! git diff --exit-code; then
-    ./bump-version.m4.sh
+    PRODUCT_VERSION_NEW="$PRODUCT_VERSION" ./bump-version.m4.sh
     git add ./version.m4
 fi
 

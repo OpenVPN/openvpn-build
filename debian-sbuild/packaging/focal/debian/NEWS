@@ -1,3 +1,15 @@
+openvpn (2.6.2-focal0) unstable; urgency=medium
+
+  * In the community-built packages for 2.6.2 --enable-iproute2 was
+    removed from build configuration. This makes the package compatible
+    with using the DCO kernel module. It should make no difference
+    for most setups. If you encounter any regressions you might need
+    to go back to 2.6.1 for now. It is recommended not to depend on
+    the behavior of --enable-iproute2 in the long term since it is
+    deprecated.
+
+ -- Frank Lichtenheld <frank.lichtenheld@openvpn.net>  Thu, 23 Mar 2023 10:00:19 +0100
+
 openvpn (2.4.0-4) unstable; urgency=medium
 
     If you're upgrading a previous OpenVPN installation, you should check your

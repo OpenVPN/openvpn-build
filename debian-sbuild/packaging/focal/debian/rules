@@ -6,7 +6,7 @@ ENV_VARS	:= IFCONFIG=/sbin/ifconfig ROUTE=/lib/freebsd/route
 EXTRA_ARGS	:=
 else
 ENV_VARS	:= SYSTEMD_ASK_PASSWORD=/bin/systemd-ask-password IFCONFIG=/sbin/ifconfig ROUTE=/sbin/route IPROUTE=/sbin/ip SYSTEMD_UNIT_DIR=/lib/systemd/system TMPFILES_DIR=/usr/lib/tmpfiles.d
-EXTRA_ARGS	:= --enable-systemd --enable-iproute2
+EXTRA_ARGS	:= --enable-systemd
 endif
 
 #export DH_VERBOSE=1
