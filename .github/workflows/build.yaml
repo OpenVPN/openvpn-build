@@ -76,7 +76,7 @@ jobs:
           ./build-and-package.ps1 -basedir ../.. -ossl ossl1.1.1 -nosign -arch ${{ matrix.arch }} -nodevprompt
 
       - name: Archive artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: openvpn-release25-${{ matrix.arch }}-${{ env.DATE }}
           path: ${{ github.workspace }}\openvpn-build\windows-msi\image\*-${{ matrix.arch }}.msi
