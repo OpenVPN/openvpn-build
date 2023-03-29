@@ -42,8 +42,6 @@ $Env:VCPKG_ROOT = "${basedir}\src\vcpkg"
 $Env:VCPKG_OVERLAY_PORTS = "${basedir}\windows-msi\vcpkg-ports"
 $Env:CMAKE = "C:\\Program Files\\CMake\\bin\\cmake.exe"
 $Env:ManifestTimestampRFC3161Url = "http://timestamp.digicert.com"
-# required by the signing scripts
-$Env:OSSL = ${ossl}
 
 if ((Test-Path "${PSScriptRoot}/build-and-package-env.ps1") -ne $True) {
     Write-Host "WARNING: configuration file (build-and-package-env.ps1) is missing"
@@ -90,8 +88,8 @@ switch ($arch)
 $gui_arch | ForEach-Object  {
 	$platform = $_
     Write-Host "Building openvpn-gui ${platform}"
-    & "$Env:CMAKE" -S . --preset ${platform}-release-${ossl}
-    & "$Env:CMAKE" --build --preset ${platform}-release-${ossl}
+    & "$Env:CMAKE" -S . --preset ${platform}-release
+    & "$Env:CMAKE" --build --preset ${platform}-release
 }
 
 ### Build OpenVPN
