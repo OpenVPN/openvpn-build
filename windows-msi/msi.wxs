@@ -49,7 +49,7 @@
             SourceFile="artwork\tapctl_create.ico"/>
         <Binary
             Id="libopenvpnmsica.dll"
-            SourceFile="!(bindpath.openvpnbin)libopenvpnmsica.dll"/>
+            SourceFile="!(bindpath.openvpnmsica)openvpnmsica.dll"/>
 
         <Property Id="ARPPRODUCTICON" Value="openvpn.ico"/>
         <Property Id="ARPURLINFOABOUT" Value="https://openvpn.net/community/"/>
@@ -775,7 +775,7 @@
                             <File Id="bin.openvpn_gui.exe" Name="openvpn-gui.exe" Source="!(bindpath.openvpnguibin)openvpn-gui.exe"/>
                         </Component>
                         <Component Id="bin.openvpnserv.exe" Guid="{43A4F408-9399-4BD7-9978-0ECE4A582929}">
-                            <File Name="openvpnserv.exe" Source="!(bindpath.openvpnbin)openvpnserv.exe"/>
+                            <File Name="openvpnserv.exe" Source="!(bindpath.openvpnserv)openvpnserv.exe"/>
                             <ServiceControl
                                 Id="OpenVPNServiceInteractive"
                                 Name="OpenVPNServiceInteractive"
@@ -812,7 +812,7 @@
                             </ServiceInstall>
                         </Component>
                         <Component Id="bin.tapctl.exe" Guid="{5A294591-0F71-470F-977B-DD288AB2B437}">
-                            <File Name="tapctl.exe" Source="!(bindpath.openvpnbin)tapctl.exe" KeyPath="yes"/>
+                            <File Name="tapctl.exe" Source="!(bindpath.openvpntapctl)tapctl.exe" KeyPath="yes"/>
                         </Component>
                         <Component Id="bin.libopenvpn_plap.dll" Guid="{E20EDCF2-7717-4069-8633-8D35695CD299}">
                             <File Id="bin.libopenvpn_plap.dll" Name="libopenvpn_plap.dll" Source="!(bindpath.openvpnguibin)libopenvpn_plap.dll"/>
