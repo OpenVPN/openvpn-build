@@ -28,17 +28,17 @@ jobs:
           fetch-depth: 0
           submodules: true
 
-      - name: vcpkg pre-download
-        working-directory: src/vcpkg
-        run: |
-          New-Item -ItemType "directory" -Path ".\downloads"
-          Invoke-WebRequest -Uri "https://build.openvpn.net/downloads/temp/strawberry-perl-5.32.1.1-32bit.zip" -OutFile ".\downloads\strawberry-perl-5.32.1.1-32bit.zip"
+      - name: Restore from cache and install vcpkg
+        uses: lukka/run-vcpkg@v11
+        with:
+          vcpkgDirectory: '${{ github.workspace }}/src/vcpkg'
+          vcpkgJsonGlob: '**/src/openvpn/contrib/vcpkg-manifests/windows/vcpkg.json'
 
       - name: Get latest CMake and ninja
         uses: lukka/get-cmake@4dcd3eb73017c61159eb130746fbca35d78a3d5f # v3.27.4
 
       - name: Install rst2html
-        run: python -m pip install --upgrade pip rst2html
+        run: python -m pip install --upgrade pip docutils
 
       - name: Setup MSVC prompt
         uses: ilammy/msvc-dev-cmd@cec98b9d092141f74527d0afa6feb2af698cfe89 # v1.12.1
