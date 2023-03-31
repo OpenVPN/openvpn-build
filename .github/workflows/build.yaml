@@ -31,17 +31,17 @@ jobs:
         run: |
           git submodule update --init --remote --recursive
 
-      - name: vcpkg pre-download
-        working-directory: src/vcpkg
-        run: |
-          New-Item -ItemType "directory" -Path ".\downloads"
-          Invoke-WebRequest -Uri "https://build.openvpn.net/downloads/temp/strawberry-perl-5.32.1.1-32bit.zip" -OutFile ".\downloads\strawberry-perl-5.32.1.1-32bit.zip"
+      - name: Restore from cache and install vcpkg
+        uses: lukka/run-vcpkg@v11
+        with:
+          vcpkgDirectory: '${{ github.workspace }}/src/vcpkg'
+          vcpkgJsonGlob: '**/src/openvpn/contrib/vcpkg-manifests/windows/vcpkg.json'
 
       - name: Get latest CMake and ninja
         uses: lukka/get-cmake@latest
 
       - name: Install rst2html
-        run: python -m pip install --upgrade pip rst2html
+        run: python -m pip install --upgrade pip docutils
 
       - name: Setup MSVC prompt
         uses: ilammy/msvc-dev-cmd@v1
