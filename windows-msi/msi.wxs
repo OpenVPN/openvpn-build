@@ -100,7 +100,7 @@
         <InstallExecuteSequence>
             <Custom Action="FindSystemInfo" After="FindRelatedProducts"/>
             <Custom Action="CheckOpenVPNServiceStatus" After="ProcessComponents"/>
-            <Custom Action="ConfigureOpenVPNService" After="StartServices">NOT Installed</Custom>
+            <Custom Action="ConfigureOpenVPNService" After="StartServices">NOT Installed OR REINSTALL</Custom>
             <Custom Action="GetInstallDir" After="FindRelatedProducts"/>
             <Custom Action="UpdatePlapReg" After="InstallFiles"/>
         </InstallExecuteSequence>
@@ -1188,6 +1188,14 @@
                     Type="string"
                     Value="[PRODUCTDIR]"/>
             </Component>
+            <Component Id="reg.bin_dir" Guid="{E027FA2F-18AD-466E-9943-15CBE6C7C45B}">
+                <RegistryValue
+                    Root="HKLM"
+                    Key="Software\$(var.PRODUCT_NAME)"
+                    Name="bin_dir"
+                    Type="string"
+                    Value="[BINDIR]"/>
+            </Component>
             <Component Id="reg.config_dir" Guid="{FA8F296E-3808-4861-AEC1-A14062D060AF}">
                 <RegistryValue
                     Root="HKLM"
@@ -1570,6 +1578,7 @@
             <ComponentRef Id="log.README.txt"/>
             <ComponentRef Id="res.ovpn.ico"/>
             <ComponentRef Id="reg.path"/>
+            <ComponentRef Id="reg.bin_dir"/>
             <ComponentRef Id="reg.config_dir"/>
             <ComponentRef Id="reg.config_ext"/>
             <ComponentRef Id="reg.exe_path"/>

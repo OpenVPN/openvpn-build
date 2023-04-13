@@ -16,9 +16,9 @@ dnl This is only to make build script happy - the file is only downloaded but no
 define([PRODUCT_WINTUN_URL_arm64],     [https://build.openvpn.net/downloads/releases/wintun-amd64-0.8.1.msm])
 
 dnl ovpn-dco binaries
-define([PRODUCT_OVPN_DCO_URL_x86],     [https://github.com/OpenVPN/ovpn-dco-win/releases/download/0.9.2/ovpn-dco-x86.msm])
-define([PRODUCT_OVPN_DCO_URL_amd64],   [https://github.com/OpenVPN/ovpn-dco-win/releases/download/0.9.2/ovpn-dco-amd64.msm])
-define([PRODUCT_OVPN_DCO_URL_arm64],   [https://github.com/OpenVPN/ovpn-dco-win/releases/download/0.9.2/ovpn-dco-arm64.msm])
+define([PRODUCT_OVPN_DCO_URL_x86],     [https://github.com/OpenVPN/ovpn-dco-win/releases/download/0.9.3/ovpn-dco-x86.msm])
+define([PRODUCT_OVPN_DCO_URL_amd64],   [https://github.com/OpenVPN/ovpn-dco-win/releases/download/0.9.3/ovpn-dco-amd64.msm])
+define([PRODUCT_OVPN_DCO_URL_arm64],   [https://github.com/OpenVPN/ovpn-dco-win/releases/download/0.9.3/ovpn-dco-arm64.msm])
 
 dnl OpenVPNServ2.exe binary
 define([OPENVPNSERV2_URL], [http://build.openvpn.net/downloads/releases/openvpnserv2-1.4.0.1.exe])
