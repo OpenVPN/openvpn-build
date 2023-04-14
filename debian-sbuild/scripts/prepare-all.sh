@@ -72,5 +72,6 @@ prepare_package() {
 }
 
 prepare_package openvpn openvpn $OPENVPN_CURRENT_VERSION $DEBIAN_UPSTREAM_VERSION
+prepare_package openvpn-dco-dkms ovpn-dco $OPENVPN_DCO_CURRENT_VERSION $OPENVPN_DCO_CURRENT_VERSION
 
 cd $BASEDIR
