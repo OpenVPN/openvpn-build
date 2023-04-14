@@ -9,7 +9,7 @@ export DEB_VERSION_UPSTREAM
 INSTALLDIR=debian/openvpn-dco-dkms/usr/src/ovpn-dco-${DEB_VERSION_UPSTREAM}
 
 %:
-	dh $@
+	dh $@ --with=dkms
 
 # Nothing to clean, configure, or build (this all happens after
 # installation using dkms)

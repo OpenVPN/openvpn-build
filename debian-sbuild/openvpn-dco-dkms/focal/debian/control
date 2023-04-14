@@ -2,8 +2,7 @@ Source: openvpn-dco-dkms
 Section: net
 Priority: optional
 Maintainer: Bernhard Schmidt <berni@debian.org>
-Build-Depends: debhelper-compat (= 13),
-	dh-sequence-dkms,
+Build-Depends: debhelper (>= 12), dkms,
 Standards-Version: 4.6.0
 Homepage: https://github.com/OpenVPN/ovpn-dco
 Vcs-Browser: https://salsa.debian.org/debian/openvpn-dco-dkms
