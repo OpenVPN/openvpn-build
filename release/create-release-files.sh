@@ -71,4 +71,15 @@ $TAR_REP --mtime="$COMMIT_DATE_GUI" -chf - "openvpn-gui-$OPENVPN_GUI_CURRENT_MAJ
     | gzip -c > "$UPLOAD/openvpn-gui-$OPENVPN_GUI_CURRENT_MAJ_VERSION.tar.gz"
 rm -fr "openvpn-gui-$OPENVPN_GUI_CURRENT_MAJ_VERSION"
 
+# Generate OpenVPN-DCO tarball
+pushd "$OPENVPN_DCO"
+
+COMMIT_DATE_DCO=$(git log --no-show-signature -n1 --format="%cD")
+
+: "Creating OpenVPN-DCO source package"
+git archive --prefix=ovpn-dco-$OPENVPN_DCO_CURRENT_VERSION/ --format=tar $OPENVPN_DCO_CURRENT_TAG \
+    | gzip -c > "$UPLOAD/ovpn-dco-$OPENVPN_DCO_CURRENT_VERSION.tar.gz"
+
+#$TAR_REP --mtime="$COMMIT_DATE_GUI" -chf - "openvpn-gui-$OPENVPN_GUI_CURRENT_MAJ_VERSION" \
+
 popd

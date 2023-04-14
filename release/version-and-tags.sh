@@ -24,6 +24,9 @@ LANG=en_us.UTF-8
 # We assume openvpn is already tagged
 git -C "$OPENVPN" checkout -f "$OPENVPN_CURRENT_TAG"
 git add "$OPENVPN"
+# We assume ovpn-dco is already tagged
+git -C "$OPENVPN_DCO" checkout -f "$OPENVPN_DCO_CURRENT_TAG"
+git add "$OPENVPN_DCO"
 
 create_debian_changelog() {
     local pkg_name=$1
@@ -45,6 +48,9 @@ create_debian_changelog() {
 # Create changelog for openvpn Debian packages
 create_debian_changelog openvpn "$DEBIAN_UPSTREAM_VERSION" "$OPENVPN" \
                         "refs/tags/$OPENVPN_PREVIOUS_TAG..refs/tags/$OPENVPN_CURRENT_TAG"
+# Create changelog for openvpn-dco-dkms Debian packages
+create_debian_changelog openvpn-dco-dkms "$OPENVPN_DCO_CURRENT_VERSION" "$OPENVPN_DCO" \
+                        "refs/tags/$OPENVPN_DCO_PREVIOUS_TAG..refs/tags/$OPENVPN_DCO_CURRENT_TAG"
 
 ###############
 # OpenVPN GUI #
