@@ -25,17 +25,26 @@ LANG=en_us.UTF-8
 git -C "$OPENVPN" checkout -f "$OPENVPN_CURRENT_TAG"
 git add "$OPENVPN"
 
-# Create changelog for openvpn Debian packages
-COMMIT_DATE=$(git -C "$OPENVPN" log --no-show-signature -n1 --format="%cD")
-DEBIAN_CHANGELOG="$DEBIAN/openvpn/changelog-$OPENVPN_CURRENT_VERSION"
-echo "openvpn (${OPENVPN_CURRENT_VERSION}-debian0) stable; urgency=medium" > "$DEBIAN_CHANGELOG"
-echo >> "$DEBIAN_CHANGELOG"
-git -C "$OPENVPN" log --pretty=short --abbrev-commit --format="  * %s (%an, %h)" \
-    "refs/tags/$OPENVPN_PREVIOUS_TAG..refs/tags/$OPENVPN_CURRENT_TAG" >> "$DEBIAN_CHANGELOG"
-echo >> "$DEBIAN_CHANGELOG"
-echo " -- $GIT_AUTHOR  $COMMIT_DATE" >> "$DEBIAN_CHANGELOG"
+create_debian_changelog() {
+    local pkg_name=$1
+    local pkg_version=$2
+    local git_dir=$3
+    local git_log=$4
+    local changelog_file="$DEBIAN/$pkg_name/changelog-${pkg_version}"
+    echo "$pkg_name (${pkg_version}-debian0) stable; urgency=medium" > "$changelog_file"
+    echo >> "$changelog_file"
+    git -C "$git_dir" log --pretty=short --abbrev-commit --format="  * %s (%an, %h)" \
+        "$git_log" >> "$changelog_file"
+    echo >> "$changelog_file"
+    local commit_date=$(git -C "$git_dir" log --no-show-signature -n1 --format="%cD")
+    echo " -- $GIT_AUTHOR  $commit_date" >> "$changelog_file"
 
-git add "$DEBIAN_CHANGELOG"
+    git add "$changelog_file"
+}
+
+# Create changelog for openvpn Debian packages
+create_debian_changelog openvpn "$DEBIAN_UPSTREAM_VERSION" "$OPENVPN" \
+                        "refs/tags/$OPENVPN_PREVIOUS_TAG..refs/tags/$OPENVPN_CURRENT_TAG"
 
 ###############
 # OpenVPN GUI #

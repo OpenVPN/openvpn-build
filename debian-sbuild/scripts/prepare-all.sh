@@ -9,31 +9,41 @@ pushd "$TOP_DIR/debian-sbuild/"
 
 . "./config/base.conf"
 
-CHANGELOG="$BASEDIR/openvpn/changelog-$OPENVPN_CURRENT_VERSION"
+prepare_package() {
+    local pkg_name=$1
+    local pkg_orig_name=$2
+    local pkg_orig_version=$3
+    local pkg_deb_version=$4
 
-if ! [ -r "${CHANGELOG}" ]; then
-    echo "ERROR: changelog file ${CHANGELOG} not found!"
-    exit 1
-fi
+    local changelog="$BASEDIR/$pkg_name/changelog-$pkg_orig_version"
 
-test -d $BUILD_BASEDIR || mkdir -p $BUILD_BASEDIR
-cd $BUILD_BASEDIR
+    if ! [ -r "${changelog}" ]; then
+        echo "ERROR: changelog file ${changelog} not found!"
+        exit 1
+    fi
 
-# Prepare all builds given in variants.conf
-cat $VARIANTS_FILE|grep -v "^#"|while read LINE; do
-    OSRELEASE=`echo $LINE|cut -d " " -f 2`
-    DIR=$OSRELEASE
+    local build_dir="$BUILD_BASEDIR/$pkg_name"
+    test -d $build_dir || mkdir -p $build_dir
+    cd $build_dir
 
-    # Only build in directories which are _not_ symbolic links
-    if ! [ -L $DIR ]; then
+    # Prepare all builds given in variants.conf
+    cat $VARIANTS_FILE|grep -v "^#"|while read LINE; do
+        OSRELEASE=`echo $LINE|cut -d " " -f 2`
+        DIR=$OSRELEASE
+
+        # Only build in directories which are _not_ symbolic links
+        if [ -L $DIR ]; then
+            continue
+        fi
+
         test -d "$DIR" || mkdir "$DIR"
         pushd "$DIR"
-        rm -rf openvpn*
-        curl -o "openvpn_$DEBIAN_UPSTREAM_VERSION.orig.tar.gz" \
-             "$SECONDARY_WEBSERVER_BASEURL/openvpn-$OPENVPN_CURRENT_VERSION.tar.gz"
-        tar -xf "openvpn_$DEBIAN_UPSTREAM_VERSION.orig.tar.gz"
-        pushd "openvpn-$OPENVPN_CURRENT_VERSION"
-        cp -a "$BASEDIR/openvpn/$OSRELEASE/debian" .
+        rm -rf "$pkg_name"*
+        curl -o "${pkg_name}_${pkg_deb_version}.orig.tar.gz" \
+             "$SECONDARY_WEBSERVER_BASEURL/${pkg_orig_name}-${pkg_orig_version}.tar.gz"
+        tar -xf "${pkg_name}_${pkg_deb_version}.orig.tar.gz"
+        pushd "${pkg_orig_name}-${pkg_orig_version}"
+        cp -a "$BASEDIR/$pkg_name/$OSRELEASE/debian" .
 
         # Generate changelog from the template using sed with regular expression
         # capture groups. The purpose is twofold:
@@ -50,16 +60,17 @@ cat $VARIANTS_FILE|grep -v "^#"|while read LINE; do
         # number type we're given.
         #
         # First sed is for openvpn-2.4_rc2-debian0-style and the second for openvpn-2.3.14-debian0-style entries
-        cat $CHANGELOG|\
-        sed -E s/'^(openvpn \([[:digit:]]\.[[:digit:]])_([[:alnum:]]+)-debian([[:digit:]])'/"\1-\2-$OSRELEASE\3"/g|\
-        sed -E s/'^(openvpn \([[:digit:]]\.[[:digit:]]\.[[:digit:]]+)-debian([[:digit:]])'/"\1-$OSRELEASE\2"/g > debian/changelog
+        cat $changelog|\
+            sed -E s/"^(${pkg_name} \([[:digit:]]\.[[:digit:]])_([[:alnum:]]+)-debian([[:digit:]])"/"\1-\2-$OSRELEASE\3"/g|\
+            sed -E s/"^(${pkg_name} \([[:digit:]]\.[[:digit:]]\.[[:digit:]]+)-debian([[:digit:]])"/"\1-$OSRELEASE\2"/g > debian/changelog
 
         dpkg-buildpackage -d -S -uc -us
 
         popd
         popd
-    fi
+    done # while variant
+}
 
-done
+prepare_package openvpn openvpn $OPENVPN_CURRENT_VERSION $DEBIAN_UPSTREAM_VERSION
 
 cd $BASEDIR
