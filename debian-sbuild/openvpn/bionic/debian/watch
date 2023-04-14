@@ -1,3 +1,0 @@
-version=3
-http://openvpn.net/index.php/open-source/downloads.html \
-(?:|.*/)openvpn(?:[_\-]v?|)(\d[^\s/]*)\.(?:tar\.xz|txz|tar\.bz2|tbz2|tar\.gz|tgz)
