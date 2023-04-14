@@ -25,9 +25,9 @@ LANG=en_us.UTF-8
 git -C "$OPENVPN" checkout -f "$OPENVPN_CURRENT_TAG"
 git add "$OPENVPN"
 
-# Create changelog for Debian packages
+# Create changelog for openvpn Debian packages
 COMMIT_DATE=$(git -C "$OPENVPN" log --no-show-signature -n1 --format="%cD")
-DEBIAN_CHANGELOG="$DEBIAN/packaging/changelog-$OPENVPN_CURRENT_VERSION"
+DEBIAN_CHANGELOG="$DEBIAN/openvpn/changelog-$OPENVPN_CURRENT_VERSION"
 echo "openvpn (${OPENVPN_CURRENT_VERSION}-debian0) stable; urgency=medium" > "$DEBIAN_CHANGELOG"
 echo >> "$DEBIAN_CHANGELOG"
 git -C "$OPENVPN" log --pretty=short --abbrev-commit --format="  * %s (%an, %h)" \

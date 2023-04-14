@@ -9,7 +9,7 @@ pushd "$TOP_DIR/debian-sbuild/"
 
 . "./config/base.conf"
 
-CHANGELOG="$BASEDIR/packaging/changelog-$OPENVPN_CURRENT_VERSION"
+CHANGELOG="$BASEDIR/openvpn/changelog-$OPENVPN_CURRENT_VERSION"
 
 if ! [ -r "${CHANGELOG}" ]; then
     echo "ERROR: changelog file ${CHANGELOG} not found!"
@@ -33,7 +33,7 @@ cat $VARIANTS_FILE|grep -v "^#"|while read LINE; do
              "$SECONDARY_WEBSERVER_BASEURL/openvpn-$OPENVPN_CURRENT_VERSION.tar.gz"
         tar -xf "openvpn_$DEBIAN_UPSTREAM_VERSION.orig.tar.gz"
         pushd "openvpn-$OPENVPN_CURRENT_VERSION"
-        cp -a "$BASEDIR/packaging/$OSRELEASE/debian" .
+        cp -a "$BASEDIR/openvpn/$OSRELEASE/debian" .
 
         # Generate changelog from the template using sed with regular expression
         # capture groups. The purpose is twofold:
