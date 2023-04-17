@@ -172,3 +172,44 @@ jobs:
           username: ${{ secrets.MSI_UPLOAD_USERNAME }}
           privateKey: ${{ secrets.MSI_UPLOAD_PRIVATE_KEY }}
           passphrase: ${{ secrets.MSI_UPLOAD_KEY_PASSPHRASE }}
+
+  debian:
+    name: Build Debian packages
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout openvpn-build
+        uses: actions/checkout@v3
+
+      - name: Checkout submodules (by branch)
+        run: |
+          git submodule update --init --remote --recursive
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update && sudo apt-get install -y sbuild git quilt debhelper dkms
+
+      - name: Prepare environment
+        working-directory: debian-sbuild
+        run: |
+          ln -s vars.example ../release/vars
+          scripts/setup.sh
+          sudo scripts/setup_chroots.sh
+          sudo sbuild-adduser runner
+
+      - name: Prepare package build
+        working-directory: debian-sbuild
+        run: |
+          scripts/prepare-all.sh
+
+      - name: Build packages
+        working-directory: debian-sbuild
+        run: |
+          sg sbuild ./scripts/build-all.sh
+
+      - name: Archive packages
+        uses: actions/upload-artifact@v3
+        with:
+          name: openvpn-debian
+          path: |
+            output
