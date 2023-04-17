@@ -176,6 +176,8 @@ jobs:
   debian:
     name: Build Debian packages
     runs-on: ubuntu-latest
+    env:
+      CHROOT_CONF: chroots/chroot.d.tar
 
     steps:
       - name: Checkout openvpn-build
@@ -189,13 +191,34 @@ jobs:
         run: |
           sudo apt-get update && sudo apt-get install -y sbuild git quilt debhelper dkms
 
+      # So that the caches expire after a while
+      - name: Get Date for cache key
+        id: get-date
+        run: |
+          echo "date=$(/bin/date -u '+%Y%m')" >> $GITHUB_OUTPUT
+
+      - name: Restore cached chroots
+        id: chroots-restore
+        uses: actions/cache/restore@v3
+        with:
+          path: |
+            debian-sbuild/chroots
+          key: chroots-${{ hashFiles('**/config/variants.conf') }}-${{ steps.get-date.outputs.date }}
+          restore-keys: |
+            chroots-${{ hashFiles('**/config/variants.conf') }}-
+            chroots-
+
       - name: Prepare environment
         working-directory: debian-sbuild
         run: |
           ln -s vars.example ../release/vars
+          [ ! -f "$CHROOT_CONF" ] || ( tar -xvf "$CHROOT_CONF" -C chroots; sudo install -m644 chroots/chroot.d/* /etc/schroot/chroot.d/ )
+          sudo chown root:root chroots/*.tar.gz
           scripts/setup.sh
           sudo scripts/setup_chroots.sh
+          sudo scripts/update-all.sh
           sudo sbuild-adduser runner
+          tar -cvf "$CHROOT_CONF" -C /etc/schroot/ chroot.d/
 
       - name: Prepare package build
         working-directory: debian-sbuild
@@ -213,3 +236,11 @@ jobs:
           name: openvpn-debian
           path: |
             output
+
+      - name: Save chroots
+        id: chroots-save
+        uses: actions/cache/save@v3
+        with:
+          path: |
+            debian-sbuild/chroots
+          key: ${{ steps.chroots-restore.outputs.cache-primary-key }}
