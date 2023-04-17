@@ -40,6 +40,7 @@ build_package() {
 
         SOURCES_DIR="$BUILD_BASEDIR/$pkg_name/$OSRELEASE"
         DEBIAN_BASENAME="${pkg_name}_${pkg_deb_version}-${OSRELEASE}${pkg_deb_build}"
+        DEBIAN_DBG_NAME="${pkg_name}-dbgsym_${pkg_deb_version}-${OSRELEASE}${pkg_deb_build}"
 
         # If the package exists already, skip the build
         if [ -f "${TARGET_DIR}/${DEBIAN_BASENAME}_${PKG_ARCH}.deb" ]; then
@@ -52,6 +53,8 @@ build_package() {
                --arch="${ARCH}" --dist="${OSRELEASE}" \
                "${DEBIAN_BASENAME}.dsc"
         cp "${DEBIAN_BASENAME}_${PKG_ARCH}.deb" "${TARGET_DIR}/"
+        [ ! -f "${DEBIAN_DBG_NAME}_${PKG_ARCH}.deb" ] || cp "${DEBIAN_DBG_NAME}_${PKG_ARCH}.deb" "${TARGET_DIR}/"
+        [ ! -f "${DEBIAN_DBG_NAME}_${PKG_ARCH}.ddeb" ] || cp "${DEBIAN_DBG_NAME}_${PKG_ARCH}.ddeb" "${TARGET_DIR}/"
         cp "${DEBIAN_BASENAME}_${ARCH}.buildinfo" "${TARGET_DIR}/"
         popd
     done
