@@ -9,6 +9,34 @@ pushd "$TOP_DIR/debian-sbuild/"
 
 . "./config/base.conf"
 
+orig_source() {
+    local pkg_name=$1
+    local pkg_orig_name=$2
+    local pkg_orig_version=$3
+    local pkg_deb_version=$4
+
+    if [ "${USE_LOCAL_SOURCE:-0}" -eq 1 ]; then
+        cp -v "$OUTPUT/upload/${pkg_orig_name}-${pkg_orig_version}.tar.gz" \
+           "${pkg_name}_${pkg_deb_version}.orig.tar.gz"
+        return
+    fi
+
+    curl -fsSL -o "${pkg_name}_${pkg_deb_version}.orig.tar.gz" \
+         "$SECONDARY_WEBSERVER_BASEURL/${pkg_orig_name}-${pkg_orig_version}.tar.gz"
+    curl -fsSL -o "${pkg_name}_${pkg_deb_version}.orig.tar.gz.asc" \
+         "$SECONDARY_WEBSERVER_BASEURL/${pkg_orig_name}-${pkg_orig_version}.tar.gz.asc"
+    # same as dpkg-source --require-valid-signature but accept SHA1 self-signature
+    # until we have fixed our primary key
+    GPG_TMP_HOME=$(mktemp -d)
+    GPG_TMP_KEYRING=$(mktemp)
+    GPG_TMP_OPTS="--homedir $GPG_TMP_HOME --keyring $GPG_TMP_KEYRING"
+    gpg $GPG_TMP_OPTS --no-options --no-default-keyring -q \
+        --import "$BASEDIR/$pkg_name/$OSRELEASE/debian/upstream/signing-key.asc"
+    gpgv $GPG_TMP_OPTS "${pkg_name}_${pkg_deb_version}.orig.tar.gz.asc" \
+         "${pkg_name}_${pkg_deb_version}.orig.tar.gz"
+    rm -rf "$GPG_TMP_HOME" "$GPG_TMP_KEYRING"
+}
+
 prepare_package() {
     local pkg_name=$1
     local pkg_orig_name=$2
@@ -39,20 +67,7 @@ prepare_package() {
         test -d "$DIR" || mkdir "$DIR"
         pushd "$DIR"
         rm -rf "$pkg_name"*
-        curl -o "${pkg_name}_${pkg_deb_version}.orig.tar.gz" \
-             "$SECONDARY_WEBSERVER_BASEURL/${pkg_orig_name}-${pkg_orig_version}.tar.gz"
-        curl -o "${pkg_name}_${pkg_deb_version}.orig.tar.gz.asc" \
-             "$SECONDARY_WEBSERVER_BASEURL/${pkg_orig_name}-${pkg_orig_version}.tar.gz.asc"
-        # same as dpkg-source --require-valid-signature but accept SHA1 self-signature
-        # until we have fixed our primary key
-        GPG_TMP_HOME=$(mktemp -d)
-        GPG_TMP_KEYRING=$(mktemp)
-        GPG_TMP_OPTS="--homedir $GPG_TMP_HOME --keyring $GPG_TMP_KEYRING"
-        gpg $GPG_TMP_OPTS --no-options --no-default-keyring -q \
-            --import "$BASEDIR/$pkg_name/$OSRELEASE/debian/upstream/signing-key.asc"
-        gpgv $GPG_TMP_OPTS "${pkg_name}_${pkg_deb_version}.orig.tar.gz.asc" \
-             "${pkg_name}_${pkg_deb_version}.orig.tar.gz"
-        rm -rf "$GPG_TMP_HOME" "$GPG_TMP_KEYRING"
+        orig_source "$@"
         tar -xf "${pkg_name}_${pkg_deb_version}.orig.tar.gz"
         pushd "${pkg_orig_name}-${pkg_orig_version}"
         cp -a "$BASEDIR/$pkg_name/$OSRELEASE/debian" .

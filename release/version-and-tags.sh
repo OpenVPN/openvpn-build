@@ -47,10 +47,10 @@ create_debian_changelog() {
 
 # Create changelog for openvpn Debian packages
 create_debian_changelog openvpn "$DEBIAN_UPSTREAM_VERSION" "$OPENVPN" \
-                        "refs/tags/$OPENVPN_PREVIOUS_TAG..refs/tags/$OPENVPN_CURRENT_TAG"
+                        "$OPENVPN_PREVIOUS_TAG..$OPENVPN_CURRENT_TAG"
 # Create changelog for openvpn-dco-dkms Debian packages
 create_debian_changelog openvpn-dco-dkms "$OPENVPN_DCO_CURRENT_VERSION" "$OPENVPN_DCO" \
-                        "refs/tags/$OPENVPN_DCO_PREVIOUS_TAG..refs/tags/$OPENVPN_DCO_CURRENT_TAG"
+                        "$OPENVPN_DCO_PREVIOUS_TAG..$OPENVPN_DCO_CURRENT_TAG"
 
 ###############
 # OpenVPN GUI #
@@ -87,6 +87,12 @@ if ! git diff --exit-code; then
 fi
 
 popd
+
+if [ "${USE_LOCAL_SOURCE:-0}" -eq 1 ]; then
+    : skip tagging
+    git reset
+    exit
+fi
 
 # did we prepare any changes?
 if ! git diff --cached --exit-code; then
