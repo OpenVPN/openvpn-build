@@ -227,7 +227,7 @@ jobs:
         working-directory: debian-sbuild
         run: |
           [ ! -f "$CHROOT_CONF" ] || ( tar -xvf "$CHROOT_CONF" -C chroots; sudo install -m644 chroots/chroot.d/* /etc/schroot/chroot.d/ )
-          sudo chown root:root chroots/*.tar.gz
+          sudo chown root:root chroots/*.tar.gz || true
           scripts/setup.sh
           sudo scripts/setup_chroots.sh
           sudo scripts/update-all.sh
