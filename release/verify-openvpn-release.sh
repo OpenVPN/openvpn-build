@@ -34,7 +34,7 @@ cd "${TESTDIR}"
 echo
 echo "Downloading release files from webservers"
 echo
-cat "../sources/urls.txt"|while read URL; do
+cat "../upload/urls.txt"|while read URL; do
     PREFIX=`echo $URL|cut -d "/" -f 3`
     FILENAME=`echo $URL|awk -F'/' '{print $NF}'`
     echo "Downloading ${URL}"
@@ -47,18 +47,21 @@ echo "Verifying signatures"
 echo
 for DIR in `find . -mindepth 1 -type d`; do
     for SIGNATURE in `ls $DIR/*.asc`; do
-        $GPG $GPG_OPTS -v --verify $SIGNATURE > /dev/null 2>&1
+        GPG_OUT=$(mktemp)
+        $GPG $GPG_OPTS -v --verify $SIGNATURE > "${GPG_OUT}" 2>&1
 
         # This is consider a failure even by GnuPG
         if [ $? -eq 0 ]; then
             echo "Good signature: ${SIGNATURE}"
         else
             echo "Bad signature: ${SIGNATURE}"
+            cat "$GPG_OUT"
         fi
+        rm -f "$GPG_OUT"
 
-        # Separate check for expired private key: even though gpg returns 0 this 
+        # Separate check for expired private key: even though gpg returns 0 this
         # is not ok for us
-        $GPG $GPG_OPTS -v --verify $SIGNATURE 2>&1 | grep -i expire
+        $GPG $GPG_OPTS -v --verify $SIGNATURE 2>&1 | grep -iE "(expire|revoke)"
 
     done
 done
