@@ -1,0 +1,5 @@
+openvpn-dco-dkms (0.2.20230323-debian0) stable; urgency=medium
+
+  * ovpn-dco: store and report transport rx/tx stats as well (Antonio Quartulli, 726fdfe)
+
+ -- Frank Lichtenheld <frank.lichtenheld@openvpn.net>  Mon, 20 Mar 2023 23:50:52 +0100
