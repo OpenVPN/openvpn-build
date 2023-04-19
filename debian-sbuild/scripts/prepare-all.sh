@@ -43,7 +43,7 @@ prepare_package() {
     local pkg_orig_version=$3
     local pkg_deb_version=$4
 
-    local changelog="$BASEDIR/$pkg_name/changelog-$pkg_orig_version"
+    local changelog="$BASEDIR/$pkg_name/changelog-$pkg_deb_version"
 
     if ! [ -r "${changelog}" ]; then
         echo "ERROR: changelog file ${changelog} not found!"
@@ -73,22 +73,18 @@ prepare_package() {
         cp -a "$BASEDIR/$pkg_name/$OSRELEASE/debian" .
 
         # Generate changelog from the template using sed with regular expression
-        # capture groups. The purpose is twofold:
+        # capture groups.
+        # The purpose is to ensure that "debian" in the version numbers are converted
+        # into real distribution codenames (e.g. "jessie")
         #
-        # - Ensure that "debian" in the version numbers are converted into real distribution codenames (e.g. "jessie")
-        # - Get rid off underscores in version names (e.g. 2.4_beta1 -> 2.4-beta1)
-        #
-        # The latter has to be done for all version definitions in the changelog
-        # or the Debian packaging tools will explode.
-        #
-        # Trying to manage versions like 2.3.14 and 2.4_rc2 with one regular
+        # Trying to manage versions like 2.3.14 and 2.4-rc2 with one regular
         # expression gets very tricky, becomes hard to read easily and is
         # fragile. Therefore we have two sed "profiles" depending on the version
         # number type we're given.
         #
-        # First sed is for openvpn-2.4_rc2-debian0-style and the second for openvpn-2.3.14-debian0-style entries
+        # First sed is for openvpn-2.4-rc2-debian0-style and the second for openvpn-2.3.14-debian0-style entries
         cat $changelog|\
-            sed -E s/"^(${pkg_name} \([[:digit:]]\.[[:digit:]])_([[:alnum:]]+)-debian([[:digit:]])"/"\1-\2-$OSRELEASE\3"/g|\
+            sed -E s/"^(${pkg_name} \([[:digit:]]\.[[:digit:]])-([[:alnum:]]+)-debian([[:digit:]])"/"\1-\2-$OSRELEASE\3"/g|\
             sed -E s/"^(${pkg_name} \([[:digit:]]\.[[:digit:]]\.[[:digit:]]+)-debian([[:digit:]])"/"\1-$OSRELEASE\2"/g > debian/changelog
 
         dpkg-buildpackage -d -S -uc -us
