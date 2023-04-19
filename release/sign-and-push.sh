@@ -65,7 +65,7 @@ ls|grep -E "${MATCH}"|while read FILE; do
         $GPG $GPG_OPTS -a --default-key $GPG_KEY_ID --output $SIGFILE --detach-sig $FILE
     fi
 
-    if ! $GPG $GPG_OPTS -v --verify ${SIGFILE} 2>&1 |grep -iE '(bad|expired)'; then
+    if ! $GPG $GPG_OPTS -v --verify ${SIGFILE} 2>&1 |grep -iE '(bad|expired|revoked)'; then
         echo "Good signature: ${SIGFILE}"
         echo "Copying files to ${SECONDARY_WEBSERVER}"
         chmod 644 $FILE $SIGFILE # ensure sane permissions

@@ -1,0 +1,9 @@
+PACKAGE_NAME="ovpn-dco"
+PACKAGE_VERSION="#MODULE_VERSION#"
+AUTOINSTALL="yes"
+MAKE="make VER=${kernelver} KERNEL_SRC=${kernel_source_dir} REVISION=$PACKAGE_VERSION"
+CLEAN="make clean"
+BUILT_MODULE_NAME[0]="ovpn-dco-v2"
+BUILT_MODULE_LOCATION[0]="drivers/net/ovpn-dco"
+DEST_MODULE_LOCATION[0]="/kernel/drivers/net/ovpn-dco"
+
