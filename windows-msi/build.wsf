@@ -207,15 +207,15 @@ clean	Cleans intermediate and output files</example>
                             [
                                 BuildPath(depsPath, "openvpn", "COPYING"),
                                 BuildPath(depsPath, "openvpn", "COPYRIGHT.GPL")
-                            ], "utf-8", adLF,
+                            ], "utf-8", adCRLF,
                             []));
                         b.pushRule(new ConvertTextBuildRule(
                             BuildPath(p.buildPath, "client.ovpn"), "utf-8", adCRLF,
-                            [BuildPath(depsPath, "openvpn", "sample", "sample-config-files", "client.conf")], "utf-8", adLF,
+                            [BuildPath(depsPath, "openvpn", "sample", "sample-config-files", "client.conf")], "utf-8", adCRLF,
                             []));
                         b.pushRule(new ConvertTextBuildRule(
                             BuildPath(p.buildPath, "server.ovpn"), "utf-8", adCRLF,
-                            [BuildPath(depsPath, "openvpn", "sample", "sample-config-files", "server.conf")], "utf-8", adLF,
+                            [BuildPath(depsPath, "openvpn", "sample", "sample-config-files", "server.conf")], "utf-8", adCRLF,
                             []));
                         // WiX linker flags
                         var wixLinkerFlags = [
