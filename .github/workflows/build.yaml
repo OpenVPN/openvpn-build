@@ -172,3 +172,89 @@ jobs:
           username: ${{ secrets.MSI_UPLOAD_USERNAME }}
           privateKey: ${{ secrets.MSI_UPLOAD_PRIVATE_KEY }}
           passphrase: ${{ secrets.MSI_UPLOAD_KEY_PASSPHRASE }}
+
+  debian:
+    name: Build Debian packages
+    runs-on: ubuntu-latest
+    env:
+      CHROOT_CONF: chroots/chroot.d.tar
+      OPENVPN_CURRENT_TAG: HEAD
+      OPENVPN_DCO_CURRENT_TAG: HEAD
+      USE_LOCAL_SOURCE: 1
+
+    steps:
+      - name: Checkout openvpn-build
+        uses: actions/checkout@v3
+
+      - name: Checkout submodules (by branch)
+        run: |
+          git submodule update --init --remote --recursive
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          # for sbuild
+          sudo apt-get install -y sbuild git quilt debhelper dkms
+          # for ./configure && make dist
+          sudo apt-get install -y autoconf automake libcap-ng-dev libssl-dev python3-docutils
+
+      - name: Prepare release files
+        working-directory: release
+        run: |
+          ln -s vars.example vars
+          mkdir ../output
+          ./version-and-tags.sh
+          ./create-release-files.sh
+
+      # So that the caches expire after a while
+      - name: Get Date for cache key
+        id: get-date
+        run: |
+          echo "date=$(/bin/date -u '+%Y%m')" >> $GITHUB_OUTPUT
+
+      - name: Restore cached chroots
+        id: chroots-restore
+        uses: actions/cache/restore@v3
+        with:
+          path: |
+            debian-sbuild/chroots
+          key: chroots-${{ hashFiles('**/config/variants.conf') }}-${{ steps.get-date.outputs.date }}
+          restore-keys: |
+            chroots-${{ hashFiles('**/config/variants.conf') }}-
+            chroots-
+
+      - name: Prepare environment
+        working-directory: debian-sbuild
+        run: |
+          [ ! -f "$CHROOT_CONF" ] || ( tar -xvf "$CHROOT_CONF" -C chroots; sudo install -m644 chroots/chroot.d/* /etc/schroot/chroot.d/ )
+          sudo chown root:root chroots/*.tar.gz || true
+          scripts/setup.sh
+          sudo scripts/setup_chroots.sh
+          sudo scripts/update-all.sh
+          sudo sbuild-adduser runner
+          tar -cvf "$CHROOT_CONF" -C /etc/schroot/ chroot.d/
+
+      - name: Prepare package build
+        working-directory: debian-sbuild
+        run: |
+          scripts/prepare-all.sh
+
+      - name: Build packages
+        working-directory: debian-sbuild
+        run: |
+          sg sbuild ./scripts/build-all.sh
+
+      - name: Archive packages
+        uses: actions/upload-artifact@v3
+        with:
+          name: openvpn-debian
+          path: |
+            output
+
+      - name: Save chroots
+        id: chroots-save
+        uses: actions/cache/save@v3
+        with:
+          path: |
+            debian-sbuild/chroots
+          key: ${{ steps.chroots-restore.outputs.cache-primary-key }}

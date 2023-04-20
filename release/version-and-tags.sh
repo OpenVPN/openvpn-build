@@ -24,18 +24,33 @@ LANG=en_us.UTF-8
 # We assume openvpn is already tagged
 git -C "$OPENVPN" checkout -f "$OPENVPN_CURRENT_TAG"
 git add "$OPENVPN"
+# We assume ovpn-dco is already tagged
+git -C "$OPENVPN_DCO" checkout -f "$OPENVPN_DCO_CURRENT_TAG"
+git add "$OPENVPN_DCO"
 
-# Create changelog for Debian packages
-COMMIT_DATE=$(git -C "$OPENVPN" log --no-show-signature -n1 --format="%cD")
-DEBIAN_CHANGELOG="$DEBIAN/packaging/changelog-$OPENVPN_CURRENT_VERSION"
-echo "openvpn (${OPENVPN_CURRENT_VERSION}-debian0) stable; urgency=medium" > "$DEBIAN_CHANGELOG"
-echo >> "$DEBIAN_CHANGELOG"
-git -C "$OPENVPN" log --pretty=short --abbrev-commit --format="  * %s (%an, %h)" \
-    "refs/tags/$OPENVPN_PREVIOUS_TAG..refs/tags/$OPENVPN_CURRENT_TAG" >> "$DEBIAN_CHANGELOG"
-echo >> "$DEBIAN_CHANGELOG"
-echo " -- $GIT_AUTHOR  $COMMIT_DATE" >> "$DEBIAN_CHANGELOG"
+create_debian_changelog() {
+    local pkg_name=$1
+    local pkg_version=$2
+    local git_dir=$3
+    local git_log=$4
+    local changelog_file="$DEBIAN/$pkg_name/changelog-${pkg_version}"
+    echo "$pkg_name (${pkg_version}-debian0) stable; urgency=medium" > "$changelog_file"
+    echo >> "$changelog_file"
+    git -C "$git_dir" log --pretty=short --abbrev-commit --format="  * %s (%an, %h)" \
+        "$git_log" >> "$changelog_file"
+    echo >> "$changelog_file"
+    local commit_date=$(git -C "$git_dir" log --no-show-signature -n1 --format="%cD")
+    echo " -- $GIT_AUTHOR  $commit_date" >> "$changelog_file"
 
-git add "$DEBIAN_CHANGELOG"
+    git add "$changelog_file"
+}
+
+# Create changelog for openvpn Debian packages
+create_debian_changelog openvpn "$DEBIAN_UPSTREAM_VERSION" "$OPENVPN" \
+                        "$OPENVPN_PREVIOUS_TAG..$OPENVPN_CURRENT_TAG"
+# Create changelog for openvpn-dco-dkms Debian packages
+create_debian_changelog openvpn-dco-dkms "$OPENVPN_DCO_CURRENT_VERSION" "$OPENVPN_DCO" \
+                        "$OPENVPN_DCO_PREVIOUS_TAG..$OPENVPN_DCO_CURRENT_TAG"
 
 ###############
 # OpenVPN GUI #
@@ -72,6 +87,12 @@ if ! git diff --exit-code; then
 fi
 
 popd
+
+if [ "${USE_LOCAL_SOURCE:-0}" -eq 1 ]; then
+    : skip tagging
+    git reset
+    exit
+fi
 
 # did we prepare any changes?
 if ! git diff --cached --exit-code; then

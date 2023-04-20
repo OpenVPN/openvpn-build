@@ -10,3 +10,7 @@
 	path = src/vcpkg
 	url = https://github.com/microsoft/vcpkg.git
 	branch = master
+[submodule "src/ovpn-dco"]
+	path = src/ovpn-dco
+	url = https://github.com/OpenVPN/ovpn-dco.git
+	branch = master

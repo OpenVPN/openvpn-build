@@ -44,5 +44,9 @@ for freight_repo in $FREIGHT_REPOS; do
         -p "${DEBIAN_UPSTREAM_VERSION}" \
         -c "/etc/freight-openvpn_${freight_repo}.conf" \
         -d "./${DEBIAN_OUTPUT_NAME}"
+    ssh $SECONDARY_WEBSERVER ./openvpn-build/debian-sbuild/scripts/freight-add-many.py \
+        -p "${OPENVPN_DCO_CURRENT_VERSION}" \
+        -c "/etc/freight-openvpn_${freight_repo}.conf" \
+        -d "./${DEBIAN_OUTPUT_NAME}"
 done
 

@@ -43,14 +43,14 @@ TAR_REP="tar --sort=name --owner=root:0 --group=root:0"
 
 : "Creating OpenVPN source packages"
 autoreconf -vi > /dev/null 2>&1
-./configure > /dev/null
+./configure --disable-dco --disable-lzo --disable-lz4 --disable-plugin-auth-pam > /dev/null
 make distdir > /dev/null
 $TAR_REP --mtime="$COMMIT_DATE" -chf - "openvpn-$OPENVPN_CURRENT_VERSION" \
     | gzip -c > "$UPLOAD/openvpn-$OPENVPN_CURRENT_VERSION.tar.gz"
 rm -fr "openvpn-$OPENVPN_CURRENT_VERSION"
 
 # Generate changelog for Trac
-git shortlog "refs/tags/$OPENVPN_PREVIOUS_TAG...refs/tags/$OPENVPN_CURRENT_TAG" \
+git shortlog "$OPENVPN_PREVIOUS_TAG...$OPENVPN_CURRENT_TAG" \
     > "$OUTPUT/changelog/openvpn-$OPENVPN_CURRENT_VERSION-changelog"
 
 # Copy the man-page and tarballs
@@ -70,5 +70,14 @@ make distdir > /dev/null
 $TAR_REP --mtime="$COMMIT_DATE_GUI" -chf - "openvpn-gui-$OPENVPN_GUI_CURRENT_MAJ_VERSION" \
     | gzip -c > "$UPLOAD/openvpn-gui-$OPENVPN_GUI_CURRENT_MAJ_VERSION.tar.gz"
 rm -fr "openvpn-gui-$OPENVPN_GUI_CURRENT_MAJ_VERSION"
+
+# Generate OpenVPN-DCO tarball
+pushd "$OPENVPN_DCO"
+
+COMMIT_DATE_DCO=$(git log --no-show-signature -n1 --format="%cD")
+
+: "Creating OpenVPN-DCO source package"
+git archive --prefix=ovpn-dco-$OPENVPN_DCO_CURRENT_VERSION/ --format=tar $OPENVPN_DCO_CURRENT_TAG \
+    | gzip -c > "$UPLOAD/ovpn-dco-$OPENVPN_DCO_CURRENT_VERSION.tar.gz"
 
 popd
