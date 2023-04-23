@@ -1,260 +1,41 @@
 # The name of our workflow
-name: Build
+name: OpenVPN binary
 on:
-  push:
-  pull_request:
-  repository_dispatch:
-    types: [openvpn-commit]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "OpenVPN version"
+        type: string
 
 permissions:
-  id-token: write   # This is required for requesting the JWT
-  contents: read    # This is required for actions/checkoutjobs:
+  id-token: write # This is required for requesting the JWT
+  contents: read # This is required for actions/checkoutjobs:
 
 jobs:
-  msvc:
+  extract:
     strategy:
       matrix:
         arch: [x86, amd64, arm64]
-
-    env:
-      CMAKE: cmake.exe
-      WIX: ${{ github.workspace }}\wix\
-
-    name: 'openvpn-build'
+    name: "extract openvpn-msi"
     runs-on: windows-latest
-
     steps:
-      - name: Checkout openvpn-build
-        uses: actions/checkout@v3
-        with:
-          path: openvpn-build
-
-      - name: Checkout submodules (by branch)
-        working-directory: openvpn-build
+      - name: download msi file
         run: |
-          git submodule update --init --remote --recursive
+          New-Item -ItemType "directory" -Path "./downloads"
+          Invoke-WebRequest -Uri "https://swupdate.openvpn.org/community/releases/OpenVPN-${{ inputs.version }}-I001-${{ matrix.arch }}.msi" -OutFile "./downloads/OpenVPN-${{ inputs.version }}-I001-${{ matrix.arch }}.msi"
 
-      - name: vcpkg pre-download
-        working-directory: openvpn-build/src/vcpkg
+      - name: extract msi file
         run: |
-          New-Item -ItemType "directory" -Path ".\downloads"
-          Invoke-WebRequest -Uri "https://build.openvpn.net/downloads/temp/strawberry-perl-5.32.1.1-32bit.zip" -OutFile ".\downloads\strawberry-perl-5.32.1.1-32bit.zip"
+          New-Item -ItemType "directory" -Path "./OpenVPN"
+          msiexec /a "./downloads/OpenVPN-${{ inputs.version }}-I001-${{ matrix.arch }}.msi" /qb TARGETDIR=./OpenVPN
 
-      - name: Get latest CMake and ninja
-        uses: lukka/get-cmake@latest
-
-      - name: Install rst2html
-        run: python -m pip install --upgrade pip rst2html
-
-      - name: Setup MSVC prompt
-        uses: ilammy/msvc-dev-cmd@v1
-
-      - name: Install Wix 3.14
+      - name: zip binary directory
         run: |
-          Invoke-WebRequest -Uri "https://build.openvpn.net/downloads/temp/wix314-toolset.zip" -OutFile wix.zip
-          Expand-Archive -Path .\wix.zip -DestinationPath wix
-          Move-Item '.\wix\WiX Toolset v3.14\bin' .\wix
+          New-Item -ItemType "directory" -Path "./output"
+          Compress-Archive -Path "./OpenVPN/bin" -DestinationPath "./output/OpenVPN-${{ inputs.version }}-I001-${{ matrix.arch }}.zip"
 
-      - name: Bump version
-        working-directory: openvpn-build/windows-msi
-        run: |
-          $NewProductCode = (New-Guid).ToString().ToUpper()
-          $BuildVersion = 10000 + [int]$env:GITHUB_RUN_NUMBER
-          $NewProductVersion = "2.6.$BuildVersion"
-          echo $NewProductCode $NewProductVersion
-          $version_m4 = (Get-Content version.m4)
-          $version_m4 -replace '^define\(\[PRODUCT_CODE\], \[\{(?<ProductCode>.*)\}]\)', "define([PRODUCT_CODE], [{${NewProductCode}}])" `
-            -replace '^define\(\[PRODUCT_VERSION\], \[(.*?)\]\)', "define([PRODUCT_VERSION], [${NewProductVersion}])" | Out-File -Encoding ASCII version.m4
-
-      - name: Build
-        working-directory: openvpn-build/windows-msi
-        run: |
-          ./build-and-package.ps1 -ossl ossl3 -arch ${{ matrix.arch }}
-
-      - name: Get openvpn commit id
-        working-directory: openvpn-build/src/openvpn
-        run: |
-          $commit = git rev-parse --short HEAD
-          echo "OPENVPN_COMMIT=$commit" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf-8 -Append
-
-      - name: Get datetime
-        run: |
-          $dt = Get-Date -Format "yyyyMMddThhmm"
-          echo "DATETIME=${dt}" >> $Env:GITHUB_ENV
-
-      - name: Archive artifacts
+      - name: upload Artifact
         uses: actions/upload-artifact@v3
         with:
-          name: openvpn-master-${{ env.DATETIME }}-${{ env.OPENVPN_COMMIT }}-${{ matrix.arch }}
-          path: ${{ github.workspace }}\openvpn-build\windows-msi\image\*-${{ matrix.arch }}.msi
-
-  run_tclient_tests:
-    name: Run t_client tests on AWS
-    needs: msvc
-    concurrency: aws_tclient_tests
-    runs-on: ubuntu-latest
-    if: ${{ github.repository == 'openvpn/openvpn-build' && github.event_name != 'pull_request' }}
-    env:
-      AWS_REGION : "eu-west-1"
-
-    steps:
-      - name: configure aws credentials
-        uses: aws-actions/configure-aws-credentials@v1-node16
-        with:
-          role-to-assume: arn:aws:iam::217307881341:role/GitHubActions
-          role-session-name: githubactions
-          aws-region: ${{ env.AWS_REGION }}
-
-      - name: Clone openvpn-windows-test repo
-        uses: actions/checkout@v3
-        with:
-          repository: openvpn/openvpn-windows-test
-          ref: master
-          path: openvpn-windows-test
-
-      - name: Install SSH key for tclient host
-        uses: shimataro/ssh-key-action@v2
-        with:
-          key: ${{ secrets.SSH_KEY_FOR_TCLIENT_HOST }}
-          known_hosts: unnecessary
-
-      - name: Get artifacts
-        uses: actions/download-artifact@v3
-        with:
-          path: msi
-
-      - name: Run AWS test
-        working-directory: openvpn-windows-test
-        shell: pwsh
-        run: |
-          Install-Module -Name AWS.Tools.Installer -Force
-          Install-AWSToolsModule AWS.Tools.EC2 -Force
-          .\Start-AWSTest.ps1 -SSH_KEY ~/.ssh/id_rsa -MSI_PATH $(Get-ChildItem ../msi/*-amd64/*.msi | select -ExpandProperty FullName)
-
-      - name: Archive openvpn logs
-        uses: actions/upload-artifact@v3
-        if: ${{ always() }}
-        with:
-          name: t_client_openvpn_logs
-          path: openvpn-windows-test/openvpn-logs.zip
-
-  upload_msis:
-    needs: run_tclient_tests
-    name: upload-msis
-    runs-on: ubuntu-latest
-    if: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/master' && github.repository == 'openvpn/openvpn-build' }}
-
-    steps:
-      - name: Install knock
-        run: sudo apt install knockd
-
-      - name: Get artifacts
-        uses: actions/download-artifact@v3
-        with:
-          path: msi
-
-      - name: Flatter and rename artifacts
-        working-directory: msi
-        run: |
-          find -name '*.msi' -printf "%p\n" | while read f; do mv $f $(dirname $f).msi; rm -rf $(dirname $f); done
-          rm -rf t_client_openvpn_logs
-
-      - name: Knock ports on remote
-        run: knock -d 500 ${{ secrets.MSI_UPLOAD_REMOTE_HOST }} ${{ secrets.MSI_UPLOAD_REMOTE_KNOCK_SEQUENCE }} ; sleep 1
-
-      - name: Copy MSI to remote
-        uses: garygrossgarten/github-action-scp@release
-        with:
-          local: msi
-          remote: ${{ secrets.MSI_UPLOAD_REMOTE_PATH }}
-          host: ${{ secrets.MSI_UPLOAD_REMOTE_HOST }}
-          port: ${{ secrets.MSI_UPLOAD_REMOTE_PORT }}
-          username: ${{ secrets.MSI_UPLOAD_USERNAME }}
-          privateKey: ${{ secrets.MSI_UPLOAD_PRIVATE_KEY }}
-          passphrase: ${{ secrets.MSI_UPLOAD_KEY_PASSPHRASE }}
-
-  debian:
-    name: Build Debian packages
-    runs-on: ubuntu-latest
-    env:
-      CHROOT_CONF: chroots/chroot.d.tar
-      OPENVPN_CURRENT_TAG: HEAD
-      OPENVPN_DCO_CURRENT_TAG: HEAD
-      USE_LOCAL_SOURCE: 1
-
-    steps:
-      - name: Checkout openvpn-build
-        uses: actions/checkout@v3
-
-      - name: Checkout submodules (by branch)
-        run: |
-          git submodule update --init --remote --recursive
-
-      - name: Install dependencies
-        run: |
-          sudo apt-get update
-          # for sbuild
-          sudo apt-get install -y sbuild git quilt debhelper dkms
-          # for ./configure && make dist
-          sudo apt-get install -y autoconf automake libcap-ng-dev libssl-dev python3-docutils
-
-      - name: Prepare release files
-        working-directory: release
-        run: |
-          ln -s vars.example vars
-          mkdir ../output
-          ./version-and-tags.sh
-          ./create-release-files.sh
-
-      # So that the caches expire after a while
-      - name: Get Date for cache key
-        id: get-date
-        run: |
-          echo "date=$(/bin/date -u '+%Y%m')" >> $GITHUB_OUTPUT
-
-      - name: Restore cached chroots
-        id: chroots-restore
-        uses: actions/cache/restore@v3
-        with:
-          path: |
-            debian-sbuild/chroots
-          key: chroots-${{ hashFiles('**/config/variants.conf') }}-${{ steps.get-date.outputs.date }}
-          restore-keys: |
-            chroots-${{ hashFiles('**/config/variants.conf') }}-
-            chroots-
-
-      - name: Prepare environment
-        working-directory: debian-sbuild
-        run: |
-          [ ! -f "$CHROOT_CONF" ] || ( tar -xvf "$CHROOT_CONF" -C chroots; sudo install -m644 chroots/chroot.d/* /etc/schroot/chroot.d/ )
-          sudo chown root:root chroots/*.tar.gz || true
-          scripts/setup.sh
-          sudo scripts/setup_chroots.sh
-          sudo scripts/update-all.sh
-          sudo sbuild-adduser runner
-          tar -cvf "$CHROOT_CONF" -C /etc/schroot/ chroot.d/
-
-      - name: Prepare package build
-        working-directory: debian-sbuild
-        run: |
-          scripts/prepare-all.sh
-
-      - name: Build packages
-        working-directory: debian-sbuild
-        run: |
-          sg sbuild ./scripts/build-all.sh
-
-      - name: Archive packages
-        uses: actions/upload-artifact@v3
-        with:
-          name: openvpn-debian
-          path: |
-            output
-
-      - name: Save chroots
-        id: chroots-save
-        uses: actions/cache/save@v3
-        with:
-          path: |
-            debian-sbuild/chroots
-          key: ${{ steps.chroots-restore.outputs.cache-primary-key }}
+          name: OpenVPN-${{ inputs.version }}-I001-${{ matrix.arch }}
+          path: output/**
