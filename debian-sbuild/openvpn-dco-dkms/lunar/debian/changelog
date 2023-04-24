@@ -1,3 +1,14 @@
+openvpn-dco-dkms (0.0+git20230324-1~exp1) experimental; urgency=medium
+
+  * New upstream version 0.0+git20230324
+    - target experimental due to the freeze
+    - new ovpn-dco-v2 module to be used with OpenVPN 2.6.2+. Not adding a
+      versioned relationship to untangle testing migration, because it will
+      just not use the "wrong" version and run unaccelerated.
+  * d/dkms: rename module to ovpn-dco-v2
+
+ -- Bernhard Schmidt <berni@debian.org>  Sat, 25 Mar 2023 00:01:17 +0100
+
 openvpn-dco-dkms (0.0+git20230125-1) unstable; urgency=medium
 
   * New upstream version 0.0+git20230125
