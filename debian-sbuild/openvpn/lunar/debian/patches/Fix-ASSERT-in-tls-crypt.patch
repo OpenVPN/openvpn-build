@@ -1,0 +1,35 @@
+From ae6068842854278de70264218516b0e4fcdfc6d9 Mon Sep 17 00:00:00 2001
+From: Arne Schwabe <arne@rfc2549.org>
+Date: Thu, 9 Mar 2023 13:00:31 +0100
+Subject: [PATCH] Ensure n = 2 is set in key2 struct in
+ tls_crypt_v2_unwrap_client_key
+
+The ASSERT in xor_key2 assumes that all methods that load a key2 struct
+correctly set n=2. However, tls_crypt_v2_unwrap_client_key loads a key
+without setting n = 2, triggering the assert.
+
+Github: Closes and reported in OpenVPN/openvpn#272
+
+Change-Id: Iaeb163d83b95818e0b26faf9d25e7737dc8ecb23
+Signed-off-by: Arne Schwabe <arne@rfc2549.org>
+Acked-by: Antonio Quartulli <a@unstable.cc>
+Message-Id: <20230309120031.3780130-1-arne@rfc2549.org>
+URL: https://www.mail-archive.com/openvpn-devel@lists.sourceforge.net/msg26363.html
+Signed-off-by: Gert Doering <gert@greenie.muc.de>
+(cherry picked from commit 85832307fcb41c229ccb7ba83984726757eb32f7)
+---
+ src/openvpn/tls_crypt.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/src/openvpn/tls_crypt.c b/src/openvpn/tls_crypt.c
+index 3b68d186bb4..88b2d6d7cce 100644
+--- a/src/openvpn/tls_crypt.c
++++ b/src/openvpn/tls_crypt.c
+@@ -532,6 +532,7 @@ tls_crypt_v2_unwrap_client_key(struct key2 *client_key, struct buffer *metadata,
+     }
+     memcpy(&client_key->keys, BPTR(&plaintext), sizeof(client_key->keys));
+     ASSERT(buf_advance(&plaintext, sizeof(client_key->keys)));
++    client_key->n = 2;
+ 
+     if (!buf_copy(metadata, &plaintext))
+     {
