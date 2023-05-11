@@ -1,0 +1,9 @@
+openvpn-dco-dkms (0.2.20230426-debian0) stable; urgency=medium
+
+  * ovpn-dco: add compat check for RHEL9 (Antonio Quartulli, 961c60d)
+  * ovpn-dco: do not apply compat netlink code on RHEL8 (Antonio Quartulli, a5e6fdb)
+  * Revert "ovpn-dco: fix compat check for sock_is_readable on RHEL8" (Antonio Quartulli, 18df90a)
+  * ovpn-dco: fix compat check for sock_is_readable on RHEL8 (Antonio Quartulli, 760cc00)
+  * tcp: don't mix statements and declarations on linux <5.16 (Antonio Quartulli, 1c2c84e)
+
+ -- Frank Lichtenheld <frank.lichtenheld@openvpn.net>  Tue, 28 Mar 2023 00:47:54 +0200
