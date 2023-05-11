@@ -1,15 +1,13 @@
 param(
     # Must be top directory of openvpn-build checkout
     [string] $topdir = "${PSScriptRoot}/..",
-    # Version of OpenSSL port to use ("ossl1.1.1" or "ossl3")
-    [string] $ossl = "ossl3",
     [string] $arch = "all",
     [switch] $sign
     )
 
 ### Preparations
 if(-not($topdir)) {
-    Write-Host "Usage: build-and-package.ps1 [-topdir <topdir>] [-ossl <ossl1.1.1|ossl3>] [-arch <all|x86|amd64|arm64>] [-sign]"
+    Write-Host "Usage: build-and-package.ps1 [-topdir <topdir>] [-arch <all|x86|amd64|arm64>] [-sign]"
     exit 1
 }
 

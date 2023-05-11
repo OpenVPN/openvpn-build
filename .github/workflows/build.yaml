@@ -29,12 +29,10 @@ jobs:
         with:
           path: openvpn-build
 
-      # Don't use latest vcpkg: https://github.com/microsoft/vcpkg/issues/31170
       - name: Checkout submodules (by branch)
         working-directory: openvpn-build
         run: |
           git submodule update --init --remote --recursive
-          git submodule update src/vcpkg
 
       - name: vcpkg pre-download
         working-directory: openvpn-build/src/vcpkg
@@ -71,7 +69,7 @@ jobs:
       - name: Build
         working-directory: openvpn-build/windows-msi
         run: |
-          ./build-and-package.ps1 -ossl ossl3 -arch ${{ matrix.arch }}
+          ./build-and-package.ps1 -arch ${{ matrix.arch }}
 
       - name: Get openvpn commit id
         working-directory: openvpn-build/src/openvpn
