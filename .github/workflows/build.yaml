@@ -26,18 +26,13 @@ jobs:
     steps:
       - name: Checkout openvpn-build
         uses: actions/checkout@v3
-        with:
-          path: openvpn-build
 
-      # Don't use latest vcpkg: https://github.com/microsoft/vcpkg/issues/31170
       - name: Checkout submodules (by branch)
-        working-directory: openvpn-build
         run: |
           git submodule update --init --remote --recursive
-          git submodule update src/vcpkg
 
       - name: vcpkg pre-download
-        working-directory: openvpn-build/src/vcpkg
+        working-directory: src/vcpkg
         run: |
           New-Item -ItemType "directory" -Path ".\downloads"
           Invoke-WebRequest -Uri "https://build.openvpn.net/downloads/temp/strawberry-perl-5.32.1.1-32bit.zip" -OutFile ".\downloads\strawberry-perl-5.32.1.1-32bit.zip"
@@ -58,7 +53,7 @@ jobs:
           Move-Item '.\wix\WiX Toolset v3.14\bin' .\wix
 
       - name: Bump version
-        working-directory: openvpn-build/windows-msi
+        working-directory: windows-msi
         run: |
           $NewProductCode = (New-Guid).ToString().ToUpper()
           $BuildVersion = 10000 + [int]$env:GITHUB_RUN_NUMBER
@@ -69,12 +64,12 @@ jobs:
             -replace '^define\(\[PRODUCT_VERSION\], \[(.*?)\]\)', "define([PRODUCT_VERSION], [${NewProductVersion}])" | Out-File -Encoding ASCII version.m4
 
       - name: Build
-        working-directory: openvpn-build/windows-msi
+        working-directory: windows-msi
         run: |
-          ./build-and-package.ps1 -ossl ossl3 -arch ${{ matrix.arch }}
+          ./build-and-package.ps1 -arch ${{ matrix.arch }}
 
       - name: Get openvpn commit id
-        working-directory: openvpn-build/src/openvpn
+        working-directory: src/openvpn
         run: |
           $commit = git rev-parse --short HEAD
           echo "OPENVPN_COMMIT=$commit" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf-8 -Append
@@ -88,7 +83,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: openvpn-master-${{ env.DATETIME }}-${{ env.OPENVPN_COMMIT }}-${{ matrix.arch }}
-          path: ${{ github.workspace }}\openvpn-build\windows-msi\image\*-${{ matrix.arch }}.msi
+          path: ${{ github.workspace }}\windows-msi\image\*-${{ matrix.arch }}.msi
 
   run_tclient_tests:
     name: Run t_client tests on AWS
