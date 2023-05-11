@@ -45,7 +45,7 @@ define([PACKAGE_VERSION], [2.6.4-I001])
 
 dnl The MSI product version in the form of n[.n[.n]] (numbers only).
 dnl The third field is 100*openvpn bugfix release + MSI build number.
-dnl So for the 2nd MSI build for OpenVPN 2.6.3 use 2.6.401
+dnl So for the 2nd MSI build for OpenVPN 2.6.3 use 2.6.302
 define([PRODUCT_VERSION], [2.6.401])
 
 dnl The MSI product code MUST change on each product release.
