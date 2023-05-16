@@ -10,6 +10,7 @@ The OpenVPN community project team is proud to release OpenVPN @OPENVPN_CURRENT_
 
 [list]
 [*][url=https://community.openvpn.net/openvpn/wiki/Downloads]Windows installers[/url]
+[*][url=https://community.openvpn.net/openvpn/wiki/OpenvpnSoftwareRepos#DebianUbuntu:UsingOpenVPNaptrepositories]Debian/Ubuntu apt repositories[/url]
 [*][url=https://copr.fedorainfracloud.org/coprs/dsommers/openvpn-release-2.6/]Red Hat/Fedora dnf/yum repositories (provided by Fedora Copr)[/url]
 [*][url=https://community.openvpn.net/openvpn/wiki/Downloads]Source archive file[/url]
 [/list]

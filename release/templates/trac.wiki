@@ -10,4 +10,4 @@ For details see [https://github.com/OpenVPN/openvpn/blob/v@OPENVPN_CURRENT_VERSI
 ||**Windows 32-bit MSI installer**||[https://swupdate.openvpn.org/community/releases/OpenVPN-@OPENVPN_CURRENT_VERSION@-@OPENVPN_INSTALLER_VERSION@-x86.msi.asc GnuPG Signature]||[https://swupdate.openvpn.org/community/releases/OpenVPN-@OPENVPN_CURRENT_VERSION@-@OPENVPN_INSTALLER_VERSION@-x86.msi OpenVPN-@OPENVPN_CURRENT_VERSION@-@OPENVPN_INSTALLER_VERSION@-x86.msi]||
 ||**Source archive file**||[https://swupdate.openvpn.org/community/releases/openvpn-@OPENVPN_CURRENT_VERSION@.tar.gz.asc GnuPG Signature]||[https://swupdate.openvpn.org/community/releases/openvpn-@OPENVPN_CURRENT_VERSION@.tar.gz openvpn-@OPENVPN_CURRENT_VERSION@.tar.gz]||
 
-
+For Community-maintained packages for Linux distributions see OpenvpnSoftwareRepos
