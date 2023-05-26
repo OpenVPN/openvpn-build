@@ -39,6 +39,7 @@ INSTALLER_VERSION="I"$(printf "%03d\n" $INSTALLER_BUILD)
 # Debian packaging scripts do not allow underscores (e.g "2.4_alpha2")
 DEBIAN_UPSTREAM_VERSION=`echo $OPENVPN_CURRENT_VERSION|sed s/"_"/"-"/g`
 DEBIAN_PACKAGE_VERSION="0"
+DEBIAN_PACKAGE_BUILD_ARCHS="amd64 arm64"
 # Which Debian repos to publish to
 FREIGHT_REPOS="stable testing release_26"
 
