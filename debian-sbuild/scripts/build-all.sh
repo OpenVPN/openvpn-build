@@ -61,7 +61,9 @@ build_package() {
 }
 
 build_package openvpn "$DEBIAN_UPSTREAM_VERSION" "$DEBIAN_PACKAGE_VERSION" any
-build_package openvpn-dco-dkms "$OPENVPN_DCO_CURRENT_VERSION" "$DEBIAN_PACKAGE_VERSION" all
+if $BUILD_ARCH_ALL; then
+    build_package openvpn-dco-dkms "$OPENVPN_DCO_CURRENT_VERSION" "$DEBIAN_PACKAGE_VERSION" all
+fi
 
 # Package all the packages into a tar.gz for transfer
 cd "$OUTPUT"
