@@ -22,7 +22,7 @@ pushd "$TOP_DIR"
 . "$SCRIPT_DIR/vars.infrastructure"
 
 for ARCH in $DEBIAN_PACKAGE_BUILD_ARCHS; do
-    _BUILD_HOST="${DEBIAN_SBUILD_BUILD_HOST}-${ARCH}"
+    _BUILD_HOST="${DEBIAN_SBUILD_BUILDHOST}-${ARCH}"
 
     ssh "$_BUILD_HOST" cloud-init status --wait
     ssh "$_BUILD_HOST" sudo git -C "$DEBIAN_SBUILD_WORKDIR" submodule update --init

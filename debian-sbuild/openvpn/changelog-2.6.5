@@ -1,0 +1,17 @@
+openvpn (2.6.5-debian0) stable; urgency=medium
+
+  * preparing release 2.6.5 (Gert Doering, cbc9e0ce)
+  * Fix use-after-free with EVP_CIPHER_free (Arne Schwabe, 205c66bd)
+  * msvc-generate: include version.m4.in in tarball (Frank Lichtenheld, cfcc20ff)
+  * options: remove --key-method from usage message (Frank Lichtenheld, 763cf2ac)
+  * tapctl: generate driver-specific adapter names (Lev Stipakov, 868286fa)
+  * Interactive service: do not force a target desktop for openvpn.exe (Selva Nair, 9e112be5)
+  * dco-win: support for --dev-node (Lev Stipakov, ea9382d7)
+  * src/openvpn/dco_freebsd.c: handle malloc failure (Ilya Shipitsin, 73ce6ac9)
+  * Correctly handle Unicode names for exit event (Selva Nair, 232a0fac)
+  * sample-plugins: Fix memleak in client-connect example plugin (Frank Lichtenheld, 13b8e155)
+  * Fix two unused assignments (Frank Lichtenheld, eb9fffe6)
+  * DCO: fix memory leak in dco_get_peer_stats_multi for Linux (Frank Lichtenheld, 5e8a571a)
+  * dco_linux: properly close dco version file (Frank Lichtenheld, 26ea58f9)
+
+ -- Frank Lichtenheld <frank.lichtenheld@openvpn.net>  Tue, 13 Jun 2023 08:09:22 +0200
