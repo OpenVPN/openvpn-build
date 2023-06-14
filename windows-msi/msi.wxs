@@ -1368,6 +1368,25 @@
                     </RegistryKey>
                 </RegistryKey>
             </Component>
+            <Component Id="reg.wer.localdumps" Guid="{30ED36F3-9D44-4DFA-A51B-34835BA0E7DC}">
+                <CreateFolder/>
+                <RegistryKey
+                    Root="HKLM"
+                    Key="SOFTWARE\Microsoft\Windows\Windows Error Reporting\LocalDumps">
+                    <RegistryKey
+                        Key="openvpn.exe"
+                        ForceCreateOnInstall="yes"
+                        ForceDeleteOnUninstall="yes"/>
+                    <RegistryKey
+                        Key="openvpn-gui.exe"
+                        ForceCreateOnInstall="yes"
+                        ForceDeleteOnUninstall="yes"/>
+                    <RegistryKey
+                        Key="openvpnserv.exe"
+                        ForceCreateOnInstall="yes"
+                        ForceDeleteOnUninstall="yes"/>
+                </RegistryKey>
+            </Component>
         </DirectoryRef>
 
 
@@ -1592,6 +1611,7 @@
             <ComponentRef Id="reg.conf.open.command"/>
             <ComponentRef Id="reg.conf.run"/>
             <ComponentRef Id="reg.conf.run.command"/>
+            <ComponentRef Id="reg.wer.localdumps"/>
             <ComponentRef Id="shortcut.config"/>
             <ComponentRef Id="shortcut.log"/>
 

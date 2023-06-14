@@ -18,7 +18,7 @@ Source code and Windows installers can be downloaded from our download page:
 
 Debian and Ubuntu packages are available in the official apt repositories:
 
-<https://community.openvpn.net/openvpn/wiki/OpenvpnSoftwareRepos>
+<https://community.openvpn.net/openvpn/wiki/OpenvpnSoftwareRepos#DebianUbuntu:UsingOpenVPNaptrepositories>
 
 On Red Hat derivatives we recommend using the Fedora Copr repository.
 
