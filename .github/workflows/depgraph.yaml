@@ -1,0 +1,30 @@
+name: Populate dependencies
+
+on:
+  push:
+    branches: [ master ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  VCPKG_FEATURE_FLAGS: dependencygraph
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        submodules: 'recursive'
+
+    - name: Bootstrap vcpkg
+      working-directory: src/vcpkg
+      run: ./bootstrap-vcpkg.sh
+    - name: Run vcpkg
+      working-directory: src/openvpn/contrib/vcpkg-manifests/windows/
+      run: ${{ github.workspace }}/src/vcpkg/vcpkg install --overlay-triplets ${{ github.workspace }}/src/openvpn/contrib/vcpkg-triplets --overlay-ports ${{ github.workspace }}/src/openvpn/contrib/vcpkg-ports --dry-run
