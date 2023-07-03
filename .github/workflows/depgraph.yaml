@@ -14,7 +14,6 @@ env:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
@@ -25,6 +24,27 @@ jobs:
     - name: Bootstrap vcpkg
       working-directory: src/vcpkg
       run: ./bootstrap-vcpkg.sh
-    - name: Run vcpkg
+    - name: vcpkg version
+      working-directory: src/vcpkg
+      run: ./vcpkg version
+    - name: Run vcpkg (openvpn)
       working-directory: src/openvpn/contrib/vcpkg-manifests/windows/
-      run: ${{ github.workspace }}/src/vcpkg/vcpkg install --overlay-triplets ${{ github.workspace }}/src/openvpn/contrib/vcpkg-triplets --overlay-ports ${{ github.workspace }}/src/openvpn/contrib/vcpkg-ports --dry-run
+      run: ${{ github.workspace }}/src/vcpkg/vcpkg install --debug --overlay-triplets ${{ github.workspace }}/src/openvpn/contrib/vcpkg-triplets --overlay-ports ${{ github.workspace }}/src/openvpn/contrib/vcpkg-ports --dry-run
+
+  openvpn-gui:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        submodules: 'recursive'
+
+    - name: Bootstrap vcpkg
+      working-directory: src/vcpkg
+      run: ./bootstrap-vcpkg.sh
+    - name: vcpkg version
+      working-directory: src/vcpkg
+      run: ./vcpkg version
+    - name: Run vcpkg (openvpn-gui)
+      working-directory: src/openvpn-gui
+      run: ${{ github.workspace }}/src/vcpkg/vcpkg install --debug --dry-run
