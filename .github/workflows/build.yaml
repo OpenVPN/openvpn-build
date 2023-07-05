@@ -32,7 +32,7 @@ jobs:
           git submodule update --init --remote --recursive
 
       - name: Restore from cache and install vcpkg
-        uses: lukka/run-vcpkg@v11
+        uses: lukka/run-vcpkg@v11.1
         with:
           vcpkgDirectory: '${{ github.workspace }}/src/vcpkg'
           vcpkgJsonGlob: '**/src/openvpn/contrib/vcpkg-manifests/windows/vcpkg.json'
