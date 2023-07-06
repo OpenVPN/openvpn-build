@@ -57,7 +57,6 @@ $cwd = Get-Location
 
 Set-Location "$Env:VCPKG_ROOT"
 & .\bootstrap-vcpkg.bat
-& .\vcpkg.exe integrate install
 
 ### Build OpenVPN-GUI
 Set-Location "${basedir}\src\openvpn-gui"
@@ -86,23 +85,24 @@ switch ($arch)
 $gui_arch | ForEach-Object  {
 	$platform = $_
     Write-Host "Building openvpn-gui ${platform}"
-    & "$Env:CMAKE" -S . --preset ${platform}-release
+    & "$Env:CMAKE" --preset ${platform}-release
     & "$Env:CMAKE" --build --preset ${platform}-release
 }
 
 ### Build OpenVPN
 Set-Location "${basedir}\src\openvpn"
 
-if (($arch -eq "all") -Or ($arch -eq "amd64")) {
-    msbuild "openvpn.sln" /p:Configuration="Release" /p:Platform="x64" /maxcpucount /t:Build
+$ovpn_arch = @("amd64", "arm64", "x86")
+if ($arch -ne "all") {
+    $ovpn_arch = @($arch)
 }
 
-if (($arch -eq "all") -Or ($arch -eq "x86")) {
-    msbuild "openvpn.sln" /p:Configuration="Release" /p:Platform="Win32" /maxcpucount /t:Build
-}
-
-if (($arch -eq "all") -Or ($arch -eq "arm64")) {
-    msbuild "openvpn.sln" /p:Configuration="Release" /p:Platform="ARM64" /maxcpucount /t:Build
+$ovpn_arch | ForEach-Object  {
+	$platform = $_
+    Write-Host "Building openvpn ${platform}"
+    # VCPKG_HOST_TRIPLET required to use host tools like pkgconf
+    & "$Env:CMAKE" --preset "win-${platform}-release"
+    & "$Env:CMAKE" --build --preset "win-${platform}-release"
 }
 
 ### Sign binaries
