@@ -4,6 +4,18 @@
         {
             "matchDepNames": ["src/vcpkg"],
             "extends": ["schedule:weekly"]
+        },
+        {
+            "matchPackageNames": ["OpenVPN/easy-rsa"],
+            "extractVersion": "^v(?<version>.*)$"
+        }
+    ],
+    "regexManagers": [
+        {
+            "fileMatch": ["windows-msi/version.m4$"],
+            "matchStrings": [
+                "datasource=(?<datasource>.*?) depName=(?<depName>.*?)( versioning=(?<versioning>.*?))?\\sdefine\\(\\[.*?\\],\\s*\\[(?<currentValue>.*?)\\]\\)\\s"
+            ]
         }
     ]
 }
