@@ -65,6 +65,7 @@ clean	Cleans intermediate and output files</example>
                     "openSSLBinPath": BuildPath(depsPath, "openvpn", "src", "openvpn", "vcpkg_installed", "x86-windows-ovpn", "x86-windows-ovpn", "bin"),
                     "programFilesPath": "ProgramFilesFolder",
                     "openSSLPlat": "",
+                    "tapWinPlat": "i386",
                     "wixPlat": "x86",
                     "wixLinkDepenencies": [],
                     "ovpnDcoPath": BuildPath(buildPath, "x86", "ovpn-dco")
@@ -79,6 +80,7 @@ clean	Cleans intermediate and output files</example>
                     "openSSLBinPath": BuildPath(depsPath, "openvpn", "src", "openvpn", "vcpkg_installed", "x64-windows-ovpn", "x64-windows-ovpn", "bin"),
                     "programFilesPath": "ProgramFiles64Folder",
                     "openSSLPlat": "-x64",
+                    "tapWinPlat": "amd64",
                     "wixPlat": "x64",
                     "wixLinkDepenencies": [],
                     "ovpnDcoPath": BuildPath(buildPath, "amd64", "ovpn-dco")
@@ -93,6 +95,7 @@ clean	Cleans intermediate and output files</example>
                     "openSSLBinPath": BuildPath(depsPath, "openvpn", "src", "openvpn", "vcpkg_installed", "arm64-windows-ovpn", "arm64-windows-ovpn", "bin"),
                     "programFilesPath": "ProgramFiles64Folder",
                     "openSSLPlat": "-arm64",
+                    "tapWinPlat": "arm64",
                     "wixPlat": "arm64",
                     "wixLinkDepenencies": [],
                     "ovpnDcoPath": BuildPath(buildPath, "arm64", "ovpn-dco")
@@ -128,7 +131,7 @@ clean	Cleans intermediate and output files</example>
                     // Downloading and extracting Easy RSA
                     b.pushRule(new DownloadBuildRule(
                         BuildPath(sourcePath, "easyrsa-" + ver.define.EASYRSA_VERSION + ".zip"),
-                        ver.define.EASYRSA_URL,
+                        "https://github.com/OpenVPN/easy-rsa/releases/download/v" + ver.define.EASYRSA_VERSION + "/EasyRSA-" + ver.define.EASYRSA_VERSION + "-win64.zip",
                         ["version.m4"]));
                     b.pushRule(new ExtractBuildRule(
                         [
@@ -157,7 +160,7 @@ clean	Cleans intermediate and output files</example>
                         // Downloading TAP-Windows6
                         b.pushRule(new DownloadBuildRule(
                             BuildPath(p.buildPath, "tap-windows6.msm"),
-                            ver.define["PRODUCT_TAP_WIN_URL_" + plat],
+                            "https://github.com/OpenVPN/tap-windows6/releases/download/" + ver.define.PRODUCT_TAP_WIN_VERSION + "/tap-windows-" + ver.define.PRODUCT_TAP_WIN_VERSION + "-" + ver.define.PRODUCT_TAP_WIN_INSTALLER_VERSION + "-" + p.tapWinPlat + ".msm",
                             ["version.m4"]));
 
                         // Downloading Wintun
@@ -169,7 +172,7 @@ clean	Cleans intermediate and output files</example>
                         // Downloading ovpn-dco
                         b.pushRule(new DownloadBuildRule(
                             BuildPath(p.buildPath, "ovpn-dco.msm"),
-                            ver.define["PRODUCT_OVPN_DCO_URL_" + plat],
+                            "https://github.com/OpenVPN/ovpn-dco-win/releases/download/" + ver.define.PRODUCT_OVPN_DCO_VERSION + "/ovpn-dco-" + plat + ".msm",
                             ["version.m4"]));
 
                         // WiX compiler flags

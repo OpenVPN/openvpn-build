@@ -3,11 +3,12 @@ dnl Downloadables
 dnl ============================================================
 
 dnl TAP-Windows binaries
-define([PRODUCT_TAP_WIN_URL_x86],      [https://github.com/OpenVPN/tap-windows6/releases/download/9.26.0/tap-windows-9.26.0-I0-i386.msm])
-define([PRODUCT_TAP_WIN_URL_amd64],    [https://github.com/OpenVPN/tap-windows6/releases/download/9.26.0/tap-windows-9.26.0-I0-amd64.msm])
-define([PRODUCT_TAP_WIN_URL_arm64],    [https://github.com/OpenVPN/tap-windows6/releases/download/9.26.0/tap-windows-9.26.0-I0-arm64.msm])
-define([PRODUCT_TAP_WIN_COMPONENT_ID], [tap0901])
-define([PRODUCT_TAP_WIN_NAME],         [TAP-Windows])
+dnl renovate: datasource=github-releases depName=OpenVPN/tap-windows6
+define([PRODUCT_TAP_WIN_VERSION],           [9.26.0])
+dnl Note: Not handled by renovate
+define([PRODUCT_TAP_WIN_INSTALLER_VERSION], [I0])
+define([PRODUCT_TAP_WIN_COMPONENT_ID],      [tap0901])
+define([PRODUCT_TAP_WIN_NAME],              [TAP-Windows])
 
 dnl Wintun binaries
 define([PRODUCT_WINTUN_URL_x86],       [https://build.openvpn.net/downloads/releases/wintun-x86-0.8.1.msm])
@@ -16,9 +17,8 @@ dnl This is only to make build script happy - the file is only downloaded but no
 define([PRODUCT_WINTUN_URL_arm64],     [https://build.openvpn.net/downloads/releases/wintun-amd64-0.8.1.msm])
 
 dnl ovpn-dco binaries
-define([PRODUCT_OVPN_DCO_URL_x86],     [https://github.com/OpenVPN/ovpn-dco-win/releases/download/0.9.3/ovpn-dco-x86.msm])
-define([PRODUCT_OVPN_DCO_URL_amd64],   [https://github.com/OpenVPN/ovpn-dco-win/releases/download/0.9.3/ovpn-dco-amd64.msm])
-define([PRODUCT_OVPN_DCO_URL_arm64],   [https://github.com/OpenVPN/ovpn-dco-win/releases/download/0.9.3/ovpn-dco-arm64.msm])
+dnl renovate: datasource=github-releases depName=OpenVPN/ovpn-dco-win
+define([PRODUCT_OVPN_DCO_VERSION],     [0.9.3])
 
 dnl OpenVPNServ2.exe binary
 define([OPENVPNSERV2_URL], [http://build.openvpn.net/downloads/releases/openvpnserv2-1.4.0.1.exe])
@@ -29,8 +29,8 @@ dnl The OpenSSL binaries, which come with Easy-RSA, are not used by Openvpn-buil
 dnl The only binaries which Openvpn-build uses from Easy-RSA, are the *nix style
 dnl (32bit only) binaries for Windows, from easy-rsa/distro/windows/bin.
 dnl Further details: easy-rsa/distro/windows/Licensing/mksh-Win32.txt
+dnl renovate: datasource=github-releases depName=OpenVPN/easy-rsa
 define([EASYRSA_VERSION], [3.1.5])
-define([EASYRSA_URL],     [https://github.com/OpenVPN/easy-rsa/releases/download/v3.1.5/EasyRSA-3.1.5-win64.zip])
 
 dnl ============================================================
 dnl MSI Provisioning
