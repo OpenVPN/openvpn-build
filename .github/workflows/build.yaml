@@ -231,6 +231,15 @@ jobs:
           sudo sbuild-adduser runner
           tar -cvf "$CHROOT_CONF" -C /etc/schroot/ chroot.d/
 
+      - name: Save chroots
+        if: steps.chroots-restore.outputs.cache-hit != 'true'
+        id: chroots-save
+        uses: actions/cache/save@v3.3.1
+        with:
+          path: |
+            debian-sbuild/chroots
+          key: ${{ steps.chroots-restore.outputs.cache-primary-key }}
+
       - name: Prepare package build
         working-directory: debian-sbuild
         run: |
@@ -247,11 +256,3 @@ jobs:
           name: openvpn-debian
           path: |
             output
-
-      - name: Save chroots
-        id: chroots-save
-        uses: actions/cache/save@v3.3.1
-        with:
-          path: |
-            debian-sbuild/chroots
-          key: ${{ steps.chroots-restore.outputs.cache-primary-key }}
