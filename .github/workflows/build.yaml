@@ -215,9 +215,9 @@ jobs:
         with:
           path: |
             debian-sbuild/chroots
-          key: chroots-${{ hashFiles('**/config/variants.conf') }}-${{ steps.get-date.outputs.date }}
+          key: chroots-${{ hashFiles('**/config/variants.amd64.conf') }}-${{ steps.get-date.outputs.date }}
           restore-keys: |
-            chroots-${{ hashFiles('**/config/variants.conf') }}-
+            chroots-${{ hashFiles('**/config/variants.amd64.conf') }}-
             chroots-
 
       - name: Prepare environment
