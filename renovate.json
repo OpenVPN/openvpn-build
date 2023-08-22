@@ -2,17 +2,26 @@
     "$schema": "https://docs.renovatebot.com/renovate-schema.json",
     "packageRules": [
         {
-            "matchDepNames": ["src/vcpkg"],
-            "extends": ["schedule:weekly"]
+            "matchDepNames": [
+                "src/vcpkg"
+            ],
+            "extends": [
+                "schedule:weekly"
+            ]
         },
         {
-            "matchPackageNames": ["OpenVPN/easy-rsa"],
+            "matchPackageNames": [
+                "OpenVPN/easy-rsa"
+            ],
             "extractVersion": "^v(?<version>.*)$"
         }
     ],
     "regexManagers": [
         {
-            "fileMatch": ["windows-msi/version.m4$"],
+            "customType": "regex",
+            "fileMatch": [
+                "windows-msi/version.m4$"
+            ],
             "matchStrings": [
                 "datasource=(?<datasource>.*?) depName=(?<depName>.*?)( versioning=(?<versioning>.*?))?\\sdefine\\(\\[.*?\\],\\s*\\[(?<currentValue>.*?)\\]\\)\\s"
             ]
