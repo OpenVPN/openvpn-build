@@ -3,8 +3,6 @@ name: Build
 on:
   push:
   pull_request:
-  repository_dispatch:
-    types: [openvpn-commit]
 
 permissions:
   id-token: write   # This is required for requesting the JWT
@@ -26,10 +24,9 @@ jobs:
     steps:
       - name: Checkout openvpn-build
         uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v3.6.0
-
-      - name: Checkout submodules (by branch)
-        run: |
-          git submodule update --init --remote --recursive
+        with:
+          fetch-depth: 0
+          submodules: true
 
       - name: vcpkg pre-download
         working-directory: src/vcpkg
@@ -182,10 +179,9 @@ jobs:
     steps:
       - name: Checkout openvpn-build
         uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v3.6.0
-
-      - name: Checkout submodules (by branch)
-        run: |
-          git submodule update --init --remote --recursive
+        with:
+          fetch-depth: 0
+          submodules: true
 
       - name: Install dependencies
         run: |
