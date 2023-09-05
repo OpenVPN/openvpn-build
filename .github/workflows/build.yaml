@@ -3,8 +3,6 @@ name: Build
 on:
   push:
   pull_request:
-  repository_dispatch:
-    types: [openvpn-commit]
 
 permissions:
   id-token: write   # This is required for requesting the JWT
@@ -25,11 +23,10 @@ jobs:
 
     steps:
       - name: Checkout openvpn-build
-        uses: actions/checkout@c85c95e3d7251135ab7dc9ce3241c5835cc595a9 # v3.5.3
-
-      - name: Checkout submodules (by branch)
-        run: |
-          git submodule update --init --remote --recursive
+        uses: actions/checkout@3df4ab11eba7bda6032a0b82a6bb43b11571feac # v4.0.0
+        with:
+          fetch-depth: 0
+          submodules: true
 
       - name: Restore from cache and install vcpkg
         uses: lukka/run-vcpkg@abed23940f9d7bc267b0e1a21ee7b699a3794baa # v11.1
@@ -38,7 +35,7 @@ jobs:
           vcpkgJsonGlob: '**/src/openvpn/contrib/vcpkg-manifests/windows/vcpkg.json'
 
       - name: Get latest CMake and ninja
-        uses: lukka/get-cmake@c9a456fb249de0451bb2e5aacc3889a2ba7a8f7a # v3.27.1
+        uses: lukka/get-cmake@4dcd3eb73017c61159eb130746fbca35d78a3d5f # v3.27.4
 
       - name: Install rst2html
         run: python -m pip install --upgrade pip docutils
@@ -96,14 +93,14 @@ jobs:
 
     steps:
       - name: configure aws credentials
-        uses: aws-actions/configure-aws-credentials@5fd3084fc36e372ff1fff382a39b10d03659f355 # v2.2.0
+        uses: aws-actions/configure-aws-credentials@04b98b3f9e85f563fb061be8751a0352327246b0 # v3.0.1
         with:
           role-to-assume: arn:aws:iam::217307881341:role/GitHubActions
           role-session-name: githubactions
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Clone openvpn-windows-test repo
-        uses: actions/checkout@c85c95e3d7251135ab7dc9ce3241c5835cc595a9 # v3.5.3
+        uses: actions/checkout@3df4ab11eba7bda6032a0b82a6bb43b11571feac # v4.0.0
         with:
           repository: openvpn/openvpn-windows-test
           ref: master
@@ -181,11 +178,10 @@ jobs:
 
     steps:
       - name: Checkout openvpn-build
-        uses: actions/checkout@c85c95e3d7251135ab7dc9ce3241c5835cc595a9 # v3.5.3
-
-      - name: Checkout submodules (by branch)
-        run: |
-          git submodule update --init --remote --recursive
+        uses: actions/checkout@3df4ab11eba7bda6032a0b82a6bb43b11571feac # v4.0.0
+        with:
+          fetch-depth: 0
+          submodules: true
 
       - name: Install dependencies
         run: |

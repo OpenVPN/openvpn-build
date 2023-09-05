@@ -33,9 +33,9 @@ signtool.exe sign /sha1 "%ManifestCertificateThumbprint%" /fd sha256 /tr "%Manif
  ..\src\openvpn\out\build\win-arm64-release\vcpkg_installed\arm64-windows-ovpn\bin\*.dll^
  ..\src\openvpn\out\build\win-x86-release\vcpkg_installed\x86-windows-ovpn\tools\openssl\openssl.exe^
  ..\src\openvpn\out\build\win-x86-release\vcpkg_installed\x86-windows-ovpn\bin\*.dll^
- ..\src\openvpn-gui\out\build\x64-release\openvpn-gui.exe^
- ..\src\openvpn-gui\out\build\x64-release\*.dll^
- ..\src\openvpn-gui\out\build\arm64-release\openvpn-gui.exe^
- ..\src\openvpn-gui\out\build\arm64-release\*.dll^
- ..\src\openvpn-gui\out\build\x86-release\openvpn-gui.exe^
- ..\src\openvpn-gui\out\build\x86-release\*.dll
+ ..\src\openvpn-gui\out\build\x64\Release\openvpn-gui.exe^
+ ..\src\openvpn-gui\out\build\x64\Release\*.dll^
+ ..\src\openvpn-gui\out\build\arm64\Release\openvpn-gui.exe^
+ ..\src\openvpn-gui\out\build\arm64\Release\*.dll^
+ ..\src\openvpn-gui\out\build\x86\Release\openvpn-gui.exe^
+ ..\src\openvpn-gui\out\build\x86\Release\*.dll

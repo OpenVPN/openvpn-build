@@ -85,7 +85,7 @@ switch ($arch)
 $gui_arch | ForEach-Object  {
 	$platform = $_
     Write-Host "Building openvpn-gui ${platform}"
-    & "$Env:CMAKE" --preset ${platform}-release
+    & "$Env:CMAKE" --preset ${platform}
     & "$Env:CMAKE" --build --preset ${platform}-release
 }
 
