@@ -207,7 +207,7 @@ jobs:
 
       - name: Restore cached chroots
         id: chroots-restore
-        uses: actions/cache/restore@88522ab9f39a2ea568f7027eddc7d8d8bc9d59c8 # v3.3.1
+        uses: actions/cache/restore@704facf57e6136b1bc63b828d79edcd491f0ee84 # v3.3.2
         with:
           path: |
             debian-sbuild/chroots
@@ -230,7 +230,7 @@ jobs:
       - name: Save chroots
         if: steps.chroots-restore.outputs.cache-hit != 'true'
         id: chroots-save
-        uses: actions/cache/save@88522ab9f39a2ea568f7027eddc7d8d8bc9d59c8 # v3.3.1
+        uses: actions/cache/save@704facf57e6136b1bc63b828d79edcd491f0ee84 # v3.3.2
         with:
           path: |
             debian-sbuild/chroots
