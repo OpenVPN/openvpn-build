@@ -30,7 +30,7 @@ dnl The only binaries which Openvpn-build uses from Easy-RSA, are the *nix style
 dnl (32bit only) binaries for Windows, from easy-rsa/distro/windows/bin.
 dnl Further details: easy-rsa/distro/windows/Licensing/mksh-Win32.txt
 dnl renovate: datasource=github-releases depName=OpenVPN/easy-rsa
-define([EASYRSA_VERSION], [3.1.6])
+define([EASYRSA_VERSION], [3.1.7])
 
 dnl ============================================================
 dnl MSI Provisioning
