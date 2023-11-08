@@ -18,7 +18,7 @@ override_dh_auto_configure:
 override_dh_auto_build:
 override_dh_auto_install:
 	mkdir -p ${INSTALLDIR}
-	for f in drivers include linux-compat.h Makefile gen-compat-autoconf.sh; do \
+	for f in compat-include drivers include linux-compat.h Makefile gen-compat-autoconf.sh; do \
 		cp -a $$f ${INSTALLDIR}; \
 	done
 
