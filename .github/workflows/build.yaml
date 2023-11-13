@@ -29,7 +29,7 @@ jobs:
           submodules: true
 
       - name: Restore from cache and install vcpkg
-        uses: lukka/run-vcpkg@6fe69898af670ac05f4a8427cc5cff4fb361cee5 # v11.2
+        uses: lukka/run-vcpkg@d42250cb2f1d4b925fe4e8abbdc9753dd3b53056 # v11.3
         with:
           vcpkgDirectory: '${{ github.workspace }}/src/vcpkg'
           vcpkgJsonGlob: '**/src/openvpn/contrib/vcpkg-manifests/windows/vcpkg.json'
