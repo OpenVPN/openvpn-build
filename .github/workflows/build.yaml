@@ -23,13 +23,13 @@ jobs:
 
     steps:
       - name: Checkout openvpn-build
-        uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608 # v4.1.0
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
         with:
           fetch-depth: 0
           submodules: true
 
       - name: Restore from cache and install vcpkg
-        uses: lukka/run-vcpkg@abed23940f9d7bc267b0e1a21ee7b699a3794baa # v11.1
+        uses: lukka/run-vcpkg@6fe69898af670ac05f4a8427cc5cff4fb361cee5 # v11.2
         with:
           vcpkgDirectory: '${{ github.workspace }}/src/vcpkg'
           vcpkgJsonGlob: '**/src/openvpn/contrib/vcpkg-manifests/windows/vcpkg.json'
@@ -100,14 +100,14 @@ jobs:
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Clone openvpn-windows-test repo
-        uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608 # v4.1.0
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
         with:
           repository: openvpn/openvpn-windows-test
           ref: master
           path: openvpn-windows-test
 
       - name: Install SSH key for tclient host
-        uses: shimataro/ssh-key-action@685d0f20da72e4b53cc81d373a2ed0a867770e46 # v2.5.1
+        uses: shimataro/ssh-key-action@38b53cb2f445ea2e0eb8872407e366677c41dbc6 # v2.6.1
         with:
           key: ${{ secrets.SSH_KEY_FOR_TCLIENT_HOST }}
           known_hosts: unnecessary
@@ -178,7 +178,7 @@ jobs:
 
     steps:
       - name: Checkout openvpn-build
-        uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608 # v4.1.0
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
         with:
           fetch-depth: 0
           submodules: true

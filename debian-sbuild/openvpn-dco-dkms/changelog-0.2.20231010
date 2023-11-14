@@ -1,0 +1,5 @@
+openvpn-dco-dkms (0.2.20231010-debian0) stable; urgency=medium
+
+  * ovpn-dco: include new GSO header file (Antonio Quartulli, dba96d2)
+
+ -- Yuriy Darnobyt <yuriy.darnobyt@openvpn.net>  Wed, 16 Aug 2023 22:19:05 +0200
