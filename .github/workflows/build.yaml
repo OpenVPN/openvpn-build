@@ -77,7 +77,7 @@ jobs:
           echo "DATETIME=${dt}" >> $Env:GITHUB_ENV
 
       - name: Archive artifacts
-        uses: actions/upload-artifact@a8a3f3ad30e3422c9c7b888a15615d19a852ae32 # v3.1.3
+        uses: actions/upload-artifact@c7d193f32edcb7bfad88892161225aeda64e9392 # v4.0.0
         with:
           name: openvpn-master-${{ env.DATETIME }}-${{ env.OPENVPN_COMMIT }}-${{ matrix.arch }}
           path: ${{ github.workspace }}\windows-msi\image\*-${{ matrix.arch }}.msi
@@ -113,7 +113,7 @@ jobs:
           known_hosts: unnecessary
 
       - name: Get artifacts
-        uses: actions/download-artifact@9bc31d5ccc31df68ecc42ccf4149144866c47d8a # v3.0.2
+        uses: actions/download-artifact@7a1cd3216ca9260cd8022db641d960b1db4d1be4 # v4.0.0
         with:
           path: msi
 
@@ -126,7 +126,7 @@ jobs:
           .\Start-AWSTest.ps1 -SSH_KEY ~/.ssh/id_rsa -MSI_PATH $(Get-ChildItem ../msi/*-amd64/*.msi | select -ExpandProperty FullName)
 
       - name: Archive openvpn logs
-        uses: actions/upload-artifact@a8a3f3ad30e3422c9c7b888a15615d19a852ae32 # v3.1.3
+        uses: actions/upload-artifact@c7d193f32edcb7bfad88892161225aeda64e9392 # v4.0.0
         if: ${{ always() }}
         with:
           name: t_client_openvpn_logs
@@ -143,7 +143,7 @@ jobs:
         run: sudo apt install knockd
 
       - name: Get artifacts
-        uses: actions/download-artifact@9bc31d5ccc31df68ecc42ccf4149144866c47d8a # v3.0.2
+        uses: actions/download-artifact@7a1cd3216ca9260cd8022db641d960b1db4d1be4 # v4.0.0
         with:
           path: msi
 
@@ -247,7 +247,7 @@ jobs:
           sg sbuild ./scripts/build-all.sh
 
       - name: Archive packages
-        uses: actions/upload-artifact@a8a3f3ad30e3422c9c7b888a15615d19a852ae32 # v3.1.3
+        uses: actions/upload-artifact@c7d193f32edcb7bfad88892161225aeda64e9392 # v4.0.0
         with:
           name: openvpn-debian
           path: |
