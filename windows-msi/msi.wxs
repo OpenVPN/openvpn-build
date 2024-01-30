@@ -349,7 +349,7 @@
             Action="SetProductDirParam"
             Id="PRODUCTDIR"
             Value="[INSTALLDIR]"
-            Sequence="first">INSTALLDIR AND NOT Installed</SetProperty>
+            Sequence="first">INSTALLDIR AND NOT Installed AND NOT WIX_UPGRADE_DETECTED</SetProperty>
 
 
         <!--
