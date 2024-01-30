@@ -303,7 +303,7 @@
                     <Subscribe Event="SelectionPathOn" Attribute="Enabled"/>
                 </Control>
                 <Control Id="Browse" Type="PushButton" X="320" Y="230" Width="60" Height="20" Text="Br&amp;owse" TabSkip="no">
-                    <Condition Action="disable">Installed</Condition>
+                    <Condition Action="hide">WIX_UPGRADE_DETECTED</Condition>
                     <Publish Event="SelectionBrowse" Value="BrowsePage">1</Publish>
                 </Control>
                 <Control Id="Reset" Type="PushButton" X="15" Y="265" Width="60" Height="20" Text="&amp;Reset" ToolTip="Resets feature selection to initial state." TabSkip="no">
