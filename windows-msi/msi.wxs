@@ -1154,6 +1154,16 @@
                             <RemoveFolder Id="shortcut.easyrsa.easyrsa_start.bat" On="uninstall"/>
                             <RegistryValue Root="HKCU" Key="Software\$(var.PRODUCT_NAME)\Shortcuts" Name="easyrsa.easyrsa_start.bat" Type="integer" Value="1"/>
                         </Component>
+                        <Component Id="shortcut.easyrsa.easyrsa_start.bat.na" Guid="{4DC29C05-2541-4E70-A05D-CF9D940A4428}">
+                            <Shortcut
+                                Id="shortcut.easyrsa.easyrsa_start.bat.na"
+                                Name="Start EasyRSA shell (Non-Admin)"
+                                Target="[EASYRSADIR]EasyRSA-Start.bat"
+                                Arguments="/na"
+                                WorkingDirectory="EASYRSADIR"/>
+                            <RemoveFolder Id="shortcut.easyrsa.easyrsa_start.bat.na" On="uninstall"/>
+                            <RegistryValue Root="HKCU" Key="Software\$(var.PRODUCT_NAME)\Shortcuts" Name="easyrsa.easyrsa_start.bat.na" Type="integer" Value="1"/>
+                        </Component>
                     </Directory>
                 </Directory>
 
@@ -1816,6 +1826,7 @@
                 <ComponentRef Id="easyrsa.x509types.serverclient"/>
 
                 <ComponentRef Id="shortcut.easyrsa.easyrsa_start.bat"/>
+                <ComponentRef Id="shortcut.easyrsa.easyrsa_start.bat.na"/>
             </Feature>
         </Feature>
 
