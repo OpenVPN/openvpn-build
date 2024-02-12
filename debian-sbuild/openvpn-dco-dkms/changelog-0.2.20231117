@@ -5,4 +5,4 @@ openvpn-dco-dkms (0.2.20231117-debian0) stable; urgency=medium
   * ovpn-dco: warn if peer is dead in ovpn_tcp_read_sock() (Antonio Quartulli, 0613e71)
   * ovpn-dco: fix refcount imbalance upon RX in case of full ring (Antonio Quartulli, 7b7a28f)
 
- -- Yuriy Darnobyt <yuriy.darnobyt@openvpn.net>  Thu, 16 Nov 2023 15:11:55 +0100
+ -- Frank Lichtenheld <frank.lichtenheld@openvpn.net>  Thu, 16 Nov 2023 15:11:55 +0100

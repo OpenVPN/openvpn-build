@@ -273,6 +273,7 @@ clean	Cleans intermediate and output files</example>
                                 BuildPath("script", "ActiveSetupCA.js"),
                                 BuildPath("script", "PlapReg.js"),
                                 BuildPath("script", "Service.js"),
+                                BuildPath("script", "ACL.js"),
                                 BuildPath(p.buildPath, "license.txt"),
                                 BuildPath(p.buildPath, "tap-windows6.msm"),
                                 BuildPath(p.buildPath, "wintun.msm"),

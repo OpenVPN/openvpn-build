@@ -83,12 +83,16 @@
 
         <Binary Id="Service.js" SourceFile="script\Service.js"/>
         <Binary Id="PlapReg.js" SourceFile="script\PlapReg.js"/>
+        <Binary Id="ACL.js" SourceFile="script\ACL.js"/>
 
-        <CustomAction Id="GetInstallDir" BinaryKey="PlapReg.js" JScriptCall="GetInstallDir" />
+        <CustomAction Id="GetInstallDirForPlap" BinaryKey="PlapReg.js" JScriptCall="GetInstallDir" />
         <CustomAction Id="UpdatePlapReg" BinaryKey="PlapReg.js" JScriptCall="UpdatePlapReg" Execute="deferred" Impersonate="no" />
 
         <CustomAction Id="CheckOpenVPNServiceStatus" BinaryKey="Service.js" JScriptCall="CheckOpenVPNServiceStatus" />
         <CustomAction Id="ConfigureOpenVPNService"  BinaryKey="Service.js" JScriptCall="ConfigureOpenVPNService" Execute="deferred" Impersonate="no" />
+
+        <CustomAction Id="GetInstallDirForACL" BinaryKey="ACL.js" JScriptCall="GetInstallDir" Return="check" />
+        <CustomAction Id="SetACL" BinaryKey="ACL.js" JScriptCall="SetACL" Execute="deferred" Impersonate="no" Return="check" />
 
         <!--
             Detect system information
@@ -101,8 +105,10 @@
             <Custom Action="FindSystemInfo" After="FindRelatedProducts"/>
             <Custom Action="CheckOpenVPNServiceStatus" After="ProcessComponents"/>
             <Custom Action="ConfigureOpenVPNService" After="StartServices">NOT Installed OR REINSTALL</Custom>
-            <Custom Action="GetInstallDir" After="FindRelatedProducts"/>
+            <Custom Action="GetInstallDirForPlap" After="SetProductDirParam"/>
             <Custom Action="UpdatePlapReg" After="InstallFiles"/>
+            <Custom Action="GetInstallDirForACL" After="SetProductDirParam">NOT Installed</Custom>
+            <Custom Action="SetACL" After="InstallFiles">NOT Installed</Custom>
         </InstallExecuteSequence>
         <UI>
             <ProgressText Action="FindSystemInfo">Detecting system information</ProgressText>
@@ -349,7 +355,7 @@
             Action="SetProductDirParam"
             Id="PRODUCTDIR"
             Value="[INSTALLDIR]"
-            Sequence="first">INSTALLDIR AND NOT Installed</SetProperty>
+            Sequence="first">INSTALLDIR AND NOT Installed AND NOT WIX_UPGRADE_DETECTED</SetProperty>
 
 
         <!--
