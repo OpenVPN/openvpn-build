@@ -1,8 +1,0 @@
-move_log_dir.patch
-auth-pam_libpam_so_filename.patch
-#debian_nogroup_for_sample_files.patch
-openvpn-pkcs11warn.patch
-systemd.patch
-#Fix-ASSERT-in-tls-crypt.patch
-#Fix-Memory-Leaks-in-HMAC-initial-packet-generation.patch
-#Set-netlink-socket-to-be-non-blocking.patch
