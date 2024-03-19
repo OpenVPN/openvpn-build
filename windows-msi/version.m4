@@ -4,7 +4,7 @@ dnl ============================================================
 
 dnl TAP-Windows binaries
 dnl renovate: datasource=github-releases depName=OpenVPN/tap-windows6
-define([PRODUCT_TAP_WIN_VERSION],           [9.26.0])
+define([PRODUCT_TAP_WIN_VERSION],           [9.27.0])
 dnl Note: Not handled by renovate
 define([PRODUCT_TAP_WIN_INSTALLER_VERSION], [I0])
 define([PRODUCT_TAP_WIN_COMPONENT_ID],      [tap0901])
