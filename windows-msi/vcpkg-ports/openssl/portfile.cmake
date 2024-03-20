@@ -2,14 +2,12 @@ if(EXISTS "${CURRENT_INSTALLED_DIR}/include/openssl/ssl.h")
     message(FATAL_ERROR "Can't build openssl if libressl/boringssl is installed. Please remove libressl/boringssl, and try install openssl again if you need it.")
 endif()
 
-set(OPENSSL_VERSION 1.1.1t)
+set(OPENSSL_VERSION 1.1.1w)
 vcpkg_from_github(
     OUT_SOURCE_PATH SOURCE_PATH
     REPO openssl/openssl
-    REF "OpenSSL_1_1_1t"
-    SHA512 f28a323fd78be0b16ae6db9a8f163e64c74410e12ddd1a9836dfdda34c264112184f4e22583c84b6fa56716e5aaac9cb860cb183bd3d0cb064091eea1e21815e
-    PATCHES
-        windows/umul128-arm64.patch # Fixed upstream in https://github.com/openssl/openssl/pull/20244
+    REF "OpenSSL_1_1_1w"
+    SHA512 adfbcd5a1f3b80c15da608b7234a7bdc50afb1b98f8dc07b712c157058a01f21e1832fdbe1024a3ec7f5e335de3da003e5dccab044ec7510ad60b2b357529a3f
 )
 
 vcpkg_find_acquire_program(PERL)
