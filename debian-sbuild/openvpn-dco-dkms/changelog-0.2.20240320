@@ -1,0 +1,8 @@
+openvpn-dco-dkms (0.2.20240320-debian0) stable; urgency=medium
+
+  * ovpn-cli: remove control packets related code (Antonio Quartulli, 2aa7f93)
+  * ovpn-cli: print out link stats as well (Antonio Quartulli, 92d0bb8)
+  * ovpn-cli: adapt stats attributes to new naming (Antonio Quartulli, 2d51103)
+  * ovpn-dco: properly declare ovpn_tcp_recvmsg for linux <5.19 (Antonio Quartulli, c24380c)
+
+ -- Yuriy Darnobyt <yuriy.darnobyt@openvpn.net>  Fri, 2 Feb 2024 14:55:03 +0100
