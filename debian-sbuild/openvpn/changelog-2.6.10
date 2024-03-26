@@ -1,0 +1,20 @@
+openvpn (2.6.10-debian0) stable; urgency=medium
+
+  * preparing release 2.6.10 (Gert Doering, ba0f62fb)
+  * Disable DCO if proxy is set via management (Lev Stipakov, 462fed53)
+  * interactive.c: Fix potential stack overflow issue (Lev Stipakov, 9b2693fe)
+  * interactive.c: disable remote access to the service pipe (Lev Stipakov, a95e6650)
+  * GHA: general update March 2024 (Frank Lichtenheld, 5afc89ab)
+  * win32: Enforce loading of plugins from a trusted directory (Lev Stipakov, 05d321ef)
+  * Update Copyright statements to 2024 (Frank Lichtenheld, ff06f4ca)
+  * Remove license warning from README.mbedtls (Max Fillinger, 366ca5b9)
+  * t_client.sh: Allow to skip tests (Frank Lichtenheld, bbc77d17)
+  * Update documentation references in systemd unit files (Christoph Schug, c6a61b84)
+  * remove repetitive words in documentation and comments (wellweek, f6c894bd)
+  * check_compression_settings_valid: Do not test for LZ4 in LZO check (Frank Lichtenheld, 7a810e64)
+  * openvpn-[client|server].service: Remove syslog.target (Martin Rys, 04e68265)
+  * samples: Remove tls-*.conf (Frank Lichtenheld, 2f20a03b)
+  * Fix typo --data-cipher-fallback (Frank Lichtenheld, 6e3fb0f2)
+  * Document that auth-user-pass may be inlined (Selva Nair, 2aac80e4)
+
+ -- Yuriy Darnobyt <yuriy.darnobyt@openvpn.net>  Tue, 19 Mar 2024 22:19:35 +0100
