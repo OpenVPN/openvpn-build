@@ -4,7 +4,7 @@ dnl ============================================================
 
 dnl TAP-Windows binaries
 dnl renovate: datasource=github-releases depName=OpenVPN/tap-windows6
-define([PRODUCT_TAP_WIN_VERSION],           [9.26.0])
+define([PRODUCT_TAP_WIN_VERSION],           [9.27.0])
 dnl Note: Not handled by renovate
 define([PRODUCT_TAP_WIN_INSTALLER_VERSION], [I0])
 define([PRODUCT_TAP_WIN_COMPONENT_ID],      [tap0901])
@@ -18,7 +18,7 @@ define([PRODUCT_WINTUN_URL_arm64],     [https://build.openvpn.net/downloads/rele
 
 dnl ovpn-dco binaries
 dnl renovate: datasource=github-releases depName=OpenVPN/ovpn-dco-win
-define([PRODUCT_OVPN_DCO_VERSION],     [1.0.0])
+define([PRODUCT_OVPN_DCO_VERSION],     [1.0.1])
 
 dnl OpenVPNServ2.exe binary
 define([OPENVPNSERV2_URL], [http://build.openvpn.net/downloads/releases/openvpnserv2-1.4.0.1.exe])

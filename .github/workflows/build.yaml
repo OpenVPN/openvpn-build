@@ -113,7 +113,7 @@ jobs:
           known_hosts: unnecessary
 
       - name: Get artifacts
-        uses: actions/download-artifact@eaceaf801fd36c7dee90939fad912460b18a1ffe # v4.1.2
+        uses: actions/download-artifact@c850b930e6ba138125429b7e5c93fc707a7f8427 # v4.1.4
         with:
           path: msi
 
@@ -143,7 +143,7 @@ jobs:
         run: sudo apt install knockd
 
       - name: Get artifacts
-        uses: actions/download-artifact@eaceaf801fd36c7dee90939fad912460b18a1ffe # v4.1.2
+        uses: actions/download-artifact@c850b930e6ba138125429b7e5c93fc707a7f8427 # v4.1.4
         with:
           path: msi
 
@@ -207,7 +207,7 @@ jobs:
 
       - name: Restore cached chroots
         id: chroots-restore
-        uses: actions/cache/restore@13aacd865c20de90d75de3b17ebe84f7a17d57d2 # v4.0.0
+        uses: actions/cache/restore@ab5e6d0c87105b4c9c2047343972218f562e4319 # v4.0.1
         with:
           path: |
             debian-sbuild/chroots
@@ -230,7 +230,7 @@ jobs:
       - name: Save chroots
         if: steps.chroots-restore.outputs.cache-hit != 'true'
         id: chroots-save
-        uses: actions/cache/save@13aacd865c20de90d75de3b17ebe84f7a17d57d2 # v4.0.0
+        uses: actions/cache/save@ab5e6d0c87105b4c9c2047343972218f562e4319 # v4.0.1
         with:
           path: |
             debian-sbuild/chroots
