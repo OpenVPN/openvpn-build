@@ -8,7 +8,7 @@ all-in-one EXE installer.
 Requirements for building MSI packages
 --------------------------------------
 
-1. `WiX Toolset`_ - tested with 3.11.1
+1. `WiX Toolset`_ - tested with 3.14.1
 2. ``unzip.exe`` - tested with UnZip 6.00 of 20 April 2009, by Info-ZIP
 3. GNU ``tar.exe`` - tested with 1.30
 4. ``gzip.exe`` - tested with 1.9

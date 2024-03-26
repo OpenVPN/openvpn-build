@@ -43,11 +43,10 @@ jobs:
       - name: Setup MSVC prompt
         uses: ilammy/msvc-dev-cmd@0b201ec74fa43914dc39ae48a89fd1d8cb592756 # v1.13.0
 
-      - name: Install Wix 3.14
+      - name: Install Wix 3.14.1
         run: |
-          Invoke-WebRequest -Uri "https://build.openvpn.net/downloads/temp/wix314-toolset.zip" -OutFile wix.zip
-          Expand-Archive -Path .\wix.zip -DestinationPath wix
-          Move-Item '.\wix\WiX Toolset v3.14\bin' .\wix
+          Invoke-WebRequest -Uri "https://github.com/wixtoolset/wix3/releases/download/wix3141rtm/wix314-binaries.zip" -OutFile wix.zip
+          Expand-Archive -Path .\wix.zip -DestinationPath wix\bin
 
       - name: Bump version
         working-directory: windows-msi
