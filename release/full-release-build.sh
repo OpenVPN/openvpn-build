@@ -30,5 +30,7 @@ done
 ssh "$WINDOWS_MSI_BUILDHOST" true
 
 $SCRIPT_DIR/source-build.sh
-$SCRIPT_DIR/debian-package-build.sh
+if ! [[ "$MSI_BUILD_ONLY" == "YES" ]]; then
+    $SCRIPT_DIR/debian-package-build.sh
+fi
 $SCRIPT_DIR/windows-installer-build.sh
