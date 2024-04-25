@@ -1,0 +1,92 @@
+openvpn-dco-dkms (0.0+git20231103-1) unstable; urgency=medium
+
+  * New upstream version 0.0+git20231103
+    - fixes refcount imbalance ("waiting for tunxxx to become free") seen
+      on heavy loaded TCP servers
+
+ -- Bernhard Schmidt <berni@debian.org>  Sat, 11 Nov 2023 22:20:21 +0100
+
+openvpn-dco-dkms (0.0+git20230816-2) unstable; urgency=medium
+
+  * Install compat-include directory (Closes: #1050211)
+
+ -- Bernhard Schmidt <berni@debian.org>  Tue, 22 Aug 2023 18:00:24 +0200
+
+openvpn-dco-dkms (0.0+git20230816-1) unstable; urgency=medium
+
+  * New upstream version 0.0+git20230816
+    - fix build error on kernel 6.5+ (Closes: #1043116)
+
+ -- Bernhard Schmidt <berni@debian.org>  Mon, 21 Aug 2023 22:51:04 +0200
+
+openvpn-dco-dkms (0.0+git20230324-1) unstable; urgency=medium
+
+  * Release to unstable targetting bookworm.
+
+ -- Bernhard Schmidt <berni@debian.org>  Thu, 13 Apr 2023 09:47:41 +0200
+
+openvpn-dco-dkms (0.0+git20230324-1~exp1) experimental; urgency=medium
+
+  * New upstream version 0.0+git20230324
+    - target experimental due to the freeze
+    - new ovpn-dco-v2 module to be used with OpenVPN 2.6.2+. Not adding a
+      versioned relationship to untangle testing migration, because it will
+      just not use the "wrong" version and run unaccelerated.
+  * d/dkms: rename module to ovpn-dco-v2
+
+ -- Bernhard Schmidt <berni@debian.org>  Sat, 25 Mar 2023 00:01:17 +0100
+
+openvpn-dco-dkms (0.0+git20230125-1) unstable; urgency=medium
+
+  * New upstream version 0.0+git20230125
+    - Fixes build with kernel version 6.2 (Closes: #1027799)
+
+ -- Bernhard Schmidt <berni@debian.org>  Wed, 25 Jan 2023 21:44:50 +0100
+
+openvpn-dco-dkms (0.0+git20221022-1) unstable; urgency=medium
+
+  * New upstream version 0.0+git20221022
+  * Fix build with kernel version > 5.19
+
+ -- Bernhard Schmidt <berni@debian.org>  Tue, 08 Nov 2022 21:33:46 +0100
+
+openvpn-dco-dkms (0.0+git20220816-1) unstable; urgency=medium
+
+  * New upstream version 0.0+git20220816
+  * Drop patch applied upstream
+
+ -- Bernhard Schmidt <berni@debian.org>  Thu, 18 Aug 2022 10:35:42 +0200
+
+openvpn-dco-dkms (0.0+git20220801-1) unstable; urgency=medium
+
+  [ Andreas Beckmann ]
+  * Switch to dh-sequence-dkms.
+  * Let dh_dkms perform the version substitution.
+  * Declare Testsuite: autopkgtest-pkg-dkms.
+
+  [ Bernhard Schmidt ]
+  * New upstream version 0.0+git20220801
+  * Add patch pending upstream to fix UDPv6 fragmentation
+
+ -- Bernhard Schmidt <berni@debian.org>  Tue, 09 Aug 2022 11:42:30 +0200
+
+openvpn-dco-dkms (0.0+git20220421-1) unstable; urgency=medium
+
+  * New upstream version 0.0+git20220421
+  * Bump Standards-Version to 4.6.0, no changes needed
+  * add Enhances: openvpn relationship
+
+ -- Bernhard Schmidt <berni@debian.org>  Tue, 10 May 2022 21:12:23 +0200
+
+openvpn-dco-dkms (0.0+git20220322-1) unstable; urgency=medium
+
+  * New upstream version 0.0+git20220322
+  * d/copyright: GPL-2.0-only WITH Linux-syscall-note for kernel header
+
+ -- Bernhard Schmidt <berni@debian.org>  Wed, 23 Mar 2022 10:26:43 +0100
+
+openvpn-dco-dkms (0.0+git20220320-1) unstable; urgency=medium
+
+  * Initial release (Closes: #1008044)
+
+ -- Bernhard Schmidt <berni@debian.org>  Sun, 20 Mar 2022 22:16:06 +0100

@@ -1,0 +1,29 @@
+Description: remove syslog.target
+Author: Jörg Frings-Fürst <debian@jff.email>
+Last-Update: 2018-07-29 
+---
+This patch header follows DEP-3: http://dep.debian.net/deps/dep3/
+Index: trunk/distro/systemd/openvpn-client@.service.in
+===================================================================
+--- trunk.orig/distro/systemd/openvpn-client@.service.in
++++ trunk/distro/systemd/openvpn-client@.service.in
+@@ -1,6 +1,6 @@
+ [Unit]
+ Description=OpenVPN tunnel for %I
+-After=syslog.target network-online.target
++After=network-online.target
+ Wants=network-online.target
+ Documentation=man:openvpn(8)
+ Documentation=https://community.openvpn.net/openvpn/wiki/Openvpn24ManPage
+Index: trunk/distro/systemd/openvpn-server@.service.in
+===================================================================
+--- trunk.orig/distro/systemd/openvpn-server@.service.in
++++ trunk/distro/systemd/openvpn-server@.service.in
+@@ -1,6 +1,6 @@
+ [Unit]
+ Description=OpenVPN service for %I
+-After=syslog.target network-online.target
++After=network-online.target
+ Wants=network-online.target
+ Documentation=man:openvpn(8)
+ Documentation=https://community.openvpn.net/openvpn/wiki/Openvpn24ManPage
