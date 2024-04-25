@@ -1,0 +1,23 @@
+#!/bin/sh
+set -e
+
+
+
+case "$1" in
+    purge|remove)
+
+#
+# remove obsolete directory
+# new at release 2.4.4-1
+#
+	if [ -d /usr/lib/openvpn ]; then
+	    rmdir --ignore-fail-on-non-empty /usr/lib/openvpn
+	fi
+    ;;
+
+esac
+
+#DEBHELPER#
+
+exit 0
+
