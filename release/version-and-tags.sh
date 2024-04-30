@@ -74,9 +74,12 @@ if ! git diff --exit-code; then
 else
     # If GUI_CURRENT_FULL_VERSION is the same we still want to try to tag OpenVPN build version
     # assuming it might be different and not tagged yet
-    git remote update
-    if ! git tag |grep -q "OpenVPN-$BUILD_VERSION" ; then
-        git tag -a "OpenVPN-$BUILD_VERSION" -m "OpenVPN-$BUILD_VERSION"
+    # This case is usually happens when we need MSI build only
+    if [[ "$MSI_BUILD_ONLY" == "YES" ]]; then
+        git remote update
+        if ! git tag |grep -q "OpenVPN-$BUILD_VERSION" ; then
+            git tag -a "OpenVPN-$BUILD_VERSION" -m "OpenVPN-$BUILD_VERSION"
+        fi
     fi
 fi
 
