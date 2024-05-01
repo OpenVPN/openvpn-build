@@ -195,6 +195,9 @@ jobs:
         run: |
           ln -s vars.example vars
           mkdir ../output
+          # we need to have ability to git tag the versions
+          # we do not push that tags
+          git config --global user.name "gha_user"
           ./version-and-tags.sh
           ./create-release-files.sh
 
