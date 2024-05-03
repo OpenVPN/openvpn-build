@@ -195,6 +195,10 @@ jobs:
         run: |
           ln -s vars.example vars
           mkdir ../output
+          # we need to have ability to git tag the versions
+          # we do not push those tags
+          git config --global user.name "gha_user"
+          git config --global user.email "gha@openvpn.invalid"
           ./version-and-tags.sh
           ./create-release-files.sh
 
