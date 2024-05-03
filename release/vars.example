@@ -18,6 +18,12 @@ GIT_AUTHOR="Yuriy Darnobyt <yuriy.darnobyt@openvpn.net>"
 
 WINDOWS_SIGNING_KEY_FP="31DA19926259519C9EA312C71935B13C33FC6E7E"
 
+# Sometimes we release MSI build only with new INSTALLER_BUILD version
+# It does not require to tag and push OpenVPN sources again
+# It also does not require to re-build linux packages
+# With MSI_BUILD_ONLY="YES" we can skip all that steps
+MSI_BUILD_ONLY="NO"
+
 # Version numbers
 OPENVPN_PREVIOUS_VERSION="${OPENVPN_PREVIOUS_VERSION:-2.6.9}"
 OPENVPN_CURRENT_VERSION="${OPENVPN_CURRENT_VERSION:-2.7_git}"
