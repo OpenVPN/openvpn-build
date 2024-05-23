@@ -41,15 +41,15 @@ define([PRODUCT_NAME],      [OpenVPN])
 define([PRODUCT_PUBLISHER], [OpenVPN, Inc.])
 
 dnl The package version as displayed by UI and used in filenames (no spaces, please).
-define([PACKAGE_VERSION], [2.6.10-I002])
+define([PACKAGE_VERSION], [2.6.10-I003])
 
 dnl The MSI product version in the form of n[.n[.n]] (numbers only).
 dnl The third field is 100*openvpn bugfix release + MSI build number.
 dnl So for the 2nd MSI build for OpenVPN 2.6.3 use 2.6.302
-define([PRODUCT_VERSION], [2.6.1002])
+define([PRODUCT_VERSION], [2.6.1003])
 
 dnl The MSI product code MUST change on each product release.
-define([PRODUCT_CODE], [{E24B6D58-6FDA-447A-BBA6-FF4C246969A5}])
+define([PRODUCT_CODE], [{C6A541CB-538F-4399-A145-B5E148FF88BF}])
 
 dnl The MSI upgrade codes MUST persist for all versions of the same product line.
 dnl Please use own upgrade codes when deploying a non-official OpenVPN release.
