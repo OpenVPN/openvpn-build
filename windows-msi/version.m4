@@ -18,7 +18,7 @@ define([PRODUCT_WINTUN_URL_arm64],     [https://build.openvpn.net/downloads/rele
 
 dnl ovpn-dco binaries
 dnl renovate: datasource=github-releases depName=OpenVPN/ovpn-dco-win
-define([PRODUCT_OVPN_DCO_VERSION],     [1.1.1])
+define([PRODUCT_OVPN_DCO_VERSION],     [1.2.1])
 
 dnl OpenVPNServ2.exe binary
 define([OPENVPNSERV2_URL], [http://build.openvpn.net/downloads/releases/openvpnserv2-1.4.0.1.exe])
