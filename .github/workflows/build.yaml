@@ -35,7 +35,7 @@ jobs:
           vcpkgJsonGlob: '**/src/openvpn/contrib/vcpkg-manifests/windows/vcpkg.json'
 
       - name: Get latest CMake and ninja
-        uses: lukka/get-cmake@85652a37b177d946c9f4fad0f696b2927ee7754d # v3.29.4
+        uses: lukka/get-cmake@18d87816d12dd87ec1449d47b9b3a587e0a1cc19 # v3.29.5
 
       - name: Install rst2html
         run: python -m pip install --upgrade pip docutils
