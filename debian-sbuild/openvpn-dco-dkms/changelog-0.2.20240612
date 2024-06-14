@@ -1,0 +1,6 @@
+openvpn-dco-dkms (0.2.20240612-debian0) stable; urgency=medium
+
+  * ovpn-dco: add net/gso.h existance check for RedHat 9.4 (Antonio Quartulli, c4c4f80)
+  * ovpn-dco: add compatibility for SUSE Linux Enterprise and openSUSE Leap (Jeff Mahoney, 879d252)
+
+ -- Frank Lichtenheld <frank.lichtenheld@openvpn.net>  Tue, 21 May 2024 22:31:39 +0200
