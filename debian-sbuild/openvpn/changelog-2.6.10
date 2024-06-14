@@ -17,4 +17,4 @@ openvpn (2.6.10-debian0) stable; urgency=medium
   * Fix typo --data-cipher-fallback (Frank Lichtenheld, 6e3fb0f2)
   * Document that auth-user-pass may be inlined (Selva Nair, 2aac80e4)
 
- -- Yuriy Darnobyt <yuriy.darnobyt@openvpn.net>  Tue, 19 Mar 2024 22:19:35 +0100
+ -- Frank Lichtenheld <frank.lichtenheld@openvpn.net>  Tue, 19 Mar 2024 22:19:35 +0100
