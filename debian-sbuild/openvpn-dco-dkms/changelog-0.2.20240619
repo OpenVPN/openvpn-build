@@ -1,0 +1,6 @@
+openvpn-dco-dkms (0.2.20240619-debian0) stable; urgency=medium
+
+  * ovpn-dco: add missing include for MODULE_ALIAS_GENL_FAMILY (Antonio Quartulli, 4a58dbe)
+  * ovpn-dco: fix gso.h compat code for RHEL 9.4 (Antonio Quartulli, 2b17b01)
+
+ -- Frank Lichtenheld <frank.lichtenheld@openvpn.net>  Tue, 18 Jun 2024 14:48:52 +0200
