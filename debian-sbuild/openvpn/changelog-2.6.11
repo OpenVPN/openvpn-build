@@ -1,0 +1,23 @@
+openvpn (2.6.11-debian0) stable; urgency=medium
+
+  * preparing release 2.6.11 (Gert Doering, ddf6bf6d)
+  * interactive.c: Improve access control for gui<->service pipe (Lev Stipakov, 51301eb6)
+  * Properly handle null bytes and invalid characters in control messages (Arne Schwabe, 90e7a858)
+  * Implement server_poll_timeout for socks (5andr0, 94bfb712)
+  * Remove "experimental" denotation for --fast-io (Frank Lichtenheld, d5c4c643)
+  * Implement Windows CA template match for Crypto-API selector (Heiko Wundram, dfbe11ac)
+  * LZO: do not use lzoutils.h macros (Frank Lichtenheld, 1ae753e4)
+  * Allow to set ifmode for existing DCO interfaces in FreeBSD (Franco Fichtner, 2f2ff186)
+  * Only schedule_exit() once (Reynir Björnsson, 65fb67cd)
+  * Workaround issue in LibreSSL crashing when enumerating digests/ciphers (Arne Schwabe, 8aed156b)
+  * Only run coverity scan in OpenVPN/OpenVPN repository (Arne Schwabe, 56fc48e8)
+  * Replace macos11 with macos14 in github runners (Arne Schwabe, 18520e5a)
+  * misc.c: remove unused code (Lev Stipakov, f50c6770)
+  * script-options.rst: Update ifconfig_* variables (Frank Lichtenheld, ea0d9c70)
+  * Add bracket in fingerprint message and do not warn about missing verification (Arne Schwabe, e36359aa)
+  * phase2_tcp_server: fix Coverity issue 'Dereference after null check' (Frank Lichtenheld, 5591af17)
+  * Use snprintf instead of sprintf for get_ssl_library_version (Arne Schwabe, 11ca69cf)
+  * documentation: make section levels consistent (Frank Lichtenheld, 7993084c)
+  * samples: Update sample configurations (Frank Lichtenheld, 371cc587)
+
+ -- Frank Lichtenheld <frank.lichtenheld@openvpn.net>  Thu, 20 Jun 2024 11:37:03 +0200
