@@ -171,7 +171,8 @@ function SetACL() {
     targetDir = TrimTrailingSlash(targetDir);
 
     try {
-        RunIcacls('\"' + targetDir + '\" /inheritance:r /grant "Administrators:(OI)(CI)F" /grant "System:(OI)(CI)F" /grant "Users:(OI)(CI)RX"');
+        // Administrators, SYSTEM, Users
+        RunIcacls('\"' + targetDir + '\" /inheritance:r /grant "*S-1-5-32-544:(OI)(CI)F" /grant "*S-1-5-18:(OI)(CI)F" /grant "*S-1-5-32-545:(OI)(CI)RX"');
     } catch (e) {
         Session.Property("CUSTOMACTIONERROR") = e.message;
         return 1603; // Indicates a fatal error during installation.
