@@ -23,10 +23,15 @@ pushd "$TOP_DIR"
 
 $SCRIPT_DIR/version-and-tags.sh
 read -p "push OpenVPN-$BUILD_VERSION in openvpn-gui?"
-git -C $TOP_DIR/src/openvpn-gui push "$INTERNAL_GIT_REPO_GUI_RW" \
-    HEAD:master \
-    "v$OPENVPN_GUI_CURRENT_FULL_VERSION" \
-    "OpenVPN-$BUILD_VERSION"
+if ! [[ "$MSI_BUILD_ONLY" == "YES" ]]; then
+    git -C $TOP_DIR/src/openvpn-gui push "$INTERNAL_GIT_REPO_GUI_RW" \
+        HEAD:master \
+        "v$OPENVPN_GUI_CURRENT_FULL_VERSION" \
+        "OpenVPN-$BUILD_VERSION"
+else
+    git -C $TOP_DIR/src/openvpn-gui push "$INTERNAL_GIT_REPO_GUI_RW" \
+        "OpenVPN-$BUILD_VERSION"
+fi
 # make sure git knows we pushed this
 git -C $TOP_DIR/src/openvpn-gui remote update
 #TODO: make idempotent

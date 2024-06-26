@@ -14,7 +14,7 @@ GPG_KEY_ID="F554A3687412CFFEBDEFE0A312F5F7B42F2B01E7"
 # This also helps catch various problems with expired subkeys and public
 # keys.
 GPG_OPTS="--no-default-keyring --keyring ~/.gnupg-security@openvpn.net/pubring.kbx"
-GIT_AUTHOR="Frank Lichtenheld <frank.lichtenheld@openvpn.net>"
+GIT_AUTHOR="Yuriy Darnobyt <yuriy.darnobyt@openvpn.net>"
 
 WINDOWS_SIGNING_KEY_FP="31DA19926259519C9EA312C71935B13C33FC6E7E"
 
@@ -40,7 +40,7 @@ OPENVPN_DCO_CURRENT_VERSION="${OPENVPN_DCO_CURRENT_VERSION:-0.2.20240619}"
 OPENVPN_DCO_CURRENT_TAG="${OPENVPN_DCO_CURRENT_TAG:-refs/tags/v$OPENVPN_DCO_CURRENT_VERSION}"
 OPENVPN_DCO_PREVIOUS_TAG="refs/tags/v$OPENVPN_DCO_PREVIOUS_VERSION"
 
-INSTALLER_BUILD=1
+INSTALLER_BUILD=2
 INSTALLER_VERSION="I"$(printf "%03d\n" $INSTALLER_BUILD)
 # Debian packaging scripts do not allow underscores (e.g "2.4_alpha2")
 DEBIAN_UPSTREAM_VERSION=`echo $OPENVPN_CURRENT_VERSION|sed s/"_"/"-"/g`
