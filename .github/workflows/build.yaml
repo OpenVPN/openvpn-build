@@ -81,177 +81,177 @@ jobs:
           name: openvpn-master-${{ env.DATETIME }}-${{ env.OPENVPN_COMMIT }}-${{ matrix.arch }}
           path: ${{ github.workspace }}\windows-msi\image\*-${{ matrix.arch }}.msi
 
-#   run_tclient_tests:
-#     name: Run t_client tests on AWS
-#     needs: msvc
-#     concurrency: aws_tclient_tests
-#     runs-on: ubuntu-latest
-#     if: ${{ github.repository == 'openvpn/openvpn-build' && github.event_name != 'pull_request' }}
-#     env:
-#       AWS_REGION : "eu-west-1"
-# 
-#     steps:
-#       - name: configure aws credentials
-#         uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502 # v4.0.2
-#         with:
-#           role-to-assume: arn:aws:iam::217307881341:role/GitHubActions
-#           role-session-name: githubactions
-#           aws-region: ${{ env.AWS_REGION }}
-# 
-#       - name: Clone openvpn-windows-test repo
-#         uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
-#         with:
-#           repository: openvpn/openvpn-windows-test
-#           ref: master
-#           path: openvpn-windows-test
-# 
-#       - name: Install SSH key for tclient host
-#         uses: shimataro/ssh-key-action@d4fffb50872869abe2d9a9098a6d9c5aa7d16be4 # v2.7.0
-#         with:
-#           key: ${{ secrets.SSH_KEY_FOR_TCLIENT_HOST }}
-#           known_hosts: unnecessary
-# 
-#       - name: Get artifacts
-#         uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16 # v4.1.8
-#         with:
-#           path: msi
-# 
-#       - name: Run AWS test
-#         working-directory: openvpn-windows-test
-#         shell: pwsh
-#         run: |
-#           Install-Module -Name AWS.Tools.Installer -Force
-#           Install-AWSToolsModule AWS.Tools.EC2 -Force
-#           .\Start-AWSTest.ps1 -SSH_KEY ~/.ssh/id_rsa -MSI_PATH $(Get-ChildItem ../msi/*-amd64/*.msi | select -ExpandProperty FullName)
-# 
-#       - name: Archive openvpn logs
-#         uses: actions/upload-artifact@0b2256b8c012f0828dc542b3febcab082c67f72b # v4.3.4
-#         if: ${{ always() }}
-#         with:
-#           name: t_client_openvpn_logs
-#           path: openvpn-windows-test/openvpn-logs.zip
-# 
-#   upload_msis:
-#     needs: run_tclient_tests
-#     name: upload-msis
-#     runs-on: ubuntu-latest
-#     if: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/master' && github.repository == 'openvpn/openvpn-build' }}
-# 
-#     steps:
-#       - name: Install knock
-#         run: sudo apt install knockd
-# 
-#       - name: Get artifacts
-#         uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16 # v4.1.8
-#         with:
-#           path: msi
-# 
-#       - name: Flatter and rename artifacts
-#         working-directory: msi
-#         run: |
-#           find -name '*.msi' -printf "%p\n" | while read f; do mv $f $(dirname $f).msi; rm -rf $(dirname $f); done
-#           rm -rf t_client_openvpn_logs
-# 
-#       - name: Knock ports on remote
-#         run: knock -d 500 ${{ secrets.MSI_UPLOAD_REMOTE_HOST }} ${{ secrets.MSI_UPLOAD_REMOTE_KNOCK_SEQUENCE }} ; sleep 1
-# 
-#       - name: Copy MSI to remote
-#         uses: garygrossgarten/github-action-scp@8a27854bb4f124a497a67316e83783efda770119 # v0.8.0
-#         with:
-#           local: msi
-#           remote: ${{ secrets.MSI_UPLOAD_REMOTE_PATH }}
-#           host: ${{ secrets.MSI_UPLOAD_REMOTE_HOST }}
-#           port: ${{ secrets.MSI_UPLOAD_REMOTE_PORT }}
-#           username: ${{ secrets.MSI_UPLOAD_USERNAME }}
-#           privateKey: ${{ secrets.MSI_UPLOAD_PRIVATE_KEY }}
-#           passphrase: ${{ secrets.MSI_UPLOAD_KEY_PASSPHRASE }}
-# 
-#   debian:
-#     name: Build Debian packages
-#     runs-on: ubuntu-latest
-#     env:
-#       CHROOT_CONF: chroots/chroot.d.tar
-#       OPENVPN_CURRENT_TAG: HEAD
-#       OPENVPN_DCO_CURRENT_TAG: HEAD
-#       USE_LOCAL_SOURCE: 1
-# 
-#     steps:
-#       - name: Checkout openvpn-build
-#         uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
-#         with:
-#           fetch-depth: 0
-#           submodules: true
-# 
-#       - name: Install dependencies
-#         run: |
-#           sudo apt-get update
-#           # for sbuild
-#           sudo apt-get install -y sbuild git quilt debhelper dkms
-#           # for ./configure && make dist
-#           sudo apt-get install -y autoconf automake libcap-ng-dev libssl-dev python3-docutils
-# 
-#       - name: Prepare release files
-#         working-directory: release
-#         run: |
-#           ln -s vars.example vars
-#           mkdir ../output
-#           # we need to have ability to git tag the versions
-#           # we do not push those tags
-#           git config --global user.name "gha_user"
-#           git config --global user.email "gha@openvpn.invalid"
-#           ./version-and-tags.sh
-#           ./create-release-files.sh
-# 
-#       # So that the caches expire after a while
-#       - name: Get Date for cache key
-#         id: get-date
-#         run: |
-#           echo "date=$(/bin/date -u '+%Y%m')" >> $GITHUB_OUTPUT
-# 
-#       - name: Restore cached chroots
-#         id: chroots-restore
-#         uses: actions/cache/restore@0c45773b623bea8c8e75f6c82b208c3cf94ea4f9 # v4.0.2
-#         with:
-#           path: |
-#             debian-sbuild/chroots
-#           key: chroots-${{ hashFiles('**/config/variants.amd64.conf') }}-${{ steps.get-date.outputs.date }}
-#           restore-keys: |
-#             chroots-${{ hashFiles('**/config/variants.amd64.conf') }}-
-#             chroots-
-# 
-#       - name: Prepare environment
-#         working-directory: debian-sbuild
-#         run: |
-#           [ ! -f "$CHROOT_CONF" ] || ( tar -xvf "$CHROOT_CONF" -C chroots; sudo install -m644 chroots/chroot.d/* /etc/schroot/chroot.d/ )
-#           sudo chown root:root chroots/*.tar.gz || true
-#           scripts/setup.sh
-#           sudo scripts/setup_chroots.sh
-#           sudo scripts/update-all.sh
-#           sudo sbuild-adduser runner
-#           tar -cvf "$CHROOT_CONF" -C /etc/schroot/ chroot.d/
-# 
-#       - name: Save chroots
-#         if: steps.chroots-restore.outputs.cache-hit != 'true'
-#         id: chroots-save
-#         uses: actions/cache/save@0c45773b623bea8c8e75f6c82b208c3cf94ea4f9 # v4.0.2
-#         with:
-#           path: |
-#             debian-sbuild/chroots
-#           key: ${{ steps.chroots-restore.outputs.cache-primary-key }}
-# 
-#       - name: Prepare package build
-#         working-directory: debian-sbuild
-#         run: |
-#           scripts/prepare-all.sh
-# 
-#       - name: Build packages
-#         working-directory: debian-sbuild
-#         run: |
-#           sg sbuild ./scripts/build-all.sh
-# 
-#       - name: Archive packages
-#         uses: actions/upload-artifact@0b2256b8c012f0828dc542b3febcab082c67f72b # v4.3.4
-#         with:
-#           name: openvpn-debian
-#           path: |
-#             output
+  run_tclient_tests:
+    name: Run t_client tests on AWS
+    needs: msvc
+    concurrency: aws_tclient_tests
+    runs-on: ubuntu-latest
+    if: ${{ github.repository == 'openvpn/openvpn-build' && github.event_name != 'pull_request' }}
+    env:
+      AWS_REGION : "eu-west-1"
+
+    steps:
+      - name: configure aws credentials
+        uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502 # v4.0.2
+        with:
+          role-to-assume: arn:aws:iam::217307881341:role/GitHubActions
+          role-session-name: githubactions
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Clone openvpn-windows-test repo
+        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+        with:
+          repository: openvpn/openvpn-windows-test
+          ref: master
+          path: openvpn-windows-test
+
+      - name: Install SSH key for tclient host
+        uses: shimataro/ssh-key-action@d4fffb50872869abe2d9a9098a6d9c5aa7d16be4 # v2.7.0
+        with:
+          key: ${{ secrets.SSH_KEY_FOR_TCLIENT_HOST }}
+          known_hosts: unnecessary
+
+      - name: Get artifacts
+        uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16 # v4.1.8
+        with:
+          path: msi
+
+      - name: Run AWS test
+        working-directory: openvpn-windows-test
+        shell: pwsh
+        run: |
+          Install-Module -Name AWS.Tools.Installer -Force
+          Install-AWSToolsModule AWS.Tools.EC2 -Force
+          .\Start-AWSTest.ps1 -SSH_KEY ~/.ssh/id_rsa -MSI_PATH $(Get-ChildItem ../msi/*-amd64/*.msi | select -ExpandProperty FullName)
+
+      - name: Archive openvpn logs
+        uses: actions/upload-artifact@0b2256b8c012f0828dc542b3febcab082c67f72b # v4.3.4
+        if: ${{ always() }}
+        with:
+          name: t_client_openvpn_logs
+          path: openvpn-windows-test/openvpn-logs.zip
+
+  upload_msis:
+    needs: run_tclient_tests
+    name: upload-msis
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/master' && github.repository == 'openvpn/openvpn-build' }}
+
+    steps:
+      - name: Install knock
+        run: sudo apt install knockd
+
+      - name: Get artifacts
+        uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16 # v4.1.8
+        with:
+          path: msi
+
+      - name: Flatter and rename artifacts
+        working-directory: msi
+        run: |
+          find -name '*.msi' -printf "%p\n" | while read f; do mv $f $(dirname $f).msi; rm -rf $(dirname $f); done
+          rm -rf t_client_openvpn_logs
+
+      - name: Knock ports on remote
+        run: knock -d 500 ${{ secrets.MSI_UPLOAD_REMOTE_HOST }} ${{ secrets.MSI_UPLOAD_REMOTE_KNOCK_SEQUENCE }} ; sleep 1
+
+      - name: Copy MSI to remote
+        uses: garygrossgarten/github-action-scp@8a27854bb4f124a497a67316e83783efda770119 # v0.8.0
+        with:
+          local: msi
+          remote: ${{ secrets.MSI_UPLOAD_REMOTE_PATH }}
+          host: ${{ secrets.MSI_UPLOAD_REMOTE_HOST }}
+          port: ${{ secrets.MSI_UPLOAD_REMOTE_PORT }}
+          username: ${{ secrets.MSI_UPLOAD_USERNAME }}
+          privateKey: ${{ secrets.MSI_UPLOAD_PRIVATE_KEY }}
+          passphrase: ${{ secrets.MSI_UPLOAD_KEY_PASSPHRASE }}
+
+  debian:
+    name: Build Debian packages
+    runs-on: ubuntu-latest
+    env:
+      CHROOT_CONF: chroots/chroot.d.tar
+      OPENVPN_CURRENT_TAG: HEAD
+      OPENVPN_DCO_CURRENT_TAG: HEAD
+      USE_LOCAL_SOURCE: 1
+
+    steps:
+      - name: Checkout openvpn-build
+        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+        with:
+          fetch-depth: 0
+          submodules: true
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          # for sbuild
+          sudo apt-get install -y sbuild git quilt debhelper dkms
+          # for ./configure && make dist
+          sudo apt-get install -y autoconf automake libcap-ng-dev libssl-dev python3-docutils
+
+      - name: Prepare release files
+        working-directory: release
+        run: |
+          ln -s vars.example vars
+          mkdir ../output
+          # we need to have ability to git tag the versions
+          # we do not push those tags
+          git config --global user.name "gha_user"
+          git config --global user.email "gha@openvpn.invalid"
+          ./version-and-tags.sh
+          ./create-release-files.sh
+
+      # So that the caches expire after a while
+      - name: Get Date for cache key
+        id: get-date
+        run: |
+          echo "date=$(/bin/date -u '+%Y%m')" >> $GITHUB_OUTPUT
+
+      - name: Restore cached chroots
+        id: chroots-restore
+        uses: actions/cache/restore@0c45773b623bea8c8e75f6c82b208c3cf94ea4f9 # v4.0.2
+        with:
+          path: |
+            debian-sbuild/chroots
+          key: chroots-${{ hashFiles('**/config/variants.amd64.conf') }}-${{ steps.get-date.outputs.date }}
+          restore-keys: |
+            chroots-${{ hashFiles('**/config/variants.amd64.conf') }}-
+            chroots-
+
+      - name: Prepare environment
+        working-directory: debian-sbuild
+        run: |
+          [ ! -f "$CHROOT_CONF" ] || ( tar -xvf "$CHROOT_CONF" -C chroots; sudo install -m644 chroots/chroot.d/* /etc/schroot/chroot.d/ )
+          sudo chown root:root chroots/*.tar.gz || true
+          scripts/setup.sh
+          sudo scripts/setup_chroots.sh
+          sudo scripts/update-all.sh
+          sudo sbuild-adduser runner
+          tar -cvf "$CHROOT_CONF" -C /etc/schroot/ chroot.d/
+
+      - name: Save chroots
+        if: steps.chroots-restore.outputs.cache-hit != 'true'
+        id: chroots-save
+        uses: actions/cache/save@0c45773b623bea8c8e75f6c82b208c3cf94ea4f9 # v4.0.2
+        with:
+          path: |
+            debian-sbuild/chroots
+          key: ${{ steps.chroots-restore.outputs.cache-primary-key }}
+
+      - name: Prepare package build
+        working-directory: debian-sbuild
+        run: |
+          scripts/prepare-all.sh
+
+      - name: Build packages
+        working-directory: debian-sbuild
+        run: |
+          sg sbuild ./scripts/build-all.sh
+
+      - name: Archive packages
+        uses: actions/upload-artifact@0b2256b8c012f0828dc542b3febcab082c67f72b # v4.3.4
+        with:
+          name: openvpn-debian
+          path: |
+            output
