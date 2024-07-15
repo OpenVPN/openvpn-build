@@ -156,7 +156,7 @@ jobs:
         run: knock -d 500 ${{ secrets.MSI_UPLOAD_REMOTE_HOST }} ${{ secrets.MSI_UPLOAD_REMOTE_KNOCK_SEQUENCE }} ; sleep 1
 
       - name: Copy MSI to remote
-        uses: garygrossgarten/github-action-scp@8a27854bb4f124a497a67316e83783efda770119 # v0.8.0
+        uses: garygrossgarten/github-action-scp@2d32ef6b45d73b9df04aac224c0839f70d5e39d6 # 0.9.0
         with:
           local: msi
           remote: ${{ secrets.MSI_UPLOAD_REMOTE_PATH }}
