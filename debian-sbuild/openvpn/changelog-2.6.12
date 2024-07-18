@@ -1,0 +1,8 @@
+openvpn (2.6.12-debian0) stable; urgency=medium
+
+  * preparing release 2.6.12 (Gert Doering, 038a94ba)
+  * Allow trailing \r and \n in control channel message (Arne Schwabe, 34357399)
+  * configure: Try to detect LZO with pkg-config (Frank Lichtenheld, 3c43b016)
+  * Http-proxy: fix bug preventing proxy credentials caching (Gianmarco De Gregori, ad0c2c07)
+
+ -- Yuriy Darnobyt <yuriy.darnobyt@openvpn.net>  Wed, 17 Jul 2024 22:14:46 +0200
