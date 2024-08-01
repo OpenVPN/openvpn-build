@@ -1,0 +1,5 @@
+openvpn-dco-dkms (0.2.20240712-debian0) stable; urgency=medium
+
+  * ovpn-dco: drop ending year from copyright lines (Antonio Quartulli, d22d04e)
+
+ -- Yuriy Darnobyt <yuriy.darnobyt@openvpn.net>  Fri, 12 Jul 2024 23:20:17 +0200
