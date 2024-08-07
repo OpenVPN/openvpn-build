@@ -17,6 +17,11 @@ jobs:
     env:
       CMAKE: cmake.exe
       WIX: ${{ github.workspace }}\wix\
+      JsignJar: ${{ github.workspace }}\jsign.jar
+      SigningStoreType: GOOGLECLOUD
+      SigningKeyStore: ${{ secrets.GOOGLE_CLOUD_KMS_KEYRING }}
+      SigningStoreKeyName: ${{ secrets.GOOGLE_CLOUD_KMS_KEY }}
+      SigningCertificateFile: ${{ github.workspace }}/certificate.pem
 
     name: 'openvpn-build'
     runs-on: windows-latest
@@ -43,6 +48,18 @@ jobs:
       - name: Setup MSVC prompt
         uses: ilammy/msvc-dev-cmd@0b201ec74fa43914dc39ae48a89fd1d8cb592756 # v1.13.0
 
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        if: ${{ env.SigningKeyStore != '' }}
+        with:
+          java-version: 17
+          distribution: 'temurin'
+
+      - name: Download Jsign
+        if: ${{ env.SigningKeyStore != '' }}
+        run: |
+          Invoke-WebRequest -Uri "https://github.com/ebourg/jsign/releases/download/6.0/jsign-6.0.jar" -OutFile jsign.jar
+
       - name: Install Wix 3.14.1
         run: |
           Invoke-WebRequest -Uri "https://github.com/wixtoolset/wix3/releases/download/wix3141rtm/wix314-binaries.zip" -OutFile wix.zip
@@ -59,8 +76,29 @@ jobs:
           $version_m4 -replace '^define\(\[PRODUCT_CODE\], \[\{(?<ProductCode>.*)\}]\)', "define([PRODUCT_CODE], [{${NewProductCode}}])" `
             -replace '^define\(\[PRODUCT_VERSION\], \[(.*?)\]\)', "define([PRODUCT_VERSION], [${NewProductVersion}])" | Out-File -Encoding ASCII version.m4
 
+      - name: Authenticate to Google Cloud
+        id: 'auth'
+        uses: 'google-github-actions/auth@v2'
+        if: ${{ env.SigningKeyStore != '' }}
+        with:
+          create_credentials_file: false
+          token_format: 'access_token'
+          workload_identity_provider: ${{ secrets.GOOGLE_CLOUD_WIP }}
+          service_account: ${{ secrets.GOOGLE_CLOUD_SERVICE_ACCOUNT }}
+          access_token_lifetime: '600s'
+
+      - name: Build and Sign
+        working-directory: windows-msi
+        env:
+           SigningStorePass: ${{ steps.auth.outputs.access_token }}
+        if: ${{ env.SigningKeyStore != '' }}
+        run: |
+          echo "${{ secrets.SIGNING_CERTIFICATE }}" >${{ github.workspace }}/certificate.pem
+          ./build-and-package.ps1 -sign -arch ${{ matrix.arch }}
+
       - name: Build
         working-directory: windows-msi
+        if: ${{ env.SigningKeyStore == '' }}
         run: |
           ./build-and-package.ps1 -arch ${{ matrix.arch }}
 
