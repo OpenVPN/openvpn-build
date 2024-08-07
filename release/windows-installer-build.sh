@@ -21,10 +21,25 @@ pushd "$TOP_DIR"
 . "$SCRIPT_DIR/vars"
 . "$SCRIPT_DIR/vars.infrastructure"
 
-ssh $WINDOWS_MSI_BUILDHOST "net.exe stop AWSCloudHSMClient" || true
-ssh $WINDOWS_MSI_BUILDHOST "\"C:\Program Files\Amazon\CloudHSM\configure.exe\" -a $HSM_IP && net.exe start AWSCloudHSMClient"
-ssh $WINDOWS_MSI_BUILDHOST "env n3fips_password=${HSM_USER:-cuuser}:$HSM_PASSWORD \"C:\Program Files\Amazon\CloudHSM\import_key.exe\" -from HSM -privateKeyHandle $HSM_PRIV_KEY_HANDLE -publicKeyHandle $HSM_PUB_KEY_HANDLE"
-ssh $WINDOWS_MSI_BUILDHOST "env n3fips_password=${HSM_USER:-cuuser}:$HSM_PASSWORD certutil -f -csp \"Cavium Key Storage Provider\" -user -repairstore my $WINDOWS_SIGNING_KEY_FP"
+cat >build-and-package-env.ps1 <<EOF
+\$Env:JsignJar="$WINDOWS_MSI_WORKDIR/../jsign.jar"
+\$Env:SigningStoreType="GOOGLECLOUD"
+\$Env:SigningKeyStore="$GOOGLE_CLOUD_KMS_KEYRING"
+\$Env:SigningStoreKeyName="$GOOGLE_CLOUD_KMS_KEY"
+\$Env:SigningCertificateFile="$WINDOWS_MSI_WORKDIR/../signingCert.pem"
+EOF
+if [ -n "${VCPKG_CACHE:-}" ]; then
+   echo "\$Env:VCPKG_BINARY_SOURCES=\"$VCPKG_CACHE\"" >>build-and-package-env.ps1
+fi
+
+ssh $WINDOWS_MSI_BUILDHOST "gcloud auth login --quiet --cred-file=$WINDOWS_MSI_WORKDIR\..\clientLibraryConfig.json"
+set +x
+ACCESS_TOKEN=$(ssh $WINDOWS_MSI_BUILDHOST "cd $WINDOWS_MSI_WORKDIR/windows-msi && gcloud auth print-access-token")
+echo "\$Env:SigningStorePass=\"$ACCESS_TOKEN\"" >>build-and-package-env.ps1
+set -x
+
+scp build-and-package-env.ps1 "$WINDOWS_MSI_BUILDHOST":"$WINDOWS_MSI_WORKDIR/windows-msi/"
+
 ssh $WINDOWS_MSI_BUILDHOST git -C "$WINDOWS_MSI_WORKDIR" submodule update --init
 ssh $WINDOWS_MSI_BUILDHOST git -C "$WINDOWS_MSI_WORKDIR/src/openvpn" remote remove internal || true
 ssh $WINDOWS_MSI_BUILDHOST git -C "$WINDOWS_MSI_WORKDIR/src/openvpn" remote add -f --tags internal "$INTERNAL_GIT_REPO_OPENVPN_RO"
@@ -32,11 +47,7 @@ ssh $WINDOWS_MSI_BUILDHOST git -C "$WINDOWS_MSI_WORKDIR" remote remove internal 
 ssh $WINDOWS_MSI_BUILDHOST git -C "$WINDOWS_MSI_WORKDIR" tag -d "OpenVPN-$BUILD_VERSION" || true
 ssh $WINDOWS_MSI_BUILDHOST git -C "$WINDOWS_MSI_WORKDIR" remote add -f --tags internal "$INTERNAL_GIT_REPO_BUILD_RO"
 ssh $WINDOWS_MSI_BUILDHOST git -C "$WINDOWS_MSI_WORKDIR" checkout --recurse-submodules -f "OpenVPN-$BUILD_VERSION"
-ssh $WINDOWS_MSI_BUILDHOST "cd $WINDOWS_MSI_WORKDIR/windows-msi && echo \$Env:ManifestCertificateThumbprint = \"$WINDOWS_SIGNING_KEY_FP\" >build-and-package-env.ps1"
-if [ -n "${VCPKG_CACHE:-}" ]; then
-   ssh $WINDOWS_MSI_BUILDHOST "cd $WINDOWS_MSI_WORKDIR/windows-msi && echo \$Env:VCPKG_BINARY_SOURCES = \"$VCPKG_CACHE\" >>build-and-package-env.ps1"
-fi
-ssh $WINDOWS_MSI_BUILDHOST "cd $WINDOWS_MSI_WORKDIR/windows-msi && \"C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Auxiliary\Build\vcvarsall.bat\" x64 && env n3fips_password=${HSM_USER:-cuuser}:$HSM_PASSWORD powershell ./build-and-package.ps1 -sign"
+ssh $WINDOWS_MSI_BUILDHOST "cd $WINDOWS_MSI_WORKDIR/windows-msi && \"C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Auxiliary\Build\vcvarsall.bat\" x64 && powershell ./build-and-package.ps1 -sign"
 
 mkdir -p "$OUTPUT/upload/"
 scp "$WINDOWS_MSI_BUILDHOST":"$WINDOWS_MSI_WORKDIR/windows-msi/image/OpenVPN-${BUILD_VERSION}"-*.msi "$OUTPUT/upload/"
