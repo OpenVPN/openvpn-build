@@ -114,6 +114,7 @@ jobs:
       - name: Get artifacts
         uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16 # v4.1.8
         with:
+          pattern: "*-amd64"
           path: msi
 
       - name: Run AWS test
@@ -146,25 +147,27 @@ jobs:
         with:
           path: msi
 
-      - name: Flatter and rename artifacts
+      - name: Flatten and rename artifacts
         working-directory: msi
         run: |
-          find -name '*.msi' -printf "%p\n" | while read f; do mv $f $(dirname $f).msi; rm -rf $(dirname $f); done
+          find -name '*.msi' -printf "%p\n" | while read f; do mv -v $f $(dirname $f).msi; rm -rvf $(dirname $f); done
           rm -rf t_client_openvpn_logs
+          rm -rf openvpn-debian
+          find
 
       - name: Knock ports on remote
         run: knock -d 500 ${{ secrets.MSI_UPLOAD_REMOTE_HOST }} ${{ secrets.MSI_UPLOAD_REMOTE_KNOCK_SEQUENCE }} ; sleep 1
 
       - name: Copy MSI to remote
-        uses: garygrossgarten/github-action-scp@2d32ef6b45d73b9df04aac224c0839f70d5e39d6 # 0.9.0
-        with:
-          local: msi
-          remote: ${{ secrets.MSI_UPLOAD_REMOTE_PATH }}
-          host: ${{ secrets.MSI_UPLOAD_REMOTE_HOST }}
-          port: ${{ secrets.MSI_UPLOAD_REMOTE_PORT }}
-          username: ${{ secrets.MSI_UPLOAD_USERNAME }}
-          privateKey: ${{ secrets.MSI_UPLOAD_PRIVATE_KEY }}
-          passphrase: ${{ secrets.MSI_UPLOAD_KEY_PASSPHRASE }}
+        working-directory: msi
+        run: |
+          set -x
+          eval $(ssh-agent -s)
+          mkdir -v -m 700 $HOME/.ssh
+          ssh-keyscan -H ${{ secrets.MSI_UPLOAD_REMOTE_HOST }} > $HOME/.ssh/known_hosts
+          echo "${{ secrets.MSI_UPLOAD_PRIVATE_KEY }}" > $HOME/.ssh/key
+          chmod 400 $HOME/.ssh/key
+          scp -i $HOME/.ssh/key *.msi ${{ secrets.MSI_UPLOAD_USERNAME }}@${{ secrets.MSI_UPLOAD_REMOTE_HOST }}:${{ secrets.MSI_UPLOAD_REMOTE_PATH }}
 
   debian:
     name: Build Debian packages
