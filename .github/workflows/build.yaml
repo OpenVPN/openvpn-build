@@ -35,7 +35,7 @@ jobs:
           vcpkgJsonGlob: '**/src/openvpn/contrib/vcpkg-manifests/windows/vcpkg.json'
 
       - name: Get latest CMake and ninja
-        uses: lukka/get-cmake@5979409e62bdf841487c5fb3c053149de97a86d3 # v3.31.2
+        uses: lukka/get-cmake@8567b9d9b63052b8430ef30042e13c3ba5288f16 # v3.31.3
 
       - name: Install rst2html
         run: python -m pip install --upgrade pip docutils
@@ -76,7 +76,7 @@ jobs:
           echo "DATETIME=${dt}" >> $Env:GITHUB_ENV
 
       - name: Archive artifacts
-        uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882 # v4.4.3
+        uses: actions/upload-artifact@6f51ac03b9356f520e9adb1b1b7802705f340c2b # v4.5.0
         with:
           name: openvpn-master-${{ env.DATETIME }}-${{ env.OPENVPN_COMMIT }}-${{ matrix.arch }}
           path: ${{ github.workspace }}\windows-msi\image\*-${{ matrix.arch }}.msi
@@ -125,7 +125,7 @@ jobs:
           .\Start-AWSTest.ps1 -SSH_KEY ~/.ssh/id_rsa -MSI_PATH $(Get-ChildItem ../msi/*-amd64/*.msi | select -ExpandProperty FullName)
 
       - name: Archive openvpn logs
-        uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882 # v4.4.3
+        uses: actions/upload-artifact@6f51ac03b9356f520e9adb1b1b7802705f340c2b # v4.5.0
         if: ${{ always() }}
         with:
           name: t_client_openvpn_logs
@@ -250,7 +250,7 @@ jobs:
           sg sbuild ./scripts/build-all.sh
 
       - name: Archive packages
-        uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882 # v4.4.3
+        uses: actions/upload-artifact@6f51ac03b9356f520e9adb1b1b7802705f340c2b # v4.5.0
         with:
           name: openvpn-debian
           path: |
