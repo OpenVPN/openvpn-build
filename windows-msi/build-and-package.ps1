@@ -18,13 +18,6 @@ if (-Not($allowed_arch.Contains($arch)))
     exit 1
 }
 
-# at the moment signing script doesn't support per-architecture signing
-if ($sign -And $arch -ne "all")
-{
-    Write-Host "-arch must be 'all' or omitted when -sign is specified"
-    exit 1
-}
-
 # Convert relative path to absolute to prevent breakages below
 $basedir = (Resolve-Path -Path $topdir)
 
@@ -47,8 +40,8 @@ if ((Test-Path "${PSScriptRoot}/build-and-package-env.ps1") -ne $True) {
     . "${PSScriptRoot}/build-and-package-env.ps1"
 }
 
-if ($sign -And -not($Env:ManifestCertificateThumbprint)) {
-    Write-Host "ERROR: signing requested but Env:ManifestCertificateThumbprint not set"
+if ($sign -And -not($Env:SigningCertificateFile)) {
+    Write-Host "ERROR: signing requested but Env:SigningCertificateFile not set"
     exit 1
 }
 
@@ -90,8 +83,6 @@ $gui_arch | ForEach-Object  {
 }
 
 ### Build OpenVPN
-Set-Location "${basedir}\src\openvpn"
-
 $ovpn_arch = @("amd64", "arm64", "x86")
 if ($arch -ne "all") {
     $ovpn_arch = @($arch)
@@ -100,18 +91,25 @@ if ($arch -ne "all") {
 $ovpn_arch | ForEach-Object  {
 	$platform = $_
     Write-Host "Building openvpn ${platform}"
+    Set-Location "${basedir}\src\openvpn"
     # VCPKG_HOST_TRIPLET required to use host tools like pkgconf
     & "$Env:CMAKE" --preset "win-${platform}-release"
     & "$Env:CMAKE" --build --preset "win-${platform}-release"
-}
 
-### Sign binaries
-if ($sign) {
-    Set-Location "${basedir}\windows-msi"
-    $Env:SignScript = "sign-openvpn.bat"
-    & .\sign-binaries.bat
-} else {
-    Write-Host "Skip signing binaries"
+    ### Sign binaries
+    if ($sign) {
+        Set-Location "${basedir}\windows-msi"
+        $Env:SignArch = $platform
+        if ($platform -ne "amd64") {
+            $Env:SignArchAlt = $platform
+        } else {
+            $Env:SignArchAlt = "x64"
+        }
+
+        & .\sign-openvpn.bat
+    } else {
+        Write-Host "Skip signing binaries"
+    }
 }
 
 ### Build MSI
@@ -139,8 +137,7 @@ switch ($arch)
 
 ### Sign MSI
 if ($sign) {
-    $Env:SignScript = "sign-msi.bat"
-    & .\sign-binaries.bat
+    & .\sign-msi.bat
 } else {
     Write-Host "Skip signing MSI"
 }
