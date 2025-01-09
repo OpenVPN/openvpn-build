@@ -35,7 +35,7 @@ jobs:
           vcpkgJsonGlob: '**/src/openvpn/contrib/vcpkg-manifests/windows/vcpkg.json'
 
       - name: Get latest CMake and ninja
-        uses: lukka/get-cmake@5979409e62bdf841487c5fb3c053149de97a86d3 # v3.31.2
+        uses: lukka/get-cmake@8567b9d9b63052b8430ef30042e13c3ba5288f16 # v3.31.3
 
       - name: Install rst2html
         run: python -m pip install --upgrade pip docutils
@@ -85,7 +85,7 @@ jobs:
     name: Run t_client tests on AWS
     needs: msvc
     concurrency: aws_tclient_tests
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     if: ${{ github.repository == 'openvpn/openvpn-build' && github.event_name != 'pull_request' }}
     env:
       AWS_REGION : "eu-west-1"
@@ -135,7 +135,7 @@ jobs:
   upload_msis:
     needs: run_tclient_tests
     name: upload-msis
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     if: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/master' && github.repository == 'openvpn/openvpn-build' }}
 
     steps:
@@ -171,7 +171,7 @@ jobs:
 
   debian:
     name: Build Debian packages
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     env:
       CHROOT_CONF: chroots/chroot.d.tar
       OPENVPN_CURRENT_TAG: HEAD
@@ -189,7 +189,7 @@ jobs:
         run: |
           sudo apt-get update
           # for sbuild
-          sudo apt-get install -y sbuild git quilt debhelper dkms
+          sudo apt-get install -y sbuild git quilt debhelper dkms dh-dkms
           # for ./configure && make dist
           sudo apt-get install -y autoconf automake libcap-ng-dev libssl-dev python3-docutils
 
@@ -247,9 +247,12 @@ jobs:
         run: |
           scripts/prepare-all.sh
 
+      # includes work-around for https://github.com/actions/runner-images/issues/9932
+      # (sg and newgrp require password to run)
       - name: Build packages
         working-directory: debian-sbuild
         run: |
+          sudo gpasswd -r sbuild
           sg sbuild ./scripts/build-all.sh
 
       - name: Archive packages
