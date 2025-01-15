@@ -1,0 +1,23 @@
+openvpn (2.6.13-debian0) stable; urgency=medium
+
+  * preparing release 2.6.13 (Gert Doering, 5662b3a8)
+  * console_systemd: remove the timeout when using 'systemd-ask-password' (Ben Boeckel, f67bd153)
+  * Improve peer fingerprint documentation (Arne Schwabe, de127bd1)
+  * forward: Fix potential unaligned access in drop_if_recursive_routing (Frank Lichtenheld, 62d41dec)
+  * Fix port-share journal doc (corubba, 6d64fa4b)
+  * Fix IPv6 in port-share journal (corubba, f966e67c)
+  * Various typo fixes (Frank Lichtenheld, 27768106)
+  * send uname() release as IV_PLAT_VER= on non-windows versions (Gert Doering, f104d00a)
+  * Add calls to nvlist_destroy to avoid leaks (Rémi Farault, a5d2544c)
+  * Refuse clients if username or password is longer than USER_PASS_LEN (Arne Schwabe, b98ff0e7)
+  * GHA: Simplify macOS builds (Frank Lichtenheld, 3abad540)
+  * GHA: Update macOS runners (Frank Lichtenheld, 914b0ef4)
+  * Route: remove incorrect routes on exit (Gianmarco De Gregori, 4ad3aa5a)
+  * Fix check_addr_clash argument order (Ralf Lici, 7e6723aa)
+  * Fix more of uninitialized struct user_pass local vars (Selva Nair, f9ab7edb)
+  * Protect cached username, password and token on client (Selva Nair, 9e1598de)
+  * proxy.c: Clear sensitive data after use (Selva Nair, 534609a2)
+  * Use a more robust way to get dco-win version (Lev Stipakov, 41fe4858)
+  * Fix missing spaces in various messages (Frank Lichtenheld, 02346806)
+
+ -- Frank Lichtenheld <frank.lichtenheld@openvpn.net>  Tue, 14 Jan 2025 18:24:27 +0100
