@@ -17,6 +17,11 @@ jobs:
     env:
       CMAKE: cmake.exe
       WIX: ${{ github.workspace }}\wix\
+      JsignJar: ${{ github.workspace }}\jsign.jar
+      SigningStoreType: GOOGLECLOUD
+      SigningKeyStore: ${{ secrets.GOOGLE_CLOUD_KMS_KEYRING }}
+      SigningStoreKeyName: ${{ secrets.GOOGLE_CLOUD_KMS_KEY }}
+      SigningCertificateFile: ${{ github.workspace }}/certificate.pem
 
     name: 'openvpn-build'
     runs-on: windows-latest
@@ -35,13 +40,25 @@ jobs:
           vcpkgJsonGlob: '**/src/openvpn/contrib/vcpkg-manifests/windows/vcpkg.json'
 
       - name: Get latest CMake and ninja
-        uses: lukka/get-cmake@8567b9d9b63052b8430ef30042e13c3ba5288f16 # v3.31.3
+        uses: lukka/get-cmake@acb35cf920333f4dc3fc4f424f1b30d5e7d561b4 # v3.31.4
 
       - name: Install rst2html
         run: python -m pip install --upgrade pip docutils
 
       - name: Setup MSVC prompt
         uses: ilammy/msvc-dev-cmd@0b201ec74fa43914dc39ae48a89fd1d8cb592756 # v1.13.0
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        if: ${{ env.SigningKeyStore != '' }}
+        with:
+          java-version: 17
+          distribution: 'temurin'
+
+      - name: Download Jsign
+        if: ${{ env.SigningKeyStore != '' }}
+        run: |
+          Invoke-WebRequest -Uri "https://github.com/ebourg/jsign/releases/download/6.0/jsign-6.0.jar" -OutFile jsign.jar
 
       - name: Install Wix 3.14.1
         run: |
@@ -59,8 +76,29 @@ jobs:
           $version_m4 -replace '^define\(\[PRODUCT_CODE\], \[\{(?<ProductCode>.*)\}]\)', "define([PRODUCT_CODE], [{${NewProductCode}}])" `
             -replace '^define\(\[PRODUCT_VERSION\], \[(.*?)\]\)', "define([PRODUCT_VERSION], [${NewProductVersion}])" | Out-File -Encoding ASCII version.m4
 
+      - name: Authenticate to Google Cloud
+        id: 'auth'
+        uses: 'google-github-actions/auth@v2'
+        if: ${{ env.SigningKeyStore != '' }}
+        with:
+          create_credentials_file: false
+          token_format: 'access_token'
+          workload_identity_provider: ${{ secrets.GOOGLE_CLOUD_WIP }}
+          service_account: ${{ secrets.GOOGLE_CLOUD_SERVICE_ACCOUNT }}
+          access_token_lifetime: '600s'
+
+      - name: Build and Sign
+        working-directory: windows-msi
+        env:
+           SigningStorePass: ${{ steps.auth.outputs.access_token }}
+        if: ${{ env.SigningKeyStore != '' }}
+        run: |
+          echo "${{ secrets.SIGNING_CERTIFICATE }}" >${{ github.workspace }}/certificate.pem
+          ./build-and-package.ps1 -sign -arch ${{ matrix.arch }}
+
       - name: Build
         working-directory: windows-msi
+        if: ${{ env.SigningKeyStore == '' }}
         run: |
           ./build-and-package.ps1 -arch ${{ matrix.arch }}
 
@@ -76,7 +114,7 @@ jobs:
           echo "DATETIME=${dt}" >> $Env:GITHUB_ENV
 
       - name: Archive artifacts
-        uses: actions/upload-artifact@6f51ac03b9356f520e9adb1b1b7802705f340c2b # v4.5.0
+        uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08 # v4.6.0
         with:
           name: openvpn-master-${{ env.DATETIME }}-${{ env.OPENVPN_COMMIT }}-${{ matrix.arch }}
           path: ${{ github.workspace }}\windows-msi\image\*-${{ matrix.arch }}.msi
@@ -126,7 +164,7 @@ jobs:
           .\Start-AWSTest.ps1 -SSH_KEY ~/.ssh/id_rsa -MSI_PATH $(Get-ChildItem ../msi/*-amd64/*.msi | select -ExpandProperty FullName)
 
       - name: Archive openvpn logs
-        uses: actions/upload-artifact@6f51ac03b9356f520e9adb1b1b7802705f340c2b # v4.5.0
+        uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08 # v4.6.0
         if: ${{ always() }}
         with:
           name: t_client_openvpn_logs
@@ -256,7 +294,7 @@ jobs:
           sg sbuild ./scripts/build-all.sh
 
       - name: Archive packages
-        uses: actions/upload-artifact@6f51ac03b9356f520e9adb1b1b7802705f340c2b # v4.5.0
+        uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08 # v4.6.0
         with:
           name: openvpn-debian
           path: |
