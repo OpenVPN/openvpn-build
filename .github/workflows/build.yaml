@@ -40,7 +40,7 @@ jobs:
           vcpkgJsonGlob: '**/src/openvpn/contrib/vcpkg-manifests/windows/vcpkg.json'
 
       - name: Get latest CMake and ninja
-        uses: lukka/get-cmake@acb35cf920333f4dc3fc4f424f1b30d5e7d561b4 # v3.31.4
+        uses: lukka/get-cmake@5f6e04f5267c8133f1273bf2103583fc72c46b17 # v3.31.5
 
       - name: Install rst2html
         run: python -m pip install --upgrade pip docutils
@@ -49,7 +49,7 @@ jobs:
         uses: ilammy/msvc-dev-cmd@0b201ec74fa43914dc39ae48a89fd1d8cb592756 # v1.13.0
 
       - name: Set up Java
-        uses: actions/setup-java@7a6d8a8234af8eb26422e24e3006232cccaa061b # v4.6.0
+        uses: actions/setup-java@3a4f6e1af504cf6a31855fa899c6aa5355ba6c12 # v4.7.0
         if: ${{ env.SigningKeyStore != '' }}
         with:
           java-version: 17
@@ -130,7 +130,7 @@ jobs:
 
     steps:
       - name: configure aws credentials
-        uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502 # v4.0.2
+        uses: aws-actions/configure-aws-credentials@4fc4975a852c8cd99761e2de1f4ba73402e44dd9 # v4.0.3
         with:
           role-to-assume: arn:aws:iam::217307881341:role/GitHubActions
           role-session-name: githubactions
