@@ -913,9 +913,6 @@
                             <Component Id="easyrsa.bin.mkdir.exe" Guid="{279A157F-662E-483C-9780-5D9AB54BB222}">
                                 <File Name="mkdir.exe" Source="!(bindpath.easyrsa)\bin\mkdir.exe"/>
                             </Component>
-                            <Component Id="easyrsa.bin.mktemp.exe" Guid="{255DF4BC-1325-453D-B357-832698E576B8}">
-                                <File Name="mktemp.exe" Source="!(bindpath.easyrsa)\bin\mktemp.exe"/>
-                            </Component>
                             <Component Id="easyrsa.bin.mv.exe" Guid="{855E68BE-109B-44A8-A42A-299F788B3A4C}">
                                 <File Name="mv.exe" Source="!(bindpath.easyrsa)\bin\mv.exe"/>
                             </Component>
@@ -966,9 +963,6 @@
                             </Component>
                             <Component Id="easyrsa.licensing.mksh_win32.txt" Guid="{BB26EDA2-7DEC-49F3-AD57-F26F4B2D0728}">
                                 <File Name="mksh-Win32.txt" Source="!(bindpath.easyrsa)\licensing\mksh-Win32.txt"/>
-                            </Component>
-                            <Component Id="easyrsa.licensing.mktemp.txt" Guid="{F07A7DAC-BF9E-430C-A3BD-8F60F38EF977}">
-                                <File Name="mktemp.txt" Source="!(bindpath.easyrsa)\licensing\mktemp.txt"/>
                             </Component>
                         </Directory>
 
@@ -1792,7 +1786,6 @@
                 <ComponentRef Id="easyrsa.bin.ls.exe"/>
                 <ComponentRef Id="easyrsa.bin.md5sum.exe"/>
                 <ComponentRef Id="easyrsa.bin.mkdir.exe"/>
-                <ComponentRef Id="easyrsa.bin.mktemp.exe"/>
                 <ComponentRef Id="easyrsa.bin.mv.exe"/>
                 <ComponentRef Id="easyrsa.bin.printf.exe"/>
                 <ComponentRef Id="easyrsa.bin.rm.exe"/>
@@ -1810,7 +1803,6 @@
                 <ComponentRef Id="easyrsa.licensing.gpl_2.0.txt"/>
                 <ComponentRef Id="easyrsa.licensing.license_openssl.txt"/>
                 <ComponentRef Id="easyrsa.licensing.mksh_win32.txt"/>
-                <ComponentRef Id="easyrsa.licensing.mktemp.txt"/>
 
                 <ComponentRef Id="easyrsa.x509types.ca"/>
                 <ComponentRef Id="easyrsa.x509types.client"/>
