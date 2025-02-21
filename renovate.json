@@ -23,6 +23,15 @@
             "extends": [
                 "schedule:weekly"
             ]
+        },
+        {
+            "matchDatasources": [
+                "github-releases"
+            ],
+            "matchPackageNames": [
+                "OpenVPN/ovpn-dco-win"
+            ],
+            "allowedVersions": "2.x"
         }
     ],
     "customManagers": [
