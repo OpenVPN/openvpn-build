@@ -141,6 +141,17 @@
             Schedule="afterInstallExecute"/>
 
         <!--
+            Ensure that NSIS-based 2.4 is uninstalled
+        -->
+        <Property Id="NSIS_OPENVPN">
+            <RegistrySearch Id="nsis.reg.path" Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(var.PRODUCT_NAME)" Name="UninstallString" Type="file"/>
+        </Property>
+
+        <Condition Message="Please uninstall the previous NSIS installation of OpenVPN before proceeding.">
+            <![CDATA[NOT NSIS_OPENVPN]]>
+        </Condition>
+
+        <!--
             1. Set install folder with registry folder if detected.
             2. Set install folder to the previous installation folder if detected. Use license.txt file to detect previous installation folder.
             3. Allow overriding install folder by specifying INSTALLDIR=<folder> on the msiexec.exe command line.
