@@ -490,8 +490,9 @@
                                 Description="Responsible for automatic start of OpenVPN instances."
                                 Type="ownProcess"
                                 Start="disabled"
+                                Account="NT SERVICE\OpenVPNService"
                                 ErrorControl="normal">
-                                <ServiceDependency Id="Dhcp"/>
+                                <ServiceDependency Id="OpenVPNServiceInteractive"/>
                             </ServiceInstall>
                         </Component>
                         <Component Id="bin.tapctl.exe" Guid="{5A294591-0F71-470F-977B-DD288AB2B437}">
