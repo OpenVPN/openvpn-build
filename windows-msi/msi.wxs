@@ -309,38 +309,6 @@
             Value="[EASYRSA]"
             Sequence="first">EASYRSA AND NOT Installed</SetProperty>
 
-
-        <!--
-            1. Set log folder with registry folder if detected.
-            2. Set log folder to the previous log folder if detected. Use README.txt file to detect previous log folder.
-            3. Allow overriding log folder by specifying LOG=<folder> on the msiexec.exe command line.
-        -->
-        <Property Id="LOGDIRREG">
-            <RegistrySearch Id="reg.log_dir" Root="HKLM" Key="SOFTWARE\$(var.PRODUCT_NAME)" Name="log_dir" Type="directory"/>
-        </Property>
-        <SetProperty
-            After="AppSearch"
-            Action="SetLogDirReg"
-            Id="LOGDIR"
-            Value="[LOGDIRREG]"
-            Sequence="first">LOGDIRREG AND NOT Installed</SetProperty>
-        <Property Id="LOGDIRPREV">
-            <ComponentSearch Id="log.README.txt" Guid="{CD05C1F7-99E7-45C9-8DE5-9C7FB73EE911}"/>
-        </Property>
-        <SetProperty
-            After="SetLogDirReg"
-            Action="SetLogDirPrev"
-            Id="LOGDIR"
-            Value="[LOGDIRPREV]"
-            Sequence="first">LOGDIRPREV AND NOT Installed</SetProperty>
-        <SetProperty
-            After="SetLogDirPrev"
-            Action="SetLogDirParam"
-            Id="LOGDIR"
-            Value="[LOG]"
-            Sequence="first">LOG AND NOT Installed</SetProperty>
-
-
         <!--
             1. Set sample configuration folder to the previous sample configuration folder if detected. Use sample.ovpn file to detect previous sample configuration folder.
             2. Allow overriding sample configuration folder by specifying SAMPLECFG=<folder> on the msiexec.exe command line.
@@ -671,12 +639,6 @@
                         </Directory>
                     </Directory>
 
-                    <Directory Id="LOGDIR" Name="log">
-                        <Component Id="log.README.txt" Guid="{CD05C1F7-99E7-45C9-8DE5-9C7FB73EE911}">
-                            <File Id="log.README.txt" Name="README.txt" Source="!(bindpath.build)README-log.txt"/>
-                        </Component>
-                    </Directory>
-
                     <Directory Id="RESDIR" Name="res">
                         <Component Id="res.ovpn.ico" Guid="{01C7FEE2-2F5B-4BBF-A7CF-7B7B5E2B44D2}">
                             <File Id="res.ovpn.ico" Name="ovpn.ico" Source="artwork\ovpn.ico"/>
@@ -698,6 +660,16 @@
                                 <File Name="legacy.dll" Source="!(bindpath.opensslbin)legacy.dll"/>
                             </Component>
                         </Directory>
+                    </Directory>
+                </Directory>
+            </Directory>
+
+            <Directory Id="CommonAppDataFolder">
+                <Directory Id="ProgramDataFolder.OpenVPN" Name="$(var.PRODUCT_NAME)">
+                    <Directory Id="LOGDIR" Name="Log">
+                        <Component Id="log.README.txt" Guid="{CD05C1F7-99E7-45C9-8DE5-9C7FB73EE911}">
+                            <File Id="log.README.txt" Name="README.txt" Source="!(bindpath.build)README-log.txt"/>
+                        </Component>
                     </Directory>
                 </Directory>
             </Directory>
