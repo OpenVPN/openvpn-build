@@ -5,4 +5,4 @@ openvpn-dco-dkms (0.2.20241216-debian0) stable; urgency=medium
   * linux-compat: move UDP_ENCAP_OVPNINUDP to compat file (Antonio Quartulli, 74311c6)
   * linux-compat: NLA_POLICY_MAX_LEN will be released in 6.13 (Antonio Quartulli, 42a50c2)
 
- -- Frank Lichtenheld <frank.lichtenheld@openvpn.net>  Thu, 21 Nov 2024 23:30:21 +0100
+ -- Yuriy Darnobyt <yuriy.darnobyt@openvpn.net>  Thu, 21 Nov 2024 23:30:21 +0100
