@@ -1,0 +1,31 @@
+Source: ovpn-backports
+Section: net
+Priority: optional
+Maintainer: Bernhard Schmidt <berni@debian.org>
+Build-Depends: debhelper-compat (= 13),
+	dh-sequence-dkms,
+Standards-Version: 4.6.0
+Homepage: https://github.com/OpenVPN/ovpn-backports
+Vcs-Browser: https://salsa.debian.org/debian/ovpn-dco-dkms
+Vcs-Git: https://salsa.debian.org/debian/openvpn-dco-dkms.git
+Rules-Requires-Root: no
+Testsuite: autopkgtest-pkg-dkms
+
+Package: ovpn-dkms
+Architecture: all
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Enhances: openvpn
+Description: DCO (Data-Channel Offload) kernel module for OpenVPN)
+ This kernel module allows OpenVPN to offload any data plane management to the
+ linux kernel, thus allowing it to exploit any Linux low level API, while
+ avoiding expensive and slow payload transfer between kernel space and user
+ space.
+ .
+ This is a backport of the ovpn module available in Linux 6.16 or
+ newer.
+ .
+ You need a matching dco-enabled OpenVPN to use this, this version
+ requires OpenVPN 2.7 or newer. It is not compatible with the DCO
+ support in OpenVPN 2.6.
+ .
+ This package uses DKMS to automatically build the ovpn-dco kernel module.

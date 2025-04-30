@@ -1,0 +1,7 @@
+PACKAGE_NAME="ovpn"
+PACKAGE_VERSION="#MODULE_VERSION#"
+AUTOINSTALL="yes"
+MAKE="make VER=${kernelver} KERNEL_SRC=${kernel_source_dir} REVISION=$PACKAGE_VERSION"
+BUILT_MODULE_NAME[0]="ovpn"
+BUILT_MODULE_LOCATION[0]="drivers/net/ovpn"
+DEST_MODULE_LOCATION[0]="/kernel/drivers/net/ovpn"

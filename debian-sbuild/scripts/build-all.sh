@@ -17,10 +17,11 @@ TARGET_DIR="$DEBIAN_OUTPUT_DIR"
 mkdir -p "$TARGET_DIR"
 
 build_package() {
-    local pkg_name=$1
-    local pkg_deb_version=$2
-    local pkg_deb_build=$3
-    local pkg_arch=$4
+    local src_pkg_name=$1
+    local bin_pkg_name=$2
+    local pkg_deb_version=$3
+    local pkg_deb_build=$4
+    local pkg_arch=$5
 
     # Loop through all OS/release/ARCH combinations we need to cover
     cat $VARIANTS_FILE|grep -v "^#"|while read LINE; do
@@ -38,31 +39,32 @@ build_package() {
             PKG_ARCH=$pkg_arch
         fi
 
-        SOURCES_DIR="$BUILD_BASEDIR/$pkg_name/$OSRELEASE"
-        DEBIAN_BASENAME="${pkg_name}_${pkg_deb_version}-${OSRELEASE}${pkg_deb_build}"
-        DEBIAN_DBG_NAME="${pkg_name}-dbgsym_${pkg_deb_version}-${OSRELEASE}${pkg_deb_build}"
+        SOURCES_DIR="$BUILD_BASEDIR/$src_pkg_name/$OSRELEASE"
+        DEBIAN_SRC_BASENAME="${src_pkg_name}_${pkg_deb_version}-${OSRELEASE}${pkg_deb_build}"
+        DEBIAN_BIN_BASENAME="${bin_pkg_name}_${pkg_deb_version}-${OSRELEASE}${pkg_deb_build}"
+        DEBIAN_DBG_NAME="${bin_pkg_name}-dbgsym_${pkg_deb_version}-${OSRELEASE}${pkg_deb_build}"
 
         # If the package exists already, skip the build
-        if [ -f "${TARGET_DIR}/${DEBIAN_BASENAME}_${PKG_ARCH}.deb" ]; then
-            echo "$DEBIAN_BASENAME for ${ARCH} has been built already"
+        if [ -f "${TARGET_DIR}/${DEBIAN_BIN_BASENAME}_${PKG_ARCH}.deb" ]; then
+            echo "$DEBIAN_BIN_BASENAME for ${ARCH} has been built already"
             continue
         fi
         pushd "$SOURCES_DIR"
         sbuild --verbose --no-run-lintian \
                --build-dir=$(pwd) \
                --arch="${ARCH}" --dist="${OSRELEASE}" \
-               "${DEBIAN_BASENAME}.dsc"
-        cp "${DEBIAN_BASENAME}_${PKG_ARCH}.deb" "${TARGET_DIR}/"
+               "${DEBIAN_SRC_BASENAME}.dsc"
+        cp "${DEBIAN_BIN_BASENAME}_${PKG_ARCH}.deb" "${TARGET_DIR}/"
         [ ! -f "${DEBIAN_DBG_NAME}_${PKG_ARCH}.deb" ] || cp "${DEBIAN_DBG_NAME}_${PKG_ARCH}.deb" "${TARGET_DIR}/"
         [ ! -f "${DEBIAN_DBG_NAME}_${PKG_ARCH}.ddeb" ] || cp "${DEBIAN_DBG_NAME}_${PKG_ARCH}.ddeb" "${TARGET_DIR}/"
-        cp "${DEBIAN_BASENAME}_${ARCH}.buildinfo" "${TARGET_DIR}/"
+        cp "${DEBIAN_SRC_BASENAME}_${ARCH}.buildinfo" "${TARGET_DIR}/"
         popd
     done
 }
 
-build_package openvpn "$DEBIAN_UPSTREAM_VERSION" "$DEBIAN_PACKAGE_VERSION" any
+build_package openvpn openvpn "$DEBIAN_UPSTREAM_VERSION" "$DEBIAN_PACKAGE_VERSION" any
 if $BUILD_ARCH_ALL; then
-    build_package openvpn-dco-dkms "$OPENVPN_DCO_CURRENT_VERSION" "$DEBIAN_PACKAGE_VERSION" all
+    build_package ovpn-backports ovpn-dkms "$OPENVPN_DCO_CURRENT_VERSION" "$DEBIAN_PACKAGE_VERSION" all
 fi
 
 # Package all the packages into a tar.gz for transfer

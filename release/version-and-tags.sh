@@ -49,8 +49,8 @@ if ! [[ "$MSI_BUILD_ONLY" == "YES" ]]; then
     # Create changelog for openvpn Debian packages
     create_debian_changelog openvpn "$DEBIAN_UPSTREAM_VERSION" "$OPENVPN" \
                             "$OPENVPN_PREVIOUS_TAG..$OPENVPN_CURRENT_TAG"
-    # Create changelog for openvpn-dco-dkms Debian packages
-    create_debian_changelog openvpn-dco-dkms "$OPENVPN_DCO_CURRENT_VERSION" "$OPENVPN_DCO" \
+    # Create changelog for ovpn-dkms Debian packages
+    create_debian_changelog ovpn-backports "$OPENVPN_DCO_CURRENT_VERSION" "$OPENVPN_DCO" \
                             "$OPENVPN_DCO_PREVIOUS_TAG..$OPENVPN_DCO_CURRENT_TAG"
 fi
 
