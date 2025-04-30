@@ -76,8 +76,8 @@ pushd "$OPENVPN_DCO"
 
 COMMIT_DATE_DCO=$(git log --no-show-signature -n1 --format="%cD")
 
-: "Creating OpenVPN-DCO source package"
-git archive --prefix=ovpn-dco-$OPENVPN_DCO_CURRENT_VERSION/ --format=tar $OPENVPN_DCO_CURRENT_TAG \
-    | gzip -c > "$UPLOAD/ovpn-dco-$OPENVPN_DCO_CURRENT_VERSION.tar.gz"
+: "Creating ovpn (DCO) source package"
+git archive --prefix=ovpn-backports-$OPENVPN_DCO_CURRENT_VERSION/ --format=tar $OPENVPN_DCO_CURRENT_TAG \
+    | gzip -c > "$UPLOAD/ovpn-backports-$OPENVPN_DCO_CURRENT_VERSION.tar.gz"
 
 popd

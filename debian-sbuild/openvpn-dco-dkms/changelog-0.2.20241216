@@ -1,8 +1,0 @@
-openvpn-dco-dkms (0.2.20241216-debian0) stable; urgency=medium
-
-  * linux-compat: fix typ0 in comment (Antonio Quartulli, a08b2fd)
-  * ovpn-dco: port to 6.12 and add related compat hacks (Antonio Quartulli, 0935edd)
-  * linux-compat: move UDP_ENCAP_OVPNINUDP to compat file (Antonio Quartulli, 74311c6)
-  * linux-compat: NLA_POLICY_MAX_LEN will be released in 6.13 (Antonio Quartulli, 42a50c2)
-
- -- Yuriy Darnobyt <yuriy.darnobyt@openvpn.net>  Thu, 21 Nov 2024 23:30:21 +0100

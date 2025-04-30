@@ -1,0 +1,11 @@
+ovpn-backports (20250423-1) unstable; urgency=medium
+
+  * New package ovpn-dkms
+    - This is an out-of-tree backport of the ovpn module
+      from Linux 6.16+ to older kernels. It replaces the
+      previous ovpn-dco module (package openvpn-dco-dkms),
+      but can be installed in parallel.
+      OpenVPN 2.6.x is only compatible with the old module,
+      OpenVPN 2.7.x is only compatbile with the new module.
+
+ -- Frank Lichtenheld <frank.lichtenheld@openvpn.net>  Wed, 30 Apr 2025 13:59:14 +0200
