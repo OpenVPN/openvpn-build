@@ -32,7 +32,9 @@
                 "OpenVPN/ovpn-dco-win"
             ],
             "allowedVersions": "2.x",
-            "matchBaseBranches": ["master"]
+            "matchBaseBranches": [
+                "master"
+            ]
         },
         {
             "matchDatasources": [
@@ -42,14 +44,16 @@
                 "OpenVPN/ovpn-dco-win"
             ],
             "allowedVersions": "1.x",
-            "matchBaseBranches": ["release/2.6"]
+            "matchBaseBranches": [
+                "release/2.6"
+            ]
         }
     ],
     "customManagers": [
         {
             "customType": "regex",
-            "fileMatch": [
-                "windows-msi/version.m4$"
+            "managerFilePatterns": [
+                "/windows-msi/version.m4$/"
             ],
             "matchStrings": [
                 "datasource=(?<datasource>.*?) depName=(?<depName>.*?)( versioning=(?<versioning>.*?))?\\sdefine\\(\\[.*?\\],\\s*\\[(?<currentValue>.*?)\\]\\)\\s"
