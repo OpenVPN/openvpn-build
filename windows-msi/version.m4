@@ -47,7 +47,7 @@ define([PACKAGE_VERSION], [2.7_git-I001])
 dnl The MSI product version in the form of n[.n[.n]] (numbers only).
 dnl The third field is 100*openvpn bugfix release + MSI build number.
 dnl So for the 2nd MSI build for OpenVPN 2.6.3 use 2.6.302
-define([PRODUCT_VERSION], [2.7_git01])
+define([PRODUCT_VERSION], [2.7.0])
 
 dnl The MSI product code MUST change on each product release.
 define([PRODUCT_CODE], [{EAF6EB3D-A983-4ED7-9DDA-F80D5BDBD925}])
