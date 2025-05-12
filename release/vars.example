@@ -47,8 +47,8 @@ DEBIAN_PACKAGE_BUILD_ARCHS="amd64 arm64"
 # Which Debian repos to publish to
 FREIGHT_REPOS="testing"
 
-# MSI internal version
-PRODUCT_VERSION="${OPENVPN_CURRENT_VERSION}"$(printf "%02d\n" $INSTALLER_BUILD)
+# MSI internal version - make sure this only contains digits and '.'
+PRODUCT_VERSION="${OPENVPN_CURRENT_VERSION/%_*/.0}"$(printf "%02d\n" $INSTALLER_BUILD)
 # MSI public version
 BUILD_VERSION="${OPENVPN_CURRENT_VERSION}-${INSTALLER_VERSION}"
 
