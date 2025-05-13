@@ -174,12 +174,6 @@ clean	Cleans intermediate and output files</example>
                             "https://github.com/OpenVPN/tap-windows6/releases/download/" + ver.define.PRODUCT_TAP_WIN_VERSION + "/tap-windows-" + ver.define.PRODUCT_TAP_WIN_VERSION + "-" + ver.define.PRODUCT_TAP_WIN_INSTALLER_VERSION + "-" + p.tapWinPlat + ".msm",
                             ["version.m4"]));
 
-                        // Downloading Wintun
-                        b.pushRule(new DownloadBuildRule(
-                            BuildPath(p.buildPath, "wintun.msm"),
-                            ver.define["PRODUCT_WINTUN_URL_" + plat],
-                            ["version.m4"]));
-
                         // Downloading ovpn-dco
                         b.pushRule(new DownloadBuildRule(
                             BuildPath(p.buildPath, "ovpn-dco.msm"),
@@ -276,7 +270,6 @@ clean	Cleans intermediate and output files</example>
                                 BuildPath("script", "ACL.js"),
                                 BuildPath(p.buildPath, "license.txt"),
                                 BuildPath(p.buildPath, "tap-windows6.msm"),
-                                BuildPath(p.buildPath, "wintun.msm"),
                                 BuildPath(p.buildPath, "ovpn-dco.msm"),
                                 BuildPath(p.openVPNBinPath, "libcrypto-3" + p.openSSLPlat + ".dll"),
                                 BuildPath(p.openVPNMsiCAPath, "openvpnmsica.dll"),
