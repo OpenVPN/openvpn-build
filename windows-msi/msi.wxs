@@ -118,8 +118,6 @@
 
         <Property Id="TAPWINDOWS6ADAPTERS" Secure="yes"/>
         <Property Id="ACTIVETAPWINDOWS6ADAPTERS" Secure="yes"/>
-        <Property Id="WINTUNADAPTERS" Secure="yes"/>
-        <Property Id="ACTIVEWINTUNADAPTERS" Secure="yes"/>
         <Property Id="OVPNDCOADAPTERS" Secure="yes"/>
         <Property Id="ACTIVEOVPNDCOADAPTERS" Secure="yes"/>
 
@@ -782,19 +780,6 @@
                             <RemoveFolder Id="shortcut.bin.tapctl.exe.create.TAPWindows6" On="uninstall"/>
                             <RegistryValue Root="HKCU" Key="Software\$(var.PRODUCT_NAME)\Shortcuts" Name="bin.tapctl.exe.create.TAPWindows6" Type="integer" Value="1"/>
                         </Component>
-                        <?if $(sys.BUILDARCH)~="x86" Or $(sys.BUILDARCH)~="x64" ?>
-                            <Component Id="shortcut.bin.tapctl.exe.create.Wintun" Guid="{D257A1B3-A06E-4CE2-AA93-C36F6487126A}">
-                                <Shortcut
-                                    Id="shortcut.bin.tapctl.exe.create.Wintun"
-                                    Name="Add a new Wintun virtual network adapter"
-                                    Target="[BINDIR]tapctl.exe"
-                                    Arguments="create --hwid wintun"
-                                    WorkingDirectory="BINDIR"
-                                    Icon="tapctl_create.ico"/>
-                                <RemoveFolder Id="shortcut.bin.tapctl.exe.create.Wintun" On="uninstall"/>
-                                <RegistryValue Root="HKCU" Key="Software\$(var.PRODUCT_NAME)\Shortcuts" Name="bin.tapctl.exe.create.Wintun" Type="integer" Value="1"/>
-                            </Component>
-                        <?endif?>
                         <Component Id="shortcut.easyrsa.easyrsa_start.bat" Guid="{FE9645C1-6EF1-4046-895A-4ED5C98E2570}">
                             <Shortcut
                                 Id="shortcut.easyrsa.easyrsa_start.bat"
@@ -1064,16 +1049,11 @@
                 <ConfigurationData Name="NETADAPTERCX21_Property" Value="[NETADAPTERCX21]" />
             </Merge>
             <Merge Id="TAPWindows6MergeModule" Language="0" DiskId="1" SourceFile="!(bindpath.build)$(var.PRODUCT_PLATFORM)\tap-windows6.msm"/>
-            <?if $(sys.BUILDARCH)~="x86" Or $(sys.BUILDARCH)~="x64" ?>
-                <Merge Id="WintunMergeModule" Language="0" DiskId="1" SourceFile="!(bindpath.build)$(var.PRODUCT_PLATFORM)\wintun.msm"/>
-            <?endif ?>
         </DirectoryRef>
 
         <UI>
             <ProgressText Action="$(var.PRODUCT_TAP_WIN_COMPONENT_ID)_Evaluate">Evaluating TAP-Windows6 driver</ProgressText>
             <ProgressText Action="$(var.PRODUCT_TAP_WIN_COMPONENT_ID)_Process">Processing TAP-Windows6 driver</ProgressText>
-            <ProgressText Action="EvaluateWintun">Evaluating Wintun driver</ProgressText>
-            <ProgressText Action="ProcessWintun">Processing Wintun driver</ProgressText>
             <ProgressText Action="OvpnDco_Evaluate">Evaluating ovpn-dco driver</ProgressText>
             <ProgressText Action="OvpnDco_Process">Processing ovpn-dco driver</ProgressText>
             <ProgressText Action="CheckAndScheduleReboot">Checking if reboot is required</ProgressText>
@@ -1171,16 +1151,6 @@
                 <Data Column="Condition"  ><![CDATA[NOT TAPWINDOWS6ADAPTERS]]></Data>
                 <Data Column="Component_" >regD8053A2D8D674155AF2620A90720BE55.8D9A59BA_33C1_4CA0_96AF_E7F728DEC8D7</Data>
             </Row>
-
-            <?if $(sys.BUILDARCH)~="x86" Or $(sys.BUILDARCH)~="x64" ?>
-                <Row>
-                    <Data Column="Adapter"    >Wintun</Data>
-                    <Data Column="DisplayName">Wintun|$(var.PRODUCT_NAME) Wintun</Data>
-                    <Data Column="HardwareId" >Wintun</Data>
-                    <Data Column="Condition"  ><![CDATA[NOT WINTUNADAPTERS]]></Data>
-                    <Data Column="Component_" >reg11F81A5FFB49D87B59FD3777E57FF853.C28309D9_1954_4F2D_A7D1_228850092460</Data>
-                </Row>
-            <?endif?>
 
             <Row>
                 <Data Column="Adapter"    >ovpndco</Data>
@@ -1371,19 +1341,6 @@
                 <ComponentRef Id="shortcut.bin.tapctl.exe.create.TAPWindows6"/>
                 <MergeRef Id="TAPWindows6MergeModule"/>
             </Feature>
-
-            <?if $(sys.BUILDARCH)~="x86" Or $(sys.BUILDARCH)~="x64" ?>
-                <Feature
-                    Id="Drivers.Wintun"
-                    Title="Wintun"
-                    Description="Layer 3 TUN Driver for Windows"
-                    Level="1"
-                    ConfigurableDirectory="PRODUCTDIR"
-                    AllowAdvertise="no">
-                    <ComponentRef Id="shortcut.bin.tapctl.exe.create.Wintun"/>
-                    <MergeRef Id="WintunMergeModule"/>
-                </Feature>
-            <?endif?>
         </Feature>
 
         <Feature

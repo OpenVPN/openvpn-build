@@ -10,12 +10,6 @@ define([PRODUCT_TAP_WIN_INSTALLER_VERSION], [I0])
 define([PRODUCT_TAP_WIN_COMPONENT_ID],      [tap0901])
 define([PRODUCT_TAP_WIN_NAME],              [TAP-Windows])
 
-dnl Wintun binaries
-define([PRODUCT_WINTUN_URL_x86],       [https://build.openvpn.net/downloads/releases/wintun-x86-0.8.1.msm])
-define([PRODUCT_WINTUN_URL_amd64],     [https://build.openvpn.net/downloads/releases/wintun-amd64-0.8.1.msm])
-dnl This is only to make build script happy - the file is only downloaded but not used, since there is no arm64 wintun MSM (yet)
-define([PRODUCT_WINTUN_URL_arm64],     [https://build.openvpn.net/downloads/releases/wintun-amd64-0.8.1.msm])
-
 dnl ovpn-dco binaries
 dnl renovate: datasource=github-releases depName=OpenVPN/ovpn-dco-win
 define([PRODUCT_OVPN_DCO_VERSION],     [2.5.6])
