@@ -209,8 +209,17 @@ jobs:
           scp -i $HOME/.ssh/key *.msi ${{ secrets.MSI_UPLOAD_USERNAME }}@${{ secrets.MSI_UPLOAD_REMOTE_HOST }}:${{ secrets.MSI_UPLOAD_REMOTE_PATH }}
 
   debian:
+    strategy:
+      matrix:
+        runner: [ubuntu-24.04, ubuntu-24.04-arm]
+        include:
+          - runner: ubuntu-24.04
+            arch: amd64
+          - runner: ubuntu-24.04-arm
+            arch: arm64
+
     name: Build Debian packages
-    runs-on: ubuntu-24.04
+    runs-on: "${{ matrix.runner }}"
     env:
       CHROOT_CONF: chroots/chroot.d.tar
       OPENVPN_CURRENT_TAG: HEAD
@@ -256,10 +265,10 @@ jobs:
         with:
           path: |
             debian-sbuild/chroots
-          key: chroots-${{ hashFiles('**/config/variants.amd64.conf') }}-${{ steps.get-date.outputs.date }}
+          key: chroots-${{ matrix.arch }}-${{ hashFiles(format('**/config/variants.{0}.conf', matrix.arch)) }}-${{ steps.get-date.outputs.date }}
           restore-keys: |
-            chroots-${{ hashFiles('**/config/variants.amd64.conf') }}-
-            chroots-
+            chroots-${{ matrix.arch }}-${{ hashFiles(format('**/config/variants.{0}.conf', matrix.arch)) }}-
+            chroots-${{ matrix.arch }}-
 
       - name: Prepare environment
         working-directory: debian-sbuild
@@ -297,6 +306,6 @@ jobs:
       - name: Archive packages
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
-          name: openvpn-debian
+          name: openvpn-debian-${{ matrix.arch }}
           path: |
             output
