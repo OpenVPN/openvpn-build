@@ -67,6 +67,7 @@ jobs:
 
       - name: Bump version
         working-directory: windows-msi
+        if: ${{ ! startsWith(github.ref, 'refs/tags/') }}
         run: |
           $NewProductCode = (New-Guid).ToString().ToUpper()
           $BuildVersion = 10000 + [int]$env:GITHUB_RUN_NUMBER
@@ -224,7 +225,6 @@ jobs:
       CHROOT_CONF: chroots/chroot.d.tar
       OPENVPN_CURRENT_TAG: HEAD
       OPENVPN_DCO_CURRENT_TAG: HEAD
-      USE_LOCAL_SOURCE: 1
 
     steps:
       - name: Checkout openvpn-build
@@ -246,12 +246,18 @@ jobs:
         run: |
           ln -s vars.example vars
           mkdir ../output
+
+      - name: Create local tag and files
+        working-directory: release
+        if: ${{ ! startsWith(github.ref, 'refs/tags/') }}
+        run: |
           # we need to have ability to git tag the versions
           # we do not push those tags
           git config --global user.name "gha_user"
           git config --global user.email "gha@openvpn.invalid"
           ./version-and-tags.sh
           ./create-release-files.sh
+          echo USE_LOCAL_SOURCE=1 >> $GITHUB_ENV
 
       # So that the caches expire after a while
       - name: Get Date for cache key
