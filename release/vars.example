@@ -3,8 +3,8 @@
 PRIMARY_WEBSERVER="swupdate.openvpn.org"
 PRIMARY_WEBSERVER_BASEURL="https://$PRIMARY_WEBSERVER/community/releases"
 SECONDARY_WEBSERVER="root@build.community.aws.openvpn.in"
-SECONDARY_WEBSERVER_PATH="/var/www/downloads/temp"
-SECONDARY_WEBSERVER_BASEURL="https://build.openvpn.net/downloads/temp"
+SECONDARY_WEBSERVER_PATH="/var/www/downloads/releases"
+SECONDARY_WEBSERVER_BASEURL="https://build.openvpn.net/downloads/releases"
 
 # Committing/tagging/signing
 GPG="gpg"
@@ -38,11 +38,11 @@ OPENVPN_DCO_CURRENT_VERSION="${OPENVPN_DCO_CURRENT_VERSION:-6.15.0.2025052802}"
 OPENVPN_DCO_CURRENT_TAG="${OPENVPN_DCO_CURRENT_TAG:-refs/tags/ovpn-net-next/main-6.15.0-rc5-2025052802}"
 OPENVPN_DCO_PREVIOUS_TAG="refs/tags/v$OPENVPN_DCO_PREVIOUS_VERSION"
 
-INSTALLER_BUILD=1
+INSTALLER_BUILD=2
 INSTALLER_VERSION="I"$(printf "%03d\n" $INSTALLER_BUILD)
 # Debian packaging scripts do not allow underscores (e.g "2.4_alpha2")
 DEBIAN_UPSTREAM_VERSION=`echo $OPENVPN_CURRENT_VERSION|sed s/"_"/"~"/g`
-DEBIAN_PACKAGE_VERSION="0"
+DEBIAN_PACKAGE_VERSION="1"
 DEBIAN_PACKAGE_BUILD_ARCHS="amd64 arm64"
 # Which Debian repos to publish to
 FREIGHT_REPOS="testing release_27"
