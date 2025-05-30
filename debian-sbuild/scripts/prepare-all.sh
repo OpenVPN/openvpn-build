@@ -77,7 +77,7 @@ prepare_package() {
         # The purpose is to ensure that "debian" in the version numbers are converted
         # into real distribution codenames (e.g. "jessie")
         cat $changelog | \
-            sed -E s/"^(${pkg_name} \([[:alnum:].-]+)-debian([[:digit:]])"/"\1-$OSRELEASE\2"/g \
+            sed -E s/"^(${pkg_name} \([[:alnum:].~-]+)-debian0"/"\1-${OSRELEASE}${DEBIAN_PACKAGE_VERSION}"/g \
                 > debian/changelog
 
         dpkg-buildpackage -d -S -uc -us

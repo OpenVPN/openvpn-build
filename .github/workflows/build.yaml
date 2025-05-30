@@ -255,9 +255,10 @@ jobs:
           # we do not push those tags
           git config --global user.name "gha_user"
           git config --global user.email "gha@openvpn.invalid"
+          export USE_LOCAL_SOURCE=1
+          echo USE_LOCAL_SOURCE=1 >> $GITHUB_ENV
           ./version-and-tags.sh
           ./create-release-files.sh
-          echo USE_LOCAL_SOURCE=1 >> $GITHUB_ENV
 
       # So that the caches expire after a while
       - name: Get Date for cache key

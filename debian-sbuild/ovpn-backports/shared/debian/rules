@@ -19,7 +19,7 @@ override_dh_auto_build:
 override_dh_auto_test:
 override_dh_auto_install:
 	mkdir -p ${INSTALLDIR}
-	for f in compat-include drivers include linux-compat.h Makefile; do \
+	for f in .version compat-include drivers include linux-compat.h Makefile; do \
 		cp -a $$f ${INSTALLDIR}; \
 	done
 
