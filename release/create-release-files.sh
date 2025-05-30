@@ -29,7 +29,7 @@ fi
 # Generate release and changelog directories
 for DIR in upload changelog man; do
     if ! [ -d "$OUTPUT/$DIR" ]; then
-        mkdir -v "$OUTPUT/$DIR"
+        mkdir -pv "$OUTPUT/$DIR"
     fi
 done
 
