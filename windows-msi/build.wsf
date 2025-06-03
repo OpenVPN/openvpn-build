@@ -329,28 +329,6 @@ clean	Cleans intermediate and output files</example>
                     break;
             }
 
-            // Add rules for 7-Zip SFX creation.
-            switch (cmd) {
-                case "all": case "clean":
-                case "exe":
-                    b.pushRule(new PreprocessBuildRule(
-                        BuildPath(buildPath, "boot.wsf"), "utf-8", adCRLF,
-                        ["boot.wsf.in"], "utf-8", adLF,
-                        ver,
-                        ["version.m4"]));
-                    b.pushRule(new SevenZipSFXBuildRule(
-                        BuildPath(outputPath, ver.define.PRODUCT_NAME + "-install-" + ver.define.PACKAGE_VERSION + ".exe"),
-                        BuildPath("lzma1805", "bin", "7zSD-openvpn.sfx"),
-                        ";!@Install@!UTF-8!\r\n" +
-                        "Title=\"" + ver.define.PRODUCT_NAME + " " + ver.define.PACKAGE_VERSION + "\"\r\n" +
-                        "ExecuteFile=\"wscript.exe\"\r\n" +
-                        "ExecuteParameters=\"boot.wsf\"\r\n" +
-                        ";!@InstallEnd@!\r\n",
-                        [BuildPath(buildPath, "boot.wsf")].concat(msiFiles),
-                        ["version.m4"]));
-                    break;
-            }
-
             var fso = new ActiveXObject("Scripting.FileSystemObject");
  
             // Finally, build the target.
@@ -360,7 +338,6 @@ clean	Cleans intermediate and output files</example>
                     b.build(BuildPath(outputPath, ver.define.PRODUCT_NAME + "-" + ver.define.PACKAGE_VERSION + "-x86.msi"    ));
                     b.build(BuildPath(outputPath, ver.define.PRODUCT_NAME + "-" + ver.define.PACKAGE_VERSION + "-amd64.msi"  ));
                     b.build(BuildPath(outputPath, ver.define.PRODUCT_NAME + "-" + ver.define.PACKAGE_VERSION + "-arm64.msi"  ));
-                    b.build(BuildPath(outputPath, ver.define.PRODUCT_NAME + "-install-" + ver.define.PACKAGE_VERSION + ".exe"));
                     break;
 
                 case "msi":
@@ -379,10 +356,6 @@ clean	Cleans intermediate and output files</example>
 
                 case "msi-arm64":
                     b.build(BuildPath(outputPath, ver.define.PRODUCT_NAME + "-" + ver.define.PACKAGE_VERSION + "-arm64.msi"));
-                    break;
-
-                case "exe":
-                    b.build(BuildPath(outputPath, ver.define.PRODUCT_NAME + "-install-" + ver.define.PACKAGE_VERSION + ".exe"));
                     break;
 
                 case "clean":

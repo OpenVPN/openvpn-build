@@ -85,7 +85,7 @@ Note: The following explains details of the packaging process wrapped by the
 ``build-and-package.ps1`` script described above.
 
 The ``build.wsf`` is a simple Makefile type building tool used to generate MSI
-packages and EXE installers. It expects OpenVPN and its dependencies to be
+packages. It expects OpenVPN and its dependencies to be
 built and in the directory layout described above. It was developed to avoid
 Microsoft Visual Studio or GNU Make requirements. Refer to ``build.wsf`` for
 exact usage::
@@ -105,12 +105,7 @@ exact usage::
     Commands:
     all     Builds MSI packages and EXE installer
     msi     Builds MSI packages only
-    exe     Builds EXE installer only
     clean   Cleans intermediate and output files
-
-The ``cscript build.wsf exe`` command does not build MSI packages. This is a
-safety feature to prevent accidental rebuild of already signed MSI files,
-should something accidentally touch any of the MSI package source files.
 
 Digital signing
 ---------------
