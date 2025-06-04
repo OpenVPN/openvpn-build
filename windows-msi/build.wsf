@@ -26,9 +26,8 @@
 			<named name="a" helpstring="Builds all targets even if output is newer than input" type="simple"/>
 			<example>
 Commands:
-all  	Builds MSI packages and EXE installer
-msi  	Builds MSI packages only
-exe  	Builds EXE installer only
+all  	Builds MSI packages
+msi  	Builds MSI packages
 clean	Cleans intermediate and output files</example>
 		</runtime>
 		<reference object="ADODB.Stream"/>
@@ -121,225 +120,209 @@ clean	Cleans intermediate and output files</example>
             var cmd = WScript.Arguments.Unnamed.Length > 0 ? WScript.Arguments.Unnamed(0).toLowerCase() : "all";
             var msiFiles = [];
 
-            // Add MSI building rules for "all"/"clean" and "msi" targets only.
-            // This prevents accidental building of already signed MSI packages
-            // with "exe" target.
-            switch (cmd) {
-                case "all":
-                case "clean":
-                case "msi":
-                case "msi-x86":
-                case "msi-amd64":
-                case "msi-arm64":
-                    var env = WScript.CreateObject("WScript.Shell").Environment("Process");
+            var env = WScript.CreateObject("WScript.Shell").Environment("Process");
 
-                    // Downloading openvpnserv2.exe
-                    b.pushRule(new DownloadBuildRule(
+            // Downloading openvpnserv2.exe
+            b.pushRule(new DownloadBuildRule(
+            BuildPath(buildPath, "openvpnserv2.exe"),
+                "https://github.com/OpenVPN/openvpnserv2/releases/download/" + ver.define.OVPNSERV2_VERSION + "/openvpnserv2-" + ver.define.OVPNSERV2_VERSION +".exe",
+                ["version.m4"]));
+
+            // Downloading and extracting Easy RSA
+            b.pushRule(new DownloadBuildRule(
+                BuildPath(sourcePath, "easyrsa-" + ver.define.EASYRSA_VERSION + ".zip"),
+                "https://github.com/OpenVPN/easy-rsa/releases/download/v"
+                    + ver.define.EASYRSA_VERSION
+                    + "/EasyRSA-" + ver.define.EASYRSA_VERSION + "-win64.zip",
+                ["version.m4"]));
+            b.pushRule(new ExtractBuildRule(
+                [
+                    BuildPath(easyRSAPath, "easyrsa")
+                ],
+                buildPath, // "easyrsa-" + ver.define.EASYRSA_VERSION folder is provided by .zip file.
+                BuildPath(buildPath, "easyrsa-" + ver.define.EASYRSA_VERSION + ".timestamp"),
+                BuildPath(sourcePath, "easyrsa-" + ver.define.EASYRSA_VERSION + ".zip"),
+                []));
+            b.pushRule(new CreateFileBuildRule(
+                BuildPath(easyRSAPath, "EasyRSA-Start.bat"),
+                [
+                    "@echo OFF",
+                    "rem Automatically set PATH to openssl.exe",
+                    "FOR /F \"tokens=2*\" %%a IN ('REG QUERY \"HKEY_LOCAL_MACHINE\\SOFTWARE\\OpenVPN\" /v bin_dir') DO set \"PATH=%PATH%;%%b\"",
+                    "bin\\sh.exe bin\\easyrsa-shell-init.sh %*"
+                ],
+                ["version.m4"]));
+
+            // Add platform-specific build rules.
+            for (i in platforms) {
+                var
+                plat = platforms[i],
+                p = platformInfo[plat];
+
+                // Downloading TAP-Windows6
+                b.pushRule(new DownloadBuildRule(
+                    BuildPath(p.buildPath, "tap-windows6.msm"),
+                    "https://github.com/OpenVPN/tap-windows6/releases/download/"
+                        + ver.define.PRODUCT_TAP_WIN_VERSION
+                        + "/tap-windows-" + ver.define.PRODUCT_TAP_WIN_VERSION
+                        + "-" + ver.define.PRODUCT_TAP_WIN_INSTALLER_VERSION
+                        + "-" + p.tapWinPlat + ".msm",
+                    ["version.m4"]));
+
+                // Downloading ovpn-dco
+                b.pushRule(new DownloadBuildRule(
+                    BuildPath(p.buildPath, "ovpn-dco.msm"),
+                    "https://github.com/OpenVPN/ovpn-dco-win/releases/download/" + ver.define.PRODUCT_OVPN_DCO_VERSION + "/ovpn-dco-" + plat + ".msm",
+                    ["version.m4"]));
+
+                // WiX compiler flags
+                var wixCompilerFlags = [
+                    "-ext WixNetFxExtension",
+                    "-arch \"" + _CMD(p.wixPlat) + "\"",
+                    "-dPRODUCT_PUBLISHER=\""            + _CMD(ver.define["PRODUCT_PUBLISHER"           ]) + "\"",
+                    "-dPRODUCT_NAME=\""                 + _CMD(ver.define["PRODUCT_NAME"                ]) + "\"",
+                    "-dPRODUCT_VERSION=\""              + _CMD(ver.define["PRODUCT_VERSION"             ]) + "\"",
+                    "-dPACKAGE_VERSION=\""              + _CMD(ver.define["PACKAGE_VERSION"             ]) + "\"",
+                    "-dPRODUCT_TAP_WIN_NAME=\""         + _CMD(ver.define["PRODUCT_TAP_WIN_NAME"        ]) + "\"",
+                    "-dPRODUCT_TAP_WIN_COMPONENT_ID=\"" + _CMD(ver.define["PRODUCT_TAP_WIN_COMPONENT_ID"]) + "\"",
+                    "-dPRODUCT_PLATFORM=\""             + plat                                             + "\"",
+                    "-dPRODUCT_CODE=\""                 + _CMD(ver.define["PRODUCT_CODE"                ]) + "\"",
+                    "-dUPGRADE_CODE=\""                 + _CMD(ver.define["UPGRADE_CODE_" + plat        ]) + "\"",
+                    "-dCONFIG_EXTENSION=\""             + _CMD(ver.define["CONFIG_EXTENSION"            ]) + "\"",
+                    "-dPROGRAM_FILES_DIR=\""            + _CMD(p.programFilesPath                        ) + "\"",
+                    "-dOPENSSL_PLAT=\""                 + _CMD(p.openSSLPlat                             ) + "\""];
+
+                // WiX compiling
+                b.pushRule(new WiXCompileBuildRule(
+                    BuildPath(p.buildPath, "gui.wixobj"),
+                    "gui.wxs",
+                    ["version.m4"],
+                    wixCompilerFlags));
+                b.pushRule(new WiXCompileBuildRule(
+                    BuildPath(p.buildPath, "msi.wixobj"),
+                    "msi.wxs",
+                    ["version.m4"],
+                    wixCompilerFlags));
+
+                // Text file generation
+                b.pushRule(new ConvertTextBuildRule(
+                    BuildPath(p.buildPath, "license.txt"), "utf-8", adCRLF,
+                    [
+                        BuildPath(depsPath, "openvpn", "COPYING"),
+                        BuildPath(depsPath, "openvpn", "COPYRIGHT.GPL")
+                    ], "utf-8", adCRLF,
+                    []));
+                b.pushRule(new ConvertTextBuildRule(
+                    BuildPath(p.buildPath, "client.ovpn"), "utf-8", adCRLF,
+                    [BuildPath(depsPath, "openvpn", "sample", "sample-config-files", "client.conf")], "utf-8", adCRLF,
+                    []));
+                b.pushRule(new ConvertTextBuildRule(
+                    BuildPath(p.buildPath, "server.ovpn"), "utf-8", adCRLF,
+                    [BuildPath(depsPath, "openvpn", "sample", "sample-config-files", "server.conf")], "utf-8", adCRLF,
+                    []));
+                // WiX linker flags
+                var wixLinkerFlags = [
+                    "-spdb",
+                    "-ext WixNetFxExtension",
+                    "-b build=\""         + _CMD(buildPath    ) + "\"",
+                    "-b openvpndoc=\""    + _CMD(p.openVPNDocPath) + "\"",
+                    "-b openvpnbin=\""    + _CMD(p.openVPNBinPath) + "\"",
+                    "-b openvpnmsica=\""  + _CMD(p.openVPNMsiCAPath) + "\"",
+                    "-b openvpnserv=\""   + _CMD(p.openVPNServPath) + "\"",
+                    "-b openvpntapctl=\"" + _CMD(p.openVPNTapCtlPath) + "\"",
+                    "-b openvpngui=\""    + _CMD(p.openVPNGuiPath) + "\"",
+                    "-b openvpnguibin=\"" + _CMD(p.openVPNGuiBinPath) + "\"",
+                    "-b openssltools=\""  + _CMD(p.openSSLToolsPath) + "\"",
+                    "-b opensslbin=\""    + _CMD(p.openSSLBinPath) + "\"",
+                    "-b easyrsa=\""       + _CMD(easyRSAPath  ) + "\"",
+                    "-b openvpnserv2=\""  + _CMD(buildPath    ) + "\"",
+                    "-b ovpndco=\""       + _CMD(p.ovpnDcoPath) + "\""
+                ];
+
+                // WiX linking
+                var msiFile = BuildPath(outputPath, ver.define.PRODUCT_NAME + "-" + ver.define.PACKAGE_VERSION + "-" + plat + ".msi");
+                msiFiles.push(msiFile);
+                b.pushRule(new WiXLinkBuildRule(
+                    msiFile,
+                    [
+                        BuildPath(p.buildPath, "gui.wixobj"),
+                        BuildPath(p.buildPath, "msi.wixobj")
+                    ],
+                    [
+                        BuildPath("artwork", "info.ico"),
+                        BuildPath("artwork", "folder_new.ico"),
+                        BuildPath("artwork", "folder_up.ico"),
+                        BuildPath("artwork", "header.bmp"),
+                        BuildPath("artwork", "openvpn.ico"),
+                        BuildPath("artwork", "ovpn.ico"),
+                        BuildPath("artwork", "tapctl_create.ico"),
+                        BuildPath("artwork", "url.ico"),
+                        BuildPath("artwork", "warning.ico"),
+                        BuildPath("doc", "LicenseAgreement.rtf"),
+                        BuildPath("script", "ActiveSetupCA.js"),
+                        BuildPath("script", "PlapReg.js"),
+                        BuildPath("script", "Service.js"),
+                        BuildPath("script", "ACL.js"),
+                        BuildPath(p.buildPath, "license.txt"),
+                        BuildPath(p.buildPath, "tap-windows6.msm"),
+                        BuildPath(p.buildPath, "ovpn-dco.msm"),
+                        BuildPath(p.openVPNBinPath, "libcrypto-3" + p.openSSLPlat + ".dll"),
+                        BuildPath(p.openVPNMsiCAPath, "openvpnmsica.dll"),
+                        BuildPath(p.openVPNBinPath, "libpkcs11-helper-1.dll"),
+                        BuildPath(p.openVPNBinPath, "libssl-3" + p.openSSLPlat + ".dll"),
+                        BuildPath(p.openSSLToolsPath, "openssl.exe"),
+                        BuildPath(p.openSSLBinPath, "legacy.dll"),
+                        BuildPath(p.openVPNBinPath, "openvpn.exe"),
+                        BuildPath(p.openVPNGuiBinPath, "openvpn-gui.exe"),
+                        BuildPath(p.openVPNServPath, "openvpnserv.exe"),
+                        BuildPath(p.openVPNTapCtlPath, "tapctl.exe"),
+                        BuildPath("vcredist", p.wixPlat, "vcruntime140.dll"),
                         BuildPath(buildPath, "openvpnserv2.exe"),
-                        "https://github.com/OpenVPN/openvpnserv2/releases/download/" + ver.define.OVPNSERV2_VERSION + "/openvpnserv2-" + ver.define.OVPNSERV2_VERSION +".exe",
-                        ["version.m4"]));
-
-                    // Downloading and extracting Easy RSA
-                    b.pushRule(new DownloadBuildRule(
-                        BuildPath(sourcePath, "easyrsa-" + ver.define.EASYRSA_VERSION + ".zip"),
-                        "https://github.com/OpenVPN/easy-rsa/releases/download/v" + ver.define.EASYRSA_VERSION + "/EasyRSA-" + ver.define.EASYRSA_VERSION + "-win64.zip",
-                        ["version.m4"]));
-                    b.pushRule(new ExtractBuildRule(
-                        [
-                            BuildPath(easyRSAPath, "easyrsa")
-                        ],
-                        buildPath, // "easyrsa-" + ver.define.EASYRSA_VERSION folder is provided by .zip file.
-                        BuildPath(buildPath, "easyrsa-" + ver.define.EASYRSA_VERSION + ".timestamp"),
-                        BuildPath(sourcePath, "easyrsa-" + ver.define.EASYRSA_VERSION + ".zip"),
-                        []));
-                    b.pushRule(new CreateFileBuildRule(
+                        BuildPath(buildPath, "README-config.txt"),
+                        BuildPath(buildPath, "README-config-auto.txt"),
+                        BuildPath(buildPath, "INSTALL-win32.txt"),
+                        BuildPath(p.openVPNDocPath, "openvpn.8.html"),
+                        BuildPath("bookmarks", "howto.url"),
+                        BuildPath("bookmarks", "support.url"),
+                        BuildPath("bookmarks", "website.url"),
+                        BuildPath("bookmarks", "wiki.url"),
+                        BuildPath(easyRSAPath, "easyrsa"),
                         BuildPath(easyRSAPath, "EasyRSA-Start.bat"),
-                        [
-                            "@echo OFF",
-                            "rem Automatically set PATH to openssl.exe",
-                            "FOR /F \"tokens=2*\" %%a IN ('REG QUERY \"HKEY_LOCAL_MACHINE\\SOFTWARE\\OpenVPN\" /v bin_dir') DO set \"PATH=%PATH%;%%b\"",
-                            "bin\\sh.exe bin\\easyrsa-shell-init.sh %*"
-                        ],
-                        ["version.m4"]));
-
-                    // Add platform-specific build rules.
-                    for (i in platforms) {
-                        var
-                            plat = platforms[i],
-                            p = platformInfo[plat];
-
-                        // Downloading TAP-Windows6
-                        b.pushRule(new DownloadBuildRule(
-                            BuildPath(p.buildPath, "tap-windows6.msm"),
-                            "https://github.com/OpenVPN/tap-windows6/releases/download/" + ver.define.PRODUCT_TAP_WIN_VERSION + "/tap-windows-" + ver.define.PRODUCT_TAP_WIN_VERSION + "-" + ver.define.PRODUCT_TAP_WIN_INSTALLER_VERSION + "-" + p.tapWinPlat + ".msm",
-                            ["version.m4"]));
-
-                        // Downloading ovpn-dco
-                        b.pushRule(new DownloadBuildRule(
-                            BuildPath(p.buildPath, "ovpn-dco.msm"),
-                            "https://github.com/OpenVPN/ovpn-dco-win/releases/download/" + ver.define.PRODUCT_OVPN_DCO_VERSION + "/ovpn-dco-" + plat + ".msm",
-                            ["version.m4"]));
-
-                        // WiX compiler flags
-                        var wixCompilerFlags = [
-                            "-ext WixNetFxExtension",
-                            "-arch \"" + _CMD(p.wixPlat) + "\"",
-                            "-dPRODUCT_PUBLISHER=\""            + _CMD(ver.define["PRODUCT_PUBLISHER"           ]) + "\"",
-                            "-dPRODUCT_NAME=\""                 + _CMD(ver.define["PRODUCT_NAME"                ]) + "\"",
-                            "-dPRODUCT_VERSION=\""              + _CMD(ver.define["PRODUCT_VERSION"             ]) + "\"",
-                            "-dPACKAGE_VERSION=\""              + _CMD(ver.define["PACKAGE_VERSION"             ]) + "\"",
-                            "-dPRODUCT_TAP_WIN_NAME=\""         + _CMD(ver.define["PRODUCT_TAP_WIN_NAME"        ]) + "\"",
-                            "-dPRODUCT_TAP_WIN_COMPONENT_ID=\"" + _CMD(ver.define["PRODUCT_TAP_WIN_COMPONENT_ID"]) + "\"",
-                            "-dPRODUCT_PLATFORM=\""             + plat                                             + "\"",
-                            "-dPRODUCT_CODE=\""                 + _CMD(ver.define["PRODUCT_CODE"                ]) + "\"",
-                            "-dUPGRADE_CODE=\""                 + _CMD(ver.define["UPGRADE_CODE_" + plat        ]) + "\"",
-                            "-dCONFIG_EXTENSION=\""             + _CMD(ver.define["CONFIG_EXTENSION"            ]) + "\"",
-                            "-dPROGRAM_FILES_DIR=\""            + _CMD(p.programFilesPath                        ) + "\"",
-                            "-dOPENSSL_PLAT=\""                 + _CMD(p.openSSLPlat                             ) + "\""];
-
-                        // WiX compiling
-                        b.pushRule(new WiXCompileBuildRule(
-                            BuildPath(p.buildPath, "gui.wixobj"),
-                            "gui.wxs",
-                            ["version.m4"],
-                            wixCompilerFlags));
-                        b.pushRule(new WiXCompileBuildRule(
-                            BuildPath(p.buildPath, "msi.wixobj"),
-                            "msi.wxs",
-                            ["version.m4"],
-                            wixCompilerFlags));
-
-                        // Text file generation
-                        b.pushRule(new ConvertTextBuildRule(
-                            BuildPath(p.buildPath, "license.txt"), "utf-8", adCRLF,
-                            [
-                                BuildPath(depsPath, "openvpn", "COPYING"),
-                                BuildPath(depsPath, "openvpn", "COPYRIGHT.GPL")
-                            ], "utf-8", adCRLF,
-                            []));
-                        b.pushRule(new ConvertTextBuildRule(
-                            BuildPath(p.buildPath, "client.ovpn"), "utf-8", adCRLF,
-                            [BuildPath(depsPath, "openvpn", "sample", "sample-config-files", "client.conf")], "utf-8", adCRLF,
-                            []));
-                        b.pushRule(new ConvertTextBuildRule(
-                            BuildPath(p.buildPath, "server.ovpn"), "utf-8", adCRLF,
-                            [BuildPath(depsPath, "openvpn", "sample", "sample-config-files", "server.conf")], "utf-8", adCRLF,
-                            []));
-                        // WiX linker flags
-                        var wixLinkerFlags = [
-                            "-spdb",
-                            "-ext WixNetFxExtension",
-                            "-b build=\""         + _CMD(buildPath    ) + "\"",
-                            "-b openvpndoc=\""    + _CMD(p.openVPNDocPath) + "\"",
-                            "-b openvpnbin=\""    + _CMD(p.openVPNBinPath) + "\"",
-                            "-b openvpnmsica=\""  + _CMD(p.openVPNMsiCAPath) + "\"",
-                            "-b openvpnserv=\""   + _CMD(p.openVPNServPath) + "\"",
-                            "-b openvpntapctl=\"" + _CMD(p.openVPNTapCtlPath) + "\"",
-                            "-b openvpngui=\""    + _CMD(p.openVPNGuiPath) + "\"",
-                            "-b openvpnguibin=\"" + _CMD(p.openVPNGuiBinPath) + "\"",
-                            "-b openssltools=\""  + _CMD(p.openSSLToolsPath) + "\"",
-                            "-b opensslbin=\""    + _CMD(p.openSSLBinPath) + "\"",
-                            "-b easyrsa=\""       + _CMD(easyRSAPath  ) + "\"",
-                            "-b openvpnserv2=\""  + _CMD(buildPath    ) + "\"",
-                            "-b ovpndco=\""       + _CMD(p.ovpnDcoPath) + "\""
-                        ];
-
-                        // WiX linking
-                        var msiFile = BuildPath(outputPath, ver.define.PRODUCT_NAME + "-" + ver.define.PACKAGE_VERSION + "-" + plat + ".msi");
-                        msiFiles.push(msiFile);
-                        b.pushRule(new WiXLinkBuildRule(
-                            msiFile,
-                            [
-                                BuildPath(p.buildPath, "gui.wixobj"),
-                                BuildPath(p.buildPath, "msi.wixobj")
-                            ],
-                            [
-                                BuildPath("artwork", "info.ico"),
-                                BuildPath("artwork", "folder_new.ico"),
-                                BuildPath("artwork", "folder_up.ico"),
-                                BuildPath("artwork", "header.bmp"),
-                                BuildPath("artwork", "openvpn.ico"),
-                                BuildPath("artwork", "ovpn.ico"),
-                                BuildPath("artwork", "tapctl_create.ico"),
-                                BuildPath("artwork", "url.ico"),
-                                BuildPath("artwork", "warning.ico"),
-                                BuildPath("doc", "LicenseAgreement.rtf"),
-                                BuildPath("script", "ActiveSetupCA.js"),
-                                BuildPath("script", "PlapReg.js"),
-                                BuildPath("script", "Service.js"),
-                                BuildPath("script", "ACL.js"),
-                                BuildPath(p.buildPath, "license.txt"),
-                                BuildPath(p.buildPath, "tap-windows6.msm"),
-                                BuildPath(p.buildPath, "ovpn-dco.msm"),
-                                BuildPath(p.openVPNBinPath, "libcrypto-3" + p.openSSLPlat + ".dll"),
-                                BuildPath(p.openVPNMsiCAPath, "openvpnmsica.dll"),
-                                BuildPath(p.openVPNBinPath, "libpkcs11-helper-1.dll"),
-                                BuildPath(p.openVPNBinPath, "libssl-3" + p.openSSLPlat + ".dll"),
-                                BuildPath(p.openSSLToolsPath, "openssl.exe"),
-                                BuildPath(p.openSSLBinPath, "legacy.dll"),
-                                BuildPath(p.openVPNBinPath, "openvpn.exe"),
-                                BuildPath(p.openVPNGuiBinPath, "openvpn-gui.exe"),
-                                BuildPath(p.openVPNServPath, "openvpnserv.exe"),
-                                BuildPath(p.openVPNTapCtlPath, "tapctl.exe"),
-                                BuildPath("vcredist", p.wixPlat, "vcruntime140.dll"),
-                                BuildPath(buildPath, "openvpnserv2.exe"),
-                                BuildPath(buildPath, "README-config.txt"),
-                                BuildPath(buildPath, "README-config-auto.txt"),
-                                BuildPath(buildPath, "INSTALL-win32.txt"),
-                                BuildPath(p.openVPNDocPath, "openvpn.8.html"),
-                                BuildPath("bookmarks", "howto.url"),
-                                BuildPath("bookmarks", "support.url"),
-                                BuildPath("bookmarks", "website.url"),
-                                BuildPath("bookmarks", "wiki.url"),
-                                BuildPath(easyRSAPath, "easyrsa"),
-                                BuildPath(easyRSAPath, "EasyRSA-Start.bat"),
-                                BuildPath(buildPath, "README-log.txt"),
-                                BuildPath(p.buildPath, "client.ovpn"),
-                                BuildPath(p.buildPath, "server.ovpn")
-                            ].concat(p.wixLinkDepenencies),
-                            wixLinkerFlags));
-                    }
-
-                    // Readme files generation
-                    b.pushRule(new PreprocessBuildRule(
-                        BuildPath(buildPath, "INSTALL-win32.txt"), "utf-8", adCRLF,
-                        [BuildPath("doc", "doc", "INSTALL-win32.txt.in")], "utf-8", adLF,
-                        ver,
-                        ["version.m4"]));
-                    b.pushRule(new PreprocessBuildRule(
-                        BuildPath(buildPath, "README-config.txt"), "utf-8", adCRLF,
-                        [BuildPath("doc", "config", "README.txt.in")], "utf-8", adLF,
-                        ver,
-                        ["version.m4"]));
-                    b.pushRule(new PreprocessBuildRule(
-                        BuildPath(buildPath, "README-config-auto.txt"), "utf-8", adCRLF,
-                        [BuildPath("doc", "config-auto", "README.txt.in")], "utf-8", adLF,
-                        ver,
-                        ["version.m4"]));
-                    b.pushRule(new PreprocessBuildRule(
-                        BuildPath(buildPath, "README-log.txt"), "utf-8", adCRLF,
-                        [BuildPath("doc", "log", "README.txt.in")], "utf-8", adLF,
-                        ver,
-                        ["version.m4"]));
-                    break;
-
-                case "exe":
-                    for (i in platforms)
-                        msiFiles.push(BuildPath(outputPath, ver.define.PRODUCT_NAME + "-" + ver.define.PACKAGE_VERSION + "-" + platforms[i] + ".msi"));
-                    break;
+                        BuildPath(buildPath, "README-log.txt"),
+                        BuildPath(p.buildPath, "client.ovpn"),
+                        BuildPath(p.buildPath, "server.ovpn")
+                    ].concat(p.wixLinkDepenencies),
+                    wixLinkerFlags));
             }
 
+            // Readme files generation
+            b.pushRule(new PreprocessBuildRule(
+                BuildPath(buildPath, "INSTALL-win32.txt"), "utf-8", adCRLF,
+                [BuildPath("doc", "doc", "INSTALL-win32.txt.in")], "utf-8", adLF,
+                ver,
+                ["version.m4"]));
+            b.pushRule(new PreprocessBuildRule(
+                BuildPath(buildPath, "README-config.txt"), "utf-8", adCRLF,
+                [BuildPath("doc", "config", "README.txt.in")], "utf-8", adLF,
+                ver,
+                ["version.m4"]));
+            b.pushRule(new PreprocessBuildRule(
+                BuildPath(buildPath, "README-config-auto.txt"), "utf-8", adCRLF,
+                [BuildPath("doc", "config-auto", "README.txt.in")], "utf-8", adLF,
+                ver,
+                ["version.m4"]));
+            b.pushRule(new PreprocessBuildRule(
+                BuildPath(buildPath, "README-log.txt"), "utf-8", adCRLF,
+                [BuildPath("doc", "log", "README.txt.in")], "utf-8", adLF,
+                ver,
+                ["version.m4"]));
+
             var fso = new ActiveXObject("Scripting.FileSystemObject");
- 
+
             // Finally, build the target.
             switch (cmd)
             {
                 case "all":
-                    b.build(BuildPath(outputPath, ver.define.PRODUCT_NAME + "-" + ver.define.PACKAGE_VERSION + "-x86.msi"    ));
-                    b.build(BuildPath(outputPath, ver.define.PRODUCT_NAME + "-" + ver.define.PACKAGE_VERSION + "-amd64.msi"  ));
-                    b.build(BuildPath(outputPath, ver.define.PRODUCT_NAME + "-" + ver.define.PACKAGE_VERSION + "-arm64.msi"  ));
-                    break;
-
                 case "msi":
                     b.build(BuildPath(outputPath, ver.define.PRODUCT_NAME + "-" + ver.define.PACKAGE_VERSION + "-x86.msi"  ));
                     b.build(BuildPath(outputPath, ver.define.PRODUCT_NAME + "-" + ver.define.PACKAGE_VERSION + "-amd64.msi"));

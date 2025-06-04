@@ -2,8 +2,7 @@
 =====================
 
 This folder contains scripts and binaries required to build and package OpenVPN
-2.5+ and its dependencies to a set of platform-dependent MSI packages and an
-all-in-one EXE installer.
+2.5+ and its dependencies to a set of platform-dependent MSI packages.
 
 Requirements for building MSI packages
 --------------------------------------
@@ -103,20 +102,15 @@ exact usage::
     a         : Builds all targets even if output is newer than input
 
     Commands:
-    all     Builds MSI packages and EXE installer
-    msi     Builds MSI packages only
+    all     Builds MSI packages
+    msi     Builds MSI packages
     clean   Cleans intermediate and output files
 
 Digital signing
 ---------------
 
-The ``build.wsf`` tool does not support digital signing of MSI and EXE files
+The ``build.wsf`` tool does not support digital signing of MSI files
 (yet). The ``sign-openvpn.bat`` and ``sign-msi.bat`` scripts handle that part.
-
-The EXE installer does not ask for elevation. It extracts and launches
-appropriate MSI package unelevated. The UAC elevation is requested only later
-when MSI package actually starts the install process. Therefore, it is vital to
-digitally sign MSI packages.
 
 When signing MSI packages, set a signature description (``/d`` flag with
 ``signtool.exe`` utility). The ``msiexec.exe`` saves the MSI package under some
@@ -125,10 +119,6 @@ on the MSI package contains no description, Windows displays the MSI filename
 instead on the UAC prompt. Now MSI having a random filename, the UAC prompt
 gets quite confusing. Therefore, we strongly encourage you to set a description
 in the MSI signature accurately describing the package content.
-
-Digital signing of EXE installer is optional, but recommended to decrease the
-chance Windows SmartScreen will treat our EXE installer as malware on
-downloads.
 
 Signing of ``tapctl.exe`` is mandatory as it requires elevation of privileges.
 
