@@ -20,7 +20,8 @@
 -->
 <Wix
     xmlns="http://schemas.microsoft.com/wix/2006/wi"
-    xmlns:netfx="http://schemas.microsoft.com/wix/NetFxExtension">
+    xmlns:netfx="http://schemas.microsoft.com/wix/NetFxExtension"
+    xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
     <Product
         Id="$(var.PRODUCT_CODE)"
         UpgradeCode="$(var.UPGRADE_CODE)"
@@ -666,6 +667,14 @@
             <Directory Id="CommonAppDataFolder">
                 <Directory Id="ProgramDataFolder.OpenVPN" Name="$(var.PRODUCT_NAME)">
                     <Directory Id="LOGDIR" Name="Log">
+                        <!-- Folder permissions -->
+                        <Component Id="LOGDIR.permissions" Guid="{B2C34E28-8F90-4AE8-8D56-39A7E0D872A0}" KeyPath="yes">
+                            <CreateFolder>
+                                <util:PermissionEx User="NT SERVICE\OpenVPNService" GenericRead="yes" GenericWrite="yes" />
+                            </CreateFolder>
+                        </Component>
+
+                        <!-- README file -->
                         <Component Id="log.README.txt" Guid="{CD05C1F7-99E7-45C9-8DE5-9C7FB73EE911}">
                             <File Id="log.README.txt" Name="README.txt" Source="!(bindpath.build)README-log.txt"/>
                         </Component>
@@ -1211,6 +1220,7 @@
             <ComponentRef Id="bin.tapctl.exe"/>
             <ComponentRef Id="config.README.txt"/>
             <ComponentRef Id="log.README.txt"/>
+            <ComponentRef Id="LOGDIR.permissions"/>
             <ComponentRef Id="res.ovpn.ico"/>
             <ComponentRef Id="reg.path"/>
             <ComponentRef Id="reg.bin_dir"/>

@@ -178,6 +178,7 @@ clean	Cleans intermediate and output files</example>
                 // WiX compiler flags
                 var wixCompilerFlags = [
                     "-ext WixNetFxExtension",
+                    "-ext WixUtilExtension",
                     "-arch \"" + _CMD(p.wixPlat) + "\"",
                     "-dPRODUCT_PUBLISHER=\""            + _CMD(ver.define["PRODUCT_PUBLISHER"           ]) + "\"",
                     "-dPRODUCT_NAME=\""                 + _CMD(ver.define["PRODUCT_NAME"                ]) + "\"",
@@ -224,6 +225,7 @@ clean	Cleans intermediate and output files</example>
                 var wixLinkerFlags = [
                     "-spdb",
                     "-ext WixNetFxExtension",
+                    "-ext WixUtilExtension",
                     "-b build=\""         + _CMD(buildPath    ) + "\"",
                     "-b openvpndoc=\""    + _CMD(p.openVPNDocPath) + "\"",
                     "-b openvpnbin=\""    + _CMD(p.openVPNBinPath) + "\"",
