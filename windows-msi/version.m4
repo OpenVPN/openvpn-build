@@ -16,7 +16,7 @@ define([PRODUCT_OVPN_DCO_VERSION],     [2.5.9])
 
 dnl OpenVPNServ2.exe binary
 dnl renovate: datasource=github-releases depName=OpenVPN/openvpnserv2 versioning=loose
-define([OVPNSERV2_VERSION], [2.0.0.0])
+define([OVPNSERV2_VERSION], [2.0.1.0])
 
 dnl Easy-RSA binaries:
 dnl URL to .zip file containing "easy-rsa-[EASYRSA_VERSION]" folder with Easy-RSA.
