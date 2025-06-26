@@ -1,0 +1,18 @@
+ovpn-backports (6.15.0.2025061700-debian0) stable; urgency=medium
+
+  * Generated sources for ovpn-net-next/main-6.15.0-2025061700 (GitHub Actions, 206e914)
+  * Generated sources for ovpn-net-next/main-6.15.0-2025060601 (GitHub Actions, deb8269)
+  * Makefile: add target for debug symbol inclusion (Ralf Lici, 37e9c8a)
+  * Makefile: add kernel configuration check (Ralf Lici, b421800)
+  * Generated sources for ovpn-net-next/main-6.15.0-2025060600 (GitHub Actions, 1225659)
+  * Update ovpn-net-next to 2c7e4a2 (Ralf Lici, 30d1dc4)
+  * Generated sources for ovpn-net-next/main-6.15.0-rc5-2025060301 (GitHub Actions, c9c8a73)
+  * GHA: Avoid committing changes to the workflow file (Ralf Lici, 6d6983c)
+  * Generated sources for ovpn-net-next/main-6.15.0-rc5-2025060300 (GitHub Actions, b8e5288)
+  * Makefile: use ccflags-y for kernel module flags (Ralf Lici, 2070222)
+  * Generated sources for ovpn-net-next/main-6.15.0-rc5-2025060200 (GitHub Actions, 4cd8f20)
+  * Add support for SUSE SLE 15.6 (Ralf Lici, 431178a)
+  * GHA: generate sources for net and development-net (Ralf Lici, b82caf1)
+  * Avoid overwriting .version in source branches (Ralf Lici, 822d6b5)
+
+ -- Yuriy Darnobyt <yuriy.darnobyt@openvpn.net>  Tue, 17 Jun 2025 09:36:38 +0000
