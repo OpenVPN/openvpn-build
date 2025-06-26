@@ -85,6 +85,7 @@
         <Binary Id="Service.js" SourceFile="script\Service.js"/>
         <Binary Id="PlapReg.js" SourceFile="script\PlapReg.js"/>
         <Binary Id="ACL.js" SourceFile="script\ACL.js"/>
+        <Binary Id="RegisterEventSource.js" SourceFile="script\RegisterEventSource.js"/>
 
         <CustomAction Id="GetInstallDirForPlap" BinaryKey="PlapReg.js" JScriptCall="GetInstallDir" />
         <CustomAction Id="UpdatePlapReg" BinaryKey="PlapReg.js" JScriptCall="UpdatePlapReg" Execute="deferred" Impersonate="no" />
@@ -95,6 +96,7 @@
         <CustomAction Id="GetInstallDirForACL" BinaryKey="ACL.js" JScriptCall="GetInstallDir" Return="check" />
         <CustomAction Id="SetACL" BinaryKey="ACL.js" JScriptCall="SetACL" Execute="deferred" Impersonate="no" Return="check" />
 
+        <CustomAction Id="RegisterEventSource" BinaryKey="RegisterEventSource.js" JScriptCall="RegisterEventSource" Execute="deferred" Impersonate="no" Return="check" />
         <!--
             Detect system information
         -->
@@ -110,6 +112,7 @@
             <Custom Action="UpdatePlapReg" After="InstallFiles"/>
             <Custom Action="GetInstallDirForACL" After="SetProductDirParam">NOT Installed</Custom>
             <Custom Action="SetACL" After="InstallFiles">NOT Installed</Custom>
+            <Custom Action="RegisterEventSource" After="InstallFiles">NOT Installed</Custom>
         </InstallExecuteSequence>
         <UI>
             <ProgressText Action="FindSystemInfo">Detecting system information</ProgressText>

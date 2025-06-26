@@ -2,8 +2,7 @@
 =====================
 
 This folder contains scripts and binaries required to build and package OpenVPN
-2.5+ and its dependencies to a set of platform-dependent MSI packages and an
-all-in-one EXE installer.
+2.5+ and its dependencies to a set of platform-dependent MSI packages.
 
 Requirements for building MSI packages
 --------------------------------------
@@ -85,7 +84,7 @@ Note: The following explains details of the packaging process wrapped by the
 ``build-and-package.ps1`` script described above.
 
 The ``build.wsf`` is a simple Makefile type building tool used to generate MSI
-packages and EXE installers. It expects OpenVPN and its dependencies to be
+packages. It expects OpenVPN and its dependencies to be
 built and in the directory layout described above. It was developed to avoid
 Microsoft Visual Studio or GNU Make requirements. Refer to ``build.wsf`` for
 exact usage::
@@ -103,25 +102,15 @@ exact usage::
     a         : Builds all targets even if output is newer than input
 
     Commands:
-    all     Builds MSI packages and EXE installer
-    msi     Builds MSI packages only
-    exe     Builds EXE installer only
+    all     Builds MSI packages
+    msi     Builds MSI packages
     clean   Cleans intermediate and output files
-
-The ``cscript build.wsf exe`` command does not build MSI packages. This is a
-safety feature to prevent accidental rebuild of already signed MSI files,
-should something accidentally touch any of the MSI package source files.
 
 Digital signing
 ---------------
 
-The ``build.wsf`` tool does not support digital signing of MSI and EXE files
+The ``build.wsf`` tool does not support digital signing of MSI files
 (yet). The ``sign-openvpn.bat`` and ``sign-msi.bat`` scripts handle that part.
-
-The EXE installer does not ask for elevation. It extracts and launches
-appropriate MSI package unelevated. The UAC elevation is requested only later
-when MSI package actually starts the install process. Therefore, it is vital to
-digitally sign MSI packages.
 
 When signing MSI packages, set a signature description (``/d`` flag with
 ``signtool.exe`` utility). The ``msiexec.exe`` saves the MSI package under some
@@ -130,10 +119,6 @@ on the MSI package contains no description, Windows displays the MSI filename
 instead on the UAC prompt. Now MSI having a random filename, the UAC prompt
 gets quite confusing. Therefore, we strongly encourage you to set a description
 in the MSI signature accurately describing the package content.
-
-Digital signing of EXE installer is optional, but recommended to decrease the
-chance Windows SmartScreen will treat our EXE installer as malware on
-downloads.
 
 Signing of ``tapctl.exe`` is mandatory as it requires elevation of privileges.
 
