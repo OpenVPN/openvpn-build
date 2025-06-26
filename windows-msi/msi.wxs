@@ -1224,7 +1224,6 @@
             <ComponentRef Id="bin.tapctl.exe"/>
             <ComponentRef Id="config.README.txt"/>
             <ComponentRef Id="log.README.txt"/>
-            <ComponentRef Id="LOGDIR.permissions"/>
             <ComponentRef Id="res.ovpn.ico"/>
             <ComponentRef Id="reg.path"/>
             <ComponentRef Id="reg.bin_dir"/>
@@ -1285,6 +1284,7 @@
                 <ComponentRef Id="bin.openvpn_plap_uninstall.reg"/>
                 <ComponentRef Id="config_auto.README.txt"/>
                 <ComponentRef Id="reg.autostart_config_dir"/>
+                <ComponentRef Id="LOGDIR.permissions"/>
 
                 <Feature
                     Id="OpenVPN.PLAP.Register"
