@@ -1,0 +1,6 @@
+openvpn-dco-dkms (0.2.20250718-debian0) stable; urgency=medium
+
+  * ovpn-dco: port to 6.16 and add compat hacks (Antonio Quartulli, b1b490e)
+  * ovpn-dco: update README file (Antonio Quartulli, 46c77df)
+
+ -- Frank Lichtenheld <frank.lichtenheld@openvpn.net>  Fri, 18 Jul 2025 14:28:19 +0200
