@@ -137,7 +137,7 @@ jobs:
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           repository: openvpn/openvpn-windows-test
-          ref: master
+          ref: release/2.6
           path: openvpn-windows-test
 
       - name: Install SSH key for tclient host
