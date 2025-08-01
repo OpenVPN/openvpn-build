@@ -12,7 +12,7 @@ define([PRODUCT_TAP_WIN_NAME],              [TAP-Windows])
 
 dnl ovpn-dco binaries
 dnl renovate: datasource=github-releases depName=OpenVPN/ovpn-dco-win
-define([PRODUCT_OVPN_DCO_VERSION],     [2.5.9])
+define([PRODUCT_OVPN_DCO_VERSION],     [2.6.2])
 
 dnl OpenVPNServ2.exe binary
 dnl renovate: datasource=github-releases depName=OpenVPN/openvpnserv2 versioning=loose
