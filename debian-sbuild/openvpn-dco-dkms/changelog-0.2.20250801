@@ -1,0 +1,8 @@
+openvpn-dco-dkms (0.2.20250801-debian0) stable; urgency=medium
+
+  * Fix version number for timer API changes (Frank Lichtenheld, 298bf95)
+  * ovpn-dco: compat hack for 6.15 timer_* API renaming (Antonio Quartulli, 98a25de)
+  * ovpn-dco: port to 6.16 and add compat hacks (Antonio Quartulli, b1b490e)
+  * ovpn-dco: update README file (Antonio Quartulli, 46c77df)
+
+ -- Frank Lichtenheld <frank.lichtenheld@openvpn.net>  Fri, 1 Aug 2025 17:45:33 +0200

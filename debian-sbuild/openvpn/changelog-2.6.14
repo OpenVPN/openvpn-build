@@ -7,4 +7,4 @@ openvpn (2.6.14-debian0) stable; urgency=medium
   * dco: fix source IP selection when multihome (Qingfang Deng, b9ad768a)
   * GHA: Drop Ubuntu 20.04 and other maintenance (2.6) (Frank Lichtenheld, 40b76047)
 
- -- Yuriy Darnobyt <yuriy.darnobyt@openvpn.net>  Wed, 2 Apr 2025 08:53:10 +0200
+ -- Frank Lichtenheld <frank.lichtenheld@openvpn.net>  Wed, 2 Apr 2025 08:53:10 +0200
