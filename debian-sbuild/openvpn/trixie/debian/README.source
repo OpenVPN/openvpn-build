@@ -1,0 +1,18 @@
+Hello,
+
+now I use the branching model from Vincent Driessen[1].
+
+I use the gitflow-avh[2]. with the Documentation[3].
+The Debian package can be found here[4].
+
+Please upload unattended uploads use a branch feature/<your title>.
+
+
+Many thanks.
+
+ -- Jörg Frings-Fürst <debian@jff.email>  Sun, 29 Jul 2018 13:59:15 +0200
+
+[1] http://nvie.com/posts/a-successful-git-branching-model/
+[2] https://github.com/petervanderdoes/gitflow-avh
+[3] https://github.com/petervanderdoes/gitflow-avh/wiki
+[4] https://tracker.debian.org/pkg/git-flow
