@@ -28,7 +28,7 @@ jobs:
 
     steps:
       - name: Checkout openvpn-build
-        uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4.3.0
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
         with:
           fetch-depth: 0
           submodules: true
@@ -49,7 +49,7 @@ jobs:
         uses: ilammy/msvc-dev-cmd@0b201ec74fa43914dc39ae48a89fd1d8cb592756 # v1.13.0
 
       - name: Set up Java
-        uses: actions/setup-java@c5195efecf7bdfc987ee8bae7a71cb8b11521c00 # v4.7.1
+        uses: actions/setup-java@dded0888837ed1f317902acf8a20df0ad188d165 # v5.0.0
         if: ${{ env.SigningKeyStore != '' }}
         with:
           java-version: 17
@@ -134,7 +134,7 @@ jobs:
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Clone openvpn-windows-test repo
-        uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4.3.0
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
         with:
           repository: openvpn/openvpn-windows-test
           ref: release/2.6
@@ -151,7 +151,7 @@ jobs:
           rm -fr msi
 
       - name: Get artifacts
-        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5.0.0
         with:
           path: msi
 
@@ -181,7 +181,7 @@ jobs:
         run: sudo apt install knockd
 
       - name: Get artifacts
-        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5.0.0
         with:
           path: msi
 
@@ -225,7 +225,7 @@ jobs:
 
     steps:
       - name: Checkout openvpn-build
-        uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4.3.0
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
         with:
           fetch-depth: 0
           submodules: true
