@@ -33,7 +33,8 @@
             ],
             "allowedVersions": "2.x",
             "matchBaseBranches": [
-                "master"
+                "master",
+                "release/2.7"
             ]
         },
         {
