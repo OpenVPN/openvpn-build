@@ -27,7 +27,7 @@
         },
         {
             "matchDatasources": [
-                "github-releases"
+                "github-tags"
             ],
             "matchPackageNames": [
                 "OpenVPN/ovpn-dco-win"
