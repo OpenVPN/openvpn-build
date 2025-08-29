@@ -1,7 +1,6 @@
 {
     "$schema": "https://docs.renovatebot.com/renovate-schema.json",
     "extends": [ "config:best-practices" ],
-    "baseBranchPatterns": [ "master", "release/2.6", "release/2.7" ],
     "dependencyDashboardTitle": "Dependency Dashboard self-hosted",
     "gitAuthor": "OpenVPN Renovate <pkg@openvpn.net>",
     "onboarding": true,
