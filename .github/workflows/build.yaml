@@ -50,7 +50,7 @@ jobs:
           vcpkgJsonGlob: '**/src/openvpn/contrib/vcpkg-manifests/windows/vcpkg.json'
 
       - name: Get latest CMake and ninja
-        uses: lukka/get-cmake@f3273e0bcecf2f2c0d3430de21bf02ab2752c47d # v4.1.0
+        uses: lukka/get-cmake@2ecc21724e5215b0e567bc399a2602d2ecb48541 # v4.1.1
 
       - name: Install rst2html
         run: python -m pip install --upgrade pip docutils
@@ -89,7 +89,7 @@ jobs:
 
       - name: Authenticate to Google Cloud
         id: 'auth'
-        uses: 'google-github-actions/auth@6fc4af4b145ae7821d527454aa9bd537d1f2dc5f' # v2
+        uses: 'google-github-actions/auth@c200f3691d83b41bf9bbd8638997a462592937ed' # v2
         if: ${{ env.SigningKeyStore != '' }}
         with:
           create_credentials_file: false
