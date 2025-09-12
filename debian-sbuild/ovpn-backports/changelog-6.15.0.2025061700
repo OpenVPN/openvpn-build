@@ -15,4 +15,4 @@ ovpn-backports (6.15.0.2025061700-debian0) stable; urgency=medium
   * GHA: generate sources for net and development-net (Ralf Lici, b82caf1)
   * Avoid overwriting .version in source branches (Ralf Lici, 822d6b5)
 
- -- Frank Lichtenheld <frank.lichtenheld@openvpn.net>  Tue, 17 Jun 2025 09:36:38 +0000
+ -- Yuriy Darnobyt <yuriy.darnobyt@openvpn.net>  Tue, 17 Jun 2025 09:36:38 +0000
