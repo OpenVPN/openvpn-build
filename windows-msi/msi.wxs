@@ -428,7 +428,8 @@
                             <File Id="bin.openvpn_gui.exe" Name="openvpn-gui.exe" Source="!(bindpath.openvpnguibin)openvpn-gui.exe"/>
                         </Component>
                         <Component Id="bin.openvpnserv.exe" Guid="{43A4F408-9399-4BD7-9978-0ECE4A582929}">
-                            <File Name="openvpnserv.exe" Source="!(bindpath.openvpnserv)openvpnserv.exe"/>
+                            <File Name="openvpnserv.exe" Source="!(bindpath.openvpnserv)openvpnserv.exe" KeyPath="yes"/>
+                            <File Name="openvpnservmsg.dll" Source="!(bindpath.openvpnserv)openvpnservmsg.dll"/>
                             <ServiceControl
                                 Id="OpenVPNServiceInteractive"
                                 Name="OpenVPNServiceInteractive"
@@ -1030,6 +1031,24 @@
                         ForceDeleteOnUninstall="yes"/>
                 </RegistryKey>
             </Component>
+
+            <Component Id="reg.event_source" Guid="{7C86D58B-396E-43AE-A016-41C755D61CE8}">
+                <RegistryKey
+                    Root="HKLM"
+                    Key="SYSTEM\CurrentControlSet\Services\EventLog\Application\openvpnserv">
+
+                    <RegistryValue
+                        Type="string"
+                        Name="EventMessageFile"
+                        Value="[BINDIR]openvpnservmsg.dll"
+                        KeyPath="yes"/>
+
+                    <RegistryValue
+                        Type="integer"
+                        Name="TypesSupported"
+                        Value="7" />
+                </RegistryKey>
+            </Component>
         </DirectoryRef>
 
 
@@ -1240,6 +1259,7 @@
             <ComponentRef Id="reg.conf.run"/>
             <ComponentRef Id="reg.conf.run.command"/>
             <ComponentRef Id="reg.wer.localdumps"/>
+            <ComponentRef Id="reg.event_source"/>
             <ComponentRef Id="shortcut.config"/>
             <ComponentRef Id="shortcut.log"/>
 
