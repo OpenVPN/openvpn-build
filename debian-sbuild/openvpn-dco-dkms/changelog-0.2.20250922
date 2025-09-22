@@ -1,0 +1,5 @@
+openvpn-dco-dkms (0.2.20250922-debian0) stable; urgency=medium
+
+  * ovpn-dco: port to 6.17 and compat hacks (Antonio Quartulli, 2933a14)
+
+ -- Frank Lichtenheld <frank.lichtenheld@openvpn.net>  Mon, 15 Sep 2025 16:48:52 +0200
