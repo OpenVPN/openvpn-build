@@ -210,7 +210,8 @@ clean	Cleans intermediate and output files</example>
                     BuildPath(p.buildPath, "license.txt"), "utf-8", adCRLF,
                     [
                         BuildPath(depsPath, "openvpn", "COPYING"),
-                        BuildPath(depsPath, "openvpn", "COPYRIGHT.GPL")
+                        BuildPath(depsPath, "openvpn", "COPYRIGHT.GPL"),
+                        BuildPath("doc", "bundled-licenses.txt"),
                     ], "utf-8", adCRLF,
                     []));
                 b.pushRule(new ConvertTextBuildRule(
