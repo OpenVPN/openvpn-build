@@ -25,4 +25,5 @@ jobs:
           RENOVATE_IGNORE_PRESETS: >-
             local>openvpntechnologies/ops-sec-renovate,
             local>openvpntechnologies/ops-saas-renovate,
+            local>openvpntechnologies/ops-iaas-renovate,
             local>openvpntechnologies/core-team-renovate
