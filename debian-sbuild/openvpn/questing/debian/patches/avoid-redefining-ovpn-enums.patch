@@ -1,0 +1,78 @@
+From 1fbbe91d292fb925f5af73b512d7d1c83abfe714 Mon Sep 17 00:00:00 2001
+From: Frank Lichtenheld <frank@lichtenheld.com>
+Date: Fri, 1 Aug 2025 15:03:02 +0200
+Subject: [PATCH] dco linux: avoid redefining ovpn enums (2.6)
+
+Starting with Linux kernel version 6.16, a couple of ovpn-related enum
+definitions were introduced in the `include/uapi/linux/if_link.h`
+header. Redefining them in openvpn when they are already present in the
+system headers can lead to conflicts or build issues.
+
+This commit ensures that enum redefinitions are avoided by conditionally
+using the existing definitions from the system header when available.
+
+This is the port to release/2.6 based on commit
+1d3c2b67a73a0aa011c13e62f876d24e49d41df0.
+
+Change-Id: I41c5dfc7489352a9534ff6b1585a5a81e0623ab1
+Signed-off-by: Frank Lichtenheld <frank@lichtenheld.com>
+Acked-by: Antonio Quartulli <antonio@mandelbit.com>
+Message-Id: <20250801130302.372311-1-frank@lichtenheld.com>
+URL: https://www.mail-archive.com/openvpn-devel@lists.sourceforge.net/msg32470.html
+Signed-off-by: Gert Doering <gert@greenie.muc.de>
+---
+ src/openvpn/dco_linux.h      | 6 ++++--
+ src/openvpn/ovpn_dco_linux.h | 9 +++++++--
+ 2 files changed, 11 insertions(+), 4 deletions(-)
+
+diff --git a/src/openvpn/dco_linux.h b/src/openvpn/dco_linux.h
+index 511519aece4..5179912b522 100644
+--- a/src/openvpn/dco_linux.h
++++ b/src/openvpn/dco_linux.h
+@@ -26,11 +26,13 @@
+ 
+ #include "event.h"
+ 
+-#include "ovpn_dco_linux.h"
+-
+ #include <netlink/socket.h>
+ #include <netlink/netlink.h>
+ 
++/* include last since we need to behave differently if the kernel headers
++ * are from 6.16+ */
++#include "ovpn_dco_linux.h"
++
+ typedef enum ovpn_key_slot dco_key_slot_t;
+ typedef enum ovpn_cipher_alg dco_cipher_t;
+ 
+diff --git a/src/openvpn/ovpn_dco_linux.h b/src/openvpn/ovpn_dco_linux.h
+index 73e19b591cb..34abc6ab79d 100644
+--- a/src/openvpn/ovpn_dco_linux.h
++++ b/src/openvpn/ovpn_dco_linux.h
+@@ -237,14 +237,17 @@ enum ovpn_netlink_packet_attrs {
+ 	OVPN_PACKET_ATTR_MAX = __OVPN_PACKET_ATTR_AFTER_LAST - 1,
+ };
+ 
++#ifndef IFLA_OVPN_MAX
++
+ enum ovpn_ifla_attrs {
+ 	IFLA_OVPN_UNSPEC = 0,
+ 	IFLA_OVPN_MODE,
+ 
+-	__IFLA_OVPN_AFTER_LAST,
+-	IFLA_OVPN_MAX = __IFLA_OVPN_AFTER_LAST - 1,
++	__IFLA_OVPN_MAX,
+ };
+ 
++#define IFLA_OVPN_MAX (__IFLA_OVPN_MAX - 1)
++
+ enum ovpn_mode {
+ 	__OVPN_MODE_FIRST = 0,
+ 	OVPN_MODE_P2P = __OVPN_MODE_FIRST,
+@@ -253,4 +256,6 @@ enum ovpn_mode {
+ 	__OVPN_MODE_AFTER_LAST,
+ };
+ 
++#endif /* ifndef IFLA_OVPN_MAX */
++
+ #endif /* _UAPI_LINUX_OVPN_DCO_H_ */
