@@ -1,0 +1,41 @@
+Description: Set default logdir to /var/log/openvpn
+Author: Jörg Frings-Fürst <debian@jff-webhosting.net>
+Bug-Debian: https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=444431
+            https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=553303
+Forwarded: not-needed
+Last-Update: 2017-10-03
+---
+This patch header follows DEP-3: http://dep.debian.net/deps/dep3/
+Index: trunk/sample/sample-config-files/server.conf
+===================================================================
+--- trunk.orig/sample/sample-config-files/server.conf
++++ trunk/sample/sample-config-files/server.conf
+@@ -105,7 +105,7 @@ server 10.8.0.0 255.255.255.0
+ # is restarted, reconnecting clients can be assigned
+ # the same virtual IP address from the pool that was
+ # previously assigned.
+-ifconfig-pool-persist ipp.txt
++ifconfig-pool-persist /var/log/openvpn/ipp.txt
+ 
+ # Configure server mode for ethernet bridging.
+ # You must first use your OS's bridging capability
+@@ -284,7 +284,7 @@ persist-tun
+ # Output a short status file showing
+ # current connections, truncated
+ # and rewritten every minute.
+-status openvpn-status.log
++status /var/log/openvpn/openvpn-status.log
+ 
+ # By default, log messages will go to the syslog (or
+ # on Windows, if running as a service, they will go to
+@@ -293,8 +293,8 @@ status openvpn-status.log
+ # "log" will truncate the log file on OpenVPN startup,
+ # while "log-append" will append to it.  Use one
+ # or the other (but not both).
+-;log         openvpn.log
+-;log-append  openvpn.log
++;log         /var/log/openvpn/openvpn.log
++;log-append  /var/log/openvpn/openvpn.log
+ 
+ # Set the appropriate level of log
+ # file verbosity.
