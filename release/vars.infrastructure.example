@@ -7,7 +7,7 @@ WINDOWS_MSI_WORKDIR=C:/buildbot/msbuild/openvpn-build
 
 # need "internal" repos since we do only want to publish
 # official tags once the release build was successful
-INTERNAL_GIT_REPO_OPENVPN_RO=git://buildbot-host.openvpn.in/openvpn
+INTERNAL_GIT_REPO_OPENVPN_RO=git://buildbot.community.aws.openvpn.in/openvpn
 INTERNAL_GIT_REPO_BUILD_RO=https://github.com/OpenVPN/openvpn-build.git
 INTERNAL_GIT_REPO_BUILD_RW=git@github.com:OpenVPN/openvpn.git
 
