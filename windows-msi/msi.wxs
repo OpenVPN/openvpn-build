@@ -1049,6 +1049,24 @@
                         Value="7" />
                 </RegistryKey>
             </Component>
+
+            <Component Id="reg.gui_event_source" Guid="{74BDEF69-9840-4526-BC8D-837FE784F85D}">
+                <RegistryKey
+                    Root="HKLM"
+                    Key="SYSTEM\CurrentControlSet\Services\EventLog\Application\OpenVPN GUI">
+
+                    <RegistryValue
+                        Type="string"
+                        Name="EventMessageFile"
+                        Value="[BINDIR]openvpn-gui.exe"
+                        KeyPath="yes"/>
+
+                    <RegistryValue
+                        Type="integer"
+                        Name="TypesSupported"
+                        Value="7" />
+                </RegistryKey>
+            </Component>
         </DirectoryRef>
 
 
@@ -1278,6 +1296,7 @@
                 <ComponentRef Id="reg.conf.verb.default"/>
                 <ComponentRef Id="reg.conf.import"/>
                 <ComponentRef Id="reg.conf.import.command"/>
+                <ComponentRef Id="reg.gui_event_source"/>
 
                 <Feature
                     Id="OpenVPN.GUI.OnLogon"
