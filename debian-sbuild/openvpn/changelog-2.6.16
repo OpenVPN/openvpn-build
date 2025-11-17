@@ -1,0 +1,20 @@
+openvpn (2.6.16-debian0) stable; urgency=medium
+
+  * preparing release 2.6.16 (Gert Doering, 647b1151)
+  * Fix memcmp check for the hmac verification in the 3way handshake being inverted (Arne Schwabe, fa6a1824)
+  * Fix construction of invalid pointer in tls_pre_decrypt (Arne Schwabe, 4e31670b)
+  * Use correct undo_list when clearing DNS addresses (Selva Nair, 21d6b663)
+  * openvpnserv: Disallow stdin as config unless user is authorized (Selva Nair, a7f5f570)
+  * iservice: use interface index with netsh (Heiko Hund, e02fa393)
+  * iservice: check return value of MultiByteToWideChar (Heiko Hund, 5b5fdb05)
+  * fix key_state_gen_auth_control_files probably checking file creation (Arne Schwabe, da394db7)
+  * tcp: apply CLOEXEC to accepted socket, not listener (Joshua Rogers, 2aa8550d)
+  * sitnl: set FD_CLOEXEC on socket to prevent abuse (Antonio Quartulli, 12a2e88b)
+  * ssl_mbedtls: fix missing perf_pop() call (Steffan Karger, e83c63f5)
+  * Do not try to use the encrypt-then-mac ciphers from OpenSSL 3.6.0 (Arne Schwabe, 08485316)
+  * route: Add #endif comment for uncrustify compliance (Frank Lichtenheld, cf6c12f9)
+  * route: Fix a unused-but-set-variable warning on OpenBSD (Frank Lichtenheld, dca6b030)
+  * doc: HTTPS upgrades and URL fixes throughout the tree (Christian Kujau, ca1e6321)
+  * doc: Fix hyperlinks in openvpn(8) (Christian Kujau, a53b49eb)
+
+ -- Yuriy Darnobyt <yuriy.darnobyt@openvpn.net>  Mon, 17 Nov 2025 15:53:27 +0100

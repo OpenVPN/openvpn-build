@@ -1,0 +1,7 @@
+openvpn-dco-dkms (0.2.20251017-debian0) stable; urgency=medium
+
+  * ovpn-dco: fix 5.15 compat hack for RHEL9.6 (Antonio Quartulli, 5c595d5)
+  * ovpn-dco: fix 5.19 compat hack with RHEL 8.10 (Antonio Quartulli, 6b754ab)
+  * ovpn-dco: fix 6.17 compat hack for RHEL8 and 9 (Antonio Quartulli, 9229147)
+
+ -- Yuriy Darnobyt <yuriy.darnobyt@openvpn.net>  Fri, 17 Oct 2025 14:05:47 +0200
