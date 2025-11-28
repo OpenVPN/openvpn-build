@@ -1,0 +1,9 @@
+openvpn (2.6.17-debian0) stable; urgency=medium
+
+  * preparing release 2.6.17 (Gert Doering, fa20154d)
+  * interactive.c: harden pipe handling against misbehaving clients (Lev Stipakov, 29d8eccf)
+  * Restrict access to the service pipe to SYSTEM and owner (Selva Nair, f4105842)
+  * Harden interactive service pipe (Selva Nair, a8fb9f64)
+  * vcpkg-ports/pkcs11-helper: bump version to 1.31 (Selva Nair, 031fdbc7)
+
+ -- Yuriy Darnobyt <yuriy.darnobyt@openvpn.net>  Fri, 28 Nov 2025 09:10:17 +0100
