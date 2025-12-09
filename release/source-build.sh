@@ -36,6 +36,14 @@ fi
 git -C $TOP_DIR/src/openvpn-gui remote update
 #TODO: make idempotent
 if ! [[ "$MSI_BUILD_ONLY" == "YES" ]]; then
+    # Re-initialize source directory to make sure we do not have
+    # any leftovers from previous builds
+    read -p "Would you like to re-initialize source directory? (Y/n): " resp
+    if [[ "$resp" != "N" && "$resp" != "n" ]]; then
+        rm -rf "$TOP_DIR"/src/*
+        git submodule update --init --recursive
+    fi
+
     $SCRIPT_DIR/create-release-files.sh
     read -p "Upload tarballs to $SECONDARY_WEBSERVER?"
     # uploads tarballs, required by some build steps
