@@ -129,7 +129,7 @@
         <!--
             Launch conditions
         -->
-        <Condition Message="[SimpleProductName] requires Windows 7 or later version of Windows."><![CDATA[Installed OR (VersionNT>=601)]]></Condition>
+        <Condition Message="[SimpleProductName] requires Windows 10 or later version of Windows."><![CDATA[Installed OR (VersionNT>=603)]]></Condition>
         <?if $(sys.BUILDARCH)~="x86" Or $(sys.BUILDARCH)~="ARM" ?>
         <Condition Message="You are attempting to install a 32-bit variant of [SimpleProductName] on a 64-bit operating system. The 32-bit variant will not work with your operating system. An installation of a 64-bit variant is recommended."><![CDATA[Installed OR NOT VersionNT64]]></Condition>
         <?endif?>
