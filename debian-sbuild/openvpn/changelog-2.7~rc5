@@ -1,0 +1,25 @@
+openvpn (2.7~rc5-debian0) stable; urgency=medium
+
+  * OpenVPN Release 2.7_rc5 (Gert Doering, 957f0713)
+  * Correctly handle sender jumping exactly epoch_data_keys_future_count (Arne Schwabe, e0e0720a)
+  * forward: Avoid conversion warning in ipv6_send_icmp_unreachable (Frank Lichtenheld, 8c3671db)
+  * error: Remove our implementation of static_assert (Frank Lichtenheld, 6768ef1d)
+  * ssl_verify: Fix parsing of timeout from auth pending file (Frank Lichtenheld, b34dc927)
+  * socks: In establish_socks_proxy_udpassoc check result of recv_socks_reply (Frank Lichtenheld, b2cc5c2e)
+  * socket: Remove old 'dynamic remote' feature (Frank Lichtenheld, d61d3c2a)
+  * Repair interaction between DCO and persist-tun after reconnection (Gert Doering, 52c3b435)
+  * remove ENABLE_X509ALTUSERNAME conditional (Gert Doering, faac9681)
+  * Require script-security 2 when using unix: tun (Arne Schwabe, 4a15d4e5)
+  * socks: Fix wrong success check in socks_username_password_auth (Frank Lichtenheld, d104917e)
+  * socks: Replace magic "10" for socks header with macro (Frank Lichtenheld, e2d0e856)
+  * configure.ac: Clean up systemd support (Frank Lichtenheld, 50a6b663)
+  * Fix building test_tls_crypt with cmocka 2.0 (Frank Lichtenheld, 20f8127b)
+  * Update Copyright statements to 2026 (Frank Lichtenheld, f94a3ad2)
+  * GHA: Maintenance update January 2026 (Frank Lichtenheld, 13e339e9)
+  * Fix warnings on Android about unused variables/methods (Arne Schwabe, 4859d259)
+  * Allow test-crypto to work without the --secret argument (Arne Schwabe, 927b45dd)
+  * tests/unit_tests: Port to cmocka 2.0.0 API (Frank Lichtenheld, 6db186e0)
+  * Ensure wolfSSL uses old pre 1.1.0 OpenSSL path for getting ciphers (Arne Schwabe, ab5887cf)
+  * OpenVPN Release 2.7_rc4 (Gert Doering, 7e052cf2)
+
+ -- Yuriy Darnobyt <yuriy.darnobyt@openvpn.net>  Thu, 15 Jan 2026 12:54:15 +0100
