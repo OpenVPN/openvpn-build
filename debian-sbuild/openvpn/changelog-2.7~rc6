@@ -1,0 +1,25 @@
+openvpn (2.7~rc6-debian0) stable; urgency=medium
+
+  * OpenVPN Release 2.7_rc6 (Gert Doering, 706fcc7d)
+  * tunnel_server(): close correct inotify fd (Gert Doering, 5521872f)
+  * Prevent NULL pointer dereference with --dns-updown (Heiko Hund, 62a17417)
+  * manage: Do not trigger actions on management disconnect if not authenticated (Frank Lichtenheld, 4bf05d48)
+  * status: Avoid conversion warnings in status_read/status_printf (Frank Lichtenheld, e1e3b9ae)
+  * GHA: Run openvpnserv UT for MinGW builds (Frank Lichtenheld, 447d04fe)
+  * test_openvpnserv: Make sure to include config.h (Frank Lichtenheld, 83f9c55e)
+  * socket: Remove ifdef for SO_{RCV, SND}BUF (Frank Lichtenheld, 57e70112)
+  * route: Fix conversion warnings on BSDs (Frank Lichtenheld, 22a7010f)
+  * GHA: Update mbedtls to v4 (Frank Lichtenheld, c7fbd8a3)
+  * Add support for Mbed TLS 4 (Max Fillinger, 494fb718)
+  * openvpnserv: Add a first unit test (Frank Lichtenheld, b10ee38c)
+  * openvpnserv: Factor out the string conversion from GetItfDnsDomains (Frank Lichtenheld, cd533c48)
+  * openvpnserv: Fix conversion warnings in interactive.c (Frank Lichtenheld, fdfe0abe)
+  * Silence compiler truncation warning by checking snprintf return value (Arne Schwabe, 1fe95818)
+  * port-share: Check return value of fork() (Frank Lichtenheld, 1a31efb4)
+  * ssl_ncp: Avoid conversion warning in replace_default_in_ncp_ciphers_option (Frank Lichtenheld, b28321ed)
+  * socket: Avoid conversion warning in get_addr_generic (Frank Lichtenheld, 2cc00e80)
+  * ssl_verify_openssl: Avoid conversion warning in x509_verify_cert_ku (Frank Lichtenheld, de3ef0dc)
+  * cryptoapi: Avoid conversion warnings (Frank Lichtenheld, 2ece9a5d)
+  * crypto_openssl: Fix various conversion warnings (Frank Lichtenheld, 07fc7302)
+
+ -- Frank Lichtenheld <frank.lichtenheld@openvpn.net>  Wed, 28 Jan 2026 15:04:31 +0100
