@@ -14,7 +14,7 @@ GPG_KEY_ID="F554A3687412CFFEBDEFE0A312F5F7B42F2B01E7"
 # This also helps catch various problems with expired subkeys and public
 # keys.
 GPG_OPTS="--no-default-keyring --keyring ~/.gnupg-security@openvpn.net/pubring.kbx"
-GIT_AUTHOR="Yuriy Darnobyt <yuriy.darnobyt@openvpn.net>"
+GIT_AUTHOR="Frank Lichtenheld <frank.lichtenheld@openvpn.net>"
 
 # Sometimes we release MSI build only with new INSTALLER_BUILD version
 # It does not require to tag and push OpenVPN sources again
@@ -23,8 +23,8 @@ GIT_AUTHOR="Yuriy Darnobyt <yuriy.darnobyt@openvpn.net>"
 MSI_BUILD_ONLY="NO"
 
 # Version numbers
-OPENVPN_PREVIOUS_VERSION="${OPENVPN_PREVIOUS_VERSION:-2.7_rc4}"
-OPENVPN_CURRENT_VERSION="${OPENVPN_CURRENT_VERSION:-2.7_rc5}"
+OPENVPN_PREVIOUS_VERSION="${OPENVPN_PREVIOUS_VERSION:-2.7_rc5}"
+OPENVPN_CURRENT_VERSION="${OPENVPN_CURRENT_VERSION:-2.7_rc6}"
 OPENVPN_CURRENT_TAG="${OPENVPN_CURRENT_TAG:-refs/tags/v$OPENVPN_CURRENT_VERSION}"
 OPENVPN_PREVIOUS_TAG="refs/tags/v$OPENVPN_PREVIOUS_VERSION"
 
@@ -38,7 +38,7 @@ OPENVPN_DCO_CURRENT_VERSION="${OPENVPN_DCO_CURRENT_VERSION:-6.17.0.2025112700}"
 OPENVPN_DCO_CURRENT_TAG="${OPENVPN_DCO_CURRENT_TAG:-refs/tags/ovpn-net-next/main-6.17.0-2025112700}"
 OPENVPN_DCO_PREVIOUS_TAG="${OPENVPN_DCO_PREVIOUS_TAG:-refs/tags/ovpn-net-next/main-6.17.0-2025102200}"
 
-INSTALLER_BUILD=13
+INSTALLER_BUILD=14
 INSTALLER_VERSION="I"$(printf "%03d\n" $INSTALLER_BUILD)
 # Debian packaging scripts do not allow underscores (e.g "2.4_alpha2")
 DEBIAN_UPSTREAM_VERSION=`echo $OPENVPN_CURRENT_VERSION|sed s/"_"/"~"/g`
