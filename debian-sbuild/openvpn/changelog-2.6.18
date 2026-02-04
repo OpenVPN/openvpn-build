@@ -1,0 +1,18 @@
+openvpn (2.6.18-debian0) stable; urgency=medium
+
+  * preparing release 2.6.18 (Gert Doering, abd5e179)
+  * tunnel_server_*(): close correct inotify fd (Gert Doering, 172fe071)
+  * manage: Do not trigger actions on management disconnect if not authenticated (Frank Lichtenheld, bb27e407)
+  * tests/unit_tests: Port to cmocka 2.0.0 API (Frank Lichtenheld, 78c39974)
+  * Ensure that all unit tests use unbuffered stdout and stderr (Arne Schwabe, be76565f)
+  * Add check for bind-dev in DCO options (Brandon Currell, 30041d6c)
+  * Repair interaction between DCO and persist-tun after reconnection (Gert Doering, fae4a9e3)
+  * multi: Warn about failing read in multi_process_file_closed() (Frank Lichtenheld, d8a30a5b)
+  * tun.c: set IPv4 address temporary on Windows (Lev Stipakov, 3aacb621)
+  * pull-filter: improve documentation (Selva Nair, f8f1e1af)
+  * tests: Allow to override openvpn binary used (Frank Lichtenheld, 966cdeb3)
+  * configure.ac: Remove use of PKCS11_HELPER_LIBS in mbedTLS checks (Frank Lichtenheld, 3118c424)
+  * configure: Try to use pkg-config to detect mbedTLS (Frank Lichtenheld, 40420d43)
+  * Prevent crash on invalid server-ipv6 argument (Klemens Nanni, 09c35f84)
+
+ -- Frank Lichtenheld <frank.lichtenheld@openvpn.net>  Mon, 2 Feb 2026 16:00:10 +0100
