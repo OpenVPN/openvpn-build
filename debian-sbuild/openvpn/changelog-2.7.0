@@ -1,0 +1,9 @@
+openvpn (2.7.0-debian0) stable; urgency=medium
+
+  * OpenVPN Release 2.7.0 (Gert Doering, ee157774)
+  * Review Changes.rst for 2.7.0 release (Frank Lichtenheld, 5836ccdf)
+  * Update the clang-format reference version to 21.1.8 (Frank Lichtenheld, 44a5b330)
+  * crypto: Do not claim we will remove support for BF-CBC in 2.7 (Frank Lichtenheld, f6004dc4)
+  * Mbed TLS 4: Add more algorithms (Max Fillinger, 2183eb5d)
+
+ -- Frank Lichtenheld <frank.lichtenheld@openvpn.net>  Wed, 11 Feb 2026 11:48:21 +0100
