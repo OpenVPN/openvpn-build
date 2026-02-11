@@ -20,11 +20,11 @@ GIT_AUTHOR="Frank Lichtenheld <frank.lichtenheld@openvpn.net>"
 # It does not require to tag and push OpenVPN sources again
 # It also does not require to re-build linux packages
 # With MSI_BUILD_ONLY="YES" we can skip all that steps
-MSI_BUILD_ONLY="YES"
+MSI_BUILD_ONLY="NO"
 
 # Version numbers
-OPENVPN_PREVIOUS_VERSION="${OPENVPN_PREVIOUS_VERSION:-2.7_rc5}"
-OPENVPN_CURRENT_VERSION="${OPENVPN_CURRENT_VERSION:-2.7_rc6}"
+OPENVPN_PREVIOUS_VERSION="${OPENVPN_PREVIOUS_VERSION:-2.7_rc6}"
+OPENVPN_CURRENT_VERSION="${OPENVPN_CURRENT_VERSION:-2.7.0}"
 OPENVPN_CURRENT_TAG="${OPENVPN_CURRENT_TAG:-refs/tags/v$OPENVPN_CURRENT_VERSION}"
 OPENVPN_PREVIOUS_TAG="refs/tags/v$OPENVPN_PREVIOUS_VERSION"
 
@@ -38,14 +38,14 @@ OPENVPN_DCO_CURRENT_VERSION="${OPENVPN_DCO_CURRENT_VERSION:-6.17.0.2025112700}"
 OPENVPN_DCO_CURRENT_TAG="${OPENVPN_DCO_CURRENT_TAG:-refs/tags/ovpn-net-next/main-6.17.0-2025112700}"
 OPENVPN_DCO_PREVIOUS_TAG="${OPENVPN_DCO_PREVIOUS_TAG:-refs/tags/ovpn-net-next/main-6.17.0-2025102200}"
 
-INSTALLER_BUILD=15
+INSTALLER_BUILD=16
 INSTALLER_VERSION="I"$(printf "%03d\n" $INSTALLER_BUILD)
 # Debian packaging scripts do not allow underscores (e.g "2.4_alpha2")
 DEBIAN_UPSTREAM_VERSION=`echo $OPENVPN_CURRENT_VERSION|sed s/"_"/"~"/g`
 DEBIAN_PACKAGE_VERSION="1"
 DEBIAN_PACKAGE_BUILD_ARCHS="amd64 arm64"
 # Which Debian repos to publish to
-FREIGHT_REPOS="testing release_27"
+FREIGHT_REPOS="stable testing release_27"
 
 # MSI internal version - make sure this only contains digits and '.'
 PRODUCT_VERSION="${OPENVPN_CURRENT_VERSION/%_*/.0}"$(printf "%02d\n" $INSTALLER_BUILD)
