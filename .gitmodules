@@ -5,7 +5,7 @@
 [submodule "src/openvpn"]
 	path = src/openvpn
 	url = https://github.com/OpenVPN/openvpn.git
-	branch = master
+	branch = release/2.7
 [submodule "src/vcpkg"]
 	path = src/vcpkg
 	url = https://github.com/microsoft/vcpkg.git
