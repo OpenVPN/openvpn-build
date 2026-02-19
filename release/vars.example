@@ -14,7 +14,7 @@ GPG_KEY_ID="F554A3687412CFFEBDEFE0A312F5F7B42F2B01E7"
 # This also helps catch various problems with expired subkeys and public
 # keys.
 GPG_OPTS="--no-default-keyring --keyring ~/.gnupg-security@openvpn.net/pubring.kbx"
-GIT_AUTHOR="Frank Lichtenheld <frank.lichtenheld@openvpn.net>"
+GIT_AUTHOR="Yuriy Darnobyt <yuriy.darnobyt@openvpn.net>"
 
 # Sometimes we release MSI build only with new INSTALLER_BUILD version
 # It does not require to tag and push OpenVPN sources again
