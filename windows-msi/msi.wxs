@@ -85,7 +85,6 @@
         <Binary Id="Service.js" SourceFile="script\Service.js"/>
         <Binary Id="PlapReg.js" SourceFile="script\PlapReg.js"/>
         <Binary Id="ACL.js" SourceFile="script\ACL.js"/>
-        <Binary Id="RegisterEventSource.js" SourceFile="script\RegisterEventSource.js"/>
 
         <CustomAction Id="GetInstallDirForPlap" BinaryKey="PlapReg.js" JScriptCall="GetInstallDir" />
         <CustomAction Id="UpdatePlapReg" BinaryKey="PlapReg.js" JScriptCall="UpdatePlapReg" Execute="deferred" Impersonate="no" />
@@ -96,7 +95,6 @@
         <CustomAction Id="GetInstallDirForACL" BinaryKey="ACL.js" JScriptCall="GetInstallDir" Return="check" />
         <CustomAction Id="SetACL" BinaryKey="ACL.js" JScriptCall="SetACL" Execute="deferred" Impersonate="no" Return="check" />
 
-        <CustomAction Id="RegisterEventSource" BinaryKey="RegisterEventSource.js" JScriptCall="RegisterEventSource" Execute="deferred" Impersonate="no" Return="check" />
         <!--
             Detect system information
         -->
@@ -112,7 +110,6 @@
             <Custom Action="UpdatePlapReg" After="InstallFiles"/>
             <Custom Action="GetInstallDirForACL" After="SetProductDirParam">NOT Installed</Custom>
             <Custom Action="SetACL" After="InstallFiles">NOT Installed</Custom>
-            <Custom Action="RegisterEventSource" After="InstallFiles">NOT Installed</Custom>
         </InstallExecuteSequence>
         <UI>
             <ProgressText Action="FindSystemInfo">Detecting system information</ProgressText>
@@ -1068,6 +1065,17 @@
                         Value="7" />
                 </RegistryKey>
             </Component>
+
+            <Component Id="reg.openvpnservice_event_source" Guid="{D2CEB66C-2EC6-4889-89EA-E38940F53E62}">
+                <util:EventSource
+                    Name="OpenVPNService"
+                    Log="Application"
+                    EventMessageFile="%SystemRoot%\Microsoft.NET\Framework\v4.0.30319\EventLogMessages.dll"
+                    SupportsErrors="yes"
+                    SupportsWarnings="yes"
+                    SupportsInformationals="yes"
+                    KeyPath="yes" />
+            </Component>
         </DirectoryRef>
 
 
@@ -1324,6 +1332,7 @@
                 <ComponentRef Id="config_auto.README.txt"/>
                 <ComponentRef Id="reg.autostart_config_dir"/>
                 <ComponentRef Id="LOGDIR.permissions"/>
+                <ComponentRef Id="reg.openvpnservice_event_source"/>
 
                 <Feature
                     Id="OpenVPN.PLAP.Register"
