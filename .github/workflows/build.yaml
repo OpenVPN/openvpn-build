@@ -160,7 +160,7 @@ jobs:
           path: openvpn-windows-test
 
       - name: Install SSH key for tclient host
-        uses: shimataro/ssh-key-action@d4fffb50872869abe2d9a9098a6d9c5aa7d16be4 # v2.7.0
+        uses: shimataro/ssh-key-action@6b84f2e793b32fa0b03a379cadadec75cc539391 # v2.8.0
         with:
           key: ${{ secrets.SSH_KEY_FOR_TCLIENT_HOST }}
           known_hosts: unnecessary
