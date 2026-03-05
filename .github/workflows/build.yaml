@@ -81,7 +81,7 @@ jobs:
         run: |
           $NewProductCode = (New-Guid).ToString().ToUpper()
           $BuildVersion = 10000 + [int]$env:GITHUB_RUN_NUMBER
-          $NewProductVersion = "2.6.$BuildVersion"
+          $NewProductVersion = "2.7.$BuildVersion"
           echo $NewProductCode $NewProductVersion
           $version_m4 = (Get-Content version.m4)
           $version_m4 -replace '^define\(\[PRODUCT_CODE\], \[\{(?<ProductCode>.*)\}]\)', "define([PRODUCT_CODE], [{${NewProductCode}}])" `
@@ -113,22 +113,19 @@ jobs:
         run: |
           ./build-and-package.ps1 -arch ${{ matrix.arch }}
 
-      - name: Get openvpn commit id
-        working-directory: src/openvpn
+      - name: Rename MSI
         run: |
-          $commit = git rev-parse --short HEAD
-          echo "OPENVPN_COMMIT=$commit" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf-8 -Append
-
-      - name: Get datetime
-        run: |
+          $commit = git -C ./src/openvpn rev-parse --short HEAD
           $dt = Get-Date -Format "yyyyMMddThhmm"
-          echo "DATETIME=${dt}" >> $Env:GITHUB_ENV
+          $orig_msi_name = (Get-Item .\windows-msi\image\*-${{ matrix.arch }}.msi).Name
+          $msi_name = $orig_msi_name -replace '^(OpenVPN-.*?)-(${{ matrix.arch }}\.msi)', "`$1+${dt}-${commit}-`$2"
+          mv .\windows-msi\image\$orig_msi_name .\windows-msi\image\$msi_name
 
-      - name: Archive artifacts
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+      - name: Archive MSI
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
         with:
-          name: openvpn-msi-${{ env.DATETIME }}-${{ env.OPENVPN_COMMIT }}-${{ matrix.arch }}
           path: ${{ github.workspace }}\windows-msi\image\*-${{ matrix.arch }}.msi
+          archive: false
 
       - name: Save vcpkg cache
         if: steps.vcpkg-restore.outputs.cache-hit != 'true'
@@ -165,14 +162,14 @@ jobs:
           key: ${{ secrets.SSH_KEY_FOR_TCLIENT_HOST }}
           known_hosts: unnecessary
 
-      - name: Cleanup old artifacts
+      - name: Cleanup old MSIs
         run:
           rm -fr msi
 
-      - name: Get artifacts
-        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
+      - name: Get MSI
+        uses: actions/download-artifact@70fc10c6e5e1ce46ad2ea6f2b72d43f7d47b13c3 # v8.0.0
         with:
-          pattern: "openvpn-msi-*-amd64"
+          pattern: "*-amd64.msi"
           path: msi
 
       - name: Run AWS test
@@ -184,7 +181,7 @@ jobs:
           .\Start-AWSTest.ps1 -SSH_KEY ~/.ssh/id_rsa -MSI_PATH $(Get-ChildItem ../msi/*.msi | select -ExpandProperty FullName)
 
       - name: Archive openvpn logs
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
         if: ${{ always() }}
         with:
           name: t_client_openvpn_logs
@@ -201,17 +198,10 @@ jobs:
         run: sudo apt install knockd
 
       - name: Get artifacts
-        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
+        uses: actions/download-artifact@70fc10c6e5e1ce46ad2ea6f2b72d43f7d47b13c3 # v8.0.0
         with:
+          pattern: "*.msi"
           path: msi
-
-      - name: Flatten and rename artifacts
-        working-directory: msi
-        run: |
-          find -name '*.msi' -printf "%p\n" | while read f; do mv -v $f $(dirname $f).msi; rm -rvf $(dirname $f); done
-          rm -rf t_client_openvpn_logs
-          rm -rf openvpn-debian
-          find
 
       - name: Knock ports on remote
         run: knock -d 500 ${{ secrets.MSI_UPLOAD_REMOTE_HOST }} ${{ secrets.MSI_UPLOAD_REMOTE_KNOCK_SEQUENCE }} ; sleep 1
@@ -225,7 +215,7 @@ jobs:
           ssh-keyscan -H ${{ secrets.MSI_UPLOAD_REMOTE_HOST }} > $HOME/.ssh/known_hosts
           echo "${{ secrets.MSI_UPLOAD_PRIVATE_KEY }}" > $HOME/.ssh/key
           chmod 400 $HOME/.ssh/key
-          scp -i $HOME/.ssh/key *.msi ${{ secrets.MSI_UPLOAD_USERNAME }}@${{ secrets.MSI_UPLOAD_REMOTE_HOST }}:${{ secrets.MSI_UPLOAD_REMOTE_PATH }}
+          scp -i $HOME/.ssh/key *.msi/*.msi ${{ secrets.MSI_UPLOAD_USERNAME }}@${{ secrets.MSI_UPLOAD_REMOTE_HOST }}:${{ secrets.MSI_UPLOAD_REMOTE_PATH }}
 
   debian:
     strategy:
@@ -329,7 +319,7 @@ jobs:
           sg sbuild ./scripts/build-all.sh
 
       - name: Archive packages
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
         with:
           name: openvpn-debian-${{ matrix.arch }}
           path: |
