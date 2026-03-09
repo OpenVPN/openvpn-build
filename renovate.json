@@ -1,6 +1,7 @@
 {
     "$schema": "https://docs.renovatebot.com/renovate-schema.json",
     "baseBranchPatterns": [ "master", "release/2.6", "release/2.7" ],
+    "prConcurrentLimit": 15,
     "packageRules": [
         {
             "matchDepNames": [
