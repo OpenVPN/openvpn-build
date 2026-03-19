@@ -10,4 +10,4 @@ tmp
 *.cer
 *.crt
 release/vars.infrastructure
-windows-msi/build-and-package-env.ps1
+windows-msi/build-env.bat

@@ -22,6 +22,7 @@ jobs:
       SigningKeyStore: ${{ secrets.GOOGLE_CLOUD_KMS_KEYRING }}
       SigningStoreKeyName: ${{ secrets.GOOGLE_CLOUD_KMS_KEY }}
       SigningCertificateFile: ${{ github.workspace }}/certificate.pem
+      ManifestTimestampRFC3161Url: http://timestamp.digicert.com
       VCPKG_BINARY_SOURCES: clear;files,${{ github.workspace }}/vcpkg_cache,readwrite
 
     name: 'openvpn-build'
@@ -83,9 +84,9 @@ jobs:
           $BuildVersion = 10000 + [int]$env:GITHUB_RUN_NUMBER
           $NewProductVersion = "2.7.$BuildVersion"
           echo $NewProductCode $NewProductVersion
-          $version_m4 = (Get-Content version.m4)
-          $version_m4 -replace '^define\(\[PRODUCT_CODE\], \[\{(?<ProductCode>.*)\}]\)', "define([PRODUCT_CODE], [{${NewProductCode}}])" `
-            -replace '^define\(\[PRODUCT_VERSION\], \[(.*?)\]\)', "define([PRODUCT_VERSION], [${NewProductVersion}])" | Out-File -Encoding ASCII version.m4
+          $version_cmake = (Get-Content version.cmake)
+          $version_cmake -replace '^set\(PRODUCT_CODE\s+"\{.*?\}"\)', "set(PRODUCT_CODE `"{${NewProductCode}}`")" `
+            -replace '^set\(PRODUCT_VERSION\s+".*?"\)', "set(PRODUCT_VERSION `"${NewProductVersion}`")" | Out-File -Encoding ASCII version.cmake
 
       - name: Authenticate to Google Cloud
         id: 'auth'
@@ -105,26 +106,28 @@ jobs:
         if: ${{ env.SigningKeyStore != '' }}
         run: |
           echo "${{ secrets.SIGNING_CERTIFICATE }}" >${{ github.workspace }}/certificate.pem
-          ./build-and-package.ps1 -sign -arch ${{ matrix.arch }}
+          cmake -B build -DOPENVPN_ARCH=${{ matrix.arch }} -DSIGN_BINARIES=ON
+          cmake --build build
 
       - name: Build
         working-directory: windows-msi
         if: ${{ env.SigningKeyStore == '' }}
         run: |
-          ./build-and-package.ps1 -arch ${{ matrix.arch }}
+          cmake -B build -DOPENVPN_ARCH=${{ matrix.arch }}
+          cmake --build build
 
       - name: Rename MSI
         run: |
           $commit = git -C ./src/openvpn rev-parse --short HEAD
           $dt = Get-Date -Format "yyyyMMddThhmm"
-          $orig_msi_name = (Get-Item .\windows-msi\image\*-${{ matrix.arch }}.msi).Name
+          $orig_msi_name = (Get-Item .\windows-msi\build\image\*-${{ matrix.arch }}.msi).Name
           $msi_name = $orig_msi_name -replace '^(OpenVPN-.*?)-(${{ matrix.arch }}\.msi)', "`$1+${dt}-${commit}-`$2"
-          mv .\windows-msi\image\$orig_msi_name .\windows-msi\image\$msi_name
+          mv .\windows-msi\build\image\$orig_msi_name .\windows-msi\build\image\$msi_name
 
       - name: Archive MSI
         uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
         with:
-          path: ${{ github.workspace }}\windows-msi\image\*-${{ matrix.arch }}.msi
+          path: ${{ github.workspace }}\windows-msi\build\image\*-${{ matrix.arch }}.msi
           archive: false
 
       - name: Save vcpkg cache

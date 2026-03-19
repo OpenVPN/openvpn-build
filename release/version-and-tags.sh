@@ -88,11 +88,11 @@ popd
 
 pushd "$MSI"
 # Update user-visible version
-sed -E -i s/"define\(\[PACKAGE_VERSION\], \[(.+)\]\)"/"define\(\[PACKAGE_VERSION\], \[$BUILD_VERSION\]\)"/1 version.m4
-# if version.m4 was already updated, assume everything is fine as is
+sed -E -i s/'set\(PACKAGE_VERSION "(.+)"\)'/"set(PACKAGE_VERSION \"$BUILD_VERSION\")"/1 version.cmake
+# if version.cmake was already updated, assume everything is fine as is
 if ! git diff --exit-code; then
-    PRODUCT_VERSION_NEW="$PRODUCT_VERSION" ./bump-version.m4.sh
-    git add ./version.m4
+    PRODUCT_VERSION_NEW="$PRODUCT_VERSION" ./bump-version.sh
+    git add ./version.cmake
 fi
 
 popd
