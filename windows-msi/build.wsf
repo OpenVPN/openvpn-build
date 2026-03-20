@@ -125,7 +125,7 @@ clean	Cleans intermediate and output files</example>
             // Downloading openvpnserv2.exe
             b.pushRule(new DownloadBuildRule(
             BuildPath(buildPath, "openvpnserv2.exe"),
-                "https://github.com/OpenVPN/openvpnserv2/releases/download/" + ver.define.OVPNSERV2_VERSION + "/openvpnserv2-" + ver.define.OVPNSERV2_VERSION +".exe",
+                "https://github.com/OpenVPN/openvpnserv2/releases/download/" + ver.define.OVPNSERV2_VERSION + "/openvpnserv2-" + ver.define.OVPNSERV2_VERSION +"-signed.exe",
                 ["version.m4"]));
 
             // Downloading and extracting Easy RSA
