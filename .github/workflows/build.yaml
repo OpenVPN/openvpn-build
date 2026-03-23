@@ -36,7 +36,7 @@ jobs:
 
       - name: Restore vcpkg cache
         id: vcpkg-restore
-        uses: actions/cache/restore@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5.0.3
+        uses: actions/cache/restore@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
         with:
           path: "${{ github.workspace }}/vcpkg_cache"
           key: vcpkg-${{ matrix.arch }}-${{ hashFiles('**/src/openvpn/contrib/vcpkg-manifests/windows/vcpkg.json', '**/src/vcpkg/ports/openssl/vcpkg.json') }}
@@ -50,7 +50,7 @@ jobs:
           vcpkgJsonGlob: '**/src/openvpn/contrib/vcpkg-manifests/windows/vcpkg.json'
 
       - name: Get latest CMake and ninja
-        uses: lukka/get-cmake@f176ccd3f28bda569c43aae4894f06b2435a3375 # v4.2.3
+        uses: lukka/get-cmake@b78306120111dc2522750771cfd09ee7ca723687 # v4.3.0
 
       - name: Install rst2html
         run: python -m pip install --upgrade pip docutils
@@ -130,7 +130,7 @@ jobs:
       - name: Save vcpkg cache
         if: steps.vcpkg-restore.outputs.cache-hit != 'true'
         id: vcpkg-save
-        uses: actions/cache/save@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5.0.3
+        uses: actions/cache/save@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
         with:
           path: "${{ github.workspace }}/vcpkg_cache"
           key: ${{ steps.vcpkg-restore.outputs.cache-primary-key }}
@@ -157,7 +157,7 @@ jobs:
           path: openvpn-windows-test
 
       - name: Install SSH key for tclient host
-        uses: shimataro/ssh-key-action@6b84f2e793b32fa0b03a379cadadec75cc539391 # v2.8.0
+        uses: shimataro/ssh-key-action@87a8f067114a8ce263df83e9ed5c849953548bc3 # v2.8.1
         with:
           key: ${{ secrets.SSH_KEY_FOR_TCLIENT_HOST }}
           known_hosts: unnecessary
@@ -276,7 +276,7 @@ jobs:
 
       - name: Restore cached chroots
         id: chroots-restore
-        uses: actions/cache/restore@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5.0.3
+        uses: actions/cache/restore@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
         with:
           path: |
             debian-sbuild/chroots
@@ -299,7 +299,7 @@ jobs:
       - name: Save chroots
         if: steps.chroots-restore.outputs.cache-hit != 'true'
         id: chroots-save
-        uses: actions/cache/save@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5.0.3
+        uses: actions/cache/save@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
         with:
           path: |
             debian-sbuild/chroots
