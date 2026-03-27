@@ -7,58 +7,56 @@ This folder contains scripts and binaries required to build and package OpenVPN
 Requirements for building MSI packages
 --------------------------------------
 
-1. `WiX Toolset`_ - tested with 3.14.1
-2. ``unzip.exe`` - tested with UnZip 6.00 of 20 April 2009, by Info-ZIP
-3. GNU ``tar.exe`` - tested with 1.30
-4. ``gzip.exe`` - tested with 1.9
-5. ``bzip2.exe`` - tested with 1.0.6, 6-Sept-2010
+These are the tools used directly by this buildsystem. For
+the dependencies of building OpenVPN itself see the next
+section.
 
-Note: ``unzip.exe``, ``tar.exe``, ``gzip.exe``, and ``bzip2.exe`` must be in
-``%PATH%``.
+This buildsystem only works on Windows machines, it should
+work on Windows 10 and newer and Windows Server 2019 and newer.
+
+1. CMake 3.20 or later
+2. `WiX Toolset`_ - tested with 3.14.1
 
 Requirements for building OpenVPN and its dependencies
 ------------------------------------------------------
 
-Building and packaging OpenVPN on Windows is a fairly complex process with lots
-of dependencies. If you're starting from scratch it is recommended to use the
-"msibuilder" VM in `openvpn-vagrant <https://github.com/OpenVPN/openvpn-vagrant/>`_.
+These tools are required for building OpenVPN and OpenVPN-GUI
 
-If using Vagrant and Virtualbox is not an option you should be able to run the
-Vagrant provisioning scripts with suitable parameters on a fresh Windows 10-based system,
-though only Windows Server 2019 is tested.
+1. Visual Studio build tools
+2. Git
+3. Powershell Core (pwsh)
+4. Python 3 + docutils package
 
-In either case you will end up with a directory layout such as this:
-
-- openvpn-build
-
-- vcpkg (openssl etc.)
-
-- openvpn-gui
-
-- openvpn
-
+All other dependencies are built via vcpkg.
 
 Signing
 -------
 
-If you want to do code signing, you need to add your code-signing
-PFX certificate into the certificate store::
+If you want to do code signing, set the following environment variables (shown
+here for ``cmd.exe``) before building with ``-DSIGN_BINARIES=ON``::
 
-    Import-PfxCertificate -FilePath .\mycert.pfx -CertstoreLocation Cert:\Currentuser\My -Password (ConvertTo-SecureString -String "mypass" -Force -AsPlainText)
+    set JsignJar=path\to\jsign.jar
+    set SigningStoreType=GOOGLECLOUD
+    set SigningKeyStore=your-keyring
+    set SigningStoreKeyName=your-key
+    set SigningCertificateFile=path\to\certificate.pem
+    set SigningStorePass=your-access-token
+    set ManifestTimestampRFC3161Url=http://timestamp.digicert.com
 
-This command will print out the certificate thumbprint which you'll need to tell to
-the build scripts. To do this, create a config file, ``build-and-package-env.ps1``,
-next to ``build-and-package.ps1``::
+Or for PowerShell::
 
-    $Env:ManifestCertificateThumbprint = "cert thumbprint"
-
-This is not required unless you call ``build-and-package.ps1`` with the ``-sign``
-option.
+    $env:JsignJar = "path\to\jsign.jar"
+    $env:SigningStoreType = "GOOGLECLOUD"
+    $env:SigningKeyStore = "your-keyring"
+    $env:SigningStoreKeyName = "your-key"
+    $env:SigningCertificateFile = "path\to\certificate.pem"
+    $env:SigningStorePass = "your-access-token"
+    $env:ManifestTimestampRFC3161Url = "http://timestamp.digicert.com"
 
 Building and packaging
 ----------------------
 
-First adjust ``version.m4``. It is important to increment
+First adjust ``version.cmake``. It is important to increment
 ``PRODUCT_VERSION`` *and* ``PRODUCT_CODE`` on each release. MSI
 upgrading logic relies on this. You can use ``bump-version.ps1``
 script for this purpose.
@@ -66,60 +64,26 @@ script for this purpose.
 To build and package::
 
     cd openvpn-build\windows-msi
-    .\build-and-package.ps1
+    cmake -B build
+    cmake --build build
 
-If everything was set up correctly you should see three MSI packages in
-``image`` subfolder, each signed and containing signed binaries.
+To build a single architecture or with signing::
+
+    cmake -B build -DOPENVPN_ARCH=amd64 -DSIGN_BINARIES=ON
+    cmake --build build
+
+If everything was set up correctly you should see MSI packages in the
+``build\image`` subfolder.
+
+Individual targets can be built directly::
+
+    cmake --build build --target msi_amd64
 
 Cleaning up
 -----------
 
-You can use the ``cleanup.ps1`` script to clean up temporary build files and build artefacts.
-This makes it easier to create clean builds.
+Remove the ``build`` directory to clean all build artefacts, or use::
 
-build.wsf
----------
-
-Note: The following explains details of the packaging process wrapped by the
-``build-and-package.ps1`` script described above.
-
-The ``build.wsf`` is a simple Makefile type building tool used to generate MSI
-packages. It expects OpenVPN and its dependencies to be
-built and in the directory layout described above. It was developed to avoid
-Microsoft Visual Studio or GNU Make requirements. Refer to ``build.wsf`` for
-exact usage::
-
-    C:\openvpn-build\windows-msi>cscript build.wsf /?
-    Microsoft (R) Windows Script Host Version 5.812
-    Copyright (C) Microsoft Corporation. All rights reserved.
-
-    Packages OpenVPN for Windows.
-    Usage: build.wsf [<command>] [/a]
-
-    Options:
-
-    <command> : Command to execute (default: "all")
-    a         : Builds all targets even if output is newer than input
-
-    Commands:
-    all     Builds MSI packages
-    msi     Builds MSI packages
-    clean   Cleans intermediate and output files
-
-Digital signing
----------------
-
-The ``build.wsf`` tool does not support digital signing of MSI files
-(yet). The ``sign-openvpn.bat`` and ``sign-msi.bat`` scripts handle that part.
-
-When signing MSI packages, set a signature description (``/d`` flag with
-``signtool.exe`` utility). The ``msiexec.exe`` saves the MSI package under some
-random name and launches an elevated process to install it. When the signature
-on the MSI package contains no description, Windows displays the MSI filename
-instead on the UAC prompt. Now MSI having a random filename, the UAC prompt
-gets quite confusing. Therefore, we strongly encourage you to set a description
-in the MSI signature accurately describing the package content.
-
-Signing of ``tapctl.exe`` is mandatory as it requires elevation of privileges.
+    cmake --build build --target clean
 
 .. _`WiX Toolset`: http://wixtoolset.org/

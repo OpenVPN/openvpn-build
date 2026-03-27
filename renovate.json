@@ -56,10 +56,10 @@
         {
             "customType": "regex",
             "managerFilePatterns": [
-                "/windows-msi/version.m4$/"
+                "/windows-msi/version\\.cmake$/"
             ],
             "matchStrings": [
-                "datasource=(?<datasource>.*?) depName=(?<depName>.*?)( versioning=(?<versioning>.*?))?\\sdefine\\(\\[.*?\\],\\s*\\[(?<currentValue>.*?)\\]\\)\\s"
+                "datasource=(?<datasource>.*?) depName=(?<depName>.*?)( versioning=(?<versioning>.*?))?\\nset\\(\\w+\\s+\"(?<currentValue>.*?)\"\\)"
             ]
         }
     ]
