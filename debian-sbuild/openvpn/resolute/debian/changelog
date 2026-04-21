@@ -1,3 +1,63 @@
+openvpn (2.6.14-2ubuntu1) questing; urgency=low
+
+  * Merge from Debian unstable. Remaining changes:
+    - d/control: Demote easy-rsa to Suggests (universe package).
+    - debian/openvpn@.service: Add '--script-security 2' similar to what
+      got added to debian/openvpn.init.d ages ago (LP #1454725)
+    - d/t/control: Move to isolation-container to enable armhf/LXD coverage.
+      (LP #2104146)
+    - d/p/handle_intentional_route_push_float_ip.patch
+
+ -- Gianfranco Costamagna <locutusofborg@debian.org>  Sat, 06 Sep 2025 08:40:39 +0200
+
+openvpn (2.6.14-2) unstable; urgency=medium
+
+  * Cherry-pick upstream fix to build with Kernel 6.16+ (Closes: #1114249)
+  * d/control: Set homepage to the community (open-source) subpage
+
+ -- Bernhard Schmidt <berni@debian.org>  Fri, 05 Sep 2025 22:13:12 +0200
+
+openvpn (2.6.14-1ubuntu2) questing; urgency=medium
+
+  * d/p/handle_intentional_route_push_float_ip.patch: Fix floating IP due
+    to "route VPN_IP net_gateway", which can lead to incorrect blocking of
+    a source IP switch for 60 seconds immediately after connection setup.
+    (LP: #2108860)
+
+ -- Bryce Harrington <bryce@canonical.com>  Thu, 28 Aug 2025 15:34:24 -0700
+
+openvpn (2.6.14-1ubuntu1) questing; urgency=medium
+
+  * Merge from Debian Unstable (LP: #2110417). Remaining changes:
+    - d/control: Demote easy-rsa to Suggests (universe package).
+    - debian/openvpn@.service: Add '--script-security 2' similar to what
+      got added to debian/openvpn.init.d ages ago (LP #1454725)
+    - d/t/control: Move to isolation-container to enable armhf/LXD coverage.
+      (LP #2104146)
+  * Dropped Changes:
+    - SECURITY UPDATE: denial of service issue
+      + debian/patches/CVE-2025-2704.patch: allow tls-crypt-v2 to be setup
+        only on initial packet of a session in src/openvpn/ssl.c,
+        src/openvpn/ssl_common.h, src/openvpn/ssl_pkt.c,
+        src/openvpn/ssl_pkt.h, src/openvpn/tls_crypt.c,
+        src/openvpn/tls_crypt.h, tests/unit_tests/openvpn/test_tls_crypt.c.
+      + CVE-2025-2704
+      [ Fixed upstream in 2.6.14 ]
+
+ -- Lena Voytek <lena.voytek@canonical.com>  Wed, 21 May 2025 13:13:19 -0400
+
+openvpn (2.6.14-1) unstable; urgency=medium
+
+  [ Aquila Macedo ]
+  * Add new autopkgtest for unit tests
+
+  [ Bernhard Schmidt ]
+  * New upstream version 2.6.14
+    - CVE-2025-2704 possible ASSERT() on OpenVPN servers using --tls-crypt-v2
+      (Closes: #1101935)
+
+ -- Bernhard Schmidt <berni@debian.org>  Wed, 02 Apr 2025 20:56:44 +0200
+
 openvpn (2.6.13-1ubuntu3) plucky; urgency=medium
 
   * SECURITY UPDATE: denial of service issue
@@ -2915,4 +2975,3 @@ openvpn (1.2.0-1) unstable; urgency=low
   * Initial Release. (Closes: #140463)
 
  -- Alberto Gonzalez Iniesta <agi@agi.as>  Thu, 23 May 2002 11:00:37 +0200
-
