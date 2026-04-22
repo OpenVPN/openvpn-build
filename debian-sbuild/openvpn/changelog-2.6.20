@@ -1,0 +1,20 @@
+openvpn (2.6.20-debian0) stable; urgency=medium
+
+  * OpenVPN Release 2.6.20 (Gert Doering, 8e87f2c3)
+  * Ensure that buffer of freed session are not used (Arne Schwabe, 4472265e)
+  * tls-crypt-v2: Avoid interpreting opcode as part of WKc (Steffan Karger, 0dc820fe)
+  * dco-linux: enforce ifindex only for DEL_PEER notifications (Ralf Lici, adece456)
+  * dco: backport immediate notification processing on Linux and FreeBSD (Ralf Lici, e78a8af2)
+  * dco: port core/context infrastructure needed for backport of commit 7791f53 (Ralf Lici, 876a8cf5)
+  * Fix copyright line in README (Gert Doering, 219b8b3b)
+  * openvpnmsica: Fix setting of iTicks in schedule_adapter_delete (Frank Lichtenheld, 246bc0e8)
+  * doc: fix client-nat syntax and examples (Ralf Lici, 0481d937)
+  * management: stop bytecount on client disconnection (Ralf Lici, ea8185ca)
+  * dco_freebsd: use AF_LOCAL sockets for ioctl() communication with DCO driver (Gert Doering, a8918624)
+  * configure.ac: adjust to native inotify support for FreeBSD 15+ (Gert Doering, a4bf28df)
+  * DCO Linux: Fix setting DCO ifmode failing on big endian archs (Arne Schwabe, a2037b26)
+  * auth-pam: fix discards 'const' qualifier from pointer target type (Frank Lichtenheld, 7ec8cbe6)
+  * dns: fix discards 'const' qualifier from pointer target type (Rudi Heitbaum, 7cf6e1f8)
+  * ntlm: fix discards 'const' qualifier from pointer target type (Rudi Heitbaum, b5087dcf)
+
+ -- Yuriy Darnobyt <yuriy.darnobyt@openvpn.net>  Wed, 22 Apr 2026 09:17:36 +0200
