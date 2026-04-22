@@ -22,7 +22,7 @@ Build-Depends:
  systemd-dev [linux-any]
 Standards-Version: 4.6.0.1
 Rules-Requires-Root: no
-Homepage: https://openvpn.net/
+Homepage: https://openvpn.net/community/
 Vcs-Git: https://salsa.debian.org/debian/openvpn.git
 Vcs-Browser: https://salsa.debian.org/debian/openvpn
 

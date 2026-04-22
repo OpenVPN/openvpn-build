@@ -1,0 +1,11 @@
+#!/bin/sh
+set -ex
+
+# This test sets up and builds the openvpn, then runs the unit tests.
+
+dh_update_autotools_config
+dh_autoreconf
+debian/rules override_dh_auto_configure
+debian/rules override_dh_auto_build
+
+make -C tests/unit_tests check V=0
