@@ -1,0 +1,28 @@
+openvpn (2.7.2-debian0) stable; urgency=medium
+
+  * OpenVPN Release 2.7.2 (Gert Doering, 59748789)
+  * Ensure that buffer of freed session are not used (Arne Schwabe, 4a2c827c)
+  * tls-crypt-v2: Avoid interpreting opcode as part of WKc (Steffan Karger, 607e2fcb)
+  * Fix copyright line in README (Gert Doering, bac8be07)
+  * GHA: Factor out building SSL libs to a reusable workflow (Frank Lichtenheld, 66be31fe)
+  * Inlined credentials: read missing password from management interface (Selva Nair, b450414d)
+  * verify_x509_name: Improve the error message on failure (Selva Nair, 20b4ecd9)
+  * GHA: Add OpenSSL 4.0 build (Arne Schwabe, e57d16c8)
+  * OpenSSL 4.0: Use X509_check_certificate_times instead of X509_cmp_time (Arne Schwabe, 8747fcf6)
+  * ssl_openssl: Fix some CRL mixups (David Benjamin, 0588668f)
+  * Add unit tests for 'auth-user-pass username-only' (Selva Nair, e722fde4)
+  * build: Use info fetched from version.m4 (Luis Cruz, de598fc9)
+  * Log when writing username/password to TLS buffer fails (Selva Nair, 784ba7a2)
+  * Try to emphasise the transition from old ovpn-dco to new ovpn module (Arne Schwabe, a4936d31)
+  * management: add base64 multi-line input for passwords (Luca Boccassi, d9b48759)
+  * win: Fix nrpt_dnssec flag handling (Frank Lichtenheld, 2aaa5e4d)
+  * openvpnmsica: Fix setting of iTicks in schedule_adapter_delete (Frank Lichtenheld, f4669642)
+  * Do not access internals of ASN1_INTEGER to print hex of serial (Arne Schwabe, c3dd2ab2)
+  * doc: Remove some explanations for pre-2.3 configurations (Frank Lichtenheld, 06a0d8bc)
+  * OpenSSL 4.0: Make X509 objects const (Arne Schwabe, 120bc506)
+  * Add unit test for printing various details of certificates (Arne Schwabe, 490364ce)
+  * Rename key* to privkey* in cert_data.h (Arne Schwabe, 4d16f2a6)
+  * Use ASN1_BIT_STRING_get_bit to check for netscape certificate usage (Arne Schwabe, 86d272cd)
+  * Update --learn-address man page with ipv6 information (Greg Cox, 081eb6ec)
+
+ -- Yuriy Darnobyt <yuriy.darnobyt@openvpn.net>  Tue, 21 Apr 2026 18:47:44 +0200
