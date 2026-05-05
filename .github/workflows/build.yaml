@@ -175,10 +175,13 @@ jobs:
       - name: Run AWS test
         working-directory: openvpn-windows-test
         shell: pwsh
+        env:
+          ConfigFile: ${{ secrets.T_CLIENT_INLINE_FILE }}
         run: |
           Install-Module -Name AWS.Tools.Installer -Force
           Install-AWSToolsModule AWS.Tools.EC2 -Force
-          .\Start-AWSTest.ps1 -SSH_KEY ~/.ssh/id_rsa -MSI_PATH $(Get-ChildItem ../msi/*.msi | select -ExpandProperty FullName)
+          Out-File -FilePath ./t_client.inline -InputObject $Env:ConfigFile
+          .\Start-AWSTest.ps1 -SSH_KEY ~/.ssh/id_rsa -MSI_PATH $(Get-ChildItem ../msi/*.msi | select -ExpandProperty FullName) -CONFIG_FILE ./t_client.inline
 
       - name: Archive openvpn logs
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
