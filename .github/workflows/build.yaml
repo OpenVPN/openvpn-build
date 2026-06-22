@@ -24,7 +24,7 @@ jobs:
       SigningCertificateFile: ${{ github.workspace }}/certificate.pem
 
     name: 'openvpn-build'
-    runs-on: windows-latest
+    runs-on: windows-2022
 
     steps:
       - name: Checkout openvpn-build
