@@ -25,7 +25,7 @@ jobs:
       VCPKG_BINARY_SOURCES: clear;files,${{ github.workspace }}/vcpkg_cache,readwrite
 
     name: 'openvpn-build'
-    runs-on: windows-2022
+    runs-on: windows-2025
 
     steps:
       - name: Checkout openvpn-build
