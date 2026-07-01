@@ -1,0 +1,17 @@
+openvpn (2.6.21-debian0) stable; urgency=medium
+
+  * OpenVPN Release 2.6.21 (Gert Doering, 4dee614e)
+  * Fix tls_wrap_reneg use after free (Max Fillinger, 7cfd5c09)
+  * Ensure tls-crypt keys are not setup twice (Arne Schwabe, 4357bb37)
+  * Fix ack_write_buf use after free (Max Fillinger, ea01c654)
+  * Ensure we only get the session from valid tokens for external-auth (Arne Schwabe, ee119b24)
+  * Clean up metadata handling in tls_crypt_v2_extract_client_key (Arne Schwabe, cd47c629)
+  * GHA: Cherry-pick changes from master to keep working (Frank Lichtenheld, 4967193d)
+  * win32: fix plugin trusted-dir check prefix bypass (Lev Stipakov, 0bb1f2c4)
+  * Make get_random return int64 instead of long (Arne Schwabe, bab5ee23)
+  * options: fix use-after-free of DNS options on client connect (Antonio Quartulli, 14d761c8)
+  * Fix 1-byte buffer overrun on NTLMv2 proxy responses. (Gert Doering, e1bf48ab)
+  * Ensure pushed tun-mtu is no lower than TUN_MTU_MIN (Arne Schwabe, dc023ffe)
+  * Null-terminate tls-crypt client keys when testing (Max Fillinger, e13b1281)
+
+ -- Frank Lichtenheld <frank.lichtenheld@openvpn.com>  Wed, 1 Jul 2026 11:54:02 +0200

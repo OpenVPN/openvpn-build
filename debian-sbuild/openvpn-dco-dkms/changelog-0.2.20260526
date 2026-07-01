@@ -1,0 +1,15 @@
+openvpn-dco-dkms (0.2.20260526-debian0) stable; urgency=medium
+
+  * ovpn: fix 6.16 compat hack on RHEL 9.8 (Antonio Quartulli, 4081ec1)
+  * ovpn-dco: compat hack for 7.1 about tcp_recvmsg changing signature (Antonio Quartulli, 65afbcb)
+  * ovpn-dco: compat hack for 7.1 about ipv6_stub being removed (Antonio Quartulli, 20be82f)
+  * ovpn-dco: serialize peer NAPI add/delete (Ralf Lici, ef379ea)
+  * ovpn-dco: avoid UAF when releasing peer (Antonio Quartulli, f74c59a)
+  * Update issue templates (Antonio Quartulli, 7ff209d)
+  * Mark ovpn-dco as obsolete for OpenVPN <2.7.0 (Antonio Quartulli, f29bb20)
+  * Update README.md for markdown formatting (Antonio Quartulli, d4a755c)
+  * ovpn-dco: rename README to README.md (Antonio Quartulli, ce4f1e0)
+  * ovpn-dco: README - make compatibility with userspace explicit (Antonio Quartulli, 322f1c4)
+  * ovpn-dco: netlink - fix u8/u16 mismatch when reading OVPN_NEW_KEY_ATTR_KEY_ID on BigEndian (Arne Schwabe, fd3dac4)
+
+ -- Frank Lichtenheld <frank.lichtenheld@openvpn.com>  Tue, 19 May 2026 15:25:07 +0200
