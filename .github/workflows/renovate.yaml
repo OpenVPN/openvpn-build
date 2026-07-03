@@ -21,7 +21,8 @@ jobs:
             ${{ github.repository_owner }}/openvpn-build,
             ${{ github.repository_owner }}/openvpn,
             ${{ github.repository_owner }}/openvpn3,
-            ${{ github.repository_owner }}/openvpn-gui
+            ${{ github.repository_owner }}/openvpn-gui,
+            ${{ github.repository_owner }}/openvpn-tests
           RENOVATE_IGNORE_PRESETS: >-
             local>openvpntechnologies/ops-sec-renovate,
             local>openvpntechnologies/ops-saas-renovate,
