@@ -1,0 +1,10 @@
+openvpn (2.6.22-debian0) stable; urgency=medium
+
+  * OpenVPN Release 2.6.22 (Gert Doering, c9b790f5)
+  * interactive: forbid "--setenv opt" in startup data (Heiko Hund, b06ee457)
+  * ssl: Ignore hard reset packets with a non-zero packet id (Frank Lichtenheld, 6ad370fa)
+  * dco: make key state desync recoverable (Ralf Lici, 5b17c050)
+  * test_tls_crypt: Fix test failure on Windows (Frank Lichtenheld, dbffaae1)
+  * proto: correct 802.1Q length check in is_ipv_X (rootvector2, 66c7d435)
+
+ -- Frank Lichtenheld <frank.lichtenheld@openvpn.com>  Wed, 5 Aug 2026 17:36:33 +0200

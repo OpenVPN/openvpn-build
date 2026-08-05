@@ -1,0 +1,5 @@
+openvpn-dco-dkms (0.2.20260804-debian0) stable; urgency=medium
+
+  * ovpn-dco: add hack for setup_udp_tunnel_sock() on linux >=7.1.5 (Antonio Quartulli, dc2a2db)
+
+ -- Frank Lichtenheld <frank.lichtenheld@openvpn.com>  Tue, 4 Aug 2026 09:51:21 +0200
