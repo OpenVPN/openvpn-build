@@ -1,0 +1,21 @@
+openvpn (2.7.6-debian0) stable; urgency=medium
+
+  * OpenVPN Release 2.7.6 (Gert Doering, 327a33de)
+  * interactive: forbid "--setenv opt" in startup data (Heiko Hund, 7b40723d)
+  * ssl: Ignore hard reset packets with a non-zero packet id (Frank Lichtenheld, 6d7685f4)
+  * Correctly calculate packet id size when epoch packet format is in use (Arne Schwabe, 80257130)
+  * options: make 'tun' the default for '--dev' (Antonio Quartulli, c2a1de5e)
+  * dco: make key state desync recoverable (Ralf Lici, d0528fae)
+  * mingw: avoid C99 "hh" scanf length modifier (Heiko Hund, 326bd05d)
+  * options: limit ping and keepalive values to one day (Marco Baffo, 5d8cb707)
+  * Enable TCP_NODELAY by default and push it to clients (Antonio Quartulli, 21f662e8)
+  * Remove --providers from --help output for Mbed TLS (Max Fillinger, 339f6f17)
+  * Make --x509-username-field work with Mbed TLS (Max Fillinger, 08bbc490)
+  * proto: correct 802.1Q length check in is_ipv_X (rootvector2, 47c92671)
+  * test_tls_crypt: Fix test failure on Windows (Frank Lichtenheld, d8bbfbc5)
+  * t_client.sh.in: Do not run resolvectl if systemd is not running (Frank Lichtenheld, 2e63ed33)
+  * CMake: detect cmocka_version.h via include path, not by linking (Lev Stipakov, b6b6af3d)
+  * ssl_pkt: Fix doxygen warning about read_control_auth (Frank Lichtenheld, b64b1d01)
+  * test_tls_crypt: Fix issue with temp file name on big endian systems (Frank Lichtenheld, c3d929cb)
+
+ -- Frank Lichtenheld <frank.lichtenheld@openvpn.com>  Mon, 3 Aug 2026 15:42:49 +0200
