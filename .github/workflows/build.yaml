@@ -193,7 +193,7 @@ jobs:
   upload_msis:
     needs: run_tclient_tests
     name: upload-msis
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     if: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/master' && github.repository == 'openvpn/openvpn-build' }}
 
     steps:
