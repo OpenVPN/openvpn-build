@@ -1,0 +1,14 @@
+openvpn (2.6.23-debian0) stable; urgency=medium
+
+  * OpenVPN Release 2.6.23 (Gert Doering, 49620843)
+  * ssl: do not trust the peer's request to resend the wrapped client key (Lev Stipakov, 75fb978f)
+  * Ignore acks for packets that cannot be outstanding (Arne Schwabe, bd90ce85)
+  * Avoid unbounded reliable TLS timeout (Arne Schwabe, 93d68b1f)
+  * Move check_session_buf_not_used method into the method that free the buffer (Arne Schwabe, 7dae6315)
+  * win32: quote arguments that cmd.exe would reinterpret (Lev Stipakov, 3c3ef5b7)
+  * tapctl: prevent binary planting with netsh (Heiko Hund, d836a52b)
+  * win: don't use NULL DACL with system objects (Heiko Hund, 78a1a7bd)
+  * dhcp: Fix off-by-one in write_dhcp_search_str() temp buffer guard (Nexory, cedf9bc2)
+  * openvpnserv: detect sibling dirs in CheckConfigPath (Heiko Hund, 927b18df)
+
+ -- Yuriy Darnobyt <yuriy.darnobyt@openvpn.net>  Wed, 23 Sep 2026 11:07:27 +0200
