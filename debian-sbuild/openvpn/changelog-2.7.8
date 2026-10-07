@@ -1,0 +1,26 @@
+openvpn (2.7.8-debian0) stable; urgency=medium
+
+  * OpenVPN Release 2.7.8 (Gert Doering, dc1f5690)
+  * multi_io: drop IOW_MBUF (Gianmarco De Gregori, 095af37c)
+  * mbuf: don't count dereferenced items in the queue length (Gianmarco De Gregori, 397276d6)
+  * doc: document optional message parameter for management command client-kill (Sarvagya Chaturvedi, 779cd934)
+  * dco: remove iroute at client exit time instead of delayed exit (Antonio Quartulli, e9d8fd2b)
+  * dco: stop fetching peer stats during client disconnect (Ralf Lici, da51a901)
+  * buffer: make buf_valid() and buf_defined() NULL-safe (Andrew Gonzalez, 75e59741)
+  * multi/dco: simplify dco_delete_iroutes call chain (Antonio Quartulli, 681c6c3c)
+  * dco_linux: drop the now-redundant __is_locked re-entrancy guard (Antonio Quartulli, 028acc7c)
+  * dco_linux: read multicast notifications on a dedicated netlink socket (Antonio Quartulli, a85aa33c)
+  * GHA: Maintenance update September 2026 (Frank Lichtenheld, 0381e31e)
+  * proxy: Work-around spurious warning on mingw builds (Frank Lichtenheld, 0c12762e)
+  * GHA: Explicitly set PKG_CONFIG_PATH in Android build (Frank Lichtenheld, 8ce11e8e)
+  * ssl: reject a pushed epoch data format tag with a non-AEAD cipher (Antonio Quartulli, 69a7cb1b)
+  * dco_win: report per-peer ioctl failures instead of exiting (Lev Stipakov, e02ceb9d)
+  * dco: do not exit the process when installing a DCO key fails (Antonio Quartulli, 87d3dd5c)
+  * Check for null-bytes in certificate subjects (Max Fillinger, cf4384ee)
+  * ssl: do not trust the peer's request to resend the wrapped client key (Lev Stipakov, b0cb5029)
+  * Improve auth token related comments (Arne Schwabe, 4bdbf2f1)
+  * options: fix unsigned underflow when clearing domain_search_list (Cole Munz, d586f8ad)
+  * win32: stop cmd.exe from expanding variables in quoted arguments (Lev Stipakov, 4eaacbb9)
+  * reliable: add unit tests for ACK and backoff DoS hardening (Lev Stipakov, acd9702b)
+
+ -- Frank Lichtenheld <frank.lichtenheld@openvpn.net>  Tue, 6 Oct 2026 14:59:16 +0200
