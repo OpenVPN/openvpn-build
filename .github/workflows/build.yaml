@@ -213,8 +213,8 @@ jobs:
         working-directory: msi
         run: |
           set -x
-          eval $(ssh-agent -s)
           mkdir -v -m 700 $HOME/.ssh
+          eval $(ssh-agent -s)
           ssh-keyscan -H ${{ secrets.MSI_UPLOAD_REMOTE_HOST }} > $HOME/.ssh/known_hosts
           echo "${{ secrets.MSI_UPLOAD_PRIVATE_KEY }}" > $HOME/.ssh/key
           chmod 400 $HOME/.ssh/key
