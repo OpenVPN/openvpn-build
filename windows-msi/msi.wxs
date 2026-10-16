@@ -20,7 +20,6 @@
 -->
 <Wix
     xmlns="http://schemas.microsoft.com/wix/2006/wi"
-    xmlns:netfx="http://schemas.microsoft.com/wix/NetFxExtension"
     xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
     <Product
         Id="$(var.PRODUCT_CODE)"
@@ -62,7 +61,6 @@
         <Property Id="MSICHECKCRCS" Value="1"/>
         <Property Id="DISABLEROLLBACK" Value="yes"/>
         <Property Id="EDITOR" Value="notepad.exe"/>
-        <PropertyRef Id="NETFRAMEWORK40FULL"/>
 
         <Property Id="WIN102004" Secure="yes">
             <DirectorySearch Id="searchAdvApiDir" Path="[SystemFolder]" Depth="0">
@@ -90,6 +88,8 @@
         <CustomAction Id="UpdatePlapReg" BinaryKey="PlapReg.js" JScriptCall="UpdatePlapReg" Execute="deferred" Impersonate="no" />
 
         <CustomAction Id="CheckOpenVPNServiceStatus" BinaryKey="Service.js" JScriptCall="CheckOpenVPNServiceStatus" />
+        <CustomAction Id="SetRecreateOpenVPNServiceData" Property="RecreateOpenVPNService" Value="[#bin.openvpnserv.exe]" />
+        <CustomAction Id="RecreateOpenVPNService" BinaryKey="Service.js" JScriptCall="RecreateOpenVPNService" Execute="deferred" Impersonate="no" Return="ignore" />
         <CustomAction Id="ConfigureOpenVPNService"  BinaryKey="Service.js" JScriptCall="ConfigureOpenVPNService" Execute="deferred" Impersonate="no" />
 
         <CustomAction Id="GetInstallDirForACL" BinaryKey="ACL.js" JScriptCall="GetInstallDir" Return="check" />
@@ -104,8 +104,10 @@
         </InstallUISequence>
         <InstallExecuteSequence>
             <Custom Action="FindSystemInfo" After="FindRelatedProducts"/>
-            <Custom Action="CheckOpenVPNServiceStatus" After="ProcessComponents"/>
-            <Custom Action="ConfigureOpenVPNService" After="StartServices">NOT Installed OR REINSTALL</Custom>
+            <Custom Action="CheckOpenVPNServiceStatus" Before="InstallValidate"/>
+            <Custom Action="SetRecreateOpenVPNServiceData" After="RemoveExistingProducts">NOT REMOVE~="ALL"</Custom>
+            <Custom Action="RecreateOpenVPNService" After="SetRecreateOpenVPNServiceData">NOT REMOVE~="ALL"</Custom>
+            <Custom Action="ConfigureOpenVPNService" After="RecreateOpenVPNService">NOT REMOVE~="ALL"</Custom>
             <Custom Action="GetInstallDirForPlap" After="SetProductDirParam"/>
             <Custom Action="UpdatePlapReg" After="InstallFiles"/>
             <Custom Action="GetInstallDirForACL" After="SetProductDirParam">NOT Installed</Custom>
@@ -114,6 +116,7 @@
         <UI>
             <ProgressText Action="FindSystemInfo">Detecting system information</ProgressText>
             <ProgressText Action="CheckOpenVPNServiceStatus">Checking status of OpenVPNService</ProgressText>
+            <ProgressText Action="RecreateOpenVPNService">Installing OpenVPNService</ProgressText>
             <ProgressText Action="ConfigureOpenVPNService">Configuring OpenVPNService</ProgressText>
         </UI>
 
@@ -425,7 +428,7 @@
                             <File Id="bin.openvpn_gui.exe" Name="openvpn-gui.exe" Source="!(bindpath.openvpnguibin)openvpn-gui.exe"/>
                         </Component>
                         <Component Id="bin.openvpnserv.exe" Guid="{43A4F408-9399-4BD7-9978-0ECE4A582929}">
-                            <File Name="openvpnserv.exe" Source="!(bindpath.openvpnserv)openvpnserv.exe" KeyPath="yes"/>
+                            <File Id="bin.openvpnserv.exe" Name="openvpnserv.exe" Source="!(bindpath.openvpnserv)openvpnserv.exe" KeyPath="yes"/>
                             <File Name="openvpnservmsg.dll" Source="!(bindpath.openvpnserv)openvpnservmsg.dll"/>
                             <ServiceControl
                                 Id="OpenVPNServiceInteractive"
@@ -438,14 +441,12 @@
                                 Name="OpenVPNServiceInteractive"
                                 DisplayName="OpenVPN Interactive Service"
                                 Description="Allows OpenVPN GUI and other clients to establish OpenVPN connections without administrative privileges in a secure way."
-                                Type="shareProcess"
+                                Arguments="-interactive"
+                                Type="ownProcess"
                                 Start="auto"
                                 ErrorControl="normal">
                                 <ServiceDependency Id="Dhcp"/>
                             </ServiceInstall>
-                        </Component>
-                        <Component Id="bin.openvpnserv2.exe" Guid="{8867EEBF-B928-49D7-A1F5-D33E2BCAAD70}">
-                            <File Name="openvpnserv2.exe" Source="!(bindpath.openvpnserv2)openvpnserv2.exe"/>
                             <ServiceControl
                                 Id="OpenVPNService"
                                 Name="OpenVPNService"
@@ -456,11 +457,18 @@
                                 Name="OpenVPNService"
                                 DisplayName="OpenVPNService"
                                 Description="Responsible for automatic start of OpenVPN instances."
+                                Arguments="-automatic"
                                 Type="ownProcess"
                                 Start="disabled"
                                 Account="NT SERVICE\OpenVPNService"
                                 ErrorControl="normal">
                                 <ServiceDependency Id="OpenVPNServiceInteractive"/>
+                                <ServiceConfig
+                                    ServiceSid="unrestricted"
+                                    OnInstall="yes"
+                                    OnReinstall="yes">
+                                    <RequiredPrivilege>SeChangeNotifyPrivilege</RequiredPrivilege>
+                                </ServiceConfig>
                             </ServiceInstall>
                         </Component>
                         <Component Id="bin.tapctl.exe" Guid="{5A294591-0F71-470F-977B-DD288AB2B437}">
@@ -1065,17 +1073,6 @@
                         Value="7" />
                 </RegistryKey>
             </Component>
-
-            <Component Id="reg.openvpnservice_event_source" Guid="{D2CEB66C-2EC6-4889-89EA-E38940F53E62}">
-                <util:EventSource
-                    Name="OpenVPNService"
-                    Log="Application"
-                    EventMessageFile="%SystemRoot%\Microsoft.NET\Framework\v4.0.30319\EventLogMessages.dll"
-                    SupportsErrors="yes"
-                    SupportsWarnings="yes"
-                    SupportsInformationals="yes"
-                    KeyPath="yes" />
-            </Component>
         </DirectoryRef>
 
 
@@ -1324,15 +1321,12 @@
                 Level="2"
                 ConfigurableDirectory="PRODUCTDIR"
                 AllowAdvertise="no">
-                <Condition Level="0"><![CDATA[NOT NETFRAMEWORK40FULL AND NOT Installed]]></Condition>
-                <ComponentRef Id="bin.openvpnserv2.exe"/>
                 <ComponentRef Id="bin.libopenvpn_plap.dll"/>
                 <ComponentRef Id="bin.openvpn_plap_install.reg"/>
                 <ComponentRef Id="bin.openvpn_plap_uninstall.reg"/>
                 <ComponentRef Id="config_auto.README.txt"/>
                 <ComponentRef Id="reg.autostart_config_dir"/>
                 <ComponentRef Id="LOGDIR.permissions"/>
-                <ComponentRef Id="reg.openvpnservice_event_source"/>
 
                 <Feature
                     Id="OpenVPN.PLAP.Register"

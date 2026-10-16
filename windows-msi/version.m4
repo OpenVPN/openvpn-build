@@ -14,10 +14,6 @@ dnl ovpn-dco binaries
 dnl renovate: datasource=github-releases depName=OpenVPN/ovpn-dco-win
 define([PRODUCT_OVPN_DCO_VERSION],     [2.8.13])
 
-dnl OpenVPNServ2.exe binary
-dnl renovate: datasource=github-releases depName=OpenVPN/openvpnserv2 versioning=loose
-define([OVPNSERV2_VERSION], [2.0.1.0])
-
 dnl Easy-RSA binaries:
 dnl URL to .zip file containing "easy-rsa-[EASYRSA_VERSION]" folder with Easy-RSA.
 dnl The OpenSSL binaries, which come with Easy-RSA, are not used by Openvpn-build.
