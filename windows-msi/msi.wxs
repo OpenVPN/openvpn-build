@@ -108,7 +108,8 @@
             <Custom Action="ConfigureOpenVPNService" After="StartServices">NOT Installed OR REINSTALL</Custom>
             <Custom Action="GetInstallDirForPlap" After="SetProductDirParam"/>
             <Custom Action="UpdatePlapReg" After="InstallFiles"/>
-            <Custom Action="GetInstallDirForACL" After="SetProductDirParam">NOT Installed</Custom>
+            <!-- after CostFinalize, so that the config directory properties are resolved -->
+            <Custom Action="GetInstallDirForACL" After="CostFinalize">NOT Installed</Custom>
             <Custom Action="SetACL" After="InstallFiles">NOT Installed</Custom>
         </InstallExecuteSequence>
         <UI>
