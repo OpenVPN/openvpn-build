@@ -1,0 +1,6 @@
+ovpn-backports (7.3.0.2026100801-debian0) stable; urgency=medium
+
+  * Generated sources for ovpn-net-next/main-7.3.0-rc2-2026100801 (GitHub Actions, 5fa9098)
+  * Generated sources for ovpn-net-next/main-7.3.0-rc2-2026100800 (GitHub Actions, 5fca1a6)
+
+ -- Frank Lichtenheld <frank.lichtenheld@openvpn.net>  Thu, 8 Oct 2026 09:33:36 +0000
