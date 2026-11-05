@@ -122,12 +122,6 @@ clean	Cleans intermediate and output files</example>
 
             var env = WScript.CreateObject("WScript.Shell").Environment("Process");
 
-            // Downloading openvpnserv2.exe
-            b.pushRule(new DownloadBuildRule(
-            BuildPath(buildPath, "openvpnserv2.exe"),
-                "https://github.com/OpenVPN/openvpnserv2/releases/download/" + ver.define.OVPNSERV2_VERSION + "/openvpnserv2-" + ver.define.OVPNSERV2_VERSION +"-signed.exe",
-                ["version.m4"]));
-
             // Downloading and extracting Easy RSA
             b.pushRule(new DownloadBuildRule(
                 BuildPath(sourcePath, "easyrsa-" + ver.define.EASYRSA_VERSION + ".zip"),
@@ -177,7 +171,6 @@ clean	Cleans intermediate and output files</example>
 
                 // WiX compiler flags
                 var wixCompilerFlags = [
-                    "-ext WixNetFxExtension",
                     "-ext WixUtilExtension",
                     "-arch \"" + _CMD(p.wixPlat) + "\"",
                     "-dPRODUCT_PUBLISHER=\""            + _CMD(ver.define["PRODUCT_PUBLISHER"           ]) + "\"",
@@ -225,7 +218,6 @@ clean	Cleans intermediate and output files</example>
                 // WiX linker flags
                 var wixLinkerFlags = [
                     "-spdb",
-                    "-ext WixNetFxExtension",
                     "-ext WixUtilExtension",
                     "-b build=\""         + _CMD(buildPath    ) + "\"",
                     "-b openvpndoc=\""    + _CMD(p.openVPNDocPath) + "\"",
@@ -238,7 +230,6 @@ clean	Cleans intermediate and output files</example>
                     "-b openssltools=\""  + _CMD(p.openSSLToolsPath) + "\"",
                     "-b opensslbin=\""    + _CMD(p.openSSLBinPath) + "\"",
                     "-b easyrsa=\""       + _CMD(easyRSAPath  ) + "\"",
-                    "-b openvpnserv2=\""  + _CMD(buildPath    ) + "\"",
                     "-b ovpndco=\""       + _CMD(p.ovpnDcoPath) + "\""
                 ];
 
@@ -281,7 +272,6 @@ clean	Cleans intermediate and output files</example>
                         BuildPath(p.openVPNServPath, "openvpnservmsg.dll"),
                         BuildPath(p.openVPNTapCtlPath, "tapctl.exe"),
                         BuildPath("vcredist", p.wixPlat, "vcruntime140.dll"),
-                        BuildPath(buildPath, "openvpnserv2.exe"),
                         BuildPath(buildPath, "README-config.txt"),
                         BuildPath(buildPath, "README-config-auto.txt"),
                         BuildPath(buildPath, "INSTALL-win32.txt"),
