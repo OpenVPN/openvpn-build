@@ -10,7 +10,7 @@ obtain these and save them to one of OpenVPN's configuration directories:
 For launching OpenVPN Connections you have two main options:
 
     OpenVPN GUI (tray applet)
-    OpenVPNService (system service, not installed by default)
+    OpenVPNService (system service)
 
 OpenVPN GUI is used to launching VPN connections on demand. The OpenVPNService
 launches all configs under config-auto during boot and should be used for
@@ -39,18 +39,21 @@ SYSTEM SERVICES
 
 OpenVPN 2.5-beta1 and later come bundled with two system services:
 
-    OpenVPNService (background service, not installed by default)
+    OpenVPNService (background service)
     OpenVPNServiceInteractive (required to run GUI as non-admin)
 
 The installer starts OpenVPNServiceInteractive automatically and configures it
 to start at system startup. This is done to allow unprivileged users to start
 OpenVPN connections using OpenVPN GUI without any extra configuration.
 
-OpenVPNService is based on openvpnserv2, a complete rewrite of the OpenVPN
-service wrapper. It is intended for launching OpenVPN instances that should be
-up at all times, instead of being manually launched by a user. OpenVPNService
-is able to restart individual OpenVPN processes if they crash, and it also
-works properly on recent Windows versions.
+Both services are implemented by openvpnserv.exe. OpenVPNService is intended
+for launching OpenVPN instances that should be up at all times, instead of
+being manually launched by a user. It starts one OpenVPN process for each
+config file in the config-auto directory, using OpenVPNServiceInteractive,
+and restarts individual OpenVPN processes if they exit. It runs as the
+unprivileged virtual service account NT SERVICE\OpenVPNService. The installer
+enables and starts it by default; if the "OpenVPN Service" feature is not
+selected, the service stays installed but disabled.
 
 BUILDING OPENVPN FOR WINDOWS
 
