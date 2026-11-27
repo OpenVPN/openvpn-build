@@ -52,17 +52,40 @@ function GetConfigMigrationDirs() {
     }
 }
 
+function IsServiceFeatureSelected() {
+    var msiInstallStateUnknown = -1;
+    var msiInstallStateLocal = 3;
+    var feature = "OpenVPN.Service";
+
+    var requested = Session.FeatureRequestState(feature);
+    if (requested == msiInstallStateUnknown)
+        return Session.FeatureCurrentState(feature) == msiInstallStateLocal;
+    return requested == msiInstallStateLocal;
+}
+
+// runs early, as removing an old version during an upgrade may delete the service
+// result: selected|startMode|started|migrateSrc|migrateDst
 function CheckOpenVPNServiceStatus() {
-    if (!IsServiceExist())
-        return;
+    var startMode = "";
+    var started = false;
+    var migrateDirs = ["", ""];
 
-    var wmi = GetObject("winmgmts://./root/cimv2");
-    var srv = wmi.Get("Win32_Service.Name='" + _serviceName + "'");
-    var startMode = srv.StartMode.toLowerCase();
-    if ((startMode != "auto") && (startMode != "disabled"))
-        startMode = "demand";
+    if (IsServiceExist()) {
+        var wmi = GetObject("winmgmts://./root/cimv2");
+        var srv = wmi.Get("Win32_Service.Name='" + _serviceName + "'");
+        startMode = srv.StartMode.toLowerCase();
+        if ((startMode != "auto") && (startMode != "disabled"))
+            startMode = "demand";
+        started = srv.Started;
+        migrateDirs = GetConfigMigrationDirs();
 
-    Session.Property("ConfigureOpenVPNService") = [startMode, srv.Started].concat(GetConfigMigrationDirs()).join("|");
+        // without the feature the service is registered disabled, nothing to keep
+        if (startMode == "disabled" && !Session.Property("CONFIGAUTODIRREG"))
+            startMode = "";
+    }
+
+    var selected = IsServiceFeatureSelected() ? "1" : "0";
+    Session.Property("ConfigureOpenVPNService") = [selected, startMode, started].concat(migrateDirs).join("|");
 }
 
 function MigrateConfigs(src, dst) {
@@ -83,31 +106,45 @@ function MigrateConfigs(src, dst) {
     }
 }
 
+// removing an openvpnserv2.exe based version deletes the service, install it again
+function RecreateOpenVPNService() {
+    var exe = Session.Property("CustomActionData");
+    var wsh = new ActiveXObject("WScript.Shell");
+    var rc = wsh.Run("\"" + exe + "\" -install automatic", 0, true);
+    if (rc != 0) {
+        Log("Installing " + _serviceName + " failed, openvpnserv.exe exit code " + rc);
+    }
+}
+
+function Log(msg) {
+    var rec = Session.Installer.CreateRecord(0);
+    rec.StringData(0) = msg;
+    Session.Message(0x04000000 /* msiMessageTypeInfo */, rec);
+}
+
 function ConfigureOpenVPNService() {
-    if (!IsServiceExist())
+    if (!IsServiceExist()) {
+        Log(_serviceName + " does not exist, cannot configure it");
         return;
-
-    var startMode = "";
-    var needsStart = false;
-    var val = Session.Property("CustomActionData");
-    var migrateSrc = "", migrateDst = "";
-    if (val == "") {
-        // this likely means new install
-        startMode = "auto";
-        needsStart = true;
-    } else {
-        arr = val.split("|");
-        startMode = arr[0];
-        needsStart = arr[1] == "true";
-
-        // migrate configs if this is an upgrade and service was started
-        if (needsStart && arr.length >= 4) {
-            migrateSrc = arr[2];
-            migrateDst = arr[3];
-        }
     }
 
-    if (migrateSrc && migrateDst) {
+    var arr = Session.Property("CustomActionData").split("|");
+    var selected = arr[0] == "1";
+    var startMode = arr[1] || "";
+    var needsStart = arr[2] == "true";
+    var migrateSrc = arr[3] || "";
+    var migrateDst = arr[4] || "";
+
+    if (!selected) {
+        // the service is always registered, but must not run without the feature
+        startMode = "disabled";
+        needsStart = false;
+    } else if (startMode == "") {
+        // nothing to restore: new install, or the feature was just selected
+        startMode = "auto";
+        needsStart = true;
+    } else if (needsStart && migrateSrc && migrateDst) {
+        // migrate configs if this is an upgrade and service was started
         MigrateConfigs(migrateSrc, migrateDst);
     }
 
